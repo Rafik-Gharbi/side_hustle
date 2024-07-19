@@ -1,0 +1,90 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../constants/colors.dart';
+import '../../constants/sizes.dart';
+import '../../helpers/helper.dart';
+import '../../models/filter_model.dart';
+import '../../services/theme/theme.dart';
+import '../../widgets/custom_buttons.dart';
+import '../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../widgets/custom_text_field.dart';
+import '../../widgets/hold_in_safe_area.dart';
+import '../../widgets/loading_request.dart';
+import '../../widgets/task_card.dart';
+import '../task_filter/more_filters_popup.dart';
+import 'task_list_controller.dart';
+
+class TaskListScreen extends StatelessWidget {
+  static const String routeName = '/tasks';
+  final FilterModel? filterModel;
+  final String? searchQuery;
+
+  const TaskListScreen({super.key, this.filterModel, this.searchQuery});
+
+  @override
+  Widget build(BuildContext context) {
+    final getAllTasks = filterModel == null && searchQuery == null;
+    return HoldInSafeArea(
+      child: GetBuilder<TaskListController>(
+        initState: (state) => Helper.waitAndExecute(() => state.controller != null, () {
+          if (getAllTasks) {
+            state.controller?.getAllTasks();
+          } else {
+            state.controller?.fetchSearchedTasks(searchQuery: searchQuery, filter: filterModel);
+          }
+        }),
+        builder: (controller) => Obx(
+          () => CustomScaffoldBottomNavigation(
+            appBarTitle: 'Search Tasks',
+            appBarActions: [
+              CustomButtons.icon(
+                icon: Icon(controller.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
+                onPressed: () => controller.openSearchBar.value = !controller.openSearchBar.value,
+              ),
+              CustomButtons.icon(
+                icon: const Icon(Icons.filter_alt_outlined),
+                onPressed: () => Get.dialog(
+                  MoreFiltersPopup(
+                    updateFilter: (filter) => controller.filterModel = filter,
+                    filter: controller.filterModel,
+                  ),
+                ),
+              ),
+            ],
+            appBarBottom: controller.openSearchBar.value
+                ? AppBar(
+                    backgroundColor: kNeutralColor100,
+                    leading: const SizedBox(),
+                    flexibleSpace: CustomTextField(
+                      fieldController: controller.searchTaskController,
+                      hintText: 'Search Task',
+                      suffixIcon: const Icon(Icons.search, color: kPrimaryColor),
+                      fillColor: Colors.white,
+                      onChanged: (value) => Helper.onSearchDebounce(
+                        () => value.length >= 3 || value.isEmpty ? controller.searchTasks() : null,
+                      ),
+                    ),
+                  )
+                : null,
+            body: LoadingRequest(
+              isLoading: controller.isLoading,
+              child: controller.filteredTaskList.isEmpty
+                  ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
+                  : ListView.builder(
+                      itemCount: controller.filteredTaskList.length,
+                      itemBuilder: (context, index) {
+                        final task = controller.filteredTaskList[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: 2),
+                          child: TaskCard(task: task),
+                        );
+                      },
+                    ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
