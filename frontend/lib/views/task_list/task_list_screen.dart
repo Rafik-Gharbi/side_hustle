@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../constants/colors.dart';
 import '../../constants/sizes.dart';
+import '../../helpers/buildables.dart';
 import '../../helpers/helper.dart';
 import '../../models/filter_model.dart';
 import '../../services/theme/theme.dart';
@@ -62,7 +63,7 @@ class TaskListScreen extends StatelessWidget {
                       suffixIcon: const Icon(Icons.search, color: kPrimaryColor),
                       fillColor: Colors.white,
                       onChanged: (value) => Helper.onSearchDebounce(
-                        () => value.length >= 3 || value.isEmpty ? controller.searchTasks() : null,
+                        () => value.length >= 3 || value.isEmpty ? controller.fetchSearchedTasks() : null,
                       ),
                     ),
                   )
@@ -71,15 +72,32 @@ class TaskListScreen extends StatelessWidget {
               isLoading: controller.isLoading,
               child: controller.filteredTaskList.isEmpty
                   ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
-                  : ListView.builder(
-                      itemCount: controller.filteredTaskList.length,
-                      itemBuilder: (context, index) {
-                        final task = controller.filteredTaskList[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: 2),
-                          child: TaskCard(task: task),
-                        );
-                      },
+                  : SingleChildScrollView(
+                      controller: controller.scrollController,
+                      child: Column(
+                        children: [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: controller.filteredTaskList.length,
+                            itemBuilder: (context, index) {
+                              final task = controller.filteredTaskList[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: 2),
+                                child: TaskCard(task: task),
+                              );
+                            },
+                          ),
+                          Obx(
+                            () => controller.isLoadingMore.value && !controller.isEndList
+                                ? Padding(
+                                    padding: const EdgeInsets.only(bottom: Paddings.extraLarge),
+                                    child: SizedBox(height: 60, width: Get.width, child: Center(child: Buildables.buildLoadingWidget(height: 80))),
+                                  )
+                                : const SizedBox(),
+                          ),
+                        ],
+                      ),
                     ),
             ),
           ),

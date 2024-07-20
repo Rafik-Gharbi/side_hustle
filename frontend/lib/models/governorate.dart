@@ -14,9 +14,10 @@ class Governorate {
         name: json['name'],
       );
 
-  factory Governorate.fromGovernorateData({required GovernorateTableCompanion governorate}) => MainAppController.find.getGovernorateById(governorate.id)!;
+  factory Governorate.fromGovernorateData({required GovernorateTableCompanion governorate}) => MainAppController.find.getGovernorateById(governorate.id.value)!;
 
   GovernorateTableCompanion toGovernorateCompanion() => GovernorateTableCompanion(
         id: Value(id),
+        name: Value(name),
       );
 }

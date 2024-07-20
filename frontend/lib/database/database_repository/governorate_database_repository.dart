@@ -11,7 +11,7 @@ class GovernorateDatabaseRepository extends GetxService {
   Future<List<Governorate>> select() async {
     List<GovernorateTableData> result = await database.select(database.governorateTable).get();
     List<Governorate> governorates = [];
-    for (final governorate in result) {
+    for (var governorate in result) {
       governorates.add(Governorate.fromGovernorateData(governorate: governorate.toCompanion(true)));
     }
     return governorates;
@@ -55,7 +55,7 @@ class GovernorateDatabaseRepository extends GetxService {
   Future<void> backupGovernorates(List<Governorate> governorates) async {
     LoggerService.logger?.i('Backing up governorates...');
     await deleteAll();
-    for (final element in governorates) {
+    for (var element in governorates) {
       await insert(element.toGovernorateCompanion());
     }
   }

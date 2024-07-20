@@ -10,8 +10,8 @@ class UserDatabaseRepository extends GetxService {
 
   Future<User?> getUserById(int userId) async {
     try {
-      final UserTableData user = (await (database.select(database.userTable)..where((tbl) => tbl.id.equals(userId))).get()).first;
-      return User.fromUserTable(user: user);
+      final UserTableData? user = (await (database.select(database.userTable)..where((tbl) => tbl.id.equals(userId))).get()).firstOrNull;
+      return user != null ? User.fromUserTable(user: user) : User(id: userId);
     } catch (e) {
       LoggerService.logger?.e(e);
       return null;

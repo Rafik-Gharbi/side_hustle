@@ -273,47 +273,15 @@ class $GovernorateTableTable extends GovernorateTable
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _categoryMeta =
-      const VerificationMeta('category');
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
-  late final GeneratedColumn<String> category = GeneratedColumn<String>(
-      'category', aliasedName, false,
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant(''));
-  static const VerificationMeta _estimationMeta =
-      const VerificationMeta('estimation');
   @override
-  late final GeneratedColumn<double> estimation = GeneratedColumn<double>(
-      'estimation', aliasedName, false,
-      type: DriftSqlType.double,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0.0));
-  static const VerificationMeta _endDateMeta =
-      const VerificationMeta('endDate');
-  @override
-  late final GeneratedColumn<DateTime> endDate = GeneratedColumn<DateTime>(
-      'end_date', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
-  static const VerificationMeta _isSavingMeta =
-      const VerificationMeta('isSaving');
-  @override
-  late final GeneratedColumn<bool> isSaving = GeneratedColumn<bool>(
-      'is_saving', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("is_saving" IN (0, 1))'),
-      defaultValue: const Constant(false));
-  static const VerificationMeta _notionIdMeta =
-      const VerificationMeta('notionId');
-  @override
-  late final GeneratedColumn<String> notionId = GeneratedColumn<String>(
-      'notion_id', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  @override
-  List<GeneratedColumn> get $columns =>
-      [id, category, estimation, endDate, isSaving, notionId];
+  List<GeneratedColumn> get $columns => [id, name];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -328,27 +296,9 @@ class $GovernorateTableTable extends GovernorateTable
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('category')) {
-      context.handle(_categoryMeta,
-          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
-    }
-    if (data.containsKey('estimation')) {
+    if (data.containsKey('name')) {
       context.handle(
-          _estimationMeta,
-          estimation.isAcceptableOrUnknown(
-              data['estimation']!, _estimationMeta));
-    }
-    if (data.containsKey('end_date')) {
-      context.handle(_endDateMeta,
-          endDate.isAcceptableOrUnknown(data['end_date']!, _endDateMeta));
-    }
-    if (data.containsKey('is_saving')) {
-      context.handle(_isSavingMeta,
-          isSaving.isAcceptableOrUnknown(data['is_saving']!, _isSavingMeta));
-    }
-    if (data.containsKey('notion_id')) {
-      context.handle(_notionIdMeta,
-          notionId.isAcceptableOrUnknown(data['notion_id']!, _notionIdMeta));
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     }
     return context;
   }
@@ -361,16 +311,8 @@ class $GovernorateTableTable extends GovernorateTable
     return GovernorateTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      category: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
-      estimation: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}estimation'])!,
-      endDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}end_date']),
-      isSaving: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_saving'])!,
-      notionId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}notion_id']),
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
     );
   }
 
@@ -383,46 +325,20 @@ class $GovernorateTableTable extends GovernorateTable
 class GovernorateTableData extends DataClass
     implements Insertable<GovernorateTableData> {
   final int id;
-  final String category;
-  final double estimation;
-  final DateTime? endDate;
-  final bool isSaving;
-  final String? notionId;
-  const GovernorateTableData(
-      {required this.id,
-      required this.category,
-      required this.estimation,
-      this.endDate,
-      required this.isSaving,
-      this.notionId});
+  final String name;
+  const GovernorateTableData({required this.id, required this.name});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['category'] = Variable<String>(category);
-    map['estimation'] = Variable<double>(estimation);
-    if (!nullToAbsent || endDate != null) {
-      map['end_date'] = Variable<DateTime>(endDate);
-    }
-    map['is_saving'] = Variable<bool>(isSaving);
-    if (!nullToAbsent || notionId != null) {
-      map['notion_id'] = Variable<String>(notionId);
-    }
+    map['name'] = Variable<String>(name);
     return map;
   }
 
   GovernorateTableCompanion toCompanion(bool nullToAbsent) {
     return GovernorateTableCompanion(
       id: Value(id),
-      category: Value(category),
-      estimation: Value(estimation),
-      endDate: endDate == null && nullToAbsent
-          ? const Value.absent()
-          : Value(endDate),
-      isSaving: Value(isSaving),
-      notionId: notionId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(notionId),
+      name: Value(name),
     );
   }
 
@@ -431,11 +347,7 @@ class GovernorateTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return GovernorateTableData(
       id: serializer.fromJson<int>(json['id']),
-      category: serializer.fromJson<String>(json['category']),
-      estimation: serializer.fromJson<double>(json['estimation']),
-      endDate: serializer.fromJson<DateTime?>(json['endDate']),
-      isSaving: serializer.fromJson<bool>(json['isSaving']),
-      notionId: serializer.fromJson<String?>(json['notionId']),
+      name: serializer.fromJson<String>(json['name']),
     );
   }
   @override
@@ -443,38 +355,19 @@ class GovernorateTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'category': serializer.toJson<String>(category),
-      'estimation': serializer.toJson<double>(estimation),
-      'endDate': serializer.toJson<DateTime?>(endDate),
-      'isSaving': serializer.toJson<bool>(isSaving),
-      'notionId': serializer.toJson<String?>(notionId),
+      'name': serializer.toJson<String>(name),
     };
   }
 
-  GovernorateTableData copyWith(
-          {int? id,
-          String? category,
-          double? estimation,
-          Value<DateTime?> endDate = const Value.absent(),
-          bool? isSaving,
-          Value<String?> notionId = const Value.absent()}) =>
+  GovernorateTableData copyWith({int? id, String? name}) =>
       GovernorateTableData(
         id: id ?? this.id,
-        category: category ?? this.category,
-        estimation: estimation ?? this.estimation,
-        endDate: endDate.present ? endDate.value : this.endDate,
-        isSaving: isSaving ?? this.isSaving,
-        notionId: notionId.present ? notionId.value : this.notionId,
+        name: name ?? this.name,
       );
   GovernorateTableData copyWithCompanion(GovernorateTableCompanion data) {
     return GovernorateTableData(
       id: data.id.present ? data.id.value : this.id,
-      category: data.category.present ? data.category.value : this.category,
-      estimation:
-          data.estimation.present ? data.estimation.value : this.estimation,
-      endDate: data.endDate.present ? data.endDate.value : this.endDate,
-      isSaving: data.isSaving.present ? data.isSaving.value : this.isSaving,
-      notionId: data.notionId.present ? data.notionId.value : this.notionId,
+      name: data.name.present ? data.name.value : this.name,
     );
   }
 
@@ -482,85 +375,46 @@ class GovernorateTableData extends DataClass
   String toString() {
     return (StringBuffer('GovernorateTableData(')
           ..write('id: $id, ')
-          ..write('category: $category, ')
-          ..write('estimation: $estimation, ')
-          ..write('endDate: $endDate, ')
-          ..write('isSaving: $isSaving, ')
-          ..write('notionId: $notionId')
+          ..write('name: $name')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, category, estimation, endDate, isSaving, notionId);
+  int get hashCode => Object.hash(id, name);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is GovernorateTableData &&
           other.id == this.id &&
-          other.category == this.category &&
-          other.estimation == this.estimation &&
-          other.endDate == this.endDate &&
-          other.isSaving == this.isSaving &&
-          other.notionId == this.notionId);
+          other.name == this.name);
 }
 
 class GovernorateTableCompanion extends UpdateCompanion<GovernorateTableData> {
   final Value<int> id;
-  final Value<String> category;
-  final Value<double> estimation;
-  final Value<DateTime?> endDate;
-  final Value<bool> isSaving;
-  final Value<String?> notionId;
+  final Value<String> name;
   const GovernorateTableCompanion({
     this.id = const Value.absent(),
-    this.category = const Value.absent(),
-    this.estimation = const Value.absent(),
-    this.endDate = const Value.absent(),
-    this.isSaving = const Value.absent(),
-    this.notionId = const Value.absent(),
+    this.name = const Value.absent(),
   });
   GovernorateTableCompanion.insert({
     this.id = const Value.absent(),
-    this.category = const Value.absent(),
-    this.estimation = const Value.absent(),
-    this.endDate = const Value.absent(),
-    this.isSaving = const Value.absent(),
-    this.notionId = const Value.absent(),
+    this.name = const Value.absent(),
   });
   static Insertable<GovernorateTableData> custom({
     Expression<int>? id,
-    Expression<String>? category,
-    Expression<double>? estimation,
-    Expression<DateTime>? endDate,
-    Expression<bool>? isSaving,
-    Expression<String>? notionId,
+    Expression<String>? name,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (category != null) 'category': category,
-      if (estimation != null) 'estimation': estimation,
-      if (endDate != null) 'end_date': endDate,
-      if (isSaving != null) 'is_saving': isSaving,
-      if (notionId != null) 'notion_id': notionId,
+      if (name != null) 'name': name,
     });
   }
 
-  GovernorateTableCompanion copyWith(
-      {Value<int>? id,
-      Value<String>? category,
-      Value<double>? estimation,
-      Value<DateTime?>? endDate,
-      Value<bool>? isSaving,
-      Value<String?>? notionId}) {
+  GovernorateTableCompanion copyWith({Value<int>? id, Value<String>? name}) {
     return GovernorateTableCompanion(
       id: id ?? this.id,
-      category: category ?? this.category,
-      estimation: estimation ?? this.estimation,
-      endDate: endDate ?? this.endDate,
-      isSaving: isSaving ?? this.isSaving,
-      notionId: notionId ?? this.notionId,
+      name: name ?? this.name,
     );
   }
 
@@ -570,20 +424,8 @@ class GovernorateTableCompanion extends UpdateCompanion<GovernorateTableData> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (category.present) {
-      map['category'] = Variable<String>(category.value);
-    }
-    if (estimation.present) {
-      map['estimation'] = Variable<double>(estimation.value);
-    }
-    if (endDate.present) {
-      map['end_date'] = Variable<DateTime>(endDate.value);
-    }
-    if (isSaving.present) {
-      map['is_saving'] = Variable<bool>(isSaving.value);
-    }
-    if (notionId.present) {
-      map['notion_id'] = Variable<String>(notionId.value);
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
     }
     return map;
   }
@@ -592,11 +434,7 @@ class GovernorateTableCompanion extends UpdateCompanion<GovernorateTableData> {
   String toString() {
     return (StringBuffer('GovernorateTableCompanion(')
           ..write('id: $id, ')
-          ..write('category: $category, ')
-          ..write('estimation: $estimation, ')
-          ..write('endDate: $endDate, ')
-          ..write('isSaving: $isSaving, ')
-          ..write('notionId: $notionId')
+          ..write('name: $name')
           ..write(')'))
         .toString();
   }
@@ -2167,20 +2005,12 @@ class $$CategoryTableTableOrderingComposer
 typedef $$GovernorateTableTableCreateCompanionBuilder
     = GovernorateTableCompanion Function({
   Value<int> id,
-  Value<String> category,
-  Value<double> estimation,
-  Value<DateTime?> endDate,
-  Value<bool> isSaving,
-  Value<String?> notionId,
+  Value<String> name,
 });
 typedef $$GovernorateTableTableUpdateCompanionBuilder
     = GovernorateTableCompanion Function({
   Value<int> id,
-  Value<String> category,
-  Value<double> estimation,
-  Value<DateTime?> endDate,
-  Value<bool> isSaving,
-  Value<String?> notionId,
+  Value<String> name,
 });
 
 class $$GovernorateTableTableTableManager extends RootTableManager<
@@ -2202,35 +2032,19 @@ class $$GovernorateTableTableTableManager extends RootTableManager<
               $$GovernorateTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String> category = const Value.absent(),
-            Value<double> estimation = const Value.absent(),
-            Value<DateTime?> endDate = const Value.absent(),
-            Value<bool> isSaving = const Value.absent(),
-            Value<String?> notionId = const Value.absent(),
+            Value<String> name = const Value.absent(),
           }) =>
               GovernorateTableCompanion(
             id: id,
-            category: category,
-            estimation: estimation,
-            endDate: endDate,
-            isSaving: isSaving,
-            notionId: notionId,
+            name: name,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String> category = const Value.absent(),
-            Value<double> estimation = const Value.absent(),
-            Value<DateTime?> endDate = const Value.absent(),
-            Value<bool> isSaving = const Value.absent(),
-            Value<String?> notionId = const Value.absent(),
+            Value<String> name = const Value.absent(),
           }) =>
               GovernorateTableCompanion.insert(
             id: id,
-            category: category,
-            estimation: estimation,
-            endDate: endDate,
-            isSaving: isSaving,
-            notionId: notionId,
+            name: name,
           ),
         ));
 }
@@ -2243,28 +2057,8 @@ class $$GovernorateTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get category => $state.composableBuilder(
-      column: $state.table.category,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get estimation => $state.composableBuilder(
-      column: $state.table.estimation,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<DateTime> get endDate => $state.composableBuilder(
-      column: $state.table.endDate,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<bool> get isSaving => $state.composableBuilder(
-      column: $state.table.isSaving,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get notionId => $state.composableBuilder(
-      column: $state.table.notionId,
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -2303,28 +2097,8 @@ class $$GovernorateTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get category => $state.composableBuilder(
-      column: $state.table.category,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get estimation => $state.composableBuilder(
-      column: $state.table.estimation,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<DateTime> get endDate => $state.composableBuilder(
-      column: $state.table.endDate,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<bool> get isSaving => $state.composableBuilder(
-      column: $state.table.isSaving,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get notionId => $state.composableBuilder(
-      column: $state.table.notionId,
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }

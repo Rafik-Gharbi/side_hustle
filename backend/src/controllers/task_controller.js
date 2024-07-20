@@ -134,7 +134,14 @@ exports.filterTasks = async (req, res) => {
     const priceMin = req.query.priceMin;
     const priceMax = req.query.priceMax;
     const nearby = req.query.nearby;
+    const page = req.query.page;
+    const limit = req.query.limit;
     const currentUserId = req.decoded?.id;
+
+    const pageQuery = page ?? 1;
+    const limitQuery = limit ? parseInt(limit) : 9;
+    const offset = (pageQuery - 1) * limit;
+
     let userFavorites = [];
     if (currentUserId) {
       userFavorites = await getFavoriteByUserId(currentUserId);
@@ -152,12 +159,13 @@ exports.filterTasks = async (req, res) => {
       user.governorate_id as user_governorate_id,
       user.phone_number,
       user.role FROM task JOIN user ON task.owner_id = user.id WHERE (task.title LIKE :searchQuery OR task.description LIKE :searchQuery)
-    ${categoryId ? `AND task.category_id = :categoryId` : ``}
-    ${
-      priceMin && priceMax
-        ? `AND task.price >= :priceMin AND task.price <= :priceMax`
-        : ``
-    }
+      ${categoryId ? `AND task.category_id = :categoryId` : ``}
+      ${
+        priceMin && priceMax
+          ? `AND task.price >= :priceMin AND task.price <= :priceMax`
+          : ``
+      }
+      LIMIT :limit OFFSET :offset
 ;`;
     const tasks = await sequelize.query(query, {
       type: sequelize.QueryTypes.SELECT,
@@ -166,6 +174,8 @@ exports.filterTasks = async (req, res) => {
         categoryId: categoryId,
         priceMin: priceMin,
         priceMax: priceMax,
+        limit: limitQuery,
+        offset: offset,
       },
     });
     const formattedList = await Promise.all(

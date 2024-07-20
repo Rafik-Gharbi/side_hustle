@@ -8,8 +8,6 @@ import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../constants/shared_preferences_keys.dart';
-import '../database/database_repository/category_database_repository.dart';
-import '../database/database_repository/governorate_database_repository.dart';
 import '../helpers/helper.dart';
 import '../models/category.dart';
 import '../models/governorate.dart';
@@ -87,7 +85,7 @@ class MainAppController extends GetxController {
   }
 
   Future<void> _init() async {
-    currentConnectivityStatus = await checkConnectivity();
+    currentConnectivityStatus = await Future.delayed(const Duration(milliseconds: 600), () async => await checkConnectivity());
     isConnected.value = currentConnectivityStatus != ConnectivityResult.none;
     await Helper.waitAndExecute(
       () => SharedPreferencesService.find.isReady,
@@ -138,7 +136,6 @@ class MainAppController extends GetxController {
 
     categories = await ParamsRepository.find.getAllCategories() ?? [];
     if (categories.isEmpty) categories = await loadCategories();
-    CategoryDatabaseRepository.find.backupCategories(categories);
   }
 
   Future<void> _initDefaultGovernorates() async {
@@ -150,7 +147,6 @@ class MainAppController extends GetxController {
 
     governorates = await ParamsRepository.find.getAllGovernorates() ?? [];
     if (governorates.isEmpty) governorates = await loadGovernorates();
-    GovernorateDatabaseRepository.find.backupGovernorates(governorates);
   }
 
   void _saveLanguagePreferences(Locale deviceLocale) {

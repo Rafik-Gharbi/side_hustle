@@ -12,7 +12,7 @@ class CategoryDatabaseRepository extends GetxService {
     List<CategoryTableData> result = await database.select(database.categoryTable).get();
     List<Category> categories = [];
 
-    for (final category in result.where((element) => element.parent == 0)) {
+    for (var category in result.where((element) => element.parent == 0)) {
       categories.add(Category.fromCategoryData(category: category));
     }
     return categories;
@@ -43,7 +43,7 @@ class CategoryDatabaseRepository extends GetxService {
   Future<void> backupCategories(List<Category> categories) async {
     LoggerService.logger?.i('Backing up categories...');
     await deleteAll();
-    for (final element in categories) {
+    for (var element in categories) {
       await insert(element.toCategoryCompanion());
     }
   }

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../constants/constants.dart';
 import '../controllers/main_app_controller.dart';
 import '../database/database_repository/task_database_repository.dart';
 import '../helpers/helper.dart';
@@ -46,14 +47,14 @@ class TaskRepository extends GetxService {
     return null;
   }
 
-  Future<List<Task>?> filterTasks({required String searchQuery, required FilterModel filter}) async {
+  Future<List<Task>?> filterTasks({int page = 0, int limit = kLoadMoreLimit, String searchQuery = '', FilterModel? filter}) async {
     try {
       List<Task>? tasks;
       if (MainAppController.find.isConnected.value) {
         final result = await ApiBaseHelper().request(
           RequestType.get,
           sendToken: true,
-          '/task/filter?searchQuery=$searchQuery${filter.category != null ? '&categoryId=${filter.category!.id}' : ''}${filter.minPrice != null ? '&priceMin=${filter.minPrice}' : ''}${filter.maxPrice != null ? '&priceMax=${filter.maxPrice}' : ''}${filter.nearby != null ? '&nearby=${filter.nearby}' : ''}',
+          '/task/filter?page=$page&limit=$limit&searchQuery=$searchQuery${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}',
         );
         tasks = (result['formattedList'] as List).map((e) => Task.fromJson(e)).toList();
       } else {

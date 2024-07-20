@@ -105,14 +105,14 @@ class ApiBaseHelper extends GetxController {
       final imageUploadRequest = http.MultipartRequest(requestType.name.toUpperCase(), requestUrl);
       if (sendToken) imageUploadRequest.headers['Authorization'] = 'Bearer $token';
 
-      for (final file in files) {
+      for (var file in files) {
         Uint8List fileBytes = await file!.readAsBytes();
         String filename = file.name;
 
         imageUploadRequest.files.add(http.MultipartFile.fromBytes(keyImage, fileBytes.toList(), filename: filename));
       }
       if (body is Map<String, dynamic>) {
-        for (final element in (body).keys) {
+        for (var element in (body).keys) {
           if (body[element] != null) imageUploadRequest.fields.putIfAbsent(element, () => body[element].toString());
         }
       } else {

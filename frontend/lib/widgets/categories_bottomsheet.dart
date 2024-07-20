@@ -9,7 +9,6 @@ import '../models/category.dart';
 import '../services/theme/theme.dart';
 import 'custom_buttons.dart';
 import 'custom_text_field.dart';
-import 'hold_in_safe_area.dart';
 
 class CategoriesBottomsheet extends StatefulWidget {
   final void Function(List<Category> category) onSelectCategory;
@@ -49,17 +48,19 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
     if (value.isEmpty) {
       filteredCategories = categories;
     } else {
-      filteredCategories = categories.where((element) => element.name.toLowerCase().contains(value.toLowerCase())).toList();
+      filteredCategories = categories
+          .where(
+            (element) =>
+                element.name.toLowerCase().contains(value.toLowerCase()) ||
+                MainAppController.find.getCategoryChildren(element).any((childCategory) => childCategory.name.toLowerCase().contains(value.toLowerCase())),
+          )
+          .toList();
     }
     setState(() {});
   }
 
   List<Category> _initializeFilteredCategories() {
     List<Category> result = [];
-    // if (!widget.isIncome && OverviewController.find.filteredTransactions.isNotEmpty) {
-    //   result.add(
-    //       Category(name: 'most_frequent'.tr, subCategories: MainAppController.find.getTopFrequentCategories(), icon: Icons.category_outlined, color: kPrimaryColor));
-    // }
     result.addAll(categories);
     return result;
   }
@@ -68,7 +69,8 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => searchFocusNode.requestFocus());
     final canUpdate = widget.nextUpdate != null ? widget.nextUpdate!.isBefore(DateTime.now()) : true;
-    return HoldInSafeArea(
+    return SafeArea(
+      minimum: const EdgeInsets.only(top: Paddings.exceptional * 2),
       child: DecoratedBox(
         decoration: const BoxDecoration(color: kNeutralColor100, borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusSize.extraLarge))),
         child: Padding(

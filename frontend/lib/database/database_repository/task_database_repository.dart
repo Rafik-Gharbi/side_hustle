@@ -35,7 +35,7 @@ class TaskDatabaseRepository extends GetxService {
   Future<List<Task>> select() async {
     final List<TaskTableData> allTasks = await database.select(database.taskTable).get();
     final List<Task> result = <Task>[];
-    for (final taskElement in allTasks) {
+    for (var taskElement in allTasks) {
       final Task task = await _convertTaskTo(taskElement.toCompanion(true));
       result.add(task);
     }
@@ -50,7 +50,7 @@ class TaskDatabaseRepository extends GetxService {
   Future<List<Task>> selectWithFilter(Function($TaskTableTable tbl) condition, {bool withFeedback = false}) async {
     final List<TaskTableData> allTasks = await (database.select(database.taskTable)..where((tbl) => condition(tbl))).get();
     final List<Task> result = <Task>[];
-    for (final taskElement in allTasks) {
+    for (var taskElement in allTasks) {
       final Task task = await _convertTaskTo(taskElement.toCompanion(true), withFeedback: withFeedback);
       result.add(task);
     }
@@ -101,7 +101,7 @@ class TaskDatabaseRepository extends GetxService {
     }
     // backup task's attachments if absent, else update
     if (task.attachments != null && task.attachments!.isNotEmpty) {
-      for (final attachment in task.attachments!) {
+      for (var attachment in task.attachments!) {
         final existAttachment = await getAttachmentByUrl(attachment.file.path);
         if (existAttachment != null) {
           await updateAttachment(existAttachment);
@@ -120,26 +120,26 @@ class TaskDatabaseRepository extends GetxService {
     if (isFavorite) {
       SharedPreferencesService.find.add(favoriteTasksKey, jsonEncode(tasks.map((e) => e.id).toList()));
     }
-    for (final task in tasks) {
+    for (var task in tasks) {
       await backupTask(task);
     }
   }
 
   Future<void> deleteOldTasks(List<Task> tasks) async {
     LoggerService.logger?.i('Deleting old tasks...');
-    for (final task in tasks) {
+    for (var task in tasks) {
       await delete(task);
       task.attachments?.forEach((element) async => await deleteAttachment(element.toAttachmentCompanion(taskId: task.id)));
     }
   }
 
-  Future<List<Task>> filterTasks(String searchQuery, FilterModel filter) async {
+  Future<List<Task>> filterTasks(String searchQuery, FilterModel? filter) async {
     LoggerService.logger?.i('Filtering tasks (searchQuery: $searchQuery, filter: ${filter.toString()})...');
     final allTasks = await select();
     // final allAttachments = await selectAttachments();
     // Helper.snackBar(message: 'All saved attachments length: ${allAttachments.length}');
     // final allTasks = await selectWithFilter((tbl) => tbl.title.contains(searchQuery), withFeedback: true);
-    if (searchQuery.isEmpty && !filter.isNotEmpty) {
+    if (searchQuery.isEmpty && (filter == null || !filter.isNotEmpty)) {
       return allTasks;
     } else {
       final filtered = allTasks
@@ -147,8 +147,8 @@ class TaskDatabaseRepository extends GetxService {
             (task) =>
                 (searchQuery.isNotEmpty ? task.title.contains(searchQuery) : false) ||
                 (searchQuery.isNotEmpty ? task.description.contains(searchQuery) : false) ||
-                (task.category != null && filter.category != null ? task.category?.id == filter.category?.id : false) ||
-                (task.price != null && filter.minPrice != null && filter.maxPrice != null ? task.price! < filter.maxPrice! && task.price! > filter.minPrice! : false),
+                (task.category != null && filter!.category != null ? task.category?.id == filter.category?.id : false) ||
+                (task.price != null && filter!.minPrice != null && filter.maxPrice != null ? task.price! < filter.maxPrice! && task.price! > filter.minPrice! : false),
             // TODO add nearby filtering
           )
           .toList();
@@ -162,7 +162,7 @@ class TaskDatabaseRepository extends GetxService {
     final savedIds = SharedPreferencesService.find.get(hotTasksKey);
     List<int> hotTasksId = (jsonDecode(savedIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
     if (hotTasksId.isNotEmpty) {
-      for (final taskId in hotTasksId) {
+      for (var taskId in hotTasksId) {
         final task = await getTaskById(taskId);
         if (task != null) result.add(task);
       }
@@ -177,7 +177,7 @@ class TaskDatabaseRepository extends GetxService {
       final savedIds = SharedPreferencesService.find.get(favoriteTasksKey);
       List<int> favoriteTasksId = (jsonDecode(savedIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
       if (favoriteTasksId.isNotEmpty) {
-        for (final taskId in favoriteTasksId) {
+        for (var taskId in favoriteTasksId) {
           final task = await getTaskById(taskId);
           if (task != null) result.add(task);
         }
@@ -198,7 +198,7 @@ class TaskDatabaseRepository extends GetxService {
   Future<Task> _convertTaskTo(TaskTableCompanion task, {bool withFeedback = false}) async {
     final User? taskUser = await UserDatabaseRepository.find.getUserById(task.owner.value as int);
     final List<ImageDTO> attachments = (await _getTaskAttachments(task, withFeedback: withFeedback)).map((e) => _convertToImageDTO(e)).toList();
-    return Task.fromTaskData(task: task, owner: taskUser!, attachments: attachments);
+    return Task.fromTaskData(task: task, owner: taskUser ?? User(id: task.owner.value), attachments: attachments);
   }
 
   ImageDTO _convertToImageDTO(TaskAttachmentTableData e) => ImageDTO(file: XFile(e.url), type: ImageType.values.singleWhere((element) => element.name == e.type));
