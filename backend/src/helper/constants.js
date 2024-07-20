@@ -12,7 +12,7 @@ const constantId = {
       isVerified: "none",
       isMailVerified: true,
       governorate_id: 17,
-      role: "[admin]",
+      role: "admin",
     },
   ],
   LanguageType: [

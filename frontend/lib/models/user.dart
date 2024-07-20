@@ -1,7 +1,10 @@
+import 'dart:convert';
+
+import 'package:drift/drift.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../controllers/main_app_controller.dart';
-import '../helpers/extensions/role_extension.dart';
+import '../database/database.dart';
 import '../networking/api_base_helper.dart';
 import 'governorate.dart';
 
@@ -36,7 +39,7 @@ class User {
   String? phone;
   String? facebookId;
   String? googleId;
-  List<Role>? roles;
+  Role? role;
   String? picture;
   Governorate? governorate;
   String? bio;
@@ -58,7 +61,7 @@ class User {
     this.googleId,
     this.bio,
     this.coordinates,
-    this.roles,
+    this.role,
     this.picture,
     this.isMailVerified,
     this.isVerified = VerifyIdentityStatus.none,
@@ -69,7 +72,7 @@ class User {
         name: payload['name'],
         isMailVerified: payload['isMailVerified'],
         isVerified: VerifyIdentityStatus.fromString(payload['isVerified']),
-        roles: User.parseRoles(payload['role']), // Parse roles from string
+        role: Role.values.singleWhere((element) => element.name == payload['role']), // Parse roles from string
         picture: payload['picture'] != null ? ApiBaseHelper().getUserImage(payload['picture']) : null,
       );
 
@@ -82,7 +85,7 @@ class User {
         coordinates: json['coordinates'],
         birthdate: json['birthdate'] != null ? DateTime.parse(json['birthdate']) : null,
         gender: json['gender'] != null ? Gender.fromString(json['gender']) : null,
-        roles: json['role'] != null ? User.parseRoles(json['role']) : null,
+        role: json['role'] != null ? Role.values.singleWhere((element) => element.name == json['role']) : null,
         picture: json['picture'] != null ? ApiBaseHelper().getUserImage(json['picture']) : null,
         facebookId: json['facebookId'],
         googleId: json['googleId'],
@@ -102,7 +105,7 @@ class User {
     data['coordinates'] = coordinates;
     data['birthdate'] = birthdate?.toIso8601String();
     data['gender'] = gender?.value.toLowerCase();
-    data['role'] = roles?.map((role) => role.value).toList();
+    data['role'] = role?.name;
     data['picture'] = picture;
     data['facebookId'] = facebookId;
     data['googleId'] = googleId;
@@ -119,11 +122,6 @@ class User {
     if (phone != null) data['phoneNumber'] = phone;
     data['password'] = password;
     return data;
-  }
-
-  static List<Role> parseRoles(String rolesString) {
-    final rolesList = rolesString.replaceAll('[', '').replaceAll(']', '').split(',');
-    return rolesList.map((role) => RoleExtension.fromString(role.trim())).whereType<Role>().toList();
   }
 
   Map<String, dynamic> toUpdateJson() {
@@ -147,4 +145,36 @@ class User {
     data['googleId'] = googleId;
     return data;
   }
+
+  factory User.fromUserTable({required UserTableData user}) => User(
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        birthdate: user.birthdate,
+        gender: user.gender,
+        bio: user.bio,
+        picture: user.picture,
+        isVerified: user.isVerified,
+        isMailVerified: user.isMailVerified,
+        role: user.role,
+        coordinates: user.coordinates != null ? LatLng.fromJson(jsonDecode(user.coordinates!)) : null,
+        governorate: MainAppController.find.getGovernorateById(user.governorate),
+      );
+
+  UserTableCompanion toUserCompanion() => UserTableCompanion(
+        id: id == null ? const Value.absent() : Value(id!),
+        email: email == null ? const Value.absent() : Value(email!),
+        name: name == null ? const Value.absent() : Value(name!),
+        governorate: governorate?.id == null ? const Value.absent() : Value(governorate!.id),
+        phone: phone == null ? const Value.absent() : Value(phone!),
+        birthdate: birthdate == null ? const Value.absent() : Value(birthdate!),
+        bio: bio == null ? const Value.absent() : Value(bio!),
+        picture: picture == null ? const Value.absent() : Value(picture!),
+        gender: gender == null ? const Value.absent() : Value(gender!),
+        isVerified: Value(isVerified),
+        isMailVerified: isMailVerified == null ? const Value.absent() : Value(isMailVerified!),
+        role: role == null ? const Value.absent() : Value(role!),
+        coordinates: coordinates == null ? const Value.absent() : Value(jsonEncode(coordinates!)),
+      );
 }

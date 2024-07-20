@@ -1,10 +1,15 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../constants/shared_preferences_keys.dart';
+import '../database/database_repository/category_database_repository.dart';
+import '../database/database_repository/governorate_database_repository.dart';
 import '../helpers/helper.dart';
 import '../models/category.dart';
 import '../models/governorate.dart';
@@ -25,13 +30,27 @@ class MainAppController extends GetxController {
   RxInt bottomNavIndex = 0.obs;
   bool isReady = false;
   RxString currency = 'TND'.obs;
+  late StreamSubscription<List<ConnectivityResult>> subscription;
+  ConnectivityResult currentConnectivityStatus = ConnectivityResult.none;
+  RxBool isConnected = true.obs;
 
   Category? getCategoryById(id) => categories.cast<Category?>().singleWhere((element) => element?.id == id, orElse: () => null);
 
   Governorate? getGovernorateById(id) => governorates.cast<Governorate?>().singleWhere((element) => element?.id == id, orElse: () => null);
 
   MainAppController() {
+    subscription = Connectivity().onConnectivityChanged.listen((result) async {
+      currentConnectivityStatus = await checkConnectivity(connectivity: result);
+      isConnected.value = currentConnectivityStatus != ConnectivityResult.none;
+      foundation.debugPrint('Device is connected: $isConnected');
+    });
     _init();
+  }
+
+  @override
+  dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   void manageNavigation(String routeName) {
@@ -51,7 +70,25 @@ class MainAppController extends GetxController {
     Get.updateLocale(lang);
   }
 
+  Future<ConnectivityResult> checkConnectivity({List<ConnectivityResult>? connectivity}) async {
+    final List<ConnectivityResult> connectivityResult = connectivity ?? await Connectivity().checkConnectivity();
+    if (connectivityResult.contains(ConnectivityResult.mobile)) {
+      return ConnectivityResult.mobile; // Mobile network available.
+    } else if (connectivityResult.contains(ConnectivityResult.wifi)) {
+      return ConnectivityResult.wifi; // Wi-fi is available.
+    } else if (connectivityResult.contains(ConnectivityResult.ethernet)) {
+      return ConnectivityResult.ethernet; // Ethernet connection available.
+    } else if (connectivityResult.contains(ConnectivityResult.vpn)) {
+      return ConnectivityResult.vpn; // Vpn connection active.
+    } else if (connectivityResult.contains(ConnectivityResult.other)) {
+      return ConnectivityResult.other; // Connected to a network which is not in the above mentioned networks.
+    }
+    return ConnectivityResult.none;
+  }
+
   Future<void> _init() async {
+    currentConnectivityStatus = await checkConnectivity();
+    isConnected.value = currentConnectivityStatus != ConnectivityResult.none;
     await Helper.waitAndExecute(
       () => SharedPreferencesService.find.isReady,
       () async {
@@ -101,6 +138,7 @@ class MainAppController extends GetxController {
 
     categories = await ParamsRepository.find.getAllCategories() ?? [];
     if (categories.isEmpty) categories = await loadCategories();
+    CategoryDatabaseRepository.find.backupCategories(categories);
   }
 
   Future<void> _initDefaultGovernorates() async {
@@ -112,6 +150,7 @@ class MainAppController extends GetxController {
 
     governorates = await ParamsRepository.find.getAllGovernorates() ?? [];
     if (governorates.isEmpty) governorates = await loadGovernorates();
+    GovernorateDatabaseRepository.find.backupGovernorates(governorates);
   }
 
   void _saveLanguagePreferences(Locale deviceLocale) {

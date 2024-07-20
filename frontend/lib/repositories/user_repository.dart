@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../controllers/main_app_controller.dart';
+import '../database/database_repository/user_database_repository.dart';
 import '../helpers/helper.dart';
 import '../models/category.dart';
 import '../models/dto/login_dto.dart';
@@ -128,8 +130,25 @@ class UserRepository extends GetxService {
 
   Future<ProfileDTO?> getLoggedInUser() async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.get, '/user/profile', sendToken: true);
-      return ProfileDTO.fromJson(result);
+      ProfileDTO? profileDTO;
+      if (MainAppController.find.isConnected.value) {
+        final result = await ApiBaseHelper().request(RequestType.get, '/user/profile', sendToken: true);
+        profileDTO = ProfileDTO.fromJson(result);
+      } else {
+        final user = AuthenticationService.find.jwtUserData?.id != null ? await UserDatabaseRepository.find.getUserById(AuthenticationService.find.jwtUserData!.id!) : null;
+        if (user != null) {
+          profileDTO = ProfileDTO(
+            user: user,
+            subscribedCategories: [],
+            nextUpdateGategory: DateTime.now().add(const Duration(days: 30)));
+        }
+      }
+      if (profileDTO != null) {
+        if (MainAppController.find.isConnected.value) UserDatabaseRepository.find.backupUser(profileDTO.user.toUserCompanion());
+        return profileDTO;
+      } else {
+        return null;
+      }
     } catch (e) {
       LoggerService.logger?.e('Error occurred in getLoggedInUser:\n$e');
       return null;

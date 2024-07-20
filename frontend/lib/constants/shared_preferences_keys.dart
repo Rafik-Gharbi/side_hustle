@@ -5,3 +5,5 @@ const String countryCodeKey = 'country_code';
 const String jwtKey = 'jwt';
 const String refreshTokenKey = 'refreshToken';
 const String navigationStackKey = 'stack';
+const String hotTasksKey = 'hot_tasks';
+const String favoriteTasksKey = 'favorite_tasks';

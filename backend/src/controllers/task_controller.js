@@ -47,9 +47,10 @@ exports.getAllTasks = async (req, res) => {
           governorate_id: row.governorate_id,
           category_id: row.category_id,
           owner: owner,
-          isFavorite: currentUserId
-            ? userFavorites.some((e) => e.user_id === currentUserId)
-            : false,
+          isFavorite:
+            currentUserId && userFavorites.length > 0
+              ? userFavorites.some((e) => e.task_id == row.id)
+              : false,
         };
       })
     );

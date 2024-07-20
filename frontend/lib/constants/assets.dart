@@ -9,4 +9,5 @@ class Assets {
   static const String verifyIdentity = 'assets/lottie/verify_user.json';
   static const String scanIdentityCard = 'assets/lottie/scan_identity_card.json';
   static const String selfieWithIdentityCard = 'assets/lottie/selfie_with_identity_card.json';
+  static const String pictureLoading = 'assets/lottie/picture_loading.json';
 }

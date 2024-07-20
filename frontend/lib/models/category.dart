@@ -1,5 +1,7 @@
+import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 
+import '../database/database.dart';
 import '../helpers/extensions/icondata_convert_extension.dart';
 
 class Category {
@@ -30,4 +32,16 @@ class Category {
     data['parentId'] = parentId;
     return data;
   }
+
+  factory Category.fromCategoryData({required CategoryTableData category}) => Category(
+        id: category.id,
+        name: category.name,
+        icon: category.icon.toString().getIconData(),
+      );
+
+  CategoryTableCompanion toCategoryCompanion() => CategoryTableCompanion(
+        id: Value(id),
+        name: Value(name),
+        icon: Value(icon.codePoint),
+  );
 }

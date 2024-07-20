@@ -16,7 +16,6 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double size = (Get.width - 60) / 4;
-    if (size < 80) size = (Get.width - 50) / 3;
     return ClipRRect(
       borderRadius: smallRadius,
       child: InkWell(

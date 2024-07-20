@@ -15,6 +15,13 @@
 	<string>Upload task attachments</string>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
+	<key>NWPathMonitor</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+	<key>NSAllowsArbitraryLoads</key>
+	<true/>
+	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

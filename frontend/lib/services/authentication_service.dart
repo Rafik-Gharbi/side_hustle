@@ -376,7 +376,7 @@ class AuthenticationService extends GetxController {
         final userFromToken = User.fromToken(jwtPayload);
         _jwtUserData ??= user ?? userFromToken;
         jwtUserData?.id = userFromToken.id;
-        jwtUserData?.roles = userFromToken.roles;
+        jwtUserData?.role = userFromToken.role;
         jwtUserData?.name = userFromToken.name;
         jwtUserData?.picture = userFromToken.picture;
         jwtUserData?.isVerified = userFromToken.isVerified;

@@ -61,8 +61,10 @@ class VerifyUserController extends GetxController {
         timerProgress.value = timerProgress.value - 1;
       } else {
         timer.cancel();
-        Get.back();
-        Helper.snackBar(message: 'Time is up, please try again!');
+        if (timerProgress.value == 0) {
+          Get.back();
+          Helper.snackBar(message: 'Time is up, please try again!');
+        }
       }
     });
   }

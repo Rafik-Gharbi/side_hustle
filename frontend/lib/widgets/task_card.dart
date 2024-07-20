@@ -6,6 +6,7 @@ import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
 import '../controllers/main_app_controller.dart';
+import '../database/database_repository/task_database_repository.dart';
 import '../helpers/helper.dart';
 import '../models/task.dart';
 import '../services/authentication_service.dart';
@@ -47,6 +48,7 @@ class TaskCard extends StatelessWidget {
                     final result = await MainAppController.find.toggleFavoriteTask(task);
                     setState(() => task.isFavorite = result);
                     if (!result) onRemoveFavorite?.call();
+                    TaskDatabaseRepository.find.backupTask(task, isFavorite: true);
                   }
 
                   return Padding(

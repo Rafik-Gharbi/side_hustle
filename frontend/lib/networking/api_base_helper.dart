@@ -37,8 +37,8 @@ extension RequestTypeExtension on RequestType {
 
 const String baseUrlLocalWeb = 'http://localhost:3000'; // web localhost
 const String baseUrlLocalAndroid = 'http://10.0.2.2:3000'; // android localhost
-const String baseUrlLocalIos = 'http://127.0.0.1:3000'; // ios localhost
-// const String baseUrlLocalIos = 'http://172.20.10.2:3000'; // real device ip address
+// const String baseUrlLocalIos = 'http://127.0.0.1:3000'; // ios localhost
+const String baseUrlLocalIos = 'http://192.168.1.36:3000'; // real device ip address
 const String baseUrlRemote = 'https://HustleMatch.net'; // remote
 String _lastRequestedUrl = '';
 
@@ -46,7 +46,7 @@ class ApiBaseHelper extends GetxController {
   static ApiBaseHelper get find => Get.find<ApiBaseHelper>();
   // final String baseUrl = baseUrlRemote;
   final String baseUrl = kReleaseMode
-      ? baseUrlRemote
+      ? baseUrlLocalIos //baseUrlRemote
       : kIsWeb
           ? baseUrlLocalWeb
           : GetPlatform.isAndroid

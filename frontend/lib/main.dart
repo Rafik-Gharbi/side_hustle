@@ -3,6 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'database/database_repository/category_database_repository.dart';
+import 'database/database_repository/governorate_database_repository.dart';
+import 'database/database_repository/task_database_repository.dart';
+import 'database/database_repository/user_database_repository.dart';
 import 'networking/api_base_helper.dart';
 import 'repositories/favorite_repository.dart';
 import 'repositories/params_repository.dart';
@@ -116,5 +120,10 @@ class InitialBindings implements Bindings {
     Get.put(ParamsRepository(), permanent: true);
     Get.put(TaskRepository(), permanent: true);
     Get.put(FavoriteRepository(), permanent: true);
+    // Database repositories
+    Get.put(UserDatabaseRepository(), permanent: true);
+    Get.put(TaskDatabaseRepository(), permanent: true);
+    Get.put(CategoryDatabaseRepository(), permanent: true);
+    Get.put(GovernorateDatabaseRepository(), permanent: true);
   }
 }

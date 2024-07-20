@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lottie/lottie.dart';
 
+import '../../constants/assets.dart';
 import '../../constants/colors.dart';
 import '../../constants/constants.dart';
 import '../../constants/sizes.dart';
@@ -9,6 +12,7 @@ import '../../helpers/helper.dart';
 import '../../models/dto/image_dto.dart';
 import '../../models/task.dart';
 import '../../services/authentication_service.dart';
+import '../../services/logger_service.dart';
 import '../../services/theme/theme.dart';
 import '../../widgets/custom_buttons.dart';
 import '../../widgets/custom_scaffold_bottom_navigation.dart';
@@ -84,10 +88,21 @@ class TaskDetailsScreen extends StatelessWidget {
                                 width: attachmentSize,
                                 height: attachmentSize,
                                 child: attachment.type == ImageType.file
-                                    ? Center(child: Text(attachment.file.name, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, maxLines: 3))
+                                    ? Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(Paddings.small),
+                                          child: Text(attachment.file.name, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, maxLines: 3),
+                                        ),
+                                      )
                                     : ClipRRect(
                                         borderRadius: smallRadius,
-                                        child: Image.network(attachment.file.path, fit: BoxFit.cover),
+                                        child: CachedNetworkImage(
+                                          imageUrl: attachment.file.path,
+                                          fit: BoxFit.cover,
+                                          progressIndicatorBuilder: (context, url, downloadProgress) => Lottie.asset(Assets.pictureLoading, fit: BoxFit.cover),
+                                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                                          errorListener: (error) => LoggerService.logger?.e(error),
+                                        ), 
                                       ),
                               ),
                             ),

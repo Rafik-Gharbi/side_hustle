@@ -196,11 +196,14 @@ class AddTaskBottomsheet extends StatelessWidget {
                                               child: Center(
                                                 child: controller.isImage(xFile.name.toLowerCase())
                                                     ? ClipRRect(borderRadius: smallRadius, child: Image.file(File(xFile.path), fit: BoxFit.cover))
-                                                    : Text(
-                                                        xFile.name,
-                                                        textAlign: TextAlign.center,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        maxLines: 2,
+                                                    : Padding(
+                                                        padding: const EdgeInsets.all(Paddings.small),
+                                                        child: Text(
+                                                          xFile.name,
+                                                          textAlign: TextAlign.center,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          maxLines: 2,
+                                                        ),
                                                       ),
                                               ),
                                             ),

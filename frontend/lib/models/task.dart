@@ -1,4 +1,7 @@
+import 'package:drift/drift.dart';
+
 import '../controllers/main_app_controller.dart';
+import '../database/database.dart';
 import '../helpers/extensions/date_time_extension.dart';
 import 'category.dart';
 import 'dto/image_dto.dart';
@@ -64,4 +67,31 @@ class Task {
     // data['attachments'] = attachments;
     return data;
   }
+
+  TaskTableCompanion toTaskCompanion({bool? isFavoriteUpdate}) => TaskTableCompanion(
+        id: id == null ? const Value.absent() : Value(id!),
+        price: price == null ? const Value.absent() : Value(price!),
+        category: category?.id == null ? const Value.absent() : Value(category!.id),
+        governorate: governorate?.id == null ? const Value.absent() : Value(governorate!.id),
+        dueDate: dueDate == null ? const Value.absent() : Value(dueDate!),
+        owner: Value(owner.id!),
+        title: Value(title),
+        description: Value(description),
+        delivrables: Value(delivrables ?? ''),
+        isfavorite: Value(isFavoriteUpdate ?? isFavorite),
+      );
+
+  factory Task.fromTaskData({required TaskTableCompanion task, required User owner, List<ImageDTO>? attachments}) => Task(
+        id: task.id.value,
+        title: task.title.value,
+        description: task.description.value,
+        delivrables: task.delivrables.value,
+        dueDate: task.dueDate.value,
+        price: task.price.value,
+        isFavorite: task.isfavorite.value,
+        category: MainAppController.find.getCategoryById(task.category.value),
+        governorate: MainAppController.find.getGovernorateById(task.governorate.value),
+        attachments: attachments,
+        owner: owner,
+      );
 }

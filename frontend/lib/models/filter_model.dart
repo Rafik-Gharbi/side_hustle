@@ -18,4 +18,7 @@ class FilterModel {
     data['nearby'] = nearby;
     return data;
   }
+
+  @override
+  String toString() => 'FilterModel(category: ${category?.name}, minPrice: $minPrice, maxPrice: $maxPrice, nearby: $nearby)';
 }

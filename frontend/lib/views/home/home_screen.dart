@@ -105,7 +105,7 @@ class HomeScreen extends StatelessWidget {
                     'Popular Categories',
                     () => Get.bottomSheet(
                       SizedBox(
-                        height: Get.height * 0.8,
+                        height: Get.height * 0.7,
                         child: CategoriesBottomsheet(onSelectCategory: (category) {
                           Get.back();
                           WidgetsBinding.instance.addPostFrameCallback(
