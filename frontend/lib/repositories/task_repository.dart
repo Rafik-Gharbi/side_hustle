@@ -4,6 +4,7 @@ import '../constants/constants.dart';
 import '../controllers/main_app_controller.dart';
 import '../database/database_repository/task_database_repository.dart';
 import '../helpers/helper.dart';
+import '../models/dto/task_request_dto.dart';
 import '../models/filter_model.dart';
 import '../models/task.dart';
 import '../networking/api_base_helper.dart';
@@ -64,6 +65,24 @@ class TaskRepository extends GetxService {
       return tasks;
     } catch (e) {
       LoggerService.logger?.e('Error occured in filterTasks:\n$e');
+    }
+    return null;
+  }
+
+  Future<List<TaskRequestDTO>?> listUserTaskRequest({int page = 0, int limit = kLoadMoreLimit}) async {
+    try {
+      List<TaskRequestDTO>? tasks;
+      if (MainAppController.find.isConnected.value) {
+        final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/task/user-request?page=$page&limit=$limit');
+        tasks = (result['formattedList'] as List).map((e) => TaskRequestDTO.fromJson(e)).toList();
+      } else {
+        final list = await TaskDatabaseRepository.find.getTaskRequest();
+        tasks = list.map((e) => TaskRequestDTO(task: e, condidates: 0)).toList();
+      }
+      if (tasks.isNotEmpty && MainAppController.find.isConnected.value) TaskDatabaseRepository.find.backupTaskRequest(tasks.map((e) => e.task).toList());
+      return tasks;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in listUserTaskRequest:\n$e');
     }
     return null;
   }

@@ -2,7 +2,7 @@ const { sequelize, Sequelize } = require("../../db.config");
 const { User } = require("./user_model");
 const { Governorate } = require("./governorate_model");
 const { Category } = require("./category_model");
-const { getOneMinuteBeforeMidnight } = require("../helper/helpers");
+const { getOneMinuteBeforeMidnight } = require("../helper/constants");
 const Task = sequelize.define(
   "task",
   {
@@ -15,7 +15,6 @@ const Task = sequelize.define(
       type: Sequelize.DATE,
       defaultValue: getOneMinuteBeforeMidnight,
     },
-    // final List<File>? attachments;
   },
   {
     tableName: "task",

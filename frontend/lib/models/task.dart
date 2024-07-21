@@ -35,7 +35,7 @@ class Task {
     this.isFavorite = false,
   });
 
-  factory Task.fromJson(Map<String, dynamic> json) => Task(
+  factory Task.fromJson(Map<String, dynamic> json, {dynamic attachments}) => Task(
         id: json['id'],
         title: json['title'],
         description: json['description'],
@@ -48,7 +48,11 @@ class Task {
                 ? double.parse(json['price'])
                 : json['price'],
         delivrables: json['delivrables'],
-        attachments: json['attachments'] != null && (json['attachments'] as List).isNotEmpty ? (json['attachments'] as List).map((e) => ImageDTO.fromJson(e)).toList() : null,
+        attachments: json['attachments'] != null && (json['attachments'] as List).isNotEmpty
+            ? (json['attachments'] as List).map((e) => ImageDTO.fromJson(e)).toList()
+            : attachments != null
+                ? (attachments as List).map((e) => ImageDTO.fromJson(e)).toList()
+                : null,
         dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate']) : DateTime.now().toOneMinuteBeforeMidnight(),
         isFavorite: json['isFavorite'] ?? false,
       );

@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Bcrypt = require("bcrypt");
-const { Client } = require("../models/user_model");
+const { User } = require("../models/user_model");
 const { decryptData } = require("../helper/encryption");
 const { Parameters } = require("../models/paramters_model");
 const { generateJWT } = require("../helper/helpers");
@@ -133,7 +133,7 @@ function roleAuth(roles) {
     if (!email || !password) {
       return res.status(403).json({ message: "missing_credentials" });
     }
-    const user = await Client.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(404).json({ message: "client_not_found" });
     }
@@ -152,7 +152,7 @@ function roleAuth(roles) {
   };
 }
 async function clientIsVerified(req, res, next) {
-  const userFound = await Client.findByPk(req.decoded.id);
+  const userFound = await User.findByPk(req.decoded.id);
   if (userFound.isVerified) {
     next();
   } else {

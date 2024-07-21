@@ -43,9 +43,7 @@ async function saveImage(imageName, imageBuffer, folder, resize = true) {
 }
 function deleteImages() {
   deleteFolderRecursive("../../public/images/client");
-  deleteFolderRecursive("../../public/properties/hd");
-  deleteFolderRecursive("../../public/properties");
-  deleteFolderRecursive("../../public/pdf");
+  deleteFolderRecursive("../../public/task");
 }
 function deleteImage(filePath) {
   if (fs.existsSync(filePath)) {

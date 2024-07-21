@@ -117,7 +117,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                 enabled: widget.enabled,
                 textDirection: widget.textInputType == TextInputType.phone ? TextDirection.ltr : null,
                 focusNode: widget.focusNode,
-                textCapitalization: widget.textCapitalization ?? TextCapitalization.words,
+                textCapitalization: widget.textCapitalization ?? TextCapitalization.sentences,
                 keyboardType: widget.textInputType,
                 textAlign: widget.textAlign ?? TextAlign.start,
                 autofocus: widget.autofocus,
@@ -136,13 +136,13 @@ class CustomTextFieldState extends State<CustomTextField> {
                       alignLabelWithHint: true,
                       label: widget.enableFloatingLabel ? Text(widget.hintText ?? '', style: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor)) : null,
                       border: widget.outlinedBorder
-                          ? OutlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
+                          ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
                           : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
                       enabledBorder: widget.outlinedBorder
-                          ? OutlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
+                          ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
                           : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
                       focusedBorder: widget.outlinedBorder
-                          ? OutlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
+                          ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
                           : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
                       floatingLabelStyle: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(height: 0.2),
                       hintText: widget.hintText,

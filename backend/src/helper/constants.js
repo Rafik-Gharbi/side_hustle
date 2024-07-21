@@ -3,16 +3,43 @@
 const constantId = {
   Users: [
     {
-      name: "Rafik",
-      email: "rafik@gmail.com",
+      id: 1,
+      name: "Rafik Admin",
+      email: "rafik.admin@gmail.com",
       password: "123",
       gender: "male",
-      birthdate: "1992-09-23 ",
+      birthdate: "1992-09-23",
       phone_number: "+21653543541",
-      isVerified: "none",
+      isVerified: "verified",
       isMailVerified: true,
       governorate_id: 17,
       role: "admin",
+    },
+    {
+      id: 2,
+      name: "Rafik Seeker",
+      email: "rafik.seeker@gmail.com",
+      password: "123",
+      gender: "male",
+      birthdate: "1992-09-23",
+      phone_number: "+21622222222",
+      isVerified: "verified",
+      isMailVerified: true,
+      governorate_id: 17,
+      role: "seeker",
+    },
+    {
+      id: 3,
+      name: "Rafik Provider",
+      email: "rafik.provider@gmail.com",
+      password: "123",
+      gender: "male",
+      birthdate: "1992-09-23",
+      phone_number: "+21623232323",
+      isVerified: "none",
+      isMailVerified: true,
+      governorate_id: 17,
+      role: "provider",
     },
   ],
   LanguageType: [
@@ -1554,7 +1581,22 @@ const prefixPatterns = [
   { prefix: "+52", pattern: /^\+52\d{10}$/ }, // Panama
 ];
 
+const getOneMinuteBeforeMidnight = () => {
+  const now = new Date();
+  const endOfDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    23,
+    59,
+    0,
+    0
+  );
+  return endOfDay;
+};
+
 module.exports = {
   constantId,
   prefixPatterns,
+  getOneMinuteBeforeMidnight,
 };

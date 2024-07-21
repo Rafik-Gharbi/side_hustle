@@ -16,7 +16,9 @@ import '../repositories/favorite_repository.dart';
 import '../repositories/params_repository.dart';
 import '../services/shared_preferences.dart';
 import '../services/translation/app_localization.dart';
+import '../views/chat/chat_screen.dart';
 import '../views/home/home_screen.dart';
+import '../views/market/market_screen.dart';
 import '../views/profile/profile_screen.dart';
 
 class MainAppController extends GetxController {
@@ -114,6 +116,12 @@ class MainAppController extends GetxController {
             switch (bottomNavIndex.value) {
               case 0:
                 if (Get.currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);
+                break;
+              case 1:
+                Get.toNamed(MarketScreen.routeName);
+                break;
+              case 2:
+                Get.toNamed(ChatScreen.routeName);
                 break;
               case 3:
                 Get.toNamed(ProfileScreen.routeName);

@@ -29,6 +29,8 @@ final Map<String, String> enUs = <String, String>{
   'login_express_interest_msg': 'Please login to express interest',
   'login_add_task_msg': 'Please login to add a task',
   'login_save_task_msg': 'Please login to save a task',
+  'reservation_already_exist': 'Proposal already sent',
+  'error_sending_proposal': 'Error sending proposal',
   'attach_files_pictures': 'Attach files/pictures',
   'expected_delivrables': 'Expected delivrables',
   'task_title': 'Task title',

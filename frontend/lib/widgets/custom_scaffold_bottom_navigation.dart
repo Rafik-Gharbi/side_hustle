@@ -12,6 +12,7 @@ import '../services/theme/theme.dart';
 import '../views/add_task/add_task_bottomsheet.dart';
 import '../views/home/home_screen.dart';
 import '../views/profile/profile_screen.dart';
+import '../views/task_proposal/task_proposal_screen.dart';
 import 'custom_buttons.dart';
 
 class CustomScaffoldBottomNavigation extends StatelessWidget {
@@ -53,8 +54,10 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                 icon: const Icon(Icons.chevron_left, size: 28),
                 onPressed: () {
                   onBack?.call();
-                  if (NavigationHistoryObserver.instance.previousRoute == ProfileScreen.routeName) {
+                  if (Get.currentRoute == TaskProposalScreen.routeName) {
                     Get.back();
+                  } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && Get.currentRoute != ProfileScreen.routeName) {
+                    NavigationHistoryObserver.instance.goToPreviousRoute(popToProfile: true);
                   } else {
                     MainAppController.find.bottomNavIndex.value = 0;
                     if (Get.currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);

@@ -9,7 +9,6 @@ const { sendMail } = require("../helper/email_service");
 const {
   sendConfirmationMail,
   contactUsMail,
-  newPartnerMail,
   forgotPasswordEmailTemplate,
 } = require("../views/template_email");
 // const { sendOTP, verifyOTP } = require("../helper/twilio_service");
@@ -27,11 +26,9 @@ const {
 } = require("../helper/image");
 const { encryptData } = require("../helper/encryption");
 const { UserDocumentModel } = require("../models/user_document_model");
-const { Category } = require("../models/category_model");
 const {
   CategorySubscriptionModel,
 } = require("../models/category_subscribtion_model");
-// const { Partner } = require("../models/partners_model");
 
 exports.renewJWT = async (req, res) => {
   try {
@@ -334,7 +331,15 @@ exports.getUserById = async (req, res) => {
     }
     const userFound = await User.findByPk(id);
 
-    return res.status(200).json({ user: userFound });
+    return res.status(200).json({
+      user: {
+        id: userFound.id,
+        name: userFound.name,
+        governorate_id: userFound.governorate_id,
+        picture: userFound.picture,
+        isVerified: userFound.isVerified,
+      },
+    });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

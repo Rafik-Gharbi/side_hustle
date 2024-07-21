@@ -5,7 +5,7 @@ const { Governorate } = require("../models/governorate_model");
 const { Category } = require("../models/category_model");
 const { getFavoriteByUserId } = require("../sql/sql_request");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
-const { getFileType } = require("../helper/helpers");
+const { getFileType, getTaskCondidatesNumber } = require("../helper/helpers");
 
 // get all tasks
 exports.getAllTasks = async (req, res) => {
@@ -207,6 +207,91 @@ exports.filterTasks = async (req, res) => {
             currentUserId && userFavorites.length > 0
               ? userFavorites.some((e) => e.task_id == row.id)
               : false,
+        };
+      })
+    );
+    return res.status(200).json({ formattedList });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+// user task request
+exports.taskRequest = async (req, res) => {
+  try {
+    const page = req.query.page;
+    const limit = req.query.limit;
+    const currentUserId = req.decoded?.id;
+
+    const pageQuery = page ?? 1;
+    const limitQuery = limit ? parseInt(limit) : 9;
+    const offset = (pageQuery - 1) * limit;
+
+    let userFavorites = [];
+    const userFound = await User.findByPk(currentUserId);
+    if (!userFound) {
+      return res.status(404).json({ message: "user_not_found" });
+    } else {
+      userFavorites = await getFavoriteByUserId(currentUserId);
+    }
+
+    const query = `SELECT task.*, 
+      user.id AS user_id,
+      user.name,
+      user.email,
+      user.gender,
+      user.birthdate,
+      user.picture,
+      user.governorate_id as user_governorate_id,
+      user.phone_number,
+      user.role FROM task JOIN user ON task.owner_id = user.id WHERE task.owner_id = :userId
+      LIMIT :limit OFFSET :offset
+;`;
+    const tasks = await sequelize.query(query, {
+      type: sequelize.QueryTypes.SELECT,
+      replacements: {
+        userId: currentUserId,
+        limit: limitQuery,
+        offset: offset,
+      },
+    });
+    const formattedList = await Promise.all(
+      tasks.map(async (row) => {
+        let owner = {
+          id: row.owner_id,
+          name: row.name,
+          email: row.email,
+          picture: row.picture,
+          phone: row.phone_number,
+        };
+
+        let taskAttachments = [];
+        taskAttachments = await TaskAttachmentModel.findAll({
+          where: { task_id: row.id },
+        });
+
+        // TODO add task's proposals from reservation where user_id == current user and task_id == row.id
+        const condidates = await getTaskCondidatesNumber(row.id);
+
+        return {
+          condidates,
+          task: {
+            id: row.id,
+            price: row.price,
+            title: row.title,
+            description: row.description,
+            delivrables: row.delivrables,
+            governorate_id: row.governorate_id,
+            category_id: row.category_id,
+            owner: owner,
+            attachments: taskAttachments.length == 0 ? [] : taskAttachments,
+            isFavorite:
+              currentUserId && userFavorites.length > 0
+                ? userFavorites.some((e) => e.task_id == row.id)
+                : false,
+          },
         };
       })
     );

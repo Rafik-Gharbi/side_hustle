@@ -25,7 +25,6 @@ module.exports = (app) => {
   router.get(
     "/user-id",
     tokenVerification,
-    roleMiddleware(["owner"]),
     userController.getUserById
   );
 

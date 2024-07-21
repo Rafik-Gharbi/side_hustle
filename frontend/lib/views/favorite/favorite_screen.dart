@@ -22,7 +22,7 @@ class FavoriteScreen extends StatelessWidget {
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.savedTaskList.isEmpty
-                ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
+                ? const Center(child: Text('You haven\'t saved any task yet!', style: AppFonts.x14Regular))
                 : ListView.builder(
                     itemCount: controller.savedTaskList.length,
                     itemBuilder: (context, index) {

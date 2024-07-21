@@ -1,4 +1,7 @@
-const { tokenVerificationOptional, tokenVerification } = require("../middlewares/authentificationHelper");
+const {
+  tokenVerificationOptional,
+  tokenVerification,
+} = require("../middlewares/authentificationHelper");
 const { taskImageUpload } = require("../middlewares/multer-task");
 
 module.exports = (app) => {
@@ -9,6 +12,7 @@ module.exports = (app) => {
   router.get("/", tokenVerificationOptional, taskController.getAllTasks);
   router.get("/hot", tokenVerificationOptional, taskController.getHotTasks);
   router.get("/filter", tokenVerificationOptional, taskController.filterTasks);
+  router.get("/user-request", tokenVerification, taskController.taskRequest);
   router.post("/", tokenVerification, taskImageUpload, taskController.addTask);
   //   router.get(
   //     "/getAll",

@@ -1,23 +1,22 @@
 import 'dart:collection';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../views/home/home_screen.dart';
 
-import '../../services/logger_service.dart';
 import '../../services/shared_preferences.dart';
 import '../constants/shared_preferences_keys.dart';
 import '../helpers/helper.dart';
+import '../views/profile/profile_screen.dart';
 
 class NavigationHistoryObserver extends NavigatorObserver {
   static final NavigationHistoryObserver instance = NavigationHistoryObserver._();
   final int _maxHistoryLength = 50;
   final history = Queue<Route<dynamic>?>();
   Route<dynamic>? _currentRoute;
-  bool _fetchSavedHistoryRequired = true;
+  // bool _fetchSavedHistoryRequired = true;
 
-  String get previousRoute => history.length >= 2 ? history.elementAt(history.length - 2)?.settings.name ?? HomeScreen.routeName : HomeScreen.routeName;
+  String get previousRouteHistory => history.length >= 2 ? history.elementAt(history.length - 2)?.settings.name ?? HomeScreen.routeName : HomeScreen.routeName;
 
   factory NavigationHistoryObserver() => instance;
 
@@ -27,10 +26,12 @@ class NavigationHistoryObserver extends NavigatorObserver {
 
   Route<dynamic>? get currentRoute => _currentRoute;
 
+  bool get isStackHasProfileScreen => history.isNotEmpty && history.any((element) => element?.settings.name == ProfileScreen.routeName);
+
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     if (route.settings.name == HomeScreen.routeName) history.clear();
-    if (history.isNotEmpty) history.removeLast();
+    if (history.isNotEmpty && previousRouteHistory == route.settings.name) history.removeLast();
   }
 
   @override
@@ -42,43 +43,43 @@ class NavigationHistoryObserver extends NavigatorObserver {
       Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () => SharedPreferencesService.find.removeKey(navigationStackKey));
     }
     // save navigation history in shared preferences
-    if (history.length > 1 && route.settings.name != HomeScreen.routeName) {
-      Helper.waitAndExecute(
-        () => SharedPreferencesService.find.isReady,
-        () {
-          final encodedStack = jsonEncode(history
-              .where((element) => element != null)
-              .map((e) {
-                final entry = routesDictionary.entries.cast<MapEntry<String, String>?>().firstWhere(
-                      (element) => element != null ? e!.settings.name?.contains(element.value) ?? false : false,
-                      orElse: () => null,
-                    );
-                return entry != null ? entry.key + (e?.settings.name?.substring(entry.value.length) ?? '') : null;
-              })
-              .where((element) => element != null)
-              .toList());
-          SharedPreferencesService.find.add(navigationStackKey, encodedStack);
-        },
-      );
-      // Get lost navigation if any (when reloading page)
-    } else if (_fetchSavedHistoryRequired && history.length <= 1 && route.settings.name != HomeScreen.routeName) {
-      _fetchSavedHistoryRequired = false;
-      Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () {
-        final savedHistory = SharedPreferencesService.find.get(navigationStackKey);
-        if (savedHistory != null) {
-          try {
-            final mappedSavedHistory = (jsonDecode(savedHistory) as List).map((e) => e as String).map(
-                (e) => _createRouteFromName(routesDictionary[e.contains('/') ? e.substring(0, e.indexOf('/')) : e]!, arg: e.contains('/') ? e.substring(e.indexOf('/')) : null));
-            final Iterable<Route<dynamic>?> routes = mappedSavedHistory;
-            history.clear();
-            history.addAll(routes);
-            _addRoute(route);
-          } catch (e) {
-            LoggerService.logger?.e(e);
-          }
-        }
-      });
-    }
+    // if (history.length > 1 && route.settings.name != HomeScreen.routeName) {
+    // Helper.waitAndExecute(
+    //   () => SharedPreferencesService.find.isReady,
+    //   () {
+    //     final encodedStack = jsonEncode(history
+    //         .where((element) => element != null)
+    //         .map((e) {
+    //           final entry = routesDictionary.entries.cast<MapEntry<String, String>?>().firstWhere(
+    //                 (element) => element != null ? e!.settings.name?.contains(element.value) ?? false : false,
+    //                 orElse: () => null,
+    //               );
+    //           return entry != null ? entry.key + (e?.settings.name?.substring(entry.value.length) ?? '') : null;
+    //         })
+    //         .where((element) => element != null)
+    //         .toList());
+    //     SharedPreferencesService.find.add(navigationStackKey, encodedStack);
+    //   },
+    // );
+    // Get lost navigation if any (when reloading page)
+    // } else if (_fetchSavedHistoryRequired && history.length <= 1 && route.settings.name != HomeScreen.routeName) {
+    // _fetchSavedHistoryRequired = false;
+    // Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () {
+    //   final savedHistory = SharedPreferencesService.find.get(navigationStackKey);
+    //   if (savedHistory != null) {
+    //     try {
+    //       final mappedSavedHistory = (jsonDecode(savedHistory) as List).map((e) => e as String).map(
+    //           (e) => _createRouteFromName(routesDictionary[e.contains('/') ? e.substring(0, e.indexOf('/')) : e]!, arg: e.contains('/') ? e.substring(e.indexOf('/')) : null));
+    //       final Iterable<Route<dynamic>?> routes = mappedSavedHistory;
+    //       history.clear();
+    //       history.addAll(routes);
+    //       _addRoute(route);
+    //     } catch (e) {
+    //       LoggerService.logger?.e(e);
+    //     }
+    //   }
+    // });
+    // }
     _addRoute(route);
   }
 
@@ -92,31 +93,43 @@ class NavigationHistoryObserver extends NavigatorObserver {
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) => _addRoute(newRoute);
 
-  void goToPreviousRoute() {
-    if (history.length <= 1) {
-      // get saved history and populate [history]
-      if (_fetchSavedHistoryRequired) {
-        Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () {
-          final savedHistory = SharedPreferencesService.find.get(navigationStackKey);
-          _fetchSavedHistoryRequired = false;
-          if (savedHistory != null) {
-            try {
-              final mappedSavedHistory = (jsonDecode(savedHistory) as List).map((e) => e as String).map(
-                  (e) => _createRouteFromName(routesDictionary[e.contains('/') ? e.substring(0, e.indexOf('/')) : e]!, arg: e.contains('/') ? e.substring(e.indexOf('/')) : null));
-              final Iterable<Route<dynamic>?> routes = mappedSavedHistory;
-              history.addAll(routes);
-            } catch (e) {
-              LoggerService.logger?.e(e);
-            }
-          }
-          Get.toNamed(previousRoute);
-          history.removeLast();
-        });
-      } else {
-        Get.toNamed(previousRoute);
+  void goToPreviousRoute({bool? result, bool popToProfile = false}) {
+    if (popToProfile) {
+      while (previousRouteHistory != ProfileScreen.routeName) {
+        Get.back();
+        if (isStackHasProfileScreen && previousRouteHistory != ProfileScreen.routeName) history.removeLast();
       }
+      if (Get.currentRoute != ProfileScreen.routeName) {
+        history.removeLast();
+        Get.toNamed(ProfileScreen.routeName);
+      }
+    } else if (result != null) {
+      Get.back(result: result);
+      history.removeLast();
+    } else if (history.length <= 1) {
+      // get saved history and populate [history]
+      // if (_fetchSavedHistoryRequired) {
+      //   Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () {
+      //     final savedHistory = SharedPreferencesService.find.get(navigationStackKey);
+      //     _fetchSavedHistoryRequired = false;
+      //     if (savedHistory != null) {
+      //       try {
+      //         final mappedSavedHistory = (jsonDecode(savedHistory) as List).map((e) => e as String).map(
+      //             (e) => _createRouteFromName(routesDictionary[e.contains('/') ? e.substring(0, e.indexOf('/')) : e]!, arg: e.contains('/') ? e.substring(e.indexOf('/')) : null));
+      //         final Iterable<Route<dynamic>?> routes = mappedSavedHistory;
+      //         history.addAll(routes);
+      //       } catch (e) {
+      //         LoggerService.logger?.e(e);
+      //       }
+      //     }
+      //     Get.toNamed(previousRoute);
+      //     history.removeLast();
+      //   });
+      // } else {
+      Get.toNamed(previousRouteHistory);
+      // }
     } else {
-      Get.toNamed(previousRoute);
+      Get.toNamed(previousRouteHistory);
       history.removeLast();
     }
   }

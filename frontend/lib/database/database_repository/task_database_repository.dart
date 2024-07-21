@@ -202,4 +202,13 @@ class TaskDatabaseRepository extends GetxService {
   }
 
   ImageDTO _convertToImageDTO(TaskAttachmentTableData e) => ImageDTO(file: XFile(e.url), type: ImageType.values.singleWhere((element) => element.name == e.type));
+
+  void backupTaskRequest(List<Task> tasks) {
+    // TODO back up task request
+  }
+
+  Future<List<Task>> getTaskRequest() async {
+    // TODO get task request
+    return [];
+  }
 }

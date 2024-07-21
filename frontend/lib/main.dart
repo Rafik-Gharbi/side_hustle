@@ -10,10 +10,13 @@ import 'database/database_repository/user_database_repository.dart';
 import 'networking/api_base_helper.dart';
 import 'repositories/favorite_repository.dart';
 import 'repositories/params_repository.dart';
+import 'repositories/reservation_repository.dart';
 import 'repositories/task_repository.dart';
 import 'repositories/user_repository.dart';
 import 'services/authentication_service.dart';
 import 'views/add_task/add_task_bottomsheet.dart';
+import 'views/chat/chat_controller.dart';
+import 'views/chat/chat_screen.dart';
 import 'views/favorite/favorite_controller.dart';
 import 'views/favorite/favorite_screen.dart';
 import 'views/home/home_screen.dart';
@@ -25,12 +28,20 @@ import 'services/shared_preferences.dart';
 import 'services/theme/theme.dart';
 import 'services/translation/app_localization.dart';
 import 'views/home/home_controller.dart';
+import 'views/market/market_controller.dart';
+import 'views/market/market_screen.dart';
 import 'views/profile/profile_controller.dart';
 import 'views/profile/profile_screen.dart';
-import 'views/task_details/task_details_controller.dart';
 import 'views/task_details/task_details_screen.dart';
+import 'views/task_history/task_history_controller.dart';
+import 'views/task_history/task_history_screen.dart';
 import 'views/task_list/task_list_controller.dart';
 import 'views/task_list/task_list_screen.dart';
+import 'views/task_proposal/task_proposal_controller.dart';
+import 'views/task_proposal/task_proposal_screen.dart';
+import 'views/task_request/task_request_controller.dart';
+import 'views/task_request/task_request_screen.dart';
+import 'views/user_profile/user_profile_screen.dart';
 import 'views/verification_screen.dart';
 import 'views/verify_user/verify_user_controller.dart';
 import 'views/verify_user/verify_user_screen.dart';
@@ -75,6 +86,10 @@ class MyApp extends StatelessWidget {
             binding: BindingsBuilder.put(() => ProfileController()),
           ),
           GetPage(
+            name: UserProfileScreen.routeName,
+            page: () => const UserProfileScreen(),
+          ),
+          GetPage(
             name: TaskListScreen.routeName,
             page: () => Get.arguments ?? const TaskListScreen(),
             binding: BindingsBuilder.put(() => TaskListController()),
@@ -82,7 +97,6 @@ class MyApp extends StatelessWidget {
           GetPage(
             name: TaskDetailsScreen.routeName,
             page: () => TaskDetailsScreen(task: Get.arguments),
-            binding: BindingsBuilder.put(() => TaskDetailsController()),
           ),
           GetPage(
             name: VerifyUserScreen.routeName,
@@ -93,6 +107,31 @@ class MyApp extends StatelessWidget {
             name: FavoriteScreen.routeName,
             page: () => const FavoriteScreen(),
             binding: BindingsBuilder.put(() => FavoriteController()),
+          ),
+          GetPage(
+            name: TaskRequestScreen.routeName,
+            page: () => const TaskRequestScreen(),
+            binding: BindingsBuilder.put(() => TaskRequestController()),
+          ),
+          GetPage(
+            name: TaskProposalScreen.routeName,
+            page: () => const TaskProposalScreen(),
+            binding: BindingsBuilder.put(() => TaskProposalController()),
+          ),
+          GetPage(
+            name: TaskHistoryScreen.routeName,
+            page: () => const TaskHistoryScreen(),
+            binding: BindingsBuilder.put(() => TaskHistoryController()),
+          ),
+          GetPage(
+            name: ChatScreen.routeName,
+            page: () => const ChatScreen(),
+            binding: BindingsBuilder.put(() => ChatController()),
+          ),
+          GetPage(
+            name: MarketScreen.routeName,
+            page: () => const MarketScreen(),
+            binding: BindingsBuilder.put(() => MarketController()),
           ),
           GetPage(
             name: AddTaskBottomsheet.routeName,
@@ -120,6 +159,7 @@ class InitialBindings implements Bindings {
     Get.put(ParamsRepository(), permanent: true);
     Get.put(TaskRepository(), permanent: true);
     Get.put(FavoriteRepository(), permanent: true);
+    Get.put(ReservationRepository(), permanent: true);
     // Database repositories
     Get.put(UserDatabaseRepository(), permanent: true);
     Get.put(TaskDatabaseRepository(), permanent: true);

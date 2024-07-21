@@ -52,12 +52,9 @@ class TaskListController extends GetxController {
     if ((taskList.isEmpty) || taskList.length < kLoadMoreLimit) isEndList = true;
     if (page == 1) {
       filteredTaskList = taskList;
-    } else {
-      filteredTaskList.addAll(taskList);
-    }
-    if (page == 1) {
       isLoading = false;
     } else {
+      filteredTaskList.addAll(taskList);
       isLoadingMore.value = false;
     }
     update();

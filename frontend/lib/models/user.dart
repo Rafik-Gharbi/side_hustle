@@ -101,7 +101,6 @@ class User {
     data['email'] = email?.toLowerCase();
     data['name'] = name;
     data['phoneNumber'] = phone;
-    data['password'] = password;
     data['coordinates'] = coordinates;
     data['birthdate'] = birthdate?.toIso8601String();
     data['gender'] = gender?.value.toLowerCase();

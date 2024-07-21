@@ -158,7 +158,7 @@ class UserRepository extends GetxService {
   Future<User?> getUserById(int id) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/user/user-id?id=$id', sendToken: true);
-      return User.fromJson(result['User']);
+      return User.fromJson(result['user']);
     } catch (e) {
       LoggerService.logger?.e('Error occurred in getUserById:\n$e');
       return null;

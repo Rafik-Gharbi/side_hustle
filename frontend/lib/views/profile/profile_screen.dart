@@ -18,6 +18,8 @@ import '../../widgets/loading_request.dart';
 import '../account/components/signup_fields.dart';
 import '../favorite/favorite_screen.dart';
 import '../home/home_controller.dart';
+import '../task_history/task_history_screen.dart';
+import '../task_request/task_request_screen.dart';
 import '../verify_user/verify_user_screen.dart';
 import 'components/change_password.dart';
 import 'profile_controller.dart';
@@ -188,8 +190,17 @@ class ProfileScreen extends StatelessWidget {
                                                             isScrollControlled: true,
                                                           ),
                                                         ),
-                                                        buildActionTile(label: 'my_request'.tr, icon: Icons.campaign_outlined, onTap: () {}),
-                                                        buildActionTile(label: 'tasks_history'.tr, icon: Icons.history_outlined, onTap: () {}),
+                                                        if (AuthenticationService.find.jwtUserData?.role != Role.provider)
+                                                          buildActionTile(
+                                                            label: 'my_request'.tr,
+                                                            icon: Icons.campaign_outlined,
+                                                            onTap: () => Get.toNamed(TaskRequestScreen.routeName),
+                                                          ),
+                                                        buildActionTile(
+                                                          label: 'tasks_history'.tr,
+                                                          icon: Icons.history_outlined,
+                                                          onTap: () => Get.toNamed(TaskHistoryScreen.routeName),
+                                                        ),
                                                         buildActionTile(
                                                           label: 'logout'.tr,
                                                           icon: Icons.logout_outlined,
