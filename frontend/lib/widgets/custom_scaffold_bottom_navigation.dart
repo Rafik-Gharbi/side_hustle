@@ -10,7 +10,9 @@ import '../services/authentication_service.dart';
 import '../services/navigation_history_observer.dart';
 import '../services/theme/theme.dart';
 import '../views/add_task/add_task_bottomsheet.dart';
+import '../views/chat/chat_screen.dart';
 import '../views/home/home_screen.dart';
+import '../views/market/market_screen.dart';
 import '../views/profile/profile_screen.dart';
 import '../views/task_proposal/task_proposal_screen.dart';
 import 'custom_buttons.dart';
@@ -37,6 +39,12 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
     this.noAppBar = false,
   });
 
+  bool get isNotMainRoute =>
+      Get.currentRoute != HomeScreen.routeName &&
+      Get.currentRoute != ProfileScreen.routeName &&
+      Get.currentRoute != MarketScreen.routeName &&
+      Get.currentRoute != ChatScreen.routeName;
+
   @override
   Widget build(BuildContext context) {
     final isConnected = MainAppController.find.isConnected;
@@ -50,20 +58,22 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
               actions: appBarActions,
               centerTitle: true,
               bottom: appBarBottom,
-              leading: CustomButtons.icon(
-                icon: const Icon(Icons.chevron_left, size: 28),
-                onPressed: () {
-                  onBack?.call();
-                  if (Get.currentRoute == TaskProposalScreen.routeName) {
-                    Get.back();
-                  } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && Get.currentRoute != ProfileScreen.routeName) {
-                    NavigationHistoryObserver.instance.goToPreviousRoute(popToProfile: true);
-                  } else {
-                    MainAppController.find.bottomNavIndex.value = 0;
-                    if (Get.currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);
-                  }
-                },
-              ),
+              leading: isNotMainRoute
+                  ? CustomButtons.icon(
+                      icon: const Icon(Icons.chevron_left, size: 28),
+                      onPressed: () {
+                        onBack?.call();
+                        if (Get.currentRoute == TaskProposalScreen.routeName) {
+                          Get.back();
+                        } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && Get.currentRoute != ProfileScreen.routeName) {
+                          NavigationHistoryObserver.instance.goToPreviousRoute(popToProfile: true);
+                        } else {
+                          MainAppController.find.bottomNavIndex.value = 0;
+                          if (Get.currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);
+                        }
+                      },
+                    )
+                  : const SizedBox(),
             )
           : null,
       body: StatefulBuilder(builder: (context, setState) {

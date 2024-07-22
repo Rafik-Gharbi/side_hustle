@@ -18,6 +18,7 @@ import '../../widgets/loading_request.dart';
 import '../account/components/signup_fields.dart';
 import '../favorite/favorite_screen.dart';
 import '../home/home_controller.dart';
+import '../my_store/my_store_screen.dart';
 import '../task_history/task_history_screen.dart';
 import '../task_request/task_request_screen.dart';
 import '../verify_user/verify_user_screen.dart';
@@ -200,6 +201,11 @@ class ProfileScreen extends StatelessWidget {
                                                           label: 'tasks_history'.tr,
                                                           icon: Icons.history_outlined,
                                                           onTap: () => Get.toNamed(TaskHistoryScreen.routeName),
+                                                        ),
+                                                        buildActionTile(
+                                                          label: 'my_store'.tr,
+                                                          icon: Icons.store_outlined,
+                                                          onTap: () => Get.toNamed(MyStoreScreen.routeName),
                                                         ),
                                                         buildActionTile(
                                                           label: 'logout'.tr,

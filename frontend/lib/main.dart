@@ -11,6 +11,7 @@ import 'networking/api_base_helper.dart';
 import 'repositories/favorite_repository.dart';
 import 'repositories/params_repository.dart';
 import 'repositories/reservation_repository.dart';
+import 'repositories/store_repository.dart';
 import 'repositories/task_repository.dart';
 import 'repositories/user_repository.dart';
 import 'services/authentication_service.dart';
@@ -30,6 +31,8 @@ import 'services/translation/app_localization.dart';
 import 'views/home/home_controller.dart';
 import 'views/market/market_controller.dart';
 import 'views/market/market_screen.dart';
+import 'views/my_store/my_store_controller.dart';
+import 'views/my_store/my_store_screen.dart';
 import 'views/profile/profile_controller.dart';
 import 'views/profile/profile_screen.dart';
 import 'views/task_details/task_details_screen.dart';
@@ -134,6 +137,11 @@ class MyApp extends StatelessWidget {
             binding: BindingsBuilder.put(() => MarketController()),
           ),
           GetPage(
+            name: MyStoreScreen.routeName,
+            page: () => const MyStoreScreen(),
+            binding: BindingsBuilder.put(() => MyStoreController()),
+          ),
+          GetPage(
             name: AddTaskBottomsheet.routeName,
             page: () => const AddTaskBottomsheet(),
           ),
@@ -160,6 +168,7 @@ class InitialBindings implements Bindings {
     Get.put(TaskRepository(), permanent: true);
     Get.put(FavoriteRepository(), permanent: true);
     Get.put(ReservationRepository(), permanent: true);
+    Get.put(StoreRepository(), permanent: true);
     // Database repositories
     Get.put(UserDatabaseRepository(), permanent: true);
     Get.put(TaskDatabaseRepository(), permanent: true);

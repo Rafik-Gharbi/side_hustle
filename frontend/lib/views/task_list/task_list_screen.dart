@@ -25,16 +25,12 @@ class TaskListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final getAllTasks = filterModel == null && searchQuery == null;
     return HoldInSafeArea(
       child: GetBuilder<TaskListController>(
-        initState: (state) => Helper.waitAndExecute(() => state.controller != null, () {
-          if (getAllTasks) {
-            state.controller?.getAllTasks();
-          } else {
-            state.controller?.fetchSearchedTasks(searchQuery: searchQuery, filter: filterModel);
-          }
-        }),
+        initState: (state) => Helper.waitAndExecute(
+          () => state.controller != null,
+          () => state.controller?.fetchSearchedTasks(searchQuery: searchQuery, filter: filterModel),
+        ),
         builder: (controller) => Obx(
           () => CustomScaffoldBottomNavigation(
             appBarTitle: 'Search Tasks',
@@ -48,6 +44,7 @@ class TaskListScreen extends StatelessWidget {
                 onPressed: () => Get.dialog(
                   MoreFiltersPopup(
                     updateFilter: (filter) => controller.filterModel = filter,
+                    clearFilter: () => controller.filterModel = FilterModel(),
                     filter: controller.filterModel,
                   ),
                 ),

@@ -21,6 +21,7 @@ final Map<String, String> enUs = <String, String>{
   'filter': 'Filter',
   'delivrables': 'Delivrables',
   'due_date': 'Due date',
+  'my_store': 'My store',
   'Im_interested': 'I\'m Interested',
   'search_category': 'Search category',
   'my_saved_tasks': 'My saved tasks',

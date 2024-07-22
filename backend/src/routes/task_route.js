@@ -9,7 +9,6 @@ module.exports = (app) => {
 
   let router = require("express").Router();
 
-  router.get("/", tokenVerificationOptional, taskController.getAllTasks);
   router.get("/hot", tokenVerificationOptional, taskController.getHotTasks);
   router.get("/filter", tokenVerificationOptional, taskController.filterTasks);
   router.get("/user-request", tokenVerification, taskController.taskRequest);

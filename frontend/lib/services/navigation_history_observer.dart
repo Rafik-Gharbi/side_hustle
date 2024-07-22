@@ -145,7 +145,7 @@ class NavigationHistoryObserver extends NavigatorObserver {
     }
   }
 
-  Route<dynamic> _createRouteFromName(String routeName, {String? arg}) {
+  Route<dynamic> _createRouteFromName(String routeName) {
     switch (routeName) {
       case HomeScreen.routeName:
         return MaterialPageRoute(builder: (context) => const HomeScreen(), settings: const RouteSettings(name: HomeScreen.routeName));

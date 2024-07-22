@@ -4,6 +4,8 @@ const { LanguageType } = require("../models/type_language_model");
 const { constantId } = require("../helper/constants");
 const { User } = require("../models/user_model");
 const { Task } = require("../models/task_model");
+const { Store } = require("../models/store_model");
+const { Service } = require("../models/service_model");
 const { deleteDatabase } = require("../../db.config");
 const Bcrypt = require("bcrypt");
 const { removeSpacesFromPhoneNumber } = require("../helper/helpers");
@@ -16,6 +18,8 @@ exports.insert = async (req, res) => {
     const categories = constantId.categories;
     const governorates = constantId.governorates;
     const tasks = constantId.tasks;
+    const stores = constantId.stores;
+    const services = constantId.services;
 
     for (const user of users) {
       const hashedPassword = await Bcrypt.hash(user.password, 10);
@@ -28,6 +32,8 @@ exports.insert = async (req, res) => {
     const createdCategories = await Category.bulkCreate(categories);
     const createdUsers = await User.bulkCreate(users);
     const createdTasks = await Task.bulkCreate(tasks);
+    const createdStores = await Store.bulkCreate(stores);
+    const createdServices = await Service.bulkCreate(services);
 
     const result = {
       createdUsers,
@@ -35,6 +41,8 @@ exports.insert = async (req, res) => {
       createdGovernorates,
       createdCategories,
       createdTasks,
+      createdStores,
+      createdServices,
     };
 
     return res.status(200).json(result);

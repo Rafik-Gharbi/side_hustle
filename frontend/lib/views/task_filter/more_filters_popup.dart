@@ -19,9 +19,10 @@ import 'more_filter_controller.dart';
 
 class MoreFiltersPopup extends StatelessWidget {
   final void Function(FilterModel) updateFilter;
+  final void Function() clearFilter;
   final FilterModel filter;
 
-  const MoreFiltersPopup({super.key, required this.updateFilter, required this.filter});
+  const MoreFiltersPopup({super.key, required this.updateFilter, required this.filter, required this.clearFilter});
 
   @override
   Widget build(BuildContext context) => AlertDialog(
@@ -86,7 +87,10 @@ class MoreFiltersPopup extends StatelessWidget {
                             CustomButtons.elevateSecondary(
                               title: 'clear_filter'.tr,
                               width: Get.width / 3,
-                              onPressed: controller.clearFiler,
+                              onPressed: () {
+                                controller.clearFiler();
+                                clearFilter.call();
+                              },
                             ),
                             const SizedBox(width: Paddings.regular),
                             CustomButtons.elevatePrimary(

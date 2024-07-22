@@ -94,6 +94,7 @@ class HomeScreen extends StatelessWidget {
                         onPressed: () => Get.dialog(
                           MoreFiltersPopup(
                             updateFilter: (filter) => controller.filterModel = filter,
+                            clearFilter: () => controller.filterModel = FilterModel(),
                             filter: controller.filterModel,
                           ),
                         ),

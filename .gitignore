@@ -1,10 +1,13 @@
 .vscode/
+.DS_Store
 
 # backend
 backend/node_modules
 backend/.env
-backend/public/images
-backend/public/task
+backend/public/images/*
+backend/public/task/*
+backend/public/store/*
+backend/*.DS_Store
 
 # Miscellaneous
 frontend/*.class
@@ -12,7 +15,9 @@ frontend/*.lock
 frontend/*.log
 frontend/*.pyc
 frontend/*.swp
-frontend/.DS_Store
+frontend/*.DS_Store
+frontend/*/.DS_Store
+frontend/*/*/.DS_Store
 frontend/.atom/
 frontend/.buildlog/
 frontend/.history

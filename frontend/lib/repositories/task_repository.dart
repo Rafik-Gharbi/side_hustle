@@ -13,24 +13,6 @@ import '../services/logger_service.dart';
 class TaskRepository extends GetxService {
   static TaskRepository get find => Get.find<TaskRepository>();
 
-  // TODO remove this method replace by filter and lazy loading
-  Future<List<Task>?> getAllTasks() async {
-    try {
-      List<Task>? tasks;
-      if (MainAppController.find.isConnected.value) {
-        final result = await ApiBaseHelper().request(RequestType.get, '/task/', sendToken: true);
-        tasks = (result['formattedList'] as List).map((e) => Task.fromJson(e)).toList();
-      } else {
-        tasks = await TaskDatabaseRepository.find.select();
-      }
-      if (tasks.isNotEmpty && MainAppController.find.isConnected.value) TaskDatabaseRepository.find.backupTasks(tasks);
-      return tasks;
-    } catch (e) {
-      LoggerService.logger?.e('Error occured in getAllTasks:\n$e');
-    }
-    return null;
-  }
-
   Future<List<Task>?> getHotTasks() async {
     try {
       List<Task>? tasks;

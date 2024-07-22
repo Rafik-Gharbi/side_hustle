@@ -11,6 +11,7 @@ dotenv.config();
 require("./src/routes/database_route")(app);
 require("./src/routes/params_route")(app);
 require("./src/routes/task_route")(app);
+require("./src/routes/store_route")(app);
 require("./src/routes/user_route")(app);
 require("./src/routes/reservation_route")(app);
 require("./src/routes/favorite_route")(app);

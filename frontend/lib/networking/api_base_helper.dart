@@ -38,8 +38,8 @@ extension RequestTypeExtension on RequestType {
 const String baseUrlLocalWeb = 'http://localhost:3000'; // web localhost
 const String baseUrlLocalAndroid = 'http://10.0.2.2:3000'; // android localhost
 const String baseUrlLocalIos = 'http://127.0.0.1:3000'; // ios localhost
-// const String baseUrlLocalIos = 'http://192.168.1.36:3000'; // real device ip address
-const String baseUrlRemote = 'https://HustleMatch.net'; // remote
+// const String baseUrlLocalIos = 'http://192.168.0.144:3000'; // real device ip address
+// const String baseUrlRemote = 'https://HustleMatch.net'; // remote
 String _lastRequestedUrl = '';
 
 class ApiBaseHelper extends GetxController {
@@ -106,7 +106,14 @@ class ApiBaseHelper extends GetxController {
       if (sendToken) imageUploadRequest.headers['Authorization'] = 'Bearer $token';
 
       for (var file in files) {
-        Uint8List fileBytes = await file!.readAsBytes();
+        Uint8List fileBytes;
+        // if file is loaded from user device it should work just fine,
+        // else if the file has came from the server it should get loaded by getImageBytesFromNetwork method
+        try {
+          fileBytes = await file!.readAsBytes();
+        } catch (e) {
+          fileBytes = await getImageBytesFromNetwork(file!.path);
+        }
         String filename = file.name;
 
         imageUploadRequest.files.add(http.MultipartFile.fromBytes(keyImage, fileBytes.toList(), filename: filename));
@@ -156,7 +163,11 @@ class ApiBaseHelper extends GetxController {
           break;
         case RequestType.delete:
           LoggerService.logger!.i('API Delete, url $url');
-          response = await http.delete(requestUrl);
+          response = await http.delete(
+            requestUrl,
+            body: body != null ? jsonEncode(body) : null,
+            headers: headers ?? _defaultHeader,
+          );
           break;
       }
     }
@@ -165,6 +176,7 @@ class ApiBaseHelper extends GetxController {
   }
 
   String getImageTask(String pictureName) => '$baseUrl/public/task/$pictureName';
+  String getImageStore(String pictureName) => '$baseUrl/public/store/$pictureName';
   String getImageLocal(String pictureName) => pictureName;
   String getUserImage(String pictureName) => '$baseUrl/public/images/client/$pictureName';
 
@@ -221,6 +233,15 @@ class ApiBaseHelper extends GetxController {
         throw FetchDataException(
           'Error occured while Communication with Server with StatusCode : ${response.statusCode}\n${response.body}',
         );
+    }
+  }
+
+  Future<Uint8List> getImageBytesFromNetwork(String url) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      throw Exception('Failed to load image');
     }
   }
 }

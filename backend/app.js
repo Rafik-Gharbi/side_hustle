@@ -39,6 +39,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.get("/public/task/:id", (req, res) => {
   res.sendFile(path.join(__dirname, `./public/task/${req.params.id}`));
 });
+// API for uploads file (photo, galleries)
+app.get("/public/store/:id", (req, res) => {
+  res.sendFile(path.join(__dirname, `./public/store/${req.params.id}`));
+});
 // app.get("/public/task/hd/:id", (req, res) => {
 //   res.sendFile(path.join(__dirname, `./public/task/hd/${req.params.id}`));
 // });
