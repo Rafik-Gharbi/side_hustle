@@ -125,8 +125,28 @@ class Buildables {
               ),
           ],
         );
-    return CircleAvatar(radius: size! / 2, backgroundColor: kPrimaryColor, child: buildPicture());
+    return CircleAvatar(radius: size! / 2, backgroundColor: kPrimaryColor, child: buildPicture(fontSize: size * 0.4));
   }
 
   static Widget lightDivider() => Divider(thickness: 0.4, color: kNeutralColor);
+
+  static Widget buildProfileInfoRow(String label, String value) => SizedBox(
+        height: 30,
+        child: Row(
+          children: [
+            Text(label, style: AppFonts.x14Bold),
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  value,
+                  style: AppFonts.x14Regular,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
 }

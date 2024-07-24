@@ -117,7 +117,7 @@ function roleMiddleware(roles) {
   return (req, res, next) => {
     const right = req.decoded?.role;
 
-    if (right && roles.some((role) => right.includes(role))) {
+    if (right && roles === right) {
       next();
     } else {
       return res.status(403).send("access_denied");

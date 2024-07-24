@@ -16,13 +16,13 @@ class TaskRepository extends GetxService {
   Future<List<Task>?> getHotTasks() async {
     try {
       List<Task>? tasks;
-      if (MainAppController.find.isConnected.value) {
+      if (MainAppController.find.isConnected) {
         final result = await ApiBaseHelper().request(RequestType.get, '/task/hot', sendToken: true);
         tasks = (result['formattedList'] as List).map((e) => Task.fromJson(e)).toList();
       } else {
         tasks = await TaskDatabaseRepository.find.getHotTasks();
       }
-      if (tasks.isNotEmpty && MainAppController.find.isConnected.value) TaskDatabaseRepository.find.backupTasks(tasks, isHotTasks: true);
+      if (tasks.isNotEmpty && MainAppController.find.isConnected) TaskDatabaseRepository.find.backupTasks(tasks, isHotTasks: true);
       return tasks;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getHotTasks:\n$e');
@@ -33,7 +33,7 @@ class TaskRepository extends GetxService {
   Future<List<Task>?> filterTasks({int page = 0, int limit = kLoadMoreLimit, String searchQuery = '', FilterModel? filter}) async {
     try {
       List<Task>? tasks;
-      if (MainAppController.find.isConnected.value) {
+      if (MainAppController.find.isConnected) {
         final result = await ApiBaseHelper().request(
           RequestType.get,
           sendToken: true,
@@ -43,7 +43,7 @@ class TaskRepository extends GetxService {
       } else {
         tasks = await TaskDatabaseRepository.find.filterTasks(searchQuery, filter);
       }
-      if (tasks.isNotEmpty && MainAppController.find.isConnected.value) TaskDatabaseRepository.find.backupTasks(tasks);
+      if (tasks.isNotEmpty && MainAppController.find.isConnected) TaskDatabaseRepository.find.backupTasks(tasks);
       return tasks;
     } catch (e) {
       LoggerService.logger?.e('Error occured in filterTasks:\n$e');
@@ -54,14 +54,14 @@ class TaskRepository extends GetxService {
   Future<List<TaskRequestDTO>?> listUserTaskRequest({int page = 0, int limit = kLoadMoreLimit}) async {
     try {
       List<TaskRequestDTO>? tasks;
-      if (MainAppController.find.isConnected.value) {
+      if (MainAppController.find.isConnected) {
         final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/task/user-request?page=$page&limit=$limit');
         tasks = (result['formattedList'] as List).map((e) => TaskRequestDTO.fromJson(e)).toList();
       } else {
         final list = await TaskDatabaseRepository.find.getTaskRequest();
         tasks = list.map((e) => TaskRequestDTO(task: e, condidates: 0)).toList();
       }
-      if (tasks.isNotEmpty && MainAppController.find.isConnected.value) TaskDatabaseRepository.find.backupTaskRequest(tasks.map((e) => e.task).toList());
+      if (tasks.isNotEmpty && MainAppController.find.isConnected) TaskDatabaseRepository.find.backupTaskRequest(tasks.map((e) => e.task).toList());
       return tasks;
     } catch (e) {
       LoggerService.logger?.e('Error occured in listUserTaskRequest:\n$e');
@@ -74,7 +74,7 @@ class TaskRepository extends GetxService {
       final result = await ApiBaseHelper().request(RequestType.post, sendToken: true, '/task/', body: newtask.toJson(), files: newtask.attachments?.map((e) => e.file).toList());
       if (withBack) Get.back();
       final task = Task.fromJson(result['task']);
-      if (MainAppController.find.isConnected.value) TaskDatabaseRepository.find.backupTask(task);
+      if (MainAppController.find.isConnected) TaskDatabaseRepository.find.backupTask(task);
       Helper.snackBar(message: 'Task added successfully');
       return task;
     } catch (e) {
@@ -82,5 +82,34 @@ class TaskRepository extends GetxService {
       LoggerService.logger?.e('Error occured in addTask:\n$e');
     }
     return null;
+  }
+
+  Future<Task?> updateTask(Task updateTask, {required bool withBack}) async {
+    try {
+      final result = await ApiBaseHelper()
+          .request(RequestType.put, sendToken: true, '/task/${updateTask.id}', body: updateTask.toJson(), files: updateTask.attachments?.map((e) => e.file).toList());
+      if (withBack) Get.back();
+      final task = Task.fromJson(result['task']);
+      if (MainAppController.find.isConnected) TaskDatabaseRepository.find.backupTask(task);
+      Helper.snackBar(message: 'Task updated successfully');
+      return task;
+    } catch (e) {
+      Helper.snackBar(message: 'Error occurred updating your task, please try again later!');
+      LoggerService.logger?.e('Error occured in updateTask:\n$e');
+    }
+    return null;
+  }
+
+  Future<bool> deleteTask(Task task, {bool withBack = false}) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.delete, sendToken: true, '/task/${task.id}');
+      final status = result?['done'] ?? false;
+      if (withBack) Get.back();
+      if (status) Helper.snackBar(message: 'Task deleted successfully');
+      return status;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in deleteUser:\n$e');
+    }
+    return false;
   }
 }

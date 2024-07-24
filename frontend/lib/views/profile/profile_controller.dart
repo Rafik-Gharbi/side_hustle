@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../controllers/main_app_controller.dart';
 import '../../helpers/image_picker_by_platform/image_picker_platform.dart';
 import '../../models/category.dart';
 import '../../models/user.dart';
+import '../../networking/api_base_helper.dart';
 import '../../repositories/user_repository.dart';
 import '../../services/authentication_service.dart';
 import '../../services/logger_service.dart';
@@ -40,7 +42,8 @@ class ProfileController extends GetxController {
     loggedInUser = result?.user;
     subscribedCategories = result?.subscribedCategories ?? [];
     nextUpdateGategory = result?.nextUpdateGategory;
-    update();
+    if (!MainAppController.find.isBackReachable.value) ApiBaseHelper.find.isLoading = false;
+    isLoading = false;
   }
 
   Future<void> uploadFilePicture({GlobalKey<FormState>? formKey}) async {

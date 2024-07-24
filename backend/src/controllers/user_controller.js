@@ -387,6 +387,123 @@ exports.verifyPhone = async (req, res) => {
   }
 };
 
+exports.usersForApproving = async (req, res) => {
+  try {
+    const connectedUserId = req.decoded.id;
+
+    const connectedUser = await User.findByPk(connectedUserId);
+    if (!connectedUser) {
+      return res.status(404).json({ message: "user_not_found" });
+    }
+    const approveUsers = await User.findAll({
+      where: { isVerified: "pending" },
+    });
+
+    const users = await Promise.all(
+      approveUsers.map(async (user) => {
+        const userDocument = await UserDocumentModel.findOne({
+          where: { user_id: user.id },
+        });
+        return { user, userDocument };
+      })
+    );
+
+    return res.status(200).json({ users });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.approveUser = async (req, res) => {
+  try {
+    const userForApproveId = req.query.userId;
+
+    const userApprove = await User.findByPk(userForApproveId);
+    if (!userApprove) {
+      return res.status(404).json({ message: "user_not_found" });
+    }
+
+    userApprove.isVerified = "verified";
+    await userApprove.save();
+
+    return res.status(200).json({ done: true });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.userNotApprovable = async (req, res) => {
+  try {
+    const userForApproveId = req.query.userId;
+
+    const userApprove = await User.findByPk(userForApproveId);
+    if (!userApprove) {
+      return res.status(404).json({ message: "user_not_found" });
+    }
+    const userDocument = await UserDocumentModel.findOne({
+      where: { user_id: userForApproveId },
+    });
+    if (!userDocument) {
+      return res.status(404).json({ message: "user_document_not_found" });
+    }
+
+    userDocument.destroy();
+    userApprove.isVerified = "none";
+    await userApprove.save();
+    // TODO send notification for user to finish his profile and resubmit his documents
+
+    return res.status(200).json({ done: true });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.verifyPhone = async (req, res) => {
+  try {
+    const { phoneNumber, code, email } = req.body;
+
+    if (!phoneNumber || !code || !email) {
+      return res.status(400).json({ message: "missing_credentials" });
+    }
+    const formattedPhoneNumber = removeSpacesFromPhoneNumber(phoneNumber);
+
+    if (!verifyPhoneNumber(formattedPhoneNumber)) {
+      return res.status(400).json({ message: "wrong_number" });
+    }
+
+    // const responseVerification = await verifyOTP(formattedPhoneNumber, code);
+    // if (responseVerification == "approved") {
+    //   const user = await User.findOne({
+    //     where: { email: email },
+    //   });
+    //   if (user) {
+    //     user.phone_number = formattedPhoneNumber;
+    //     await VerificationCode.destroy({
+    //       where: {
+    //         phone_number: formattedPhoneNumber,
+    //       },
+    //     });
+    //   } else {
+    //     return res.status(404).json({ message: "user_not_found" });
+    //   }
+    //   await user.save();
+    // } else {
+    //   return res.status(400).json({ message: "otp_verif_failed" });
+    // }
+    return res.status(200).json({ message: "otp_approved" });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
 exports.socialMedia = async (req, res) => {
   try {
     console.log(req.body);

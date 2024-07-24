@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 
-import '../controllers/main_app_controller.dart';
 import '../database/database.dart';
 
 class Governorate {
@@ -14,7 +13,10 @@ class Governorate {
         name: json['name'],
       );
 
-  factory Governorate.fromGovernorateData({required GovernorateTableCompanion governorate}) => MainAppController.find.getGovernorateById(governorate.id.value)!;
+  factory Governorate.fromGovernorateData({required GovernorateTableCompanion governorate}) => Governorate(
+        id: governorate.id.value,
+        name: governorate.name.value,
+      );
 
   GovernorateTableCompanion toGovernorateCompanion() => GovernorateTableCompanion(
         id: Value(id),

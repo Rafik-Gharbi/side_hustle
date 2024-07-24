@@ -12,7 +12,20 @@ module.exports = (app) => {
   router.get("/hot", tokenVerificationOptional, taskController.getHotTasks);
   router.get("/filter", tokenVerificationOptional, taskController.filterTasks);
   router.get("/user-request", tokenVerification, taskController.taskRequest);
+  // TODO add role seeker check for below routes
   router.post("/", tokenVerification, taskImageUpload, taskController.addTask);
+  router.put(
+    "/:id",
+    tokenVerification,
+    taskImageUpload,
+    taskController.updateTask
+  );
+  router.delete(
+    "/:id",
+    tokenVerification,
+    taskImageUpload,
+    taskController.deleteTask
+  );
   //   router.get(
   //     "/getAll",
   //     tokenVerification,

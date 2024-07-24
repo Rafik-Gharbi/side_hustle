@@ -15,7 +15,7 @@ class StoreRepository extends GetxService {
   Future<List<Store>?> filterStores({int page = 0, int limit = kLoadMoreLimit, String searchQuery = '', FilterModel? filter}) async {
     try {
       List<Store>? stores;
-      if (MainAppController.find.isConnected.value) {
+      if (MainAppController.find.isConnected) {
         final result = await ApiBaseHelper().request(
           RequestType.get,
           sendToken: true,

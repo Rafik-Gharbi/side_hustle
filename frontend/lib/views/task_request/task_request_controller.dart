@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constants/constants.dart';
+import '../../helpers/helper.dart';
 import '../../models/dto/task_request_dto.dart';
 import '../../models/task.dart';
 import '../../networking/api_base_helper.dart';
 import '../../repositories/task_repository.dart';
+import '../add_task/add_task_bottomsheet.dart';
 import '../task_proposal/task_proposal_screen.dart';
 
 class TaskRequestController extends GetxController {
@@ -31,6 +33,8 @@ class TaskRequestController extends GetxController {
   }
 
   Future<void> _init() async {
+    page = 0;
+    isEndList = false;
     await _fetchTaskRequest();
     isLoading = false;
     update();
@@ -57,11 +61,14 @@ class TaskRequestController extends GetxController {
     update();
   }
 
-  void editTask(Task task) {}
+  Future<void> editTask(Task task) async => Get.bottomSheet(AddTaskBottomsheet(task: task), isScrollControlled: true).then((value) => _init());
+
+  void deleteTask(Task task) => Helper.openConfirmationDialog(
+        title: 'Are you sure you want to delete "${task.title}" task?',
+        onConfirm: () => TaskRepository.find.deleteTask(task).then((value) => Future.delayed(const Duration(milliseconds: 400), () => _init())),
+      );
 
   void openProposals(Task task) => Get.toNamed(TaskProposalScreen.routeName, arguments: task);
-
-  void deleteTask(Task task) {}
 
   int getTaskCondidates(Task task) => _taskRequestList.singleWhere((taskRequest) => taskRequest.task.id == task.id).condidates;
 }

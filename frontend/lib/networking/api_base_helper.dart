@@ -38,7 +38,7 @@ extension RequestTypeExtension on RequestType {
 const String baseUrlLocalWeb = 'http://localhost:3000'; // web localhost
 const String baseUrlLocalAndroid = 'http://10.0.2.2:3000'; // android localhost
 const String baseUrlLocalIos = 'http://127.0.0.1:3000'; // ios localhost
-// const String baseUrlLocalIos = 'http://192.168.0.144:3000'; // real device ip address
+// const String baseUrlLocalIos = 'http://172.20.10.2:3000'; // real device ip address
 // const String baseUrlRemote = 'https://HustleMatch.net'; // remote
 String _lastRequestedUrl = '';
 
@@ -157,7 +157,7 @@ class ApiBaseHelper extends GetxController {
           LoggerService.logger!.i('API Put, url $url');
           response = await http.put(
             requestUrl,
-            body: jsonEncode(body),
+            body: body != null ? jsonEncode(body) : null,
             headers: headers ?? _defaultHeader,
           );
           break;
@@ -242,6 +242,15 @@ class ApiBaseHelper extends GetxController {
       return response.bodyBytes;
     } else {
       throw Exception('Failed to load image');
+    }
+  }
+
+  Future<bool> checkConnectionToBackend() async {
+    try {
+      final response = await request(RequestType.get, '/params/check-connection');
+      return response?['result'] ?? false;
+    } catch (e) {
+      return false;
     }
   }
 }

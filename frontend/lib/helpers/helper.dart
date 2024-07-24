@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../constants/colors.dart';
 import '../constants/constants.dart';
@@ -111,17 +112,17 @@ class Helper {
 
   static Future<bool> launchUrlHelper(String url) async {
     LoggerService.logger!.i('launching: $url');
-    // try {
-    //   bool result = false;
-    //   if (await canLaunchUrl(Uri.parse(url))) {
-    //     result = await launchUrl(Uri.parse(url));
-    //   } else {
-    //     throw 'Could not launch $url';
-    //   }
-    //   return result;
-    // } catch (e) {
-    //   LoggerService.logger?.e('Error catched in launchUrlHelper: $e');
-    // }
+    try {
+      bool result = false;
+      if (await canLaunchUrl(Uri.parse(url))) {
+        result = await launchUrl(Uri.parse(url));
+      } else {
+        throw 'Could not launch $url';
+      }
+      return result;
+    } catch (e) {
+      LoggerService.logger?.e('Error catched in launchUrlHelper: $e');
+    }
     return false;
   }
 
@@ -186,7 +187,7 @@ class Helper {
         barrierColor: barrierColor?.withOpacity(0.3),
       );
 
-  static void openDatePicker({dynamic Function(DateTime)? onConfirm, void Function()? onClear, DateTime? currentTime}) {
+  static void openDatePicker({dynamic Function(DateTime)? onConfirm, void Function()? onClear, DateTime? currentTime, bool isFutureDate = false}) {
     picker.LocaleType mapLocale(Locale locale) {
       if (locale.languageCode == 'fr') {
         return picker.LocaleType.fr;
@@ -206,8 +207,8 @@ class Helper {
         doneStyle: AppFonts.x14Bold,
         itemStyle: AppFonts.x14Regular,
       ),
-      minTime: DateTime(1900),
-      maxTime: DateTime.now(),
+      minTime: isFutureDate ? DateTime.now() : DateTime(1900),
+      maxTime: isFutureDate ? DateTime.now().add(const Duration(days: 60)) : DateTime.now(),
       onConfirm: onConfirm,
       currentTime: currentTime,
       onCancel: onClear,

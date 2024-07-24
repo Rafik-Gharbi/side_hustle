@@ -7,6 +7,7 @@ import '../helpers/helper.dart';
 import '../models/category.dart';
 import '../models/dto/login_dto.dart';
 import '../models/dto/profile_dto.dart';
+import '../models/dto/user_approve_dto.dart';
 import '../models/user.dart';
 import '../networking/api_base_helper.dart';
 import '../networking/api_exceptions.dart';
@@ -131,20 +132,17 @@ class UserRepository extends GetxService {
   Future<ProfileDTO?> getLoggedInUser() async {
     try {
       ProfileDTO? profileDTO;
-      if (MainAppController.find.isConnected.value) {
+      if (MainAppController.find.isConnected) {
         final result = await ApiBaseHelper().request(RequestType.get, '/user/profile', sendToken: true);
         profileDTO = ProfileDTO.fromJson(result);
       } else {
         final user = AuthenticationService.find.jwtUserData?.id != null ? await UserDatabaseRepository.find.getUserById(AuthenticationService.find.jwtUserData!.id!) : null;
         if (user != null) {
-          profileDTO = ProfileDTO(
-            user: user,
-            subscribedCategories: [],
-            nextUpdateGategory: DateTime.now().add(const Duration(days: 30)));
+          profileDTO = ProfileDTO(user: user, subscribedCategories: [], nextUpdateGategory: DateTime.now().add(const Duration(days: 30)));
         }
       }
       if (profileDTO != null) {
-        if (MainAppController.find.isConnected.value) UserDatabaseRepository.find.backupUser(profileDTO.user.toUserCompanion());
+        if (MainAppController.find.isConnected) UserDatabaseRepository.find.backupUser(profileDTO.user.toUserCompanion());
         return profileDTO;
       } else {
         return null;
@@ -264,6 +262,36 @@ class UserRepository extends GetxService {
       }
     } catch (e) {
       LoggerService.logger?.e('Error occured in uploadUserVerifData:\n$e');
+    }
+    return false;
+  }
+
+  Future<List<UserApproveDTO>?> listUsersApprove() async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.get, '/user/approve', sendToken: true);
+      return (result['users'] as List).map((e) => UserApproveDTO.fromJson(e)).toList();
+    } catch (e) {
+      LoggerService.logger?.e('Error occurred in listUsersApprove:\n$e');
+      return null;
+    }
+  }
+
+  Future<bool> approveUser(User user) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.put, sendToken: true, '/user/approve?userId=${user.id}');
+      return result?['done'] ?? false;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in approveUser:\n$e');
+    }
+    return false;
+  }
+
+  Future<bool> notApprovableUser(User user) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.put, sendToken: true, '/user/not-approvable?userId=${user.id}');
+      return result?['done'] ?? false;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in notApprovableUser:\n$e');
     }
     return false;
   }

@@ -3,7 +3,9 @@ module.exports = (app) => {
 
   var router = require("express").Router();
 
-  // insert elements in the database
+  // check backend is reachable
+  router.get("/check-connection", paramsController.checkConnection);
+  // get app params governorates and categories
   router.get("/governorates", paramsController.getAllGovernorates);
   router.get("/categories", paramsController.getAllCategories);
 

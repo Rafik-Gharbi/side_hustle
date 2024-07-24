@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../constants/shared_preferences_keys.dart';
+import '../controllers/main_app_controller.dart';
 import '../helpers/helper.dart';
 import '../models/category.dart';
 import '../models/dto/profile_dto.dart';
@@ -151,17 +152,21 @@ class AuthenticationService extends GetxController {
   }
 
   void updateToken({required String token}) {
-    final jwtPayload = JwtDecoder.decode(token).entries;
-    // _jwtUserData = User.fromToken(jwtPayload);
+    final jwtPayload = JwtDecoder.decode(token);
+    _jwtUserData = User.fromToken(jwtPayload);
   }
 
   Future<ProfileDTO?> fetchUserData() async {
     return await Helper.waitAndExecute(
-      () => SharedPreferencesService.find.isReady && AuthenticationService.find.jwtUserData?.id != null,
+      () => SharedPreferencesService.find.isReady,
       () async {
         final loggedInUser = await UserRepository.find.getLoggedInUser();
         if (loggedInUser?.user.id != null) {
-          isUserMailVerified = await UserRepository.find.checkVerifiedUser();
+          if (MainAppController.find.isConnected) {
+            isUserMailVerified = await UserRepository.find.checkVerifiedUser();
+          } else {
+            isUserMailVerified = loggedInUser?.user.isMailVerified;
+          }
         }
         return loggedInUser;
       },

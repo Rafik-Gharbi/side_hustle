@@ -1,6 +1,17 @@
 const { Governorate } = require("../models/governorate_model");
 const { Category } = require("../models/category_model");
 
+// check backend is reachable
+exports.checkConnection = async (req, res) => {
+  try {
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
 // get all regions
 exports.getAllGovernorates = async (req, res) => {
   try {

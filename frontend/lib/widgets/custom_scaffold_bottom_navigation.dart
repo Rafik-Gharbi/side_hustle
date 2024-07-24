@@ -47,7 +47,6 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isConnected = MainAppController.find.isConnected;
     bool showConnectivityMsg = true;
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -80,7 +79,7 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
         return Column(
           children: [
             Obx(
-              () => (!isConnected.value && showConnectivityMsg)
+              () => (!MainAppController.find.hasInternetConnection.value || !MainAppController.find.isBackReachable.value) && showConnectivityMsg
                   ? DecoratedBox(
                       decoration: BoxDecoration(color: kErrorColor.withOpacity(0.8)),
                       child: SizedBox(
@@ -93,7 +92,11 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Text(
-                                  'You\'re offline, please check your internet connection',
+                                  !MainAppController.find.hasInternetConnection.value
+                                      ? 'You\'re offline, please check your internet connection'
+                                      : !MainAppController.find.isBackReachable.value
+                                          ? 'Server is not reachable, we are working on it!'
+                                          : 'Error has occurred, please try again later!',
                                   style: AppFonts.x12Bold.copyWith(color: kNeutralColor100),
                                   softWrap: true,
                                 ),

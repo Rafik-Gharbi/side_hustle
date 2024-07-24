@@ -325,3 +325,134 @@ exports.addTask = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+// update a task
+exports.updateTask = async (req, res) => {
+  const transaction = await sequelize.transaction();
+  const id = req.params.id;
+  try {
+    const {
+      title,
+      description,
+      price,
+      category_id,
+      governorate_id,
+      delivrables,
+      dueDate,
+    } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ message: "missing_task_id" });
+    }
+    const task = await Task.findByPk(id);
+    if (!task) {
+      return res.status(404).json({ message: "task_not_found" });
+    }
+    const foundUser = await User.findByPk(req.decoded.id);
+    if (!foundUser) {
+      return res.status(404).json({ message: "owner_not_found" });
+    }
+    if (foundUser.id != task.owner_id) {
+      return res.status(401).json({ message: "not_owner_task" });
+    }
+
+    // Update task
+    const updatedTask = await task.update(
+      {
+        title,
+        description,
+        price,
+        category_id,
+        governorate_id,
+        delivrables,
+        dueDate,
+      },
+      { transaction }
+    );
+
+    // Parse the images string from the request body
+    // const updatedImages = JSON.parse(images);
+
+    // Find existing images and determine which ones to delete
+    const existingAttachments = await TaskAttachmentModel.findAll({
+      where: { task_id: id },
+    });
+    const imagesToDelete = existingAttachments.filter(
+      (img) => !images.some((updatedImg) => updatedImg.url === img.url)
+    );
+    for (const img of imagesToDelete) {
+      await TaskAttachmentModel.destroy({ where: { id: img.id }, transaction });
+    }
+    // Handle image uploads
+    if (req.files && req.files.gallery) {
+      const imagePromises = req.files.gallery.map(async (imageProp) => {
+        if (imageProp) {
+          try {
+            const originalPath = imageProp.path;
+            const thumbnailPath = `public/task/${imageProp.filename}`;
+            await sharp(originalPath).resize(200, 200).toFile(thumbnailPath);
+
+            await TaskAttachmentModel.create(
+              {
+                url: imageProp.filename,
+                type: getFileType(file),
+                task_id: task.id,
+              },
+              { transaction }
+            );
+          } catch (error) {
+            throw new Error(
+              `Error processing image ${imageProp.originalname}: ${error.message}`
+            );
+          }
+        }
+      });
+
+      await Promise.all(imagePromises);
+    }
+
+    // Commit the transaction
+    await transaction.commit();
+
+    return res.status(200).json({
+      task: {
+        id: updatedTask.id,
+        price: updatedTask.price,
+        title: updatedTask.title,
+        description: updatedTask.description,
+        delivrables: updatedTask.delivrables,
+        governorate_id: updatedTask.governorate_id,
+        category_id: updatedTask.category_id,
+        owner: foundUser,
+      },
+    });
+  } catch (error) {
+    // Rollback the transaction in case of error
+    if (transaction) await transaction.rollback();
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// delete a task
+exports.deleteTask = async (req, res) => {
+  try {
+    const ID = req.params.id;
+    // Fetch images related to the task
+    const attachments = await TaskAttachmentModel.findAll({
+      where: { task_id: ID },
+    });
+
+    await Task.destroy({ where: { id: ID } });
+    // Delete the image files
+    attachments.forEach((image) => {
+      deleteImage(path.join(__dirname, "../../public/task", image.url));
+    });
+    return res.status(200).json({ done: true });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json(error);
+  }
+};

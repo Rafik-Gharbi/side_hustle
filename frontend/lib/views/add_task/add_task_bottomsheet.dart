@@ -8,6 +8,7 @@ import '../../constants/constants.dart';
 import '../../constants/sizes.dart';
 import '../../helpers/buildables.dart';
 import '../../helpers/form_validators.dart';
+import '../../helpers/helper.dart';
 import '../../models/task.dart';
 import '../../services/theme/theme.dart';
 import '../../widgets/categories_bottomsheet.dart';
@@ -25,7 +26,7 @@ class AddTaskBottomsheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<AddTaskController>(
-        init: AddTaskController(),
+        init: AddTaskController(task: task),
         autoRemove: false,
         builder: (controller) {
           double attachmentSize = (Get.width - 50) / 3;
@@ -121,9 +122,19 @@ class AddTaskBottomsheet extends StatelessWidget {
                             contentPadding: const EdgeInsets.only(left: 16),
                             title: RichText(
                               text: TextSpan(
-                                text: '${'due_date'.tr}: ',
-                                style: AppFonts.x14Regular,
-                                children: [TextSpan(text: controller.resolveDisplayDate(), style: AppFonts.x15Bold)],
+                                children: [
+                                  WidgetSpan(child: Text('${'due_date'.tr}: ', style: AppFonts.x14Regular)),
+                                  WidgetSpan(
+                                    child: InkWell(
+                                      onTap: () =>
+                                          Helper.openDatePicker(currentTime: controller.createdDate, onConfirm: (date) => controller.createdDate = date, isFutureDate: true),
+                                      child: Text(
+                                        controller.resolveDisplayDate(),
+                                        style: AppFonts.x15Bold.copyWith(decoration: TextDecoration.underline, decorationThickness: 0.6),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             leading: Icon(Icons.calendar_today_outlined, color: kNeutralColor),
@@ -236,7 +247,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                   child: CustomButtons.iconWithBackground(
                                     padding: const EdgeInsets.all(14),
                                     icon: const Icon(Icons.delete_forever_rounded, color: kNeutralColor100),
-                                    buttonColor: kSecondaryColor,
+                                    buttonColor: kErrorColor,
                                     onPressed: () => controller.deleteTask(task!),
                                   ),
                                 ),
@@ -248,7 +259,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                     titleStyle: AppFonts.x16Bold,
                                     width: double.infinity,
                                     loading: controller.isAdding.value,
-                                    onPressed: controller.addTask,
+                                    onPressed: controller.upsertTask,
                                   ),
                                 ),
                               ),

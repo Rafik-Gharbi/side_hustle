@@ -85,7 +85,7 @@ class MyStoreScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  if (controller.userStore!.picture?.file.path != null)
+                  if (controller.userStore?.picture?.file.path != null)
                     Image.network(controller.userStore!.picture!.file.path, height: 200, width: Get.width, fit: BoxFit.cover)
                   else if (!isOwner)
                     DecoratedBox(

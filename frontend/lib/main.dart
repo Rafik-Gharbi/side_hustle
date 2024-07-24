@@ -16,6 +16,8 @@ import 'repositories/task_repository.dart';
 import 'repositories/user_repository.dart';
 import 'services/authentication_service.dart';
 import 'views/add_task/add_task_bottomsheet.dart';
+import 'views/approve_user/approve_user_controller.dart';
+import 'views/approve_user/approve_user_screen.dart';
 import 'views/chat/chat_controller.dart';
 import 'views/chat/chat_screen.dart';
 import 'views/favorite/favorite_controller.dart';
@@ -140,6 +142,11 @@ class MyApp extends StatelessWidget {
             name: MyStoreScreen.routeName,
             page: () => const MyStoreScreen(),
             binding: BindingsBuilder.put(() => MyStoreController()),
+          ),
+          GetPage(
+            name: ApproveUserScreen.routeName,
+            page: () => const ApproveUserScreen(),
+            binding: BindingsBuilder.put(() => ApproveUserController()),
           ),
           GetPage(
             name: AddTaskBottomsheet.routeName,

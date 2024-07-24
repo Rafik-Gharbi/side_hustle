@@ -12,6 +12,7 @@ import '../helpers/helper.dart';
 import '../models/category.dart';
 import '../models/governorate.dart';
 import '../models/task.dart';
+import '../networking/api_base_helper.dart';
 import '../repositories/favorite_repository.dart';
 import '../repositories/params_repository.dart';
 import '../services/shared_preferences.dart';
@@ -32,7 +33,10 @@ class MainAppController extends GetxController {
   RxString currency = 'TND'.obs;
   late StreamSubscription<List<ConnectivityResult>> subscription;
   ConnectivityResult currentConnectivityStatus = ConnectivityResult.none;
-  RxBool isConnected = true.obs;
+  RxBool hasInternetConnection = true.obs;
+  RxBool isBackReachable = true.obs;
+
+  bool get isConnected => hasInternetConnection.value && isBackReachable.value;
 
   Category? getCategoryById(id) => categories.cast<Category?>().singleWhere((element) => element?.id == id, orElse: () => null);
 
@@ -41,7 +45,8 @@ class MainAppController extends GetxController {
   MainAppController() {
     subscription = Connectivity().onConnectivityChanged.listen((result) async {
       currentConnectivityStatus = await checkConnectivity(connectivity: result);
-      isConnected.value = currentConnectivityStatus != ConnectivityResult.none;
+      isBackReachable.value = await ApiBaseHelper.find.checkConnectionToBackend();
+      hasInternetConnection.value = currentConnectivityStatus != ConnectivityResult.none;
       foundation.debugPrint('Device is connected: $isConnected');
     });
     _init();
@@ -88,7 +93,8 @@ class MainAppController extends GetxController {
 
   Future<void> _init() async {
     currentConnectivityStatus = await Future.delayed(const Duration(milliseconds: 600), () async => await checkConnectivity());
-    isConnected.value = currentConnectivityStatus != ConnectivityResult.none;
+    isBackReachable.value = await ApiBaseHelper.find.checkConnectionToBackend();
+    hasInternetConnection.value = currentConnectivityStatus != ConnectivityResult.none;
     await Helper.waitAndExecute(
       () => SharedPreferencesService.find.isReady,
       () async {

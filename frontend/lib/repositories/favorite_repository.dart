@@ -22,13 +22,13 @@ class FavoriteRepository extends GetxService {
   Future<List<Task>> listFavorite() async {
     try {
       List<Task>? tasks;
-      if (MainAppController.find.isConnected.value) {
+      if (MainAppController.find.isConnected) {
         final result = await ApiBaseHelper().request(RequestType.get, '/favorite/list', sendToken: true);
         tasks = (result['formattedList'] as List).map((e) => Task.fromJson(e)).toList();
       } else {
         tasks = await TaskDatabaseRepository.find.getFavoriteTasks();
       }
-      if (MainAppController.find.isConnected.value) TaskDatabaseRepository.find.backupTasks(tasks, isFavorite: true);
+      if (MainAppController.find.isConnected) TaskDatabaseRepository.find.backupTasks(tasks, isFavorite: true);
       return tasks;
     } catch (e) {
       LoggerService.logger?.e('Error occured in listFavorite:\n$e');

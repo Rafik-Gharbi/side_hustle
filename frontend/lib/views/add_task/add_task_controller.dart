@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../controllers/main_app_controller.dart';
 import '../../helpers/extensions/date_time_extension.dart';
+import '../../helpers/helper.dart';
 import '../../models/category.dart';
 import '../../models/dto/image_dto.dart';
 import '../../models/governorate.dart';
@@ -23,7 +24,15 @@ class AddTaskController extends GetxController {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController delivrablesController = TextEditingController();
   Category? _category = MainAppController.find.categories.firstWhere((element) => element.parentId != -1);
-  DateTime createdDate = DateTime.now();
+  DateTime _createdDate = DateTime.now();
+
+  DateTime get createdDate => _createdDate;
+
+  set createdDate(DateTime value) {
+    _createdDate = value;
+    update();
+  }
+
   Governorate? _governorate = AuthenticationService.find.jwtUserData?.governorate;
   RxBool isAdding = false.obs;
   List<XFile>? attachments;
@@ -44,10 +53,6 @@ class AddTaskController extends GetxController {
 
   AddTaskController({this.task}) {
     if (task != null) _loadTaskData();
-    // if (category == null) {
-    //   final topFrequentCategories = MainAppController.find.getTopFrequentCategories(take: 1);
-    //   category = topFrequentCategories.isNotEmpty ? topFrequentCategories.first : MainAppController.find.activeCategories.first.subcategories.first;
-    // }
   }
 
   bool isImage(String fileName) {
@@ -58,8 +63,7 @@ class AddTaskController extends GetxController {
 
   void setCreatedDate({bool next = false, bool previous = false}) {
     if (next) createdDate = createdDate.add(const Duration(days: 1));
-    if (previous) createdDate = createdDate.subtract(const Duration(days: 1));
-    update();
+    if (previous && createdDate.isAfter(DateTime.now())) createdDate = createdDate.subtract(const Duration(days: 1));
   }
 
   void appendCurrency(String value) {
@@ -99,10 +103,10 @@ class AddTaskController extends GetxController {
     descriptionController.text = '';
     priceController.text = '';
     _category = MainAppController.find.categories.firstWhere((element) => element.parentId != -1);
-    createdDate = DateTime.now();
+    _createdDate = DateTime.now();
   }
 
-  Future<void> addTask() async {
+  Future<void> upsertTask() async {
     if (formKey.currentState?.validate() ?? false) {
       isAdding.value = true;
       final newtask = Task(
@@ -116,7 +120,11 @@ class AddTaskController extends GetxController {
         attachments: attachments?.map((e) => ImageDTO(file: e, type: isImage(e.name.toLowerCase()) ? ImageType.image : ImageType.file)).toList(),
         owner: AuthenticationService.find.jwtUserData!,
       );
-      await TaskRepository.find.addTask(newtask, withBack: true);
+      if (task?.id == null) {
+        await TaskRepository.find.addTask(newtask, withBack: true);
+      } else {
+        await TaskRepository.find.updateTask(newtask, withBack: true);
+      }
       isAdding.value = false;
     }
   }
@@ -141,7 +149,10 @@ class AddTaskController extends GetxController {
     }
   }
 
-  deleteTask(Task task) {}
+  void deleteTask(Task task) => Helper.openConfirmationDialog(
+        title: 'Are you sure you want to delete "${task.title}" task?',
+        onConfirm: () async => await TaskRepository.find.deleteTask(task, withBack: true),
+      );
 
   void removeAttachments(XFile xFile) {
     attachments?.remove(xFile);

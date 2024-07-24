@@ -16,6 +16,7 @@ import '../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../widgets/hold_in_safe_area.dart';
 import '../../widgets/loading_request.dart';
 import '../account/components/signup_fields.dart';
+import '../approve_user/approve_user_screen.dart';
 import '../favorite/favorite_screen.dart';
 import '../home/home_controller.dart';
 import '../my_store/my_store_screen.dart';
@@ -59,6 +60,7 @@ class ProfileScreen extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: Paddings.extraLarge),
                       child: LoadingRequest(
+                        isLoading: controller.isLoading,
                         child: SingleChildScrollView(
                           child: SharedPreferencesService.find.isReady && authService.jwtUserData == null
                               ? Buildables.buildLoginRequest(onLogin: controller.init)
@@ -105,17 +107,17 @@ class ProfileScreen extends StatelessWidget {
                                                     padding: const EdgeInsets.all(Paddings.large),
                                                     child: Column(
                                                       children: [
-                                                        buildProfileInfoRow('email'.tr, controller.loggedInUser?.email ?? 'not_provided'.tr),
+                                                        Buildables.buildProfileInfoRow('email'.tr, controller.loggedInUser?.email ?? 'not_provided'.tr),
                                                         Buildables.lightDivider(),
-                                                        buildProfileInfoRow(
+                                                        Buildables.buildProfileInfoRow(
                                                             'birthdate'.tr,
                                                             controller.loggedInUser?.birthdate != null
                                                                 ? Helper.formatDate(controller.loggedInUser!.birthdate!)
                                                                 : 'not_provided'.tr),
                                                         Buildables.lightDivider(),
-                                                        buildProfileInfoRow('gender'.tr, controller.loggedInUser?.gender?.value ?? 'not_provided'.tr),
+                                                        Buildables.buildProfileInfoRow('gender'.tr, controller.loggedInUser?.gender?.value ?? 'not_provided'.tr),
                                                         Buildables.lightDivider(),
-                                                        buildProfileInfoRow('phone'.tr, controller.loggedInUser?.phone ?? 'not_provided'.tr),
+                                                        Buildables.buildProfileInfoRow('phone'.tr, controller.loggedInUser?.phone ?? 'not_provided'.tr),
                                                       ],
                                                     ),
                                                   ),
@@ -207,6 +209,12 @@ class ProfileScreen extends StatelessWidget {
                                                           icon: Icons.store_outlined,
                                                           onTap: () => Get.toNamed(MyStoreScreen.routeName),
                                                         ),
+                                                        if (AuthenticationService.find.jwtUserData?.role == Role.admin)
+                                                          buildActionTile(
+                                                            label: 'approve_users'.tr,
+                                                            icon: Icons.verified_user_outlined,
+                                                            onTap: () => Get.toNamed(ApproveUserScreen.routeName),
+                                                          ),
                                                         buildActionTile(
                                                           label: 'logout'.tr,
                                                           icon: Icons.logout_outlined,
@@ -243,26 +251,6 @@ class ProfileScreen extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
           leading: CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: Icon(icon, size: 24)),
           trailing: const Icon(Icons.chevron_right_rounded),
-        ),
-      );
-
-  Widget buildProfileInfoRow(String label, String value) => SizedBox(
-        height: 30,
-        child: Row(
-          children: [
-            Text(label, style: AppFonts.x14Bold),
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  value,
-                  style: AppFonts.x14Regular,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
-            ),
-          ],
         ),
       );
 }

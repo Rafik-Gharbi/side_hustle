@@ -120,6 +120,7 @@ frontend/**/macos/Flutter/GeneratedPluginRegistrant.swift
 
 # windows & linux genereted plugins
 frontend/**generated_plugin*
+frontend/*/*/*generated_plugin*
 
 # Coverage
 frontend/coverage/
