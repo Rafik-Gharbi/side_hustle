@@ -6,6 +6,7 @@ import '../../helpers/helper.dart';
 import '../../models/category.dart';
 import '../../models/filter_model.dart';
 import '../../models/task.dart';
+import '../../networking/api_base_helper.dart';
 import '../../repositories/task_repository.dart';
 import '../task_list/task_list_screen.dart';
 
@@ -52,5 +53,10 @@ class HomeController extends GetxController {
         ),
       );
     }
+  }
+
+  Future<void> onRefreshScreen() async {
+    MainAppController.find.isBackReachable.value = await ApiBaseHelper.find.checkConnectionToBackend();
+    // TODO fetch other tasks in hotTasks and nearbyTasks
   }
 }

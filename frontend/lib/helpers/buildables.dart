@@ -125,7 +125,7 @@ class Buildables {
               ),
           ],
         );
-    return CircleAvatar(radius: size! / 2, backgroundColor: kPrimaryColor, child: buildPicture(fontSize: size * 0.4));
+    return CircleAvatar(radius: size! / 2, backgroundColor: kPrimaryColor, child: buildPicture(fontSize: size * 0.3));
   }
 
   static Widget lightDivider() => Divider(thickness: 0.4, color: kNeutralColor);

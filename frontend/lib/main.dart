@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'database/database_repository/category_database_repository.dart';
@@ -51,8 +52,9 @@ import 'views/verification_screen.dart';
 import 'views/verify_user/verify_user_controller.dart';
 import 'views/verify_user/verify_user_screen.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterConfig.loadEnvVariables();
   runApp(const MyApp());
 }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:get/get.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -15,6 +16,8 @@ import '../models/dto/profile_dto.dart';
 import '../models/governorate.dart';
 import '../models/user.dart';
 import '../repositories/user_repository.dart';
+import '../views/profile/profile_controller.dart';
+import '../views/profile/profile_screen.dart';
 import '../widgets/verify_email_dialog.dart';
 import 'logger_service.dart';
 import 'shared_preferences.dart';
@@ -68,7 +71,7 @@ class AuthenticationService extends GetxController {
   User? get jwtUserData {
     final savedToken = SharedPreferencesService.find.get(jwtKey);
     if (isUserLoggedIn.value && _jwtUserData == null && savedToken != null) {
-      // _jwtUserData = User.fromToken(JwtDecoder.decode(savedToken).entries);
+      _jwtUserData = User.fromToken(JwtDecoder.decode(savedToken));
     }
     return isUserLoggedIn.value ? _jwtUserData : null;
   }
@@ -129,7 +132,10 @@ class AuthenticationService extends GetxController {
   }
 
   AuthenticationService() {
-    _googleSignIn = GoogleSignIn();
+    _googleSignIn = GoogleSignIn(
+      clientId: GetPlatform.isIOS || GetPlatform.isMacOS ? FlutterConfig.get('GOOGLE_CLIENT_ID') : null,
+      scopes: ['email', 'openid', 'profile'],
+    );
     // Check if exist a saved token and relogin the user
     Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () async {
       final savedToken = SharedPreferencesService.find.get(jwtKey);
@@ -142,8 +148,8 @@ class AuthenticationService extends GetxController {
           // init chat messages standBy room
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) => update());
         }
-        // } else if (_auth.currentUser != null) {
-        // _silentGoogleLogin();
+      } else if (_googleSignIn.currentUser != null) {
+        _silentGoogleLogin();
       } else {
         _checkIfFacebookUserIsLogged();
       }
@@ -175,26 +181,19 @@ class AuthenticationService extends GetxController {
 
   Future<Map<String, String?>?> signInWithGoogle({bool isLinking = false, bool isSignUp = false}) async {
     try {
-      //   GoogleAuthProvider googleProvider = GoogleAuthProvider();
-      //   UserCredential? result;
-      //   if (kIsWeb) {
-      //     result = await FirebaseAuth.instance.signInWithPopup(googleProvider);
-      //   } else {
-      //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      //     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-      //     final credential = GoogleAuthProvider.credential(
-      //       accessToken: googleAuth?.accessToken,
-      //       idToken: googleAuth?.idToken,
-      //     );
-      //     result = await FirebaseAuth.instance.signInWithCredential(credential);
-      //   }
-      //   if (result.user != null) {
-      //     return _silentGoogleLogin(isLinking: isLinking, isSignUp: isSignUp);
-      //   } else {
-      //     LoggerService.logger?.e('Sign-in failed due to unknown reason.'); // Handle failed sign-in
-      //   }
-      // } on firebase.FirebaseAuthException catch (e) {
-      //   LoggerService.logger?.e('Firebase error: $e'); // Handle Firebase-specific errors
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      // final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      // if (googleAuth != null) {}
+      // final credential = GoogleAuthProvider.credential(
+      //   accessToken: googleAuth?.accessToken,
+      //   idToken: googleAuth?.idToken,
+      // );
+      // final result = await FirebaseAuth.instance.signInWithCredential(credential);
+      if (googleUser?.id != null) {
+        return _silentGoogleLogin(isLinking: isLinking, isSignUp: isSignUp);
+      } else {
+        LoggerService.logger?.e('Sign-in with Google failed due to unknown reason.'); // Handle failed sign-in
+      }
     } catch (error) {
       LoggerService.logger?.e('Error: $error'); // Handle general errors
     }
@@ -223,7 +222,7 @@ class AuthenticationService extends GetxController {
     } catch (e) {
       LoggerService.logger?.e('Error: $e');
     }
-    // if (_auth.currentUser != null) await _googleLogout();
+    if (_googleSignIn.currentUser != null) await _googleLogout();
     if (isFacebookLoggedIn) await _facebookLogout();
     SharedPreferencesService.find.removeKey(jwtKey);
     SharedPreferencesService.find.removeKey(refreshTokenKey);
@@ -314,7 +313,7 @@ class AuthenticationService extends GetxController {
   Future<void> _facebookLogout() async => await FacebookAuth.instance.logOut();
 
   Future<void> _googleLogout() async {
-    // await _auth.signOut();
+    await _googleSignIn.signOut();
     await _googleSignIn.signOut();
   }
 
@@ -324,18 +323,18 @@ class AuthenticationService extends GetxController {
   }
 
   Map<String, String?>? _silentGoogleLogin({bool isLinking = false, bool isSignUp = false}) {
-    // final googleUser = User(
-    //   email: _auth.currentUser!.email,
-    //   name: _auth.currentUser!.displayName,
-    //   picture: _auth.currentUser!.photoURL,
-    //   googleId: _auth.currentUser!.providerData[0].uid,
-    // );
-    // if (isSignUp) {
-    //   signUpUser(user: googleUser);
-    // } else {
-    //   if (!isLinking) _handleLogin(googleUser);
-    // }
-    // return {'googleId': googleUser.googleId, 'email': googleUser.email, 'name': googleUser.name, 'picture': googleUser.picture};
+    final googleUser = User(
+      email: _googleSignIn.currentUser!.email,
+      name: _googleSignIn.currentUser!.displayName,
+      picture: _googleSignIn.currentUser!.photoUrl,
+      googleId: _googleSignIn.currentUser!.id,
+    );
+    if (isSignUp) {
+      signUpUser(user: googleUser);
+    } else {
+      if (!isLinking) _handleLogin(googleUser);
+    }
+    return {'googleId': googleUser.googleId, 'email': googleUser.email, 'name': googleUser.name, 'picture': googleUser.picture};
   }
 
   Future<Map<String, String?>?> _silentFacebookLogin({bool isLinking = false, bool isSignUp = false}) async {
@@ -367,6 +366,8 @@ class AuthenticationService extends GetxController {
         //   if (GetPlatform.isMobile) Helper.mobileEmailVerification(user.email);
         // });
       }
+    } else {
+      logout();
     }
   }
 
@@ -388,6 +389,7 @@ class AuthenticationService extends GetxController {
         jwtUserData?.isMailVerified = userFromToken.isMailVerified;
         jwtUserData?.password = null;
       }
+      if (Get.currentRoute == ProfileScreen.routeName) ProfileController.find.init();
       if ((Get.isDialogOpen ?? false) || (Get.isBottomSheetOpen ?? false)) Get.back();
       update();
     }

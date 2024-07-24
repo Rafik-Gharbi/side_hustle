@@ -18,6 +18,7 @@ const {
   getDate,
   removeSpacesFromPhoneNumber,
   generateJWT,
+  adjustString,
 } = require("../helper/helpers");
 const {
   downloadImage,
@@ -178,7 +179,7 @@ exports.signUp = async (req, res) => {
         const pictureName = `${extractIdFromGoogleUrl(picture)}.jpg`;
         try {
           const name = await downloadImage(picture);
-          await saveImage(pictureName, name, "images/user");
+          await saveImage(adjustString(pictureName), name, "images/user");
           newPicture = pictureName;
         } catch (error) {
           console.error("Error downloading image:", error);

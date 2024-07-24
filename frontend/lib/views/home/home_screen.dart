@@ -30,133 +30,139 @@ class HomeScreen extends StatelessWidget {
         child: CustomScaffoldBottomNavigation(
           body: Padding(
             padding: const EdgeInsets.all(Paddings.large),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Obx(
-                    () => Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Hello,', style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
-                            if (AuthenticationService.find.isUserLoggedIn.value)
-                              Text(AuthenticationService.find.jwtUserData?.name ?? 'User', style: AppFonts.x16Bold)
-                            else
-                              const Text('Guest User', style: AppFonts.x16Bold)
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: Paddings.regular),
-                          child: Row(
+            child: RefreshIndicator(
+              color: kPrimaryColor,
+              backgroundColor: kNeutralColor100,
+              displacement: 20,
+              onRefresh: controller.onRefreshScreen,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Obx(
+                      () => Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              AuthenticationService.find.isUserLoggedIn.value
-                                  ? CustomButtons.icon(
-                                      icon: const Icon(Icons.notifications_outlined),
-                                      onPressed: () {},
-                                    )
-                                  : CustomButtons.text(
-                                      title: 'Login',
-                                      titleStyle: AppFonts.x14Bold.copyWith(color: kNeutralColor),
-                                      onPressed: () => Get.bottomSheet(const LoginDialog(), isScrollControlled: true).then((value) {
-                                        AuthenticationService.find.currentState = LoginWidgetState.login;
-                                        AuthenticationService.find.clearFormFields();
-                                        controller.update();
-                                      }),
-                                    ),
-                              CustomButtons.icon(
-                                icon: const Icon(Icons.settings_outlined),
-                                onPressed: () {},
-                              ),
+                              Text('Hello,', style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
+                              if (AuthenticationService.find.isUserLoggedIn.value)
+                                Text(AuthenticationService.find.jwtUserData?.name ?? 'User', style: AppFonts.x16Bold)
+                              else
+                                const Text('Guest User', style: AppFonts.x16Bold)
                             ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: Paddings.regular),
+                            child: Row(
+                              children: [
+                                AuthenticationService.find.isUserLoggedIn.value
+                                    ? CustomButtons.icon(
+                                        icon: const Icon(Icons.notifications_outlined),
+                                        onPressed: () {},
+                                      )
+                                    : CustomButtons.text(
+                                        title: 'Login',
+                                        titleStyle: AppFonts.x14Bold.copyWith(color: kNeutralColor),
+                                        onPressed: () => Get.bottomSheet(const LoginDialog(), isScrollControlled: true).then((value) {
+                                          AuthenticationService.find.currentState = LoginWidgetState.login;
+                                          AuthenticationService.find.clearFormFields();
+                                          controller.update();
+                                        }),
+                                      ),
+                                CustomButtons.icon(
+                                  icon: const Icon(Icons.settings_outlined),
+                                  onPressed: () {},
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: Paddings.exceptional),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextField(
+                            hintText: 'Search Task',
+                            fillColor: kNeutralLightOpacityColor,
+                            fieldController: controller.searchController,
+                            onChanged: (_) => Helper.onSearchDebounce(controller.searchTask),
+                          ),
+                        ),
+                        const SizedBox(width: Paddings.regular),
+                        CustomButtons.iconWithBackground(
+                          icon: const Icon(Icons.filter_alt_outlined, color: kBlackColor),
+                          buttonColor: kNeutralLightOpacityColor,
+                          onPressed: () => Get.dialog(
+                            MoreFiltersPopup(
+                              updateFilter: (filter) => controller.filterModel = filter,
+                              clearFilter: () => controller.filterModel = FilterModel(),
+                              filter: controller.filterModel,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: Paddings.exceptional),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextField(
-                          hintText: 'Search Task',
-                          fillColor: kNeutralLightOpacityColor,
-                          fieldController: controller.searchController,
-                          onChanged: (_) => Helper.onSearchDebounce(controller.searchTask),
+                    const SizedBox(height: Paddings.exceptional),
+                    buildTitle(
+                      'Popular Categories',
+                      () => Get.bottomSheet(
+                        SizedBox(
+                          height: Get.height * 0.7,
+                          child: CategoriesBottomsheet(onSelectCategory: (category) {
+                            Get.back();
+                            WidgetsBinding.instance.addPostFrameCallback(
+                              (_) => Get.toNamed(
+                                TaskListScreen.routeName,
+                                arguments: TaskListScreen(filterModel: FilterModel(category: category.first)),
+                              ),
+                            );
+                          }),
+                        ),
+                        isScrollControlled: true,
+                      ),
+                    ),
+                    Row(
+                      children: List.generate(
+                        controller.mostPopularCategories.length,
+                        (index) => Padding(
+                          padding: EdgeInsets.only(right: index < controller.mostPopularCategories.length - 1 ? Paddings.regular : 0),
+                          child: CategoryCard(category: controller.mostPopularCategories[index]),
                         ),
                       ),
-                      const SizedBox(width: Paddings.regular),
-                      CustomButtons.iconWithBackground(
-                        icon: const Icon(Icons.filter_alt_outlined, color: kBlackColor),
-                        buttonColor: kNeutralLightOpacityColor,
-                        onPressed: () => Get.dialog(
-                          MoreFiltersPopup(
-                            updateFilter: (filter) => controller.filterModel = filter,
-                            clearFilter: () => controller.filterModel = FilterModel(),
-                            filter: controller.filterModel,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: Paddings.exceptional),
-                  buildTitle(
-                    'Popular Categories',
-                    () => Get.bottomSheet(
-                      SizedBox(
-                        height: Get.height * 0.7,
-                        child: CategoriesBottomsheet(onSelectCategory: (category) {
-                          Get.back();
-                          WidgetsBinding.instance.addPostFrameCallback(
-                            (_) => Get.toNamed(
-                              TaskListScreen.routeName,
-                              arguments: TaskListScreen(filterModel: FilterModel(category: category.first)),
+                    ),
+                    const SizedBox(height: Paddings.exceptional),
+                    Column(
+                      children: [
+                        buildTitle('Hot Tasks', () {}),
+                        if (controller.hotTasks.isNotEmpty)
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: 3,
+                            itemBuilder: (context, index) => Padding(
+                              padding: const EdgeInsets.only(bottom: Paddings.small),
+                              child: TaskCard(task: controller.hotTasks[index]),
                             ),
-                          );
-                        }),
-                      ),
-                      isScrollControlled: true,
-                    ),
-                  ),
-                  Row(
-                    children: List.generate(
-                      controller.mostPopularCategories.length,
-                      (index) => Padding(
-                        padding: EdgeInsets.only(right: index < controller.mostPopularCategories.length - 1 ? Paddings.regular : 0),
-                        child: CategoryCard(category: controller.mostPopularCategories[index]),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: Paddings.exceptional),
-                  Column(
-                    children: [
-                      buildTitle('Hot Tasks', () {}),
-                      if (controller.hotTasks.isNotEmpty)
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: 3,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.only(bottom: Paddings.small),
-                            child: TaskCard(task: controller.hotTasks[index]),
                           ),
-                        ),
-                      buildTitle('New Tasks Nearby', () => Get.toNamed(TaskListScreen.routeName)),
-                      if (controller.hotTasks.isNotEmpty)
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: 3,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.only(bottom: Paddings.small),
-                            child: TaskCard(task: controller.hotTasks[index + 3]),
+                        buildTitle('New Tasks Nearby', () => Get.toNamed(TaskListScreen.routeName)),
+                        if (controller.hotTasks.isNotEmpty)
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: 3,
+                            itemBuilder: (context, index) => Padding(
+                              padding: const EdgeInsets.only(bottom: Paddings.small),
+                              child: TaskCard(task: controller.hotTasks[index + 3]),
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

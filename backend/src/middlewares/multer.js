@@ -2,15 +2,16 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
+const { adjustString } = require("../helper/helpers");
 
 // Config
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const dir = path.join(__dirname, "../../public/images/client");
+    const dir = path.join(__dirname, "../../public/images/user");
     if (!fs.existsSync(dir)) {
       execSync(`mkdir -p "${dir}"`);
     }
-    cb(null, "public/images/client");
+    cb(null, "public/images/user");
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname).toLowerCase();
@@ -19,7 +20,7 @@ var storage = multer.diskStorage({
       error.status = 415;
       return cb(error);
     }
-    cb(null, `${adjustString(file.originalname, ext)}-${req.decoded.id}${ext}`);
+    cb(null, `${adjustString(file.originalname)}-${req.decoded.id}${ext}`);
   },
 });
 
@@ -34,16 +35,3 @@ const fileUpload = upload.fields([
 ]);
 
 module.exports = { fileUpload };
-
-function adjustString(inputString, ext) {
-  let sanitizedString = inputString.toLowerCase();
-  // Remove the provided extension if it exists at the end of the string
-  if (sanitizedString.endsWith(ext.toLowerCase())) {
-    sanitizedString = sanitizedString.slice(0, -ext.length);
-  }
-  // Remove special characters and spaces
-  sanitizedString = sanitizedString.replace(/[^\w\s]/gi, ""); // Remove special characters
-  sanitizedString = sanitizedString.replace(/\s+/g, ""); // Remove spaces
-
-  return sanitizedString;
-}

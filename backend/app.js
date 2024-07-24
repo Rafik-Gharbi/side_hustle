@@ -49,8 +49,8 @@ app.get("/public/store/:id", (req, res) => {
 app.get("/public/images/:id", (req, res) => {
   res.sendFile(path.join(__dirname, `./public/images/${req.params.id}`));
 });
-app.get("/public/images/client/:id", (req, res) => {
-  res.sendFile(path.join(__dirname, `./public/images/client/${req.params.id}`));
+app.get("/public/images/user/:id", (req, res) => {
+  res.sendFile(path.join(__dirname, `./public/images/user/${req.params.id}`));
 });
 // API for uploads file (photo, galleries)
 app.get("/public/css/:id", (req, res) => {

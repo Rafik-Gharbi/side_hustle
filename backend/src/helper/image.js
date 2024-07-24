@@ -42,7 +42,7 @@ async function saveImage(imageName, imageBuffer, folder, resize = true) {
   }
 }
 function deleteImages() {
-  deleteFolderRecursive("../../public/images/client");
+  deleteFolderRecursive("../../public/images/user");
   deleteFolderRecursive("../../public/task");
 }
 function deleteImage(filePath) {

@@ -178,7 +178,7 @@ class ApiBaseHelper extends GetxController {
   String getImageTask(String pictureName) => '$baseUrl/public/task/$pictureName';
   String getImageStore(String pictureName) => '$baseUrl/public/store/$pictureName';
   String getImageLocal(String pictureName) => pictureName;
-  String getUserImage(String pictureName) => '$baseUrl/public/images/client/$pictureName';
+  String getUserImage(String pictureName) => '$baseUrl/public/images/user/$pictureName';
 
   dynamic _returnResponse(http.Response response) async {
     switch (response.statusCode) {

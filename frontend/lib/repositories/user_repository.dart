@@ -26,7 +26,7 @@ class UserRepository extends GetxService {
     } on UnauthorisedException {
       Helper.snackBar(title: 'error'.tr, message: 'missing_credentials'.tr);
     } on NotFoundException {
-      Helper.snackBar(title: 'error'.tr, message: 'not_found'.tr);
+      Helper.snackBar(title: 'error'.tr, message: 'user_not_found'.tr);
     } catch (e) {
       LoggerService.logger?.e('Error occured in login:\n$e');
     }
@@ -148,6 +148,7 @@ class UserRepository extends GetxService {
         return null;
       }
     } catch (e) {
+      if (e.toString().contains('user_not_found')) AuthenticationService.find.logout();
       LoggerService.logger?.e('Error occurred in getLoggedInUser:\n$e');
       return null;
     }

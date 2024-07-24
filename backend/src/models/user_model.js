@@ -28,7 +28,7 @@ const User = sequelize.define(
     isArchived: { type: Sequelize.BOOLEAN, defaultValue: false },
     isVerified: { type: Sequelize.STRING, defaultValue: "none" },
     isMailVerified: { type: Sequelize.BOOLEAN, defaultValue: false },
-    role: { type: Sequelize.STRING, defaultValue: "[provider]" },
+    role: { type: Sequelize.STRING, defaultValue: "provider" },
   },
   {
     tableName: "user",

@@ -1059,7 +1059,7 @@ const contratHtml = () => `
             $("#loader").show();
             $.ajax({
               type: "POST",
-              url: "/api/client/create-contract",
+              url: "/api/user/create-contract",
               data: {
                 signatureDataURL: dataURL,
               },

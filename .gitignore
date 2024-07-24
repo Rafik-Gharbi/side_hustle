@@ -10,6 +10,8 @@ backend/public/store/*
 backend/*.DS_Store
 
 # Miscellaneous
+frontend/.env
+frontend/*/*client_secret*
 frontend/*.class
 frontend/*.lock
 frontend/*.log

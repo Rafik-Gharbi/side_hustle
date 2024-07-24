@@ -5,6 +5,26 @@ const jwt = require("jsonwebtoken");
 const { Task } = require("../models/task_model");
 const { Reservation } = require("../models/reservation_model");
 
+function adjustString(inputString) {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (![".jpg", ".jpeg", ".png", ".gif", ".webp", ".pdf", ".doc", ".docx"].includes(ext)) {
+    const error = new Error("Extension not allowed");
+    error.status = 415;
+    return cb(error);
+  }
+
+  let sanitizedString = inputString.toLowerCase();
+  // Remove the provided extension if it exists at the end of the string
+  if (sanitizedString.endsWith(ext.toLowerCase())) {
+    sanitizedString = sanitizedString.slice(0, -ext.length);
+  }
+  // Remove special characters and spaces
+  sanitizedString = sanitizedString.replace(/[^\w\s]/gi, ""); // Remove special characters
+  sanitizedString = sanitizedString.replace(/\s+/g, ""); // Remove spaces
+
+  return sanitizedString;
+}
+
 function addAuthentication(body, targetProperty) {
   const targetObject = body[targetProperty];
 
@@ -384,4 +404,5 @@ module.exports = {
   transformStringToJson,
   getFileType,
   getTaskCondidatesNumber,
+  adjustString,
 };

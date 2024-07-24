@@ -13,6 +13,8 @@ import '../../services/authentication_service.dart';
 import '../../services/logger_service.dart';
 
 class ProfileController extends GetxController {
+  /// not permanent use with caution
+  static ProfileController get find => Get.find<ProfileController>();
   User? loggedInUser;
   bool _isLoading = true;
   XFile? profilePicture;

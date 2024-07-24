@@ -41,7 +41,6 @@ final Map<String, String> enUs = <String, String>{
   'email_verify': 'Email Verification',
   'verify_email_msg': 'Please verify your email with the recieved code.',
   'payment_canceled': 'Payment canceled by the user',
-  'client_not_found': 'Client does not exist',
   'where_to': 'Where to?',
   'where': 'Where',
   'who': 'Who?',
@@ -303,6 +302,7 @@ final Map<String, String> enUs = <String, String>{
   'invalid_credentials': 'Invalid credentials',
   'missing_password': 'Password is required',
   'account_not_found': 'Account not found',
+  'user_not_found': 'User does not exist, please create an account.',
   'already_verified': 'User already verified',
   // chech in location
   'at_the_apartment': 'At the apartment',
