@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../helpers/helper.dart';
+import '../models/enum/request_status.dart';
 import '../models/reservation.dart';
 import '../models/task.dart';
 import '../networking/api_base_helper.dart';
@@ -57,7 +58,7 @@ class ReservationRepository extends GetxService {
     return 0;
   }
 
-  Future<void> updateReservationStatus(Reservation reservation, ReservationStatus status) async {
+  Future<void> updateReservationStatus(Reservation reservation, RequestStatus status) async {
     try {
       await ApiBaseHelper().request(
         RequestType.post,

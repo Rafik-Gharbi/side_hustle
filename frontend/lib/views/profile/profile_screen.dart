@@ -173,7 +173,7 @@ class ProfileScreen extends StatelessWidget {
                                                           },
                                                         ),
                                                         buildActionTile(
-                                                          label: 'my_saved_tasks'.tr,
+                                                          label: 'my_bookmarks'.tr,
                                                           icon: Icons.bookmark_add_outlined,
                                                           onTap: () => Get.toNamed(FavoriteScreen.routeName),
                                                         ),

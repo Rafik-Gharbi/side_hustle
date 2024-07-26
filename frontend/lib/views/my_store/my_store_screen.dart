@@ -9,9 +9,11 @@ import '../../services/authentication_service.dart';
 import '../../services/theme/theme.dart';
 import '../../widgets/custom_buttons.dart';
 import '../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../widgets/custom_text_field.dart';
 import '../../widgets/hold_in_safe_area.dart';
 import '../../widgets/loading_request.dart';
 import '../../widgets/service_card.dart';
+import '../service_request/service_request_screen.dart';
 import 'my_store_controller.dart';
 
 class MyStoreScreen extends StatelessWidget {
@@ -117,34 +119,70 @@ class MyStoreScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: Paddings.small),
-                        Text(controller.userStore!.name ?? 'User store', style: AppFonts.x18Bold),
+                        Text(controller.userStore?.name ?? 'User store', style: AppFonts.x18Bold),
                         const SizedBox(height: Paddings.small),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(Icons.pin_drop_outlined, size: 14),
                             const SizedBox(width: Paddings.regular),
-                            Text(controller.userStore!.governorate?.name ?? 'City', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                            Text(controller.userStore?.governorate?.name ?? 'City', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                           ],
                         ),
                         const SizedBox(height: Paddings.extraLarge),
                         const Text('Store description:', style: AppFonts.x15Bold),
                         const SizedBox(height: Paddings.regular),
-                        Text(controller.userStore!.description ?? '', style: AppFonts.x14Regular, softWrap: true),
+                        Text(controller.userStore?.description ?? '', style: AppFonts.x14Regular, softWrap: true),
                         const SizedBox(height: Paddings.exceptional),
-                        if (controller.userStore!.services?.isNotEmpty ?? false) ...[
+                        if (controller.userStore?.services?.isNotEmpty ?? false) ...[
                           const Text('Store services', style: AppFonts.x15Bold),
                           const SizedBox(height: Paddings.large),
                           ListView.separated(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: controller.userStore!.services!.length,
+                            itemCount: controller.userStore?.services?.length ?? 0,
                             separatorBuilder: (context, index) => const SizedBox(height: Paddings.regular),
                             itemBuilder: (context, index) {
-                              final service = controller.userStore!.services![index];
+                              final service = controller.userStore?.services![index];
                               return ServiceCard(
-                                service: service,
-                                onBookService: () => isOwner ? Helper.snackBar(message: 'You cannot book your own service!') : {},
+                                service: service!,
+                                requests: service.requests,
+                                onBookService: () => isOwner
+                                    ? Get.toNamed(ServiceRequestScreen.routeName, arguments: service)
+                                    : AuthenticationService.find.isUserLoggedIn.value
+                                        ? Get.bottomSheet(
+                                            SizedBox(
+                                              height: Get.height * 0.4,
+                                              child: Material(
+                                                borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(Paddings.large),
+                                                  child: Column(
+                                                    children: [
+                                                      const SizedBox(height: Paddings.regular),
+                                                      const Center(child: Text('Request a service', style: AppFonts.x16Bold)),
+                                                      const SizedBox(height: Paddings.exceptional),
+                                                      CustomTextField(
+                                                        fieldController: controller.noteController,
+                                                        isTextArea: true,
+                                                        outlinedBorder: true,
+                                                        outlinedBorderColor: kNeutralColor,
+                                                        hintText: 'Add a note for the store owner',
+                                                      ),
+                                                      const SizedBox(height: Paddings.exceptional),
+                                                      CustomButtons.elevatePrimary(
+                                                        title: 'Submit a request',
+                                                        width: Get.width,
+                                                        onPressed: () => controller.bookService(service),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            isScrollControlled: true,
+                                          ).then((value) => controller.clearRequestFormFields())
+                                        : Helper.snackBar(message: 'login_express_interest_msg'.tr),
                                 isOwner: AuthenticationService.find.jwtUserData?.id == controller.userStore?.owner?.id,
                                 onDeleteService: () => controller.deleteService(service),
                                 onEditService: () => controller.editService(service),

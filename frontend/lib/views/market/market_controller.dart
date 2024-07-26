@@ -34,13 +34,6 @@ class MarketController extends GetxController {
     });
   }
 
-  Future<void> getAllStores() async {
-    storeList = await StoreRepository.find.filterStores(page: ++page) ?? [];
-    filteredStoreList = List.of(storeList);
-    isLoading = false;
-    update();
-  }
-
   Future<void> fetchSearchedStores({FilterModel? filter, String? searchQuery}) async {
     if (searchQuery != null && searchQuery.isNotEmpty) {
       openSearchBar.value = true;
@@ -64,13 +57,5 @@ class MarketController extends GetxController {
     if (isEndList || ApiBaseHelper.find.blockRequest) return;
     ApiBaseHelper.find.blockRequest = true;
     fetchSearchedStores().then((value) => Future.delayed(Durations.long1, () => ApiBaseHelper.find.blockRequest = false));
-  }
-
-  double getStoreCheapestService(Store store) {
-    double cheapestService = 9999;
-    for (var element in store.services!) {
-      if ((element.price ?? 0) < cheapestService) cheapestService = element.price ?? 0;
-    }
-    return cheapestService;
   }
 }

@@ -6,12 +6,15 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../helpers/helper.dart';
 import '../../helpers/image_picker_by_platform/image_picker_platform.dart';
+import '../../models/booking.dart';
 import '../../models/category.dart';
 import '../../models/dto/image_dto.dart';
 import '../../models/governorate.dart';
 import '../../models/service.dart';
 import '../../models/store.dart';
+import '../../repositories/booking_repository.dart';
 import '../../repositories/store_repository.dart';
+import '../../services/authentication_service.dart';
 import '../../services/logger_service.dart';
 import 'components/add_service_bottomsheet.dart';
 import 'components/add_store_bottomsheet.dart';
@@ -23,6 +26,7 @@ class MyStoreController extends GetxController {
   final TextEditingController servicePriceController = TextEditingController();
   final TextEditingController serviceDescriptionController = TextEditingController();
   final TextEditingController serviceNameController = TextEditingController();
+  final TextEditingController noteController = TextEditingController();
   XFile? storePicture;
   Store? userStore;
   bool isLoading = true;
@@ -102,6 +106,7 @@ class MyStoreController extends GetxController {
           gallery: serviceGallery.map((e) => ImageDTO(file: e, type: ImageType.image)).toList(),
           price: double.tryParse(servicePriceController.text),
         ),
+        userStore!,
         withBack: true,
       );
     } else {
@@ -114,6 +119,7 @@ class MyStoreController extends GetxController {
           gallery: serviceGallery.map((e) => ImageDTO(file: e, type: ImageType.image)).toList(),
           price: double.tryParse(servicePriceController.text),
         ),
+        userStore!,
         withBack: true,
       );
     }
@@ -186,7 +192,21 @@ class MyStoreController extends GetxController {
         },
       );
 
-  void bookService() {
+  Future<void> bookService(Service service) async {
+    final result = await BookingRepository.find.addBooking(
+      booking: Booking(
+        service: service,
+        date: DateTime.now(),
+        totalPrice: service.price ?? 0,
+        user: AuthenticationService.find.jwtUserData!,
+        note: noteController.text,
+        // coupon: coupon,
+      ),
+    );
+    if (result) {
+      Get.back();
+      Helper.snackBar(message: 'Service has been booked successfully');
+    }
     // TODO add service booking
   }
 
@@ -206,5 +226,9 @@ class MyStoreController extends GetxController {
     category = null;
     updateServiceId = null;
     update();
+  }
+
+  clearRequestFormFields() {
+    noteController.clear();
   }
 }

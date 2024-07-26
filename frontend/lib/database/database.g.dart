@@ -1845,6 +1845,1049 @@ class TaskAttachmentTableCompanion
   }
 }
 
+class $StoreTableTable extends StoreTable
+    with TableInfo<$StoreTableTable, StoreTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $StoreTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+      'description', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _pictureMeta =
+      const VerificationMeta('picture');
+  @override
+  late final GeneratedColumn<String> picture = GeneratedColumn<String>(
+      'picture', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _coordinatesMeta =
+      const VerificationMeta('coordinates');
+  @override
+  late final GeneratedColumn<String> coordinates = GeneratedColumn<String>(
+      'coordinates', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _governorateMeta =
+      const VerificationMeta('governorate');
+  @override
+  late final GeneratedColumn<int> governorate = GeneratedColumn<int>(
+      'governorate', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES governorate_table (id)'));
+  static const VerificationMeta _ownerMeta = const VerificationMeta('owner');
+  @override
+  late final GeneratedColumn<int> owner = GeneratedColumn<int>(
+      'owner', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES user_table (id)'));
+  static const VerificationMeta _isFavoriteMeta =
+      const VerificationMeta('isFavorite');
+  @override
+  late final GeneratedColumn<bool> isFavorite = GeneratedColumn<bool>(
+      'is_favorite', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_favorite" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        name,
+        description,
+        picture,
+        coordinates,
+        governorate,
+        owner,
+        isFavorite
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'store_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<StoreTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description']!, _descriptionMeta));
+    }
+    if (data.containsKey('picture')) {
+      context.handle(_pictureMeta,
+          picture.isAcceptableOrUnknown(data['picture']!, _pictureMeta));
+    }
+    if (data.containsKey('coordinates')) {
+      context.handle(
+          _coordinatesMeta,
+          coordinates.isAcceptableOrUnknown(
+              data['coordinates']!, _coordinatesMeta));
+    }
+    if (data.containsKey('governorate')) {
+      context.handle(
+          _governorateMeta,
+          governorate.isAcceptableOrUnknown(
+              data['governorate']!, _governorateMeta));
+    }
+    if (data.containsKey('owner')) {
+      context.handle(
+          _ownerMeta, owner.isAcceptableOrUnknown(data['owner']!, _ownerMeta));
+    }
+    if (data.containsKey('is_favorite')) {
+      context.handle(
+          _isFavoriteMeta,
+          isFavorite.isAcceptableOrUnknown(
+              data['is_favorite']!, _isFavoriteMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  StoreTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return StoreTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      description: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
+      picture: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}picture'])!,
+      coordinates: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}coordinates'])!,
+      governorate: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}governorate']),
+      owner: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}owner']),
+      isFavorite: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_favorite'])!,
+    );
+  }
+
+  @override
+  $StoreTableTable createAlias(String alias) {
+    return $StoreTableTable(attachedDatabase, alias);
+  }
+}
+
+class StoreTableData extends DataClass implements Insertable<StoreTableData> {
+  final int id;
+  final String name;
+  final String description;
+  final String picture;
+  final String coordinates;
+  final int? governorate;
+  final int? owner;
+  final bool isFavorite;
+  const StoreTableData(
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.picture,
+      required this.coordinates,
+      this.governorate,
+      this.owner,
+      required this.isFavorite});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['description'] = Variable<String>(description);
+    map['picture'] = Variable<String>(picture);
+    map['coordinates'] = Variable<String>(coordinates);
+    if (!nullToAbsent || governorate != null) {
+      map['governorate'] = Variable<int>(governorate);
+    }
+    if (!nullToAbsent || owner != null) {
+      map['owner'] = Variable<int>(owner);
+    }
+    map['is_favorite'] = Variable<bool>(isFavorite);
+    return map;
+  }
+
+  StoreTableCompanion toCompanion(bool nullToAbsent) {
+    return StoreTableCompanion(
+      id: Value(id),
+      name: Value(name),
+      description: Value(description),
+      picture: Value(picture),
+      coordinates: Value(coordinates),
+      governorate: governorate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(governorate),
+      owner:
+          owner == null && nullToAbsent ? const Value.absent() : Value(owner),
+      isFavorite: Value(isFavorite),
+    );
+  }
+
+  factory StoreTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return StoreTableData(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      description: serializer.fromJson<String>(json['description']),
+      picture: serializer.fromJson<String>(json['picture']),
+      coordinates: serializer.fromJson<String>(json['coordinates']),
+      governorate: serializer.fromJson<int?>(json['governorate']),
+      owner: serializer.fromJson<int?>(json['owner']),
+      isFavorite: serializer.fromJson<bool>(json['isFavorite']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'description': serializer.toJson<String>(description),
+      'picture': serializer.toJson<String>(picture),
+      'coordinates': serializer.toJson<String>(coordinates),
+      'governorate': serializer.toJson<int?>(governorate),
+      'owner': serializer.toJson<int?>(owner),
+      'isFavorite': serializer.toJson<bool>(isFavorite),
+    };
+  }
+
+  StoreTableData copyWith(
+          {int? id,
+          String? name,
+          String? description,
+          String? picture,
+          String? coordinates,
+          Value<int?> governorate = const Value.absent(),
+          Value<int?> owner = const Value.absent(),
+          bool? isFavorite}) =>
+      StoreTableData(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        description: description ?? this.description,
+        picture: picture ?? this.picture,
+        coordinates: coordinates ?? this.coordinates,
+        governorate: governorate.present ? governorate.value : this.governorate,
+        owner: owner.present ? owner.value : this.owner,
+        isFavorite: isFavorite ?? this.isFavorite,
+      );
+  StoreTableData copyWithCompanion(StoreTableCompanion data) {
+    return StoreTableData(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      description:
+          data.description.present ? data.description.value : this.description,
+      picture: data.picture.present ? data.picture.value : this.picture,
+      coordinates:
+          data.coordinates.present ? data.coordinates.value : this.coordinates,
+      governorate:
+          data.governorate.present ? data.governorate.value : this.governorate,
+      owner: data.owner.present ? data.owner.value : this.owner,
+      isFavorite:
+          data.isFavorite.present ? data.isFavorite.value : this.isFavorite,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StoreTableData(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('picture: $picture, ')
+          ..write('coordinates: $coordinates, ')
+          ..write('governorate: $governorate, ')
+          ..write('owner: $owner, ')
+          ..write('isFavorite: $isFavorite')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name, description, picture, coordinates,
+      governorate, owner, isFavorite);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is StoreTableData &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.description == this.description &&
+          other.picture == this.picture &&
+          other.coordinates == this.coordinates &&
+          other.governorate == this.governorate &&
+          other.owner == this.owner &&
+          other.isFavorite == this.isFavorite);
+}
+
+class StoreTableCompanion extends UpdateCompanion<StoreTableData> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> description;
+  final Value<String> picture;
+  final Value<String> coordinates;
+  final Value<int?> governorate;
+  final Value<int?> owner;
+  final Value<bool> isFavorite;
+  const StoreTableCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.description = const Value.absent(),
+    this.picture = const Value.absent(),
+    this.coordinates = const Value.absent(),
+    this.governorate = const Value.absent(),
+    this.owner = const Value.absent(),
+    this.isFavorite = const Value.absent(),
+  });
+  StoreTableCompanion.insert({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.description = const Value.absent(),
+    this.picture = const Value.absent(),
+    this.coordinates = const Value.absent(),
+    this.governorate = const Value.absent(),
+    this.owner = const Value.absent(),
+    this.isFavorite = const Value.absent(),
+  });
+  static Insertable<StoreTableData> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? description,
+    Expression<String>? picture,
+    Expression<String>? coordinates,
+    Expression<int>? governorate,
+    Expression<int>? owner,
+    Expression<bool>? isFavorite,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+      if (picture != null) 'picture': picture,
+      if (coordinates != null) 'coordinates': coordinates,
+      if (governorate != null) 'governorate': governorate,
+      if (owner != null) 'owner': owner,
+      if (isFavorite != null) 'is_favorite': isFavorite,
+    });
+  }
+
+  StoreTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? name,
+      Value<String>? description,
+      Value<String>? picture,
+      Value<String>? coordinates,
+      Value<int?>? governorate,
+      Value<int?>? owner,
+      Value<bool>? isFavorite}) {
+    return StoreTableCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      picture: picture ?? this.picture,
+      coordinates: coordinates ?? this.coordinates,
+      governorate: governorate ?? this.governorate,
+      owner: owner ?? this.owner,
+      isFavorite: isFavorite ?? this.isFavorite,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (picture.present) {
+      map['picture'] = Variable<String>(picture.value);
+    }
+    if (coordinates.present) {
+      map['coordinates'] = Variable<String>(coordinates.value);
+    }
+    if (governorate.present) {
+      map['governorate'] = Variable<int>(governorate.value);
+    }
+    if (owner.present) {
+      map['owner'] = Variable<int>(owner.value);
+    }
+    if (isFavorite.present) {
+      map['is_favorite'] = Variable<bool>(isFavorite.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StoreTableCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('picture: $picture, ')
+          ..write('coordinates: $coordinates, ')
+          ..write('governorate: $governorate, ')
+          ..write('owner: $owner, ')
+          ..write('isFavorite: $isFavorite')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ServiceTableTable extends ServiceTable
+    with TableInfo<$ServiceTableTable, ServiceTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ServiceTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+      'description', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _categoryMeta =
+      const VerificationMeta('category');
+  @override
+  late final GeneratedColumn<int> category = GeneratedColumn<int>(
+      'category', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES category_table (id)'));
+  static const VerificationMeta _storeMeta = const VerificationMeta('store');
+  @override
+  late final GeneratedColumn<int> store = GeneratedColumn<int>(
+      'store', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES store_table (id)'));
+  static const VerificationMeta _priceMeta = const VerificationMeta('price');
+  @override
+  late final GeneratedColumn<double> price = GeneratedColumn<double>(
+      'price', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, name, description, category, store, price];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'service_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<ServiceTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description']!, _descriptionMeta));
+    }
+    if (data.containsKey('category')) {
+      context.handle(_categoryMeta,
+          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
+    }
+    if (data.containsKey('store')) {
+      context.handle(
+          _storeMeta, store.isAcceptableOrUnknown(data['store']!, _storeMeta));
+    }
+    if (data.containsKey('price')) {
+      context.handle(
+          _priceMeta, price.isAcceptableOrUnknown(data['price']!, _priceMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ServiceTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ServiceTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      description: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
+      category: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}category']),
+      store: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}store']),
+      price: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}price'])!,
+    );
+  }
+
+  @override
+  $ServiceTableTable createAlias(String alias) {
+    return $ServiceTableTable(attachedDatabase, alias);
+  }
+}
+
+class ServiceTableData extends DataClass
+    implements Insertable<ServiceTableData> {
+  final int id;
+  final String name;
+  final String description;
+  final int? category;
+  final int? store;
+  final double price;
+  const ServiceTableData(
+      {required this.id,
+      required this.name,
+      required this.description,
+      this.category,
+      this.store,
+      required this.price});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['description'] = Variable<String>(description);
+    if (!nullToAbsent || category != null) {
+      map['category'] = Variable<int>(category);
+    }
+    if (!nullToAbsent || store != null) {
+      map['store'] = Variable<int>(store);
+    }
+    map['price'] = Variable<double>(price);
+    return map;
+  }
+
+  ServiceTableCompanion toCompanion(bool nullToAbsent) {
+    return ServiceTableCompanion(
+      id: Value(id),
+      name: Value(name),
+      description: Value(description),
+      category: category == null && nullToAbsent
+          ? const Value.absent()
+          : Value(category),
+      store:
+          store == null && nullToAbsent ? const Value.absent() : Value(store),
+      price: Value(price),
+    );
+  }
+
+  factory ServiceTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ServiceTableData(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      description: serializer.fromJson<String>(json['description']),
+      category: serializer.fromJson<int?>(json['category']),
+      store: serializer.fromJson<int?>(json['store']),
+      price: serializer.fromJson<double>(json['price']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'description': serializer.toJson<String>(description),
+      'category': serializer.toJson<int?>(category),
+      'store': serializer.toJson<int?>(store),
+      'price': serializer.toJson<double>(price),
+    };
+  }
+
+  ServiceTableData copyWith(
+          {int? id,
+          String? name,
+          String? description,
+          Value<int?> category = const Value.absent(),
+          Value<int?> store = const Value.absent(),
+          double? price}) =>
+      ServiceTableData(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        description: description ?? this.description,
+        category: category.present ? category.value : this.category,
+        store: store.present ? store.value : this.store,
+        price: price ?? this.price,
+      );
+  ServiceTableData copyWithCompanion(ServiceTableCompanion data) {
+    return ServiceTableData(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      description:
+          data.description.present ? data.description.value : this.description,
+      category: data.category.present ? data.category.value : this.category,
+      store: data.store.present ? data.store.value : this.store,
+      price: data.price.present ? data.price.value : this.price,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ServiceTableData(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('category: $category, ')
+          ..write('store: $store, ')
+          ..write('price: $price')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, description, category, store, price);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ServiceTableData &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.description == this.description &&
+          other.category == this.category &&
+          other.store == this.store &&
+          other.price == this.price);
+}
+
+class ServiceTableCompanion extends UpdateCompanion<ServiceTableData> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> description;
+  final Value<int?> category;
+  final Value<int?> store;
+  final Value<double> price;
+  const ServiceTableCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.description = const Value.absent(),
+    this.category = const Value.absent(),
+    this.store = const Value.absent(),
+    this.price = const Value.absent(),
+  });
+  ServiceTableCompanion.insert({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.description = const Value.absent(),
+    this.category = const Value.absent(),
+    this.store = const Value.absent(),
+    this.price = const Value.absent(),
+  });
+  static Insertable<ServiceTableData> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? description,
+    Expression<int>? category,
+    Expression<int>? store,
+    Expression<double>? price,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+      if (category != null) 'category': category,
+      if (store != null) 'store': store,
+      if (price != null) 'price': price,
+    });
+  }
+
+  ServiceTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? name,
+      Value<String>? description,
+      Value<int?>? category,
+      Value<int?>? store,
+      Value<double>? price}) {
+    return ServiceTableCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      store: store ?? this.store,
+      price: price ?? this.price,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<int>(category.value);
+    }
+    if (store.present) {
+      map['store'] = Variable<int>(store.value);
+    }
+    if (price.present) {
+      map['price'] = Variable<double>(price.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ServiceTableCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('category: $category, ')
+          ..write('store: $store, ')
+          ..write('price: $price')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ServiceGalleryTableTable extends ServiceGalleryTable
+    with TableInfo<$ServiceGalleryTableTable, ServiceGalleryTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ServiceGalleryTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _urlMeta = const VerificationMeta('url');
+  @override
+  late final GeneratedColumn<String> url = GeneratedColumn<String>(
+      'url', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+      'type', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _serviceIdMeta =
+      const VerificationMeta('serviceId');
+  @override
+  late final GeneratedColumn<int> serviceId = GeneratedColumn<int>(
+      'service_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES service_table (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [id, url, type, serviceId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'service_gallery_table';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<ServiceGalleryTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('url')) {
+      context.handle(
+          _urlMeta, url.isAcceptableOrUnknown(data['url']!, _urlMeta));
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
+    }
+    if (data.containsKey('service_id')) {
+      context.handle(_serviceIdMeta,
+          serviceId.isAcceptableOrUnknown(data['service_id']!, _serviceIdMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ServiceGalleryTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ServiceGalleryTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      url: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}url'])!,
+      type: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
+      serviceId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}service_id']),
+    );
+  }
+
+  @override
+  $ServiceGalleryTableTable createAlias(String alias) {
+    return $ServiceGalleryTableTable(attachedDatabase, alias);
+  }
+}
+
+class ServiceGalleryTableData extends DataClass
+    implements Insertable<ServiceGalleryTableData> {
+  final int id;
+  final String url;
+  final String type;
+  final int? serviceId;
+  const ServiceGalleryTableData(
+      {required this.id,
+      required this.url,
+      required this.type,
+      this.serviceId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['url'] = Variable<String>(url);
+    map['type'] = Variable<String>(type);
+    if (!nullToAbsent || serviceId != null) {
+      map['service_id'] = Variable<int>(serviceId);
+    }
+    return map;
+  }
+
+  ServiceGalleryTableCompanion toCompanion(bool nullToAbsent) {
+    return ServiceGalleryTableCompanion(
+      id: Value(id),
+      url: Value(url),
+      type: Value(type),
+      serviceId: serviceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serviceId),
+    );
+  }
+
+  factory ServiceGalleryTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ServiceGalleryTableData(
+      id: serializer.fromJson<int>(json['id']),
+      url: serializer.fromJson<String>(json['url']),
+      type: serializer.fromJson<String>(json['type']),
+      serviceId: serializer.fromJson<int?>(json['serviceId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'url': serializer.toJson<String>(url),
+      'type': serializer.toJson<String>(type),
+      'serviceId': serializer.toJson<int?>(serviceId),
+    };
+  }
+
+  ServiceGalleryTableData copyWith(
+          {int? id,
+          String? url,
+          String? type,
+          Value<int?> serviceId = const Value.absent()}) =>
+      ServiceGalleryTableData(
+        id: id ?? this.id,
+        url: url ?? this.url,
+        type: type ?? this.type,
+        serviceId: serviceId.present ? serviceId.value : this.serviceId,
+      );
+  ServiceGalleryTableData copyWithCompanion(ServiceGalleryTableCompanion data) {
+    return ServiceGalleryTableData(
+      id: data.id.present ? data.id.value : this.id,
+      url: data.url.present ? data.url.value : this.url,
+      type: data.type.present ? data.type.value : this.type,
+      serviceId: data.serviceId.present ? data.serviceId.value : this.serviceId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ServiceGalleryTableData(')
+          ..write('id: $id, ')
+          ..write('url: $url, ')
+          ..write('type: $type, ')
+          ..write('serviceId: $serviceId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, url, type, serviceId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ServiceGalleryTableData &&
+          other.id == this.id &&
+          other.url == this.url &&
+          other.type == this.type &&
+          other.serviceId == this.serviceId);
+}
+
+class ServiceGalleryTableCompanion
+    extends UpdateCompanion<ServiceGalleryTableData> {
+  final Value<int> id;
+  final Value<String> url;
+  final Value<String> type;
+  final Value<int?> serviceId;
+  const ServiceGalleryTableCompanion({
+    this.id = const Value.absent(),
+    this.url = const Value.absent(),
+    this.type = const Value.absent(),
+    this.serviceId = const Value.absent(),
+  });
+  ServiceGalleryTableCompanion.insert({
+    this.id = const Value.absent(),
+    this.url = const Value.absent(),
+    this.type = const Value.absent(),
+    this.serviceId = const Value.absent(),
+  });
+  static Insertable<ServiceGalleryTableData> custom({
+    Expression<int>? id,
+    Expression<String>? url,
+    Expression<String>? type,
+    Expression<int>? serviceId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (url != null) 'url': url,
+      if (type != null) 'type': type,
+      if (serviceId != null) 'service_id': serviceId,
+    });
+  }
+
+  ServiceGalleryTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? url,
+      Value<String>? type,
+      Value<int?>? serviceId}) {
+    return ServiceGalleryTableCompanion(
+      id: id ?? this.id,
+      url: url ?? this.url,
+      type: type ?? this.type,
+      serviceId: serviceId ?? this.serviceId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (url.present) {
+      map['url'] = Variable<String>(url.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (serviceId.present) {
+      map['service_id'] = Variable<int>(serviceId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ServiceGalleryTableCompanion(')
+          ..write('id: $id, ')
+          ..write('url: $url, ')
+          ..write('type: $type, ')
+          ..write('serviceId: $serviceId')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(e);
   $DatabaseManager get managers => $DatabaseManager(this);
@@ -1855,6 +2898,10 @@ abstract class _$Database extends GeneratedDatabase {
   late final $TaskTableTable taskTable = $TaskTableTable(this);
   late final $TaskAttachmentTableTable taskAttachmentTable =
       $TaskAttachmentTableTable(this);
+  late final $StoreTableTable storeTable = $StoreTableTable(this);
+  late final $ServiceTableTable serviceTable = $ServiceTableTable(this);
+  late final $ServiceGalleryTableTable serviceGalleryTable =
+      $ServiceGalleryTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1864,7 +2911,10 @@ abstract class _$Database extends GeneratedDatabase {
         governorateTable,
         userTable,
         taskTable,
-        taskAttachmentTable
+        taskAttachmentTable,
+        storeTable,
+        serviceTable,
+        serviceGalleryTable
       ];
 }
 
@@ -1966,6 +3016,19 @@ class $$CategoryTableTableFilterComposer
         builder: (joinBuilder, parentComposers) =>
             $$TaskTableTableFilterComposer(ComposerState(
                 $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter serviceTableRefs(
+      ComposableFilter Function($$ServiceTableTableFilterComposer f) f) {
+    final $$ServiceTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.serviceTable,
+        getReferencedColumn: (t) => t.category,
+        builder: (joinBuilder, parentComposers) =>
+            $$ServiceTableTableFilterComposer(ComposerState($state.db,
+                $state.db.serviceTable, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
@@ -2085,6 +3148,19 @@ class $$GovernorateTableTableFilterComposer
         builder: (joinBuilder, parentComposers) =>
             $$TaskTableTableFilterComposer(ComposerState(
                 $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter storeTableRefs(
+      ComposableFilter Function($$StoreTableTableFilterComposer f) f) {
+    final $$StoreTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.storeTable,
+        getReferencedColumn: (t) => t.governorate,
+        builder: (joinBuilder, parentComposers) =>
+            $$StoreTableTableFilterComposer(ComposerState($state.db,
+                $state.db.storeTable, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
@@ -2306,6 +3382,19 @@ class $$UserTableTableFilterComposer
         builder: (joinBuilder, parentComposers) =>
             $$TaskTableTableFilterComposer(ComposerState(
                 $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter storeTableRefs(
+      ComposableFilter Function($$StoreTableTableFilterComposer f) f) {
+    final $$StoreTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.storeTable,
+        getReferencedColumn: (t) => t.owner,
+        builder: (joinBuilder, parentComposers) =>
+            $$StoreTableTableFilterComposer(ComposerState($state.db,
+                $state.db.storeTable, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
@@ -2770,6 +3859,522 @@ class $$TaskAttachmentTableTableOrderingComposer
   }
 }
 
+typedef $$StoreTableTableCreateCompanionBuilder = StoreTableCompanion Function({
+  Value<int> id,
+  Value<String> name,
+  Value<String> description,
+  Value<String> picture,
+  Value<String> coordinates,
+  Value<int?> governorate,
+  Value<int?> owner,
+  Value<bool> isFavorite,
+});
+typedef $$StoreTableTableUpdateCompanionBuilder = StoreTableCompanion Function({
+  Value<int> id,
+  Value<String> name,
+  Value<String> description,
+  Value<String> picture,
+  Value<String> coordinates,
+  Value<int?> governorate,
+  Value<int?> owner,
+  Value<bool> isFavorite,
+});
+
+class $$StoreTableTableTableManager extends RootTableManager<
+    _$Database,
+    $StoreTableTable,
+    StoreTableData,
+    $$StoreTableTableFilterComposer,
+    $$StoreTableTableOrderingComposer,
+    $$StoreTableTableCreateCompanionBuilder,
+    $$StoreTableTableUpdateCompanionBuilder> {
+  $$StoreTableTableTableManager(_$Database db, $StoreTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$StoreTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$StoreTableTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> description = const Value.absent(),
+            Value<String> picture = const Value.absent(),
+            Value<String> coordinates = const Value.absent(),
+            Value<int?> governorate = const Value.absent(),
+            Value<int?> owner = const Value.absent(),
+            Value<bool> isFavorite = const Value.absent(),
+          }) =>
+              StoreTableCompanion(
+            id: id,
+            name: name,
+            description: description,
+            picture: picture,
+            coordinates: coordinates,
+            governorate: governorate,
+            owner: owner,
+            isFavorite: isFavorite,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> description = const Value.absent(),
+            Value<String> picture = const Value.absent(),
+            Value<String> coordinates = const Value.absent(),
+            Value<int?> governorate = const Value.absent(),
+            Value<int?> owner = const Value.absent(),
+            Value<bool> isFavorite = const Value.absent(),
+          }) =>
+              StoreTableCompanion.insert(
+            id: id,
+            name: name,
+            description: description,
+            picture: picture,
+            coordinates: coordinates,
+            governorate: governorate,
+            owner: owner,
+            isFavorite: isFavorite,
+          ),
+        ));
+}
+
+class $$StoreTableTableFilterComposer
+    extends FilterComposer<_$Database, $StoreTableTable> {
+  $$StoreTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get description => $state.composableBuilder(
+      column: $state.table.description,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get picture => $state.composableBuilder(
+      column: $state.table.picture,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get coordinates => $state.composableBuilder(
+      column: $state.table.coordinates,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get isFavorite => $state.composableBuilder(
+      column: $state.table.isFavorite,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$GovernorateTableTableFilterComposer get governorate {
+    final $$GovernorateTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.governorate,
+            referencedTable: $state.db.governorateTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$GovernorateTableTableFilterComposer(ComposerState($state.db,
+                    $state.db.governorateTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$UserTableTableFilterComposer get owner {
+    final $$UserTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.owner,
+        referencedTable: $state.db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$UserTableTableFilterComposer(ComposerState(
+                $state.db, $state.db.userTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  ComposableFilter serviceTableRefs(
+      ComposableFilter Function($$ServiceTableTableFilterComposer f) f) {
+    final $$ServiceTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.serviceTable,
+        getReferencedColumn: (t) => t.store,
+        builder: (joinBuilder, parentComposers) =>
+            $$ServiceTableTableFilterComposer(ComposerState($state.db,
+                $state.db.serviceTable, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$StoreTableTableOrderingComposer
+    extends OrderingComposer<_$Database, $StoreTableTable> {
+  $$StoreTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get description => $state.composableBuilder(
+      column: $state.table.description,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get picture => $state.composableBuilder(
+      column: $state.table.picture,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get coordinates => $state.composableBuilder(
+      column: $state.table.coordinates,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get isFavorite => $state.composableBuilder(
+      column: $state.table.isFavorite,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$GovernorateTableTableOrderingComposer get governorate {
+    final $$GovernorateTableTableOrderingComposer composer = $state
+        .composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.governorate,
+            referencedTable: $state.db.governorateTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$GovernorateTableTableOrderingComposer(ComposerState($state.db,
+                    $state.db.governorateTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$UserTableTableOrderingComposer get owner {
+    final $$UserTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.owner,
+        referencedTable: $state.db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$UserTableTableOrderingComposer(ComposerState(
+                $state.db, $state.db.userTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$ServiceTableTableCreateCompanionBuilder = ServiceTableCompanion
+    Function({
+  Value<int> id,
+  Value<String> name,
+  Value<String> description,
+  Value<int?> category,
+  Value<int?> store,
+  Value<double> price,
+});
+typedef $$ServiceTableTableUpdateCompanionBuilder = ServiceTableCompanion
+    Function({
+  Value<int> id,
+  Value<String> name,
+  Value<String> description,
+  Value<int?> category,
+  Value<int?> store,
+  Value<double> price,
+});
+
+class $$ServiceTableTableTableManager extends RootTableManager<
+    _$Database,
+    $ServiceTableTable,
+    ServiceTableData,
+    $$ServiceTableTableFilterComposer,
+    $$ServiceTableTableOrderingComposer,
+    $$ServiceTableTableCreateCompanionBuilder,
+    $$ServiceTableTableUpdateCompanionBuilder> {
+  $$ServiceTableTableTableManager(_$Database db, $ServiceTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ServiceTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ServiceTableTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> description = const Value.absent(),
+            Value<int?> category = const Value.absent(),
+            Value<int?> store = const Value.absent(),
+            Value<double> price = const Value.absent(),
+          }) =>
+              ServiceTableCompanion(
+            id: id,
+            name: name,
+            description: description,
+            category: category,
+            store: store,
+            price: price,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> description = const Value.absent(),
+            Value<int?> category = const Value.absent(),
+            Value<int?> store = const Value.absent(),
+            Value<double> price = const Value.absent(),
+          }) =>
+              ServiceTableCompanion.insert(
+            id: id,
+            name: name,
+            description: description,
+            category: category,
+            store: store,
+            price: price,
+          ),
+        ));
+}
+
+class $$ServiceTableTableFilterComposer
+    extends FilterComposer<_$Database, $ServiceTableTable> {
+  $$ServiceTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get description => $state.composableBuilder(
+      column: $state.table.description,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get price => $state.composableBuilder(
+      column: $state.table.price,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$CategoryTableTableFilterComposer get category {
+    final $$CategoryTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.category,
+        referencedTable: $state.db.categoryTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$CategoryTableTableFilterComposer(ComposerState($state.db,
+                $state.db.categoryTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$StoreTableTableFilterComposer get store {
+    final $$StoreTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.store,
+        referencedTable: $state.db.storeTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$StoreTableTableFilterComposer(ComposerState($state.db,
+                $state.db.storeTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  ComposableFilter serviceGalleryTableRefs(
+      ComposableFilter Function($$ServiceGalleryTableTableFilterComposer f) f) {
+    final $$ServiceGalleryTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.serviceGalleryTable,
+            getReferencedColumn: (t) => t.serviceId,
+            builder: (joinBuilder, parentComposers) =>
+                $$ServiceGalleryTableTableFilterComposer(ComposerState(
+                    $state.db,
+                    $state.db.serviceGalleryTable,
+                    joinBuilder,
+                    parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$ServiceTableTableOrderingComposer
+    extends OrderingComposer<_$Database, $ServiceTableTable> {
+  $$ServiceTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get description => $state.composableBuilder(
+      column: $state.table.description,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get price => $state.composableBuilder(
+      column: $state.table.price,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$CategoryTableTableOrderingComposer get category {
+    final $$CategoryTableTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.category,
+            referencedTable: $state.db.categoryTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$CategoryTableTableOrderingComposer(ComposerState($state.db,
+                    $state.db.categoryTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$StoreTableTableOrderingComposer get store {
+    final $$StoreTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.store,
+        referencedTable: $state.db.storeTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$StoreTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.storeTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$ServiceGalleryTableTableCreateCompanionBuilder
+    = ServiceGalleryTableCompanion Function({
+  Value<int> id,
+  Value<String> url,
+  Value<String> type,
+  Value<int?> serviceId,
+});
+typedef $$ServiceGalleryTableTableUpdateCompanionBuilder
+    = ServiceGalleryTableCompanion Function({
+  Value<int> id,
+  Value<String> url,
+  Value<String> type,
+  Value<int?> serviceId,
+});
+
+class $$ServiceGalleryTableTableTableManager extends RootTableManager<
+    _$Database,
+    $ServiceGalleryTableTable,
+    ServiceGalleryTableData,
+    $$ServiceGalleryTableTableFilterComposer,
+    $$ServiceGalleryTableTableOrderingComposer,
+    $$ServiceGalleryTableTableCreateCompanionBuilder,
+    $$ServiceGalleryTableTableUpdateCompanionBuilder> {
+  $$ServiceGalleryTableTableTableManager(
+      _$Database db, $ServiceGalleryTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer: $$ServiceGalleryTableTableFilterComposer(
+              ComposerState(db, table)),
+          orderingComposer: $$ServiceGalleryTableTableOrderingComposer(
+              ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> url = const Value.absent(),
+            Value<String> type = const Value.absent(),
+            Value<int?> serviceId = const Value.absent(),
+          }) =>
+              ServiceGalleryTableCompanion(
+            id: id,
+            url: url,
+            type: type,
+            serviceId: serviceId,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> url = const Value.absent(),
+            Value<String> type = const Value.absent(),
+            Value<int?> serviceId = const Value.absent(),
+          }) =>
+              ServiceGalleryTableCompanion.insert(
+            id: id,
+            url: url,
+            type: type,
+            serviceId: serviceId,
+          ),
+        ));
+}
+
+class $$ServiceGalleryTableTableFilterComposer
+    extends FilterComposer<_$Database, $ServiceGalleryTableTable> {
+  $$ServiceGalleryTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get url => $state.composableBuilder(
+      column: $state.table.url,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get type => $state.composableBuilder(
+      column: $state.table.type,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$ServiceTableTableFilterComposer get serviceId {
+    final $$ServiceTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.serviceId,
+        referencedTable: $state.db.serviceTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ServiceTableTableFilterComposer(ComposerState($state.db,
+                $state.db.serviceTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$ServiceGalleryTableTableOrderingComposer
+    extends OrderingComposer<_$Database, $ServiceGalleryTableTable> {
+  $$ServiceGalleryTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get url => $state.composableBuilder(
+      column: $state.table.url,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get type => $state.composableBuilder(
+      column: $state.table.type,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$ServiceTableTableOrderingComposer get serviceId {
+    final $$ServiceTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.serviceId,
+        referencedTable: $state.db.serviceTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ServiceTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.serviceTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
 class $DatabaseManager {
   final _$Database _db;
   $DatabaseManager(this._db);
@@ -2783,4 +4388,10 @@ class $DatabaseManager {
       $$TaskTableTableTableManager(_db, _db.taskTable);
   $$TaskAttachmentTableTableTableManager get taskAttachmentTable =>
       $$TaskAttachmentTableTableTableManager(_db, _db.taskAttachmentTable);
+  $$StoreTableTableTableManager get storeTable =>
+      $$StoreTableTableTableManager(_db, _db.storeTable);
+  $$ServiceTableTableTableManager get serviceTable =>
+      $$ServiceTableTableTableManager(_db, _db.serviceTable);
+  $$ServiceGalleryTableTableTableManager get serviceGalleryTable =>
+      $$ServiceGalleryTableTableTableManager(_db, _db.serviceGalleryTable);
 }

@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 import '../constants/constants.dart';
 import '../controllers/main_app_controller.dart';
+import '../database/database_repository/store_database_repository.dart';
 import '../helpers/helper.dart';
 import '../models/filter_model.dart';
 import '../models/service.dart';
@@ -23,10 +24,10 @@ class StoreRepository extends GetxService {
         );
         stores = (result['formattedList'] as List).map((e) => Store.fromJson(e)).toList();
       }
-      // else {
-      //   stores = await StoreDatabaseRepository.find.filterStores(searchQuery, filter);
-      // }
-      // if (stores.isNotEmpty && MainAppController.find.isConnected.value) StoreDatabaseRepository.find.backupStores(stores);
+      else {
+        stores = await StoreDatabaseRepository.find.filterStores(searchQuery, filter);
+      }
+      if (stores.isNotEmpty && MainAppController.find.isConnected) StoreDatabaseRepository.find.backupStores(stores);
       return stores;
     } catch (e) {
       LoggerService.logger?.e('Error occured in filterStores:\n$e');
@@ -39,7 +40,7 @@ class StoreRepository extends GetxService {
       final result = await ApiBaseHelper().request(RequestType.post, sendToken: true, '/store/', body: newstore.toJson(), files: [newstore.picture?.file]);
       if (withBack) Get.back();
       final store = Store.fromJson(result['store']);
-      // if (MainAppController.find.isConnected.value) StoreDatabaseRepository.find.backupStore(store);
+      if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupStore(store);
       Helper.snackBar(message: 'Store added successfully');
       return store;
     } catch (e) {
@@ -49,18 +50,18 @@ class StoreRepository extends GetxService {
     return null;
   }
 
-  Future<Service?> addService(Service newservice, {required bool withBack}) async {
+  Future<Service?> addService(Service newService, Store store, {required bool withBack}) async {
     try {
       final result = await ApiBaseHelper().request(
         RequestType.post,
         sendToken: true,
         '/store/service',
-        body: newservice.toJson(),
-        files: newservice.gallery?.map((e) => e.file).toList(),
+        body: newService.toJson(),
+        files: newService.gallery?.map((e) => e.file).toList(),
       );
       if (withBack) Get.back();
       final service = Service.fromJson(result['service']);
-      // if (MainAppController.find.isConnected.value) ServiceDatabaseRepository.find.backupService(service);
+      if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupService(service, store);
       Helper.snackBar(message: 'Service added successfully');
       return service;
     } catch (e) {
@@ -90,7 +91,7 @@ class StoreRepository extends GetxService {
       final result = await ApiBaseHelper().request(RequestType.post, sendToken: true, '/store/update', body: updateStore.toJson(), files: [updateStore.picture?.file]);
       if (withBack) Get.back();
       final store = Store.fromJson(result['store']);
-      // if (MainAppController.find.isConnected.value) StoreDatabaseRepository.find.backupStore(store);
+      if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupStore(store);
       Helper.snackBar(message: 'Store added successfully');
       return store;
     } catch (e) {
@@ -100,7 +101,7 @@ class StoreRepository extends GetxService {
     return null;
   }
 
-  Future<Service?> updateService(Service updateService, {required bool withBack}) async {
+  Future<Service?> updateService(Service updateService, Store store, {required bool withBack}) async {
     try {
       final result = await ApiBaseHelper().request(
         RequestType.put,
@@ -111,7 +112,7 @@ class StoreRepository extends GetxService {
       );
       if (withBack) Get.back();
       final service = Service.fromJson(result['service']);
-      // if (MainAppController.find.isConnected.value) ServiceDatabaseRepository.find.backupService(service);
+      if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupService(service, store);
       Helper.snackBar(message: 'Service added successfully');
       return service;
     } catch (e) {

@@ -6,9 +6,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'database/database_repository/category_database_repository.dart';
 import 'database/database_repository/governorate_database_repository.dart';
+import 'database/database_repository/store_database_repository.dart';
 import 'database/database_repository/task_database_repository.dart';
 import 'database/database_repository/user_database_repository.dart';
 import 'networking/api_base_helper.dart';
+import 'repositories/booking_repository.dart';
 import 'repositories/favorite_repository.dart';
 import 'repositories/params_repository.dart';
 import 'repositories/reservation_repository.dart';
@@ -38,6 +40,8 @@ import 'views/my_store/my_store_controller.dart';
 import 'views/my_store/my_store_screen.dart';
 import 'views/profile/profile_controller.dart';
 import 'views/profile/profile_screen.dart';
+import 'views/service_request/service_request_controller.dart';
+import 'views/service_request/service_request_screen.dart';
 import 'views/task_details/task_details_screen.dart';
 import 'views/task_history/task_history_controller.dart';
 import 'views/task_history/task_history_screen.dart';
@@ -151,6 +155,11 @@ class MyApp extends StatelessWidget {
             binding: BindingsBuilder.put(() => ApproveUserController()),
           ),
           GetPage(
+            name: ServiceRequestScreen.routeName,
+            page: () => const ServiceRequestScreen(),
+            binding: BindingsBuilder.put(() => ServiceRequestController()),
+          ),
+          GetPage(
             name: AddTaskBottomsheet.routeName,
             page: () => const AddTaskBottomsheet(),
           ),
@@ -177,11 +186,13 @@ class InitialBindings implements Bindings {
     Get.put(TaskRepository(), permanent: true);
     Get.put(FavoriteRepository(), permanent: true);
     Get.put(ReservationRepository(), permanent: true);
+    Get.put(BookingRepository(), permanent: true);
     Get.put(StoreRepository(), permanent: true);
     // Database repositories
     Get.put(UserDatabaseRepository(), permanent: true);
     Get.put(TaskDatabaseRepository(), permanent: true);
     Get.put(CategoryDatabaseRepository(), permanent: true);
     Get.put(GovernorateDatabaseRepository(), permanent: true);
+    Get.put(StoreDatabaseRepository(), permanent: true);
   }
 }

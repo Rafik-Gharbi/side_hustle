@@ -1,6 +1,8 @@
+import 'package:drift/drift.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import '../controllers/main_app_controller.dart';
+import '../database/database.dart';
 import '../helpers/extensions/lat_lon_extension.dart';
 import '../networking/api_base_helper.dart';
 import 'dto/image_dto.dart';
@@ -17,6 +19,7 @@ class Store {
   final LatLng? coordinates;
   final User? owner;
   List<Service>? services;
+  bool isFavorite;
 
   Store({
     this.id,
@@ -27,6 +30,7 @@ class Store {
     this.coordinates,
     this.services,
     this.owner,
+    this.isFavorite = false,
   });
 
   factory Store.fromJson(Map<String, dynamic> json) => Store(
@@ -38,6 +42,7 @@ class Store {
         governorate: json['governorate_id'] != null ? MainAppController.find.getGovernorateById(json['governorate_id']) : null,
         services: json['services'] != null ? (json['services'] as List).map((e) => Service.fromJson(e)).toList() : [],
         owner: json['owner'] != null ? User.fromJson(json['owner']) : null,
+        isFavorite: json['isFavorite'] ?? false,
       );
 
   Map<String, dynamic> toJson() {
@@ -52,4 +57,25 @@ class Store {
     data['services'] = services?.map((e) => e.toJson()).toList();
     return data;
   }
+
+  StoreTableCompanion toStoreCompanion({bool? isFavoriteUpdate}) => StoreTableCompanion(
+        id: id == null ? const Value.absent() : Value(id!),
+        governorate: governorate?.id == null ? const Value.absent() : Value(governorate!.id),
+        owner: Value(owner!.id!),
+        name: Value(name ?? ''),
+        description: Value(description ?? ''),
+        picture: picture == null ? const Value.absent() : Value(picture!.file.path),
+        coordinates: coordinates == null ? const Value.absent() : Value(coordinates!.toCoordinatesString()),
+      );
+
+  factory Store.fromStoreData({required StoreTableCompanion store, required User owner, List<Service>? services}) => Store(
+        id: store.id.value,
+        name: store.name.value,
+        description: store.description.value,
+        governorate: MainAppController.find.getGovernorateById(store.governorate.value),
+        owner: owner,
+        picture: ImageDTO(file: XFile(store.picture.value), type: ImageType.image),
+        coordinates: store.coordinates.value.isNotEmpty ? store.coordinates.value.fromString() : null,
+        services: services,
+      );
 }

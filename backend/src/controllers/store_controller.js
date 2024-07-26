@@ -3,7 +3,11 @@ const { User } = require("../models/user_model");
 const { Store } = require("../models/store_model");
 const { Governorate } = require("../models/governorate_model");
 const { Category } = require("../models/category_model");
-const { getFileType } = require("../helper/helpers");
+const {
+  getFileType,
+  getServiceCondidatesNumber,
+  checkStoreFavorite,
+} = require("../helper/helpers");
 const { Service } = require("../models/service_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
 
@@ -85,6 +89,11 @@ exports.filterStores = async (req, res) => {
               where: { service_id: service.id },
             });
 
+            const requests =
+              currentUserId == row.owner_id
+                ? await getServiceCondidatesNumber(service.id)
+                : -1;
+
             return {
               id: service.id,
               price: service.price,
@@ -92,9 +101,11 @@ exports.filterStores = async (req, res) => {
               description: service.description,
               category_id: service.category_id,
               gallery,
+              requests,
             };
           })
         );
+        const isFavorite = await checkStoreFavorite(row, currentUserId);
 
         return {
           id: row.id,
@@ -106,6 +117,7 @@ exports.filterStores = async (req, res) => {
           governorate_id: row.governorate_id,
           owner: owner,
           services,
+          isFavorite,
         };
       })
     );
@@ -358,6 +370,7 @@ exports.getUserStore = async (req, res) => {
           where: { service_id: service.id },
         });
 
+        const requests = await getServiceCondidatesNumber(service.id);
         return {
           id: service.id,
           price: service.price,
@@ -365,6 +378,7 @@ exports.getUserStore = async (req, res) => {
           description: service.description,
           category_id: service.category_id,
           gallery,
+          requests,
         };
       })
     );

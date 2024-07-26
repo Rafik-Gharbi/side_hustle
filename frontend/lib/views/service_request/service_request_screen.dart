@@ -11,26 +11,26 @@ import '../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../widgets/hold_in_safe_area.dart';
 import '../../widgets/loading_request.dart';
 import '../user_profile/user_profile_screen.dart';
-import 'task_proposal_controller.dart';
+import 'service_request_controller.dart';
 
-class TaskProposalScreen extends StatelessWidget {
-  static const String routeName = '/task-proposal';
-  const TaskProposalScreen({super.key});
+class ServiceRequestScreen extends StatelessWidget {
+  static const String routeName = '/service-request';
+  const ServiceRequestScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return HoldInSafeArea(
-      child: GetBuilder<TaskProposalController>(
+      child: GetBuilder<ServiceRequestController>(
         builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'Task Proposals',
+          appBarTitle: 'Service Requests',
           body: LoadingRequest(
             isLoading: controller.isLoading,
-            child: controller.reservationList.isEmpty
+            child: controller.bookingList.isEmpty
                 ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
                 : ListView.builder(
-                    itemCount: controller.reservationList.length,
+                    itemCount: controller.bookingList.length,
                     itemBuilder: (context, index) {
-                      final reservation = controller.reservationList[index];
+                      final booking = controller.bookingList[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: 2),
                         child: OpenContainer<bool>(
@@ -38,10 +38,10 @@ class TaskProposalScreen extends StatelessWidget {
                           transitionDuration: const Duration(milliseconds: 600),
                           onClosed: (data) => data != null && data ? Future.delayed(const Duration(milliseconds: 600), () => controller.init()) : null,
                           openBuilder: (_, __) => UserProfileScreen(
-                            user: reservation.user,
-                            requestStatus: reservation.status,
-                            onAccept: () => controller.acceptProposal(reservation),
-                            onReject: () => controller.rejectProposals(reservation),
+                            user: booking.user,
+                            requestStatus: booking.status,
+                            onAccept: () => controller.acceptProposal(booking),
+                            onReject: () => controller.rejectProposals(booking),
                           ),
                           closedBuilder: (_, openContainer) => Padding(
                             padding: const EdgeInsets.only(bottom: Paddings.regular),
@@ -54,25 +54,25 @@ class TaskProposalScreen extends StatelessWidget {
                               title: Row(
                                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(reservation.user.name ?? '', style: AppFonts.x16Bold),
+                                  Text(booking.user.name ?? '', style: AppFonts.x16Bold),
                                   // TODO Add user review score
                                 ],
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Note: ${reservation.note.isEmpty ? 'not provided' : reservation.note}', style: AppFonts.x14Regular),
+                                  Text('Note: ${booking.note.isEmpty ? 'not provided' : booking.note}', style: AppFonts.x14Regular),
                                   const SizedBox(height: Paddings.regular),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Align(
                                         alignment: Alignment.centerRight,
-                                        child: Text(Helper.formatDate(reservation.date), style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                                        child: Text(Helper.formatDate(booking.date), style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(right: Paddings.regular),
-                                        child: Text(reservation.status.value, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
+                                        child: Text(booking.status.value, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
                                       ),
                                     ],
                                   ),

@@ -18,6 +18,7 @@ import '../../widgets/custom_buttons.dart';
 import '../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/hold_in_safe_area.dart';
+import '../task_proposal/task_proposal_screen.dart';
 import '../user_profile/user_profile_screen.dart';
 import 'task_details_controller.dart';
 
@@ -151,46 +152,53 @@ class TaskDetailsScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        if (controller.condidates.value != -1) ...[
+                        if (controller.condidates.value != -1 || AuthenticationService.find.jwtUserData?.id == task.owner.id) ...[
                           const SizedBox(height: Paddings.exceptional * 2),
-                          CustomButtons.elevatePrimary(
-                            title: 'Im_interested'.tr,
-                            onPressed: () => AuthenticationService.find.isUserLoggedIn.value
-                                ? Get.bottomSheet(
-                                    SizedBox(
-                                      height: Get.height * 0.4,
-                                      child: Material(
-                                        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(Paddings.large),
-                                          child: Column(
-                                            children: [
-                                              const SizedBox(height: Paddings.regular),
-                                              const Center(child: Text('Add proposal', style: AppFonts.x16Bold)),
-                                              const SizedBox(height: Paddings.exceptional),
-                                              CustomTextField(
-                                                fieldController: controller.noteController,
-                                                isTextArea: true,
-                                                outlinedBorder: true,
-                                                outlinedBorderColor: kNeutralColor,
-                                                hintText: 'Add a note for the task owner',
-                                              ),
-                                              const SizedBox(height: Paddings.exceptional),
-                                              CustomButtons.elevatePrimary(
-                                                title: 'Submit proposal',
-                                                width: Get.width,
-                                                onPressed: () => controller.submitProposal(task),
-                                              )
-                                            ],
+                          if (AuthenticationService.find.jwtUserData?.id == task.owner.id)
+                            CustomButtons.elevatePrimary(
+                              title: 'check_proposal'.tr,
+                              onPressed: () => Get.toNamed(TaskProposalScreen.routeName, arguments: task),
+                              width: Get.width,
+                            )
+                          else
+                            CustomButtons.elevatePrimary(
+                              title: 'Im_interested'.tr,
+                              onPressed: () => AuthenticationService.find.isUserLoggedIn.value
+                                  ? Get.bottomSheet(
+                                      SizedBox(
+                                        height: Get.height * 0.4,
+                                        child: Material(
+                                          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(Paddings.large),
+                                            child: Column(
+                                              children: [
+                                                const SizedBox(height: Paddings.regular),
+                                                const Center(child: Text('Add proposal', style: AppFonts.x16Bold)),
+                                                const SizedBox(height: Paddings.exceptional),
+                                                CustomTextField(
+                                                  fieldController: controller.noteController,
+                                                  isTextArea: true,
+                                                  outlinedBorder: true,
+                                                  outlinedBorderColor: kNeutralColor,
+                                                  hintText: 'Add a note for the task owner',
+                                                ),
+                                                const SizedBox(height: Paddings.exceptional),
+                                                CustomButtons.elevatePrimary(
+                                                  title: 'Submit proposal',
+                                                  width: Get.width,
+                                                  onPressed: () => controller.submitProposal(task),
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    isScrollControlled: true,
-                                  ).then((value) => controller.clearFormFields())
-                                : Helper.snackBar(message: 'login_express_interest_msg'.tr),
-                            width: Get.width,
-                          ),
+                                      isScrollControlled: true,
+                                    ).then((value) => controller.clearFormFields())
+                                  : Helper.snackBar(message: 'login_express_interest_msg'.tr),
+                              width: Get.width,
+                            ),
                           const SizedBox(height: Paddings.small),
                           Obx(
                             () => Align(

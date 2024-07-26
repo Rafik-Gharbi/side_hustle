@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../../helpers/helper.dart';
+import '../../models/enum/request_status.dart';
 import '../../models/reservation.dart';
 import '../../models/task.dart';
 import '../../repositories/reservation_repository.dart';
@@ -27,7 +28,7 @@ class TaskProposalController extends GetxController {
   void acceptProposal(Reservation reservation) => Helper.openConfirmationDialog(
         title: 'Are you sure to accept this proposal? This will automatically reject other proposals if any.',
         onConfirm: () async {
-          await ReservationRepository.find.updateReservationStatus(reservation, ReservationStatus.confirmed);
+          await ReservationRepository.find.updateReservationStatus(reservation, RequestStatus.confirmed);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
         },
       );
@@ -35,7 +36,7 @@ class TaskProposalController extends GetxController {
   void rejectProposals(Reservation reservation) => Helper.openConfirmationDialog(
         title: 'Are you sure to reject this proposal?',
         onConfirm: () async {
-          await ReservationRepository.find.updateReservationStatus(reservation, ReservationStatus.rejected);
+          await ReservationRepository.find.updateReservationStatus(reservation, RequestStatus.rejected);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
         },
       );

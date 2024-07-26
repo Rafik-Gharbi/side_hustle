@@ -1,10 +1,10 @@
 import 'enum/request_status.dart';
-import 'task.dart';
+import 'service.dart';
 import 'user.dart';
 
-class Reservation {
+class Booking {
   final int? id;
-  final Task task;
+  final Service service;
   final DateTime date;
   final double totalPrice;
   final String? coupon;
@@ -12,9 +12,9 @@ class Reservation {
   final RequestStatus status;
   final User user;
 
-  Reservation({
+  Booking({
     this.id,
-    required this.task,
+    required this.service,
     required this.date,
     required this.totalPrice,
     required this.user,
@@ -23,9 +23,9 @@ class Reservation {
     this.note = '',
   });
 
-  factory Reservation.fromJson(Map<String, dynamic> json) => Reservation(
+  factory Booking.fromJson(Map<String, dynamic> json) => Booking(
         id: json['id'],
-        task: Task.fromJson(json['task'], attachments: json['taskAttachments']),
+        service: Service.fromJson(json['service'], gallery: json['serviceGallery']),
         date: json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
         totalPrice: json['totalPrice'] is int ? (json['totalPrice'] as int).toDouble() : json['totalPrice'],
         coupon: json['coupon'],
@@ -37,7 +37,7 @@ class Reservation {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     if (id != null) data['id'] = id;
-    data['taskId'] = task.id;
+    data['serviceId'] = service.id;
     data['date'] = date.toIso8601String();
     data['totalPrice'] = totalPrice;
     data['coupon'] = coupon;

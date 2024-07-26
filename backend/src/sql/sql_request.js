@@ -75,10 +75,24 @@ const getOwnerIdByProperty = async (propertyId) => {
   }
 };
 
-const getFavoriteByUserId = async (userId) => {
+const getFavoriteTaskByUserId = async (userId) => {
   const query = `
     SELECT task_id
-    FROM favorite
+    FROM favorite_task
+    WHERE user_id = :userId
+  `;
+  const result = await sequelize.query(query, {
+    type: sequelize.QueryTypes.SELECT,
+    replacements: { userId: userId },
+  });
+
+  return result;
+};
+
+const getFavoriteStoreByUserId = async (userId) => {
+  const query = `
+    SELECT store_id
+    FROM favorite_store
     WHERE user_id = :userId
   `;
   const result = await sequelize.query(query, {
@@ -281,7 +295,8 @@ module.exports = {
   getLocationById,
   fetchNames,
   getImageByPropertyId,
-  getFavoriteByUserId,
+  getFavoriteTaskByUserId,
+  getFavoriteStoreByUserId,
   getOwnerIdByProperty,
   getAvgReviewAndCount,
   getSubDiscussions,

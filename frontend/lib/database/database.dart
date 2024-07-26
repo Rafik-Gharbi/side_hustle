@@ -3,6 +3,9 @@ import 'package:flutter/material.dart' show Color;
 
 import '../models/user.dart';
 import 'connection/connection.dart' as impl;
+import 'tables/service.dart';
+import 'tables/service_gallery.dart';
+import 'tables/store.dart';
 import 'tables/task_attachment.dart';
 import 'tables/user.dart';
 import 'tables/governorate.dart';
@@ -11,7 +14,7 @@ import 'tables/task.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: <Type>[TaskTable, UserTable, CategoryTable, GovernorateTable, TaskAttachmentTable])
+@DriftDatabase(tables: <Type>[TaskTable, UserTable, CategoryTable, GovernorateTable, TaskAttachmentTable, StoreTable, ServiceTable, ServiceGalleryTable])
 class Database extends _$Database {
   // Private constructor to prevent external instantiation
   Database._(super.e);

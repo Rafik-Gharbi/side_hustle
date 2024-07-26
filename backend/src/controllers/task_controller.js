@@ -3,7 +3,7 @@ const { User } = require("../models/user_model");
 const { Task } = require("../models/task_model");
 const { Governorate } = require("../models/governorate_model");
 const { Category } = require("../models/category_model");
-const { getFavoriteByUserId } = require("../sql/sql_request");
+const { getFavoriteTaskByUserId } = require("../sql/sql_request");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
 const { getFileType, getTaskCondidatesNumber } = require("../helper/helpers");
 
@@ -13,7 +13,7 @@ exports.getHotTasks = async (req, res) => {
     const currentUserId = req.decoded?.id;
     let userFavorites = [];
     if (currentUserId) {
-      userFavorites = await getFavoriteByUserId(currentUserId);
+      userFavorites = await getFavoriteTaskByUserId(currentUserId);
     }
 
     const query = `SELECT task.*, 
@@ -89,7 +89,7 @@ exports.filterTasks = async (req, res) => {
 
     let userFavorites = [];
     if (currentUserId) {
-      userFavorites = await getFavoriteByUserId(currentUserId);
+      userFavorites = await getFavoriteTaskByUserId(currentUserId);
     }
 
     if (categoryId == -1) categoryId = undefined;
@@ -179,7 +179,7 @@ exports.taskRequest = async (req, res) => {
     if (!userFound) {
       return res.status(404).json({ message: "user_not_found" });
     } else {
-      userFavorites = await getFavoriteByUserId(currentUserId);
+      userFavorites = await getFavoriteTaskByUserId(currentUserId);
     }
 
     const query = `SELECT task.*, 

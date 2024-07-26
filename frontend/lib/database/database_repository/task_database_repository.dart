@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../constants/shared_preferences_keys.dart';
 import '../../helpers/helper.dart';
+import '../../models/dto/favorite_dto.dart';
 import '../../models/dto/image_dto.dart';
 import '../../models/filter_model.dart';
 import '../../models/task.dart';
@@ -12,6 +13,7 @@ import '../../models/user.dart';
 import '../../services/logger_service.dart';
 import '../../services/shared_preferences.dart';
 import '../database.dart';
+import 'store_database_repository.dart';
 import 'user_database_repository.dart';
 
 class TaskDatabaseRepository extends GetxService {
@@ -170,25 +172,6 @@ class TaskDatabaseRepository extends GetxService {
     return result;
   }
 
-  Future<List<Task>> getFavoriteTasks() async {
-    try {
-      LoggerService.logger?.i('Getting favorite tasks...');
-      List<Task> result = [];
-      final savedIds = SharedPreferencesService.find.get(favoriteTasksKey);
-      List<int> favoriteTasksId = (jsonDecode(savedIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
-      if (favoriteTasksId.isNotEmpty) {
-        for (var taskId in favoriteTasksId) {
-          final task = await getTaskById(taskId);
-          if (task != null) result.add(task);
-        }
-      }
-      return result;
-    } catch (e) {
-      LoggerService.logger?.e('Error occurred in getFavoriteTasks: $e');
-      return [];
-    }
-  }
-
   Future<List<TaskAttachmentTableData>> _getTaskAttachments(TaskTableCompanion task, {bool withFeedback = false}) async {
     final attachments = (await (database.select(database.taskAttachmentTable)..where((tbl) => tbl.taskId.equals(task.id.value))).get());
     if (withFeedback) Helper.snackBar(message: 'Task ${task.title.value} has ${attachments.length} attachments');
@@ -203,12 +186,55 @@ class TaskDatabaseRepository extends GetxService {
 
   ImageDTO _convertToImageDTO(TaskAttachmentTableData e) => ImageDTO(file: XFile(e.url), type: ImageType.values.singleWhere((element) => element.name == e.type));
 
-  void backupTaskRequest(List<Task> tasks) {
-    // TODO back up task request
+  Future<void> backupTaskRequest(List<Task> tasks) async {
+    SharedPreferencesService.find.add(taskRequestsKey, jsonEncode(tasks.map((e) => e.id).toList()));
+    await backupTasks(tasks);
   }
 
   Future<List<Task>> getTaskRequest() async {
-    // TODO get task request
-    return [];
+    LoggerService.logger?.i('Getting task requests...');
+    List<Task> result = [];
+    final savedIds = SharedPreferencesService.find.get(taskRequestsKey);
+    List<int> taskRequestsId = (jsonDecode(savedIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
+    if (taskRequestsId.isNotEmpty) {
+      for (var taskId in taskRequestsId) {
+        final task = await getTaskById(taskId);
+        if (task != null) result.add(task);
+      }
+    }
+    return result;
+  }
+
+  Future<FavoriteDTO?> getSavedFavorite() async {
+    try {
+      LoggerService.logger?.i('Getting favorite tasks...');
+      FavoriteDTO result = FavoriteDTO(savedTasks: [], savedStores: []);
+      final savedTaskIds = SharedPreferencesService.find.get(favoriteTasksKey);
+      List<int> favoriteTasksId = (jsonDecode(savedTaskIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
+      final savedStoreIds = SharedPreferencesService.find.get(favoriteStoresKey);
+      List<int> favoriteStoresId = (jsonDecode(savedStoreIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
+      if (favoriteTasksId.isNotEmpty) {
+        for (var taskId in favoriteTasksId) {
+          final task = await getTaskById(taskId);
+          if (task != null) result.savedTasks.add(task);
+        }
+      }
+      if (favoriteStoresId.isNotEmpty) {
+        for (var storeId in favoriteStoresId) {
+          final store = await StoreDatabaseRepository.find.getStoreById(storeId);
+          if (store != null) result.savedStores.add(store);
+        }
+      }
+      return result;
+    } catch (e) {
+      LoggerService.logger?.e('Error occurred in getSavedFavorite: $e');
+      return null;
+    }
+  }
+
+  Future<void> backupFavorite(FavoriteDTO? favorites) async {
+    if (favorites == null) return;
+    await backupTasks(favorites.savedTasks, isFavorite: true);
+    await StoreDatabaseRepository.find.backupStores(favorites.savedStores, isFavorite: true);
   }
 }

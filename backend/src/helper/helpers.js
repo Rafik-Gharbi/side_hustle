@@ -4,10 +4,25 @@ const { prefixPatterns } = require("../helper/constants");
 const jwt = require("jsonwebtoken");
 const { Task } = require("../models/task_model");
 const { Reservation } = require("../models/reservation_model");
+const { Service } = require("../models/service_model");
+const { Booking } = require("../models/booking_model");
+const { User } = require("../models/user_model");
+const { getFavoriteByUserId, getFavoriteStoreByUserId } = require("../sql/sql_request");
 
 function adjustString(inputString) {
-  const ext = path.extname(file.originalname).toLowerCase();
-  if (![".jpg", ".jpeg", ".png", ".gif", ".webp", ".pdf", ".doc", ".docx"].includes(ext)) {
+  const ext = path.extname(inputString).toLowerCase();
+  if (
+    ![
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".gif",
+      ".webp",
+      ".pdf",
+      ".doc",
+      ".docx",
+    ].includes(ext)
+  ) {
     const error = new Error("Extension not allowed");
     error.status = 415;
     return cb(error);
@@ -65,6 +80,50 @@ async function getTaskCondidatesNumber(taskId) {
 
     return reservationList.length;
   }
+}
+
+async function getServiceCondidatesNumber(serviceId) {
+  let serviceFound = await Service.findByPk(serviceId);
+  if (!serviceFound) {
+    return res.status(404).json({ message: "service_not_found" });
+  }
+  let confirmedBooking = await Booking.findOne({
+    where: {
+      service_id: serviceId,
+      status: "confirmed",
+    },
+  });
+  let finishedBooking = await Booking.findOne({
+    where: {
+      service_id: serviceId,
+      status: "finished",
+    },
+  });
+  if (confirmedBooking || finishedBooking) {
+    return -1;
+  } else {
+    let bookingList = await Booking.findAll({
+      where: {
+        service_id: serviceFound.id,
+      },
+    });
+
+    return bookingList.length;
+  }
+}
+
+async function checkStoreFavorite(store, currentUserId) {
+  let userFavorites = [];
+  if (!currentUserId) return false;
+  const userFound = await User.findByPk(currentUserId);
+  if (!userFound) {
+    return res.status(404).json({ message: "user_not_found" });
+  } else {
+    userFavorites = await getFavoriteStoreByUserId(currentUserId);
+  }
+  return userFavorites.length > 0
+    ? userFavorites.some((e) => e.store_id == store.id)
+    : false;
 }
 
 function getFullTimeDate() {
@@ -404,5 +463,7 @@ module.exports = {
   transformStringToJson,
   getFileType,
   getTaskCondidatesNumber,
+  getServiceCondidatesNumber,
+  checkStoreFavorite,
   adjustString,
 };

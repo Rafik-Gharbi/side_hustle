@@ -15,6 +15,7 @@ class ServiceCard extends StatelessWidget {
   final void Function()? onDeleteService;
   final void Function()? onEditService;
   final bool isOwner;
+  final int requests;
 
   const ServiceCard({
     super.key,
@@ -23,6 +24,7 @@ class ServiceCard extends StatelessWidget {
     this.onDeleteService,
     this.onEditService,
     this.isOwner = false,
+    this.requests = -1,
   });
 
   @override
@@ -68,9 +70,15 @@ class ServiceCard extends StatelessWidget {
               ],
             ),
           ),
-          CustomButtons.icon(
-            icon: const Icon(Icons.shopping_cart_outlined, size: 18),
-            onPressed: onBookService,
+          Badge(
+            isLabelVisible: isOwner,
+            offset: Offset(requests > 99 ? -5 : 0, 5),
+            label: Text(requests > 99 ? '+99' : requests.toString(), style: AppFonts.x11Bold.copyWith(color: kNeutralColor100)),
+            backgroundColor: isOwner ? kErrorColor : Colors.transparent,
+            child: CustomButtons.icon(
+              icon: Icon(isOwner ? Icons.three_p_outlined : Icons.shopping_cart_outlined, size: 18),
+              onPressed: onBookService,
+            ),
           ),
         ],
       ),

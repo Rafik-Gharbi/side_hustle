@@ -6,4 +6,6 @@ const String jwtKey = 'jwt';
 const String refreshTokenKey = 'refreshToken';
 const String navigationStackKey = 'stack';
 const String hotTasksKey = 'hot_tasks';
+const String taskRequestsKey = 'task_requests';
 const String favoriteTasksKey = 'favorite_tasks';
+const String favoriteStoresKey = 'favorite_stores';

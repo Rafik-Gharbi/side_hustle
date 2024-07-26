@@ -6,7 +6,8 @@ module.exports = (app) => {
   var router = require("express").Router();
 
   // create reservation (property and user connected)
-  router.post("/toggle", tokenVerification, favoriteController.toggleFavorite);
+  router.post("/toggle-task", tokenVerification, favoriteController.toggleTaskFavorite);
+  router.post("/toggle-store", tokenVerification, favoriteController.toggleStoreFavorite);
   router.get("/list", tokenVerification, favoriteController.listFavorite);
 
   app.use("/favorite", router);

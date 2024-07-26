@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../constants/colors.dart';
 import '../../constants/sizes.dart';
 import '../../helpers/buildables.dart';
-import '../../models/reservation.dart';
+import '../../models/enum/request_status.dart';
 import '../../models/user.dart';
 import '../../services/theme/theme.dart';
 import '../../widgets/custom_buttons.dart';
@@ -15,7 +15,7 @@ import 'user_profile_controller.dart';
 class UserProfileScreen extends StatelessWidget {
   static const String routeName = '/user-profile';
   final User? user;
-  final ReservationStatus reservationStatus;
+  final RequestStatus requestStatus;
   final void Function()? onReject;
   final void Function()? onAccept;
 
@@ -24,7 +24,7 @@ class UserProfileScreen extends StatelessWidget {
     this.user,
     this.onReject,
     this.onAccept,
-    this.reservationStatus = ReservationStatus.finished,
+    this.requestStatus = RequestStatus.finished,
   });
 
   @override
@@ -94,7 +94,7 @@ class UserProfileScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (onReject != null && onAccept != null && reservationStatus == ReservationStatus.pending)
+                if (onReject != null && onAccept != null && requestStatus == RequestStatus.pending)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: Paddings.large).copyWith(bottom: Paddings.extraLarge * 2, top: Paddings.regular),
                     child: Row(

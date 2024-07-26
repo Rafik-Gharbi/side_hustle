@@ -29,4 +29,10 @@ class ImageDTO {
         url: Value(file.path),
         taskId: Value(taskId),
       );
+
+  ServiceGalleryTableCompanion toGalleryCompanion({int? serviceId}) => ServiceGalleryTableCompanion(
+        type: Value(type.name),
+        url: Value(file.path),
+        serviceId: Value(serviceId),
+      );
 }

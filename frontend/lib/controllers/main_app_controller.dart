@@ -11,6 +11,7 @@ import '../constants/shared_preferences_keys.dart';
 import '../helpers/helper.dart';
 import '../models/category.dart';
 import '../models/governorate.dart';
+import '../models/store.dart';
 import '../models/task.dart';
 import '../networking/api_base_helper.dart';
 import '../repositories/favorite_repository.dart';
@@ -171,7 +172,12 @@ class MainAppController extends GetxController {
   List<Category> getCategoryChildren(Category parentCategory) => categories.where((element) => element.parentId == parentCategory.id).toList();
 
   Future<bool> toggleFavoriteTask(Task task) async {
-    final result = await FavoriteRepository.find.toggleFavorite(idTask: task.id!);
+    final result = await FavoriteRepository.find.toggleTaskFavorite(idTask: task.id!);
+    return result;
+  }
+
+  Future<bool> toggleFavoriteStore(Store store) async {
+    final result = await FavoriteRepository.find.toggleStoreFavorite(idStore: store.id!);
     return result;
   }
 }
