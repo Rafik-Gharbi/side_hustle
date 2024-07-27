@@ -9,3 +9,5 @@ const String hotTasksKey = 'hot_tasks';
 const String taskRequestsKey = 'task_requests';
 const String favoriteTasksKey = 'favorite_tasks';
 const String favoriteStoresKey = 'favorite_stores';
+const String hourPreferencesKey = 'hour_preferences';
+const String userSecretKey = 'user_secret';

@@ -12,6 +12,7 @@ import '../../widgets/catgory_card.dart';
 import '../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../widgets/task_card.dart';
 import '../account/login_dialog.dart';
+import '../settings/settings_screen.dart';
 import '../task_filter/more_filters_popup.dart';
 import '../task_list/task_list_screen.dart';
 import 'home_controller.dart';
@@ -73,7 +74,7 @@ class HomeScreen extends StatelessWidget {
                                       ),
                                 CustomButtons.icon(
                                   icon: const Icon(Icons.settings_outlined),
-                                  onPressed: () {},
+                                  onPressed: () => Get.toNamed(SettingsScreen.routeName),
                                 ),
                               ],
                             ),

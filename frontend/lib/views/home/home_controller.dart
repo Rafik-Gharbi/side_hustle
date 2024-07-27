@@ -32,6 +32,7 @@ class HomeController extends GetxController {
 
   Future<void> _init() async {
     Helper.waitAndExecute(() => MainAppController.find.isReady, () async {
+      // TODO adapt user preferences if selected most searched categories
       mostPopularCategories = MainAppController.find.categories.getRange(10, 14).toList();
       hotTasks = await TaskRepository.find.getHotTasks() ?? [];
       update();

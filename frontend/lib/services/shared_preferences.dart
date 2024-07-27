@@ -7,6 +7,7 @@ class SharedPreferencesService extends GetxService {
 
   static SharedPreferencesService get find => Get.find<SharedPreferencesService>();
 
+  // TODO use encrypted SharedPreferences
   SharedPreferencesService() {
     _getSharedPreferencesInstance();
   }

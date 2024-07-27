@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:flutter_screen_lock/flutter_screen_lock.dart';
 
+import '../constants/colors.dart';
 import '../constants/shared_preferences_keys.dart';
 import '../helpers/helper.dart';
 import '../models/category.dart';
@@ -36,6 +39,10 @@ class MainAppController extends GetxController {
   ConnectivityResult currentConnectivityStatus = ConnectivityResult.none;
   RxBool hasInternetConnection = true.obs;
   RxBool isBackReachable = true.obs;
+  final _localAuthentication = LocalAuthentication();
+  RxBool isAuthenticationRequired = false.obs;
+  RxBool isAuthenticated = false.obs;
+  bool _canCheckBiometric = false;
 
   bool get isConnected => hasInternetConnection.value && isBackReachable.value;
 
@@ -92,6 +99,58 @@ class MainAppController extends GetxController {
     return ConnectivityResult.none;
   }
 
+  Future<void> setAuthentication(BuildContext context) async {
+    if (isAuthenticationRequired.value) {
+      isAuthenticated.value = false;
+      await showAuthenticationProcess(Get.currentRoute, context, couldCancel: true);
+      if (!isAuthenticated.value) return;
+    }
+    await screenLockCreate(
+      context: context,
+      customizedButtonChild: isAuthenticationRequired.value ? const Icon(Icons.delete_forever, color: kNeutralColor100) : null,
+      cancelButton: const Icon(Icons.close, color: kNeutralColor100),
+      deleteButton: const Icon(Icons.backspace_outlined, color: kNeutralColor100, size: 22),
+      customizedButtonTap: () => Helper.openConfirmationDialog(
+        title: 'disable_authentication_question'.tr,
+        onConfirm: () {
+          isAuthenticationRequired.value = false;
+          SharedPreferencesService.find.removeKey(userSecretKey);
+          Get.back();
+          Get.back();
+        },
+        onCancel: () => Get.back(),
+      ),
+      keyPadConfig: const KeyPadConfig(buttonConfig: KeyPadButtonConfig(buttonStyle: ButtonStyle(foregroundColor: WidgetStatePropertyAll(kNeutralColor100)))),
+      config: ScreenLockConfig(backgroundColor: kNeutralColor100.withOpacity(0.4)),
+      onConfirmed: (value) {
+        SharedPreferencesService.find.add(userSecretKey, value);
+        isAuthenticationRequired.value = true;
+        debugPrint(value);
+        Get.back();
+      },
+    );
+  }
+
+  Future<void> showAuthenticationProcess(String? route, BuildContext context, {bool replaceNavigation = false, bool couldCancel = false}) async => await screenLock(
+        context: context,
+        correctString: SharedPreferencesService.find.get(userSecretKey) ?? '0000',
+        canCancel: couldCancel,
+        cancelButton: const Icon(Icons.close, color: kNeutralColor100),
+        deleteButton: const Icon(Icons.backspace_outlined, color: kNeutralColor100, size: 22),
+        keyPadConfig: const KeyPadConfig(buttonConfig: KeyPadButtonConfig(buttonStyle: ButtonStyle(foregroundColor: WidgetStatePropertyAll(kNeutralColor100)))),
+        config: ScreenLockConfig(backgroundColor: kNeutralColor100.withOpacity(0.4)),
+        onUnlocked: () {
+          isAuthenticated.value = true;
+          if (replaceNavigation) {
+            Get.offAllNamed(route ?? HomeScreen.routeName);
+          } else {
+            Get.back();
+          }
+        },
+        // onCancelled: () => Get.back(),
+        onOpened: () async => await _localAuth(route, replaceNavigation),
+      );
+
   Future<void> _init() async {
     currentConnectivityStatus = await Future.delayed(const Duration(milliseconds: 600), () async => await checkConnectivity());
     isBackReachable.value = await ApiBaseHelper.find.checkConnectionToBackend();
@@ -115,6 +174,13 @@ class MainAppController extends GetxController {
             Get.updateLocale(const Locale('en', 'US'));
           }
         }
+        try {
+          _canCheckBiometric = await _localAuthentication.canCheckBiometrics;
+        } catch (e) {
+          foundation.debugPrint(e.toString());
+          _canCheckBiometric = false;
+        }
+        isAuthenticationRequired.value = SharedPreferencesService.find.get(userSecretKey) != null;
         if (categories.isEmpty) await _initDefaultCategories();
         if (governorates.isEmpty) await _initDefaultGovernorates();
         ever(
@@ -140,6 +206,22 @@ class MainAppController extends GetxController {
       },
     );
     isReady = true;
+  }
+
+  Future<void> _localAuth(String? route, bool replaceNavigation) async {
+    if (_canCheckBiometric) {
+      final didAuthenticate = await _localAuthentication.authenticate(localizedReason: 'please_authenticate'.tr);
+      if (didAuthenticate) {
+        isAuthenticated.value = true;
+        if (replaceNavigation) {
+          Get.offAllNamed(route ?? HomeScreen.routeName);
+        } else {
+          Get.back();
+        }
+      }
+    } else {
+      debugPrint('cannot Check Biometrics');
+    }
   }
 
   Future<void> _initDefaultCategories() async {

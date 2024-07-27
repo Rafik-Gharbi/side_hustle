@@ -18,6 +18,7 @@ import 'repositories/store_repository.dart';
 import 'repositories/task_repository.dart';
 import 'repositories/user_repository.dart';
 import 'services/authentication_service.dart';
+import 'services/theme/theme_service.dart';
 import 'views/add_task/add_task_bottomsheet.dart';
 import 'views/approve_user/approve_user_controller.dart';
 import 'views/approve_user/approve_user_screen.dart';
@@ -42,6 +43,8 @@ import 'views/profile/profile_controller.dart';
 import 'views/profile/profile_screen.dart';
 import 'views/service_request/service_request_controller.dart';
 import 'views/service_request/service_request_screen.dart';
+import 'views/settings/settings_controller.dart';
+import 'views/settings/settings_screen.dart';
 import 'views/task_details/task_details_screen.dart';
 import 'views/task_history/task_history_controller.dart';
 import 'views/task_history/task_history_screen.dart';
@@ -160,6 +163,11 @@ class MyApp extends StatelessWidget {
             binding: BindingsBuilder.put(() => ServiceRequestController()),
           ),
           GetPage(
+            name: SettingsScreen.routeName,
+            page: () => const SettingsScreen(),
+            binding: BindingsBuilder.put(() => SettingsController()),
+          ),
+          GetPage(
             name: AddTaskBottomsheet.routeName,
             page: () => const AddTaskBottomsheet(),
           ),
@@ -180,6 +188,7 @@ class InitialBindings implements Bindings {
     Get.put(MainAppController(), permanent: true);
     Get.put(AuthenticationService(), permanent: true);
     Get.put(ApiBaseHelper(), permanent: true);
+    Get.put(ThemeService(), permanent: true);
     // Repositories
     Get.put(UserRepository(), permanent: true);
     Get.put(ParamsRepository(), permanent: true);
