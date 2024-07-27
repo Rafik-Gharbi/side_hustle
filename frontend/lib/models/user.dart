@@ -1,10 +1,9 @@
-import 'dart:convert';
-
 import 'package:drift/drift.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../controllers/main_app_controller.dart';
 import '../database/database.dart';
+import '../helpers/extensions/lat_lon_extension.dart';
 import '../networking/api_base_helper.dart';
 import 'governorate.dart';
 
@@ -44,6 +43,7 @@ class User {
   Governorate? governorate;
   String? bio;
   LatLng? coordinates;
+  bool keepPrivacy;
   Gender? gender;
   VerifyIdentityStatus isVerified;
   bool? isMailVerified;
@@ -64,6 +64,7 @@ class User {
     this.role,
     this.picture,
     this.isMailVerified,
+    this.keepPrivacy = false,
     this.isVerified = VerifyIdentityStatus.none,
   });
 
@@ -82,7 +83,8 @@ class User {
         name: json['name'],
         phone: json['phone_number'],
         password: json['password'],
-        coordinates: json['coordinates'],
+        coordinates: json['coordinates'] != null ? (json['coordinates'] as String).fromString() : null,
+        keepPrivacy: json['keepPrivacy'] ?? false,
         birthdate: json['birthdate'] != null ? DateTime.parse(json['birthdate']) : null,
         gender: json['gender'] != null ? Gender.fromString(json['gender']) : null,
         role: json['role'] != null ? Role.values.singleWhere((element) => element.name == json['role']) : null,
@@ -101,7 +103,8 @@ class User {
     data['email'] = email?.toLowerCase();
     data['name'] = name;
     data['phoneNumber'] = phone;
-    data['coordinates'] = coordinates;
+    data['coordinates'] = coordinates?.toCoordinatesString();
+    data['keepPrivacy'] = keepPrivacy;
     data['birthdate'] = birthdate?.toIso8601String();
     data['gender'] = gender?.value.toLowerCase();
     data['role'] = role?.name;
@@ -129,6 +132,8 @@ class User {
     data['email'] = email;
     data['name'] = name;
     data['phone'] = phone;
+    data['coordinates'] = coordinates?.toCoordinatesString();
+    data['keepPrivacy'] = keepPrivacy;
     data['governorate'] = governorate?.id;
     data['birthdate'] = birthdate?.toIso8601String();
     data['gender'] = gender?.value.toLowerCase();
@@ -157,7 +162,7 @@ class User {
         isVerified: user.isVerified,
         isMailVerified: user.isMailVerified,
         role: user.role,
-        coordinates: user.coordinates != null ? LatLng.fromJson(jsonDecode(user.coordinates!)) : null,
+        coordinates: user.coordinates != null ? (user.coordinates as String).fromString() : null,
         governorate: MainAppController.find.getGovernorateById(user.governorate),
       );
 
@@ -174,6 +179,6 @@ class User {
         isVerified: Value(isVerified),
         isMailVerified: isMailVerified == null ? const Value.absent() : Value(isMailVerified!),
         role: role == null ? const Value.absent() : Value(role!),
-        coordinates: coordinates == null ? const Value.absent() : Value(jsonEncode(coordinates!)),
+        coordinates: coordinates == null ? const Value.absent() : Value(coordinates!.toCoordinatesString()),
       );
 }

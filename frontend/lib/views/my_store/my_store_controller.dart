@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../helpers/helper.dart';
 import '../../helpers/image_picker_by_platform/image_picker_platform.dart';
@@ -33,11 +34,19 @@ class MyStoreController extends GetxController {
   Governorate? _governorate;
   Category? _category;
   int? updateServiceId;
+  LatLng? _coordinates;
 
   List<XFile> serviceGallery = [];
 
   Governorate? get governorate => _governorate;
   Category? get category => _category;
+
+  LatLng? get coordinates => _coordinates;
+
+  set coordinates(LatLng? value) {
+    _coordinates = value;
+    update();
+  }
 
   set category(Category? value) {
     _category = value;
@@ -72,7 +81,7 @@ class MyStoreController extends GetxController {
           description: descriptionController.text,
           governorate: governorate!,
           picture: ImageDTO(file: storePicture!, type: ImageType.image),
-          // coordinates: coordinates,
+          coordinates: coordinates,
         ),
         withBack: true,
       );
@@ -84,7 +93,7 @@ class MyStoreController extends GetxController {
           description: descriptionController.text,
           governorate: governorate!,
           picture: ImageDTO(file: storePicture!, type: ImageType.image),
-          // coordinates: coordinates,
+          coordinates: coordinates,
         ),
         withBack: true,
       );

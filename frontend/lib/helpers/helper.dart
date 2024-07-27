@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
+import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constants/colors.dart';
@@ -304,4 +306,66 @@ class Helper {
       ),
     );
   }
+
+  static Future<bool> handlePermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    final GeolocatorPlatform geolocatorPlatform = GeolocatorPlatform.instance;
+    // Test if location services are enabled.
+    serviceEnabled = await geolocatorPlatform.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return false;
+    }
+    permission = await geolocatorPlatform.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await geolocatorPlatform.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return false;
+    }
+    return true;
+  }
+
+  static Future<LatLng?> getPosition() async {
+    final permission = await handlePermission();
+    if (!permission) return null;
+
+    try {
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best, forceAndroidLocationManager: true);
+      final latitude = position.latitude;
+      final longitude = position.longitude;
+      return LatLng(latitude, longitude);
+    } catch (error) {
+      debugPrint('Error getting location: $error');
+    }
+    return null;
+  }
+
+  static void showModifyLocationAlert(void Function(LatLng?) onSubmit) => Get.dialog(
+        AlertDialog(
+          title: const Text('Modifier et partager la position actuelle'),
+          content: const Text('Voulez-vous modifier et partager votre position actuelle ?'),
+          actions: [
+            ElevatedButton(
+              child: const Text('Annuler'),
+              onPressed: () => Get.back(),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              child: const Text('Modifier et partager'),
+              onPressed: () async {
+                Get.back();
+                final coordinates = await getPosition();
+                onSubmit.call(coordinates);
+              },
+            ),
+          ],
+        ),
+      );
 }

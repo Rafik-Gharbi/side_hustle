@@ -11,6 +11,7 @@ import '../../../services/authentication_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/sizes.dart';
+import '../../../widgets/coordinates_picker.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_dropdown.dart';
 import '../../../widgets/custom_text_field.dart';
@@ -103,6 +104,14 @@ class SignUpFields extends StatelessWidget {
               selectedItem: controller.gender?.value,
               buttonHeight: 45,
               onChanged: (value) => controller.gender = Gender.fromString(value!),
+            ),
+            const SizedBox(height: Paddings.regular),
+            CoordinatesPicker(
+              onSubmit: (coordinates) => controller.coordinates = coordinates,
+              keepPrivacy: (privacy) => controller.keepPrivacy = privacy,
+              withPicker: false,
+              currentKeepPrivacy: user?.keepPrivacy,
+              currentPosition: user?.coordinates,
             ),
             const SizedBox(height: Paddings.exceptional),
             CustomButtons.elevatePrimary(

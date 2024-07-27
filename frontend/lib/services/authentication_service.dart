@@ -7,6 +7,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../constants/shared_preferences_keys.dart';
 import '../controllers/main_app_controller.dart';
@@ -59,6 +60,8 @@ class AuthenticationService extends GetxController {
   String? phoneNumber;
   Gender? _gender;
   Governorate? _governorate;
+  LatLng? _coordinates;
+  bool _keepPrivacy = false;
 
   // Available logged in user data from JWT token
   bool? isUserMailVerified;
@@ -89,6 +92,20 @@ class AuthenticationService extends GetxController {
   Gender? get gender => _gender;
 
   Governorate? get governorate => _governorate;
+
+  LatLng? get coordinates => _coordinates;
+
+  bool get keepPrivacy => _keepPrivacy;
+
+  set keepPrivacy(bool value) {
+    _keepPrivacy = value;
+    update();
+  }
+
+  set coordinates(LatLng? value) {
+    _coordinates = value;
+    update();
+  }
 
   set governorate(Governorate? value) {
     _governorate = value;
@@ -253,6 +270,8 @@ class AuthenticationService extends GetxController {
         gender: gender,
         governorate: governorate,
         phone: Helper.isNullOrEmpty(phoneNumber) ? null : phoneNumber,
+        coordinates: coordinates,
+        keepPrivacy: keepPrivacy,
       );
       final jwt = await UserRepository.find.signup(user: user);
       isLoggingIn = false;
@@ -405,6 +424,8 @@ class AuthenticationService extends GetxController {
           phone: phoneNumber,
           governorate: governorate,
           gender: gender,
+          coordinates: coordinates,
+          keepPrivacy: keepPrivacy,
           birthdate: birthdateController.text.isNotEmpty ? DateFormat('yyyy-MM-dd').parse(birthdateController.text) : null,
         ),
         withBack: true,
@@ -435,6 +456,8 @@ class AuthenticationService extends GetxController {
     phoneNumber = user?.phone;
     _governorate = user?.governorate;
     _gender = user?.gender;
+    _coordinates = user?.coordinates;
+    _keepPrivacy = user?.keepPrivacy ?? false;
     WidgetsBinding.instance.addPostFrameCallback((_) => update());
   }
 

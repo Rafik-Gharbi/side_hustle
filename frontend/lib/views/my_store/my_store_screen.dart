@@ -50,7 +50,7 @@ class MyStoreScreen extends StatelessWidget {
   Widget buildStoreContent(MyStoreController controller, bool isOwner) {
     return LoadingRequest(
       isLoading: controller.isLoading,
-      child: controller.userStore == null && isOwner
+      child: controller.userStore == null
           ? Padding(
               padding: const EdgeInsets.all(Paddings.large),
               child: Column(

@@ -31,6 +31,6 @@ class UserDatabaseRepository extends GetxService {
   Future<void> backupUser(UserTableCompanion userCompanion) async {
     LoggerService.logger?.i('Backing up user...');
     await delete();
-    await insert(userCompanion);
+    Future.delayed(const Duration(milliseconds: 800), () async => await insert(userCompanion));
   }
 }

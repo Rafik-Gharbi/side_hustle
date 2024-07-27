@@ -9,6 +9,7 @@ import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/form_validators.dart';
 import '../../../models/governorate.dart';
 import '../../../services/theme/theme.dart';
+import '../../../widgets/coordinates_picker.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_dropdown.dart';
 import '../../../widgets/custom_text_field.dart';
@@ -24,7 +25,7 @@ class AddStoreBottomsheet extends StatelessWidget {
         builder: (controller) => Padding(
               padding: const EdgeInsets.only(top: Paddings.exceptional * 2),
               child: SizedBox(
-                height: 640,
+                height: 680,
                 child: Material(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
                   color: kNeutralColor100,
@@ -85,6 +86,11 @@ class AddStoreBottomsheet extends StatelessWidget {
                                 valueFrom: (governorate) => governorate.name,
                                 onChanged: (value) => controller.governorate = value,
                                 validator: (_) => FormValidators.notEmptyOrNullValidator(controller.governorate?.name),
+                              ),
+                              const SizedBox(height: Paddings.regular),
+                              CoordinatesPicker(
+                                onSubmit: (coordinates) => controller.coordinates = coordinates,
+                                currentPosition: controller.coordinates,
                               ),
                               const SizedBox(height: Paddings.exceptional * 2),
                               CustomButtons.elevatePrimary(

@@ -21,6 +21,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CustomScaffoldBottomNavigation(
+        appBarTitle: 'Settings',
         body: GetBuilder<SettingsController>(
           builder: (controller) => Center(
             child: SingleChildScrollView(

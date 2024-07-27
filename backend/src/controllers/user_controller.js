@@ -158,6 +158,8 @@ exports.signUp = async (req, res) => {
     gender,
     governorate,
     isMobile,
+    coordinates,
+    keepPrivacy,
   } = req.body;
 
   let formattedPhoneNumber = removeSpacesFromPhoneNumber(phoneNumber);
@@ -195,6 +197,8 @@ exports.signUp = async (req, res) => {
         birthdate,
         gender,
         governorate_id: governorate,
+        coordinates,
+        keepPrivacy,
       });
     } else if (email || formattedPhoneNumber) {
       // If email or phone_number is provided, password must be set
@@ -221,6 +225,8 @@ exports.signUp = async (req, res) => {
         birthdate,
         gender,
         governorate_id: governorate,
+        coordinates,
+        keepPrivacy,
       });
     } else {
       return res.status(400).json({ message: "missing_credentials" });
@@ -741,7 +747,7 @@ exports.updatePassword = async (req, res) => {
 };
 
 exports.updateProfile = async (req, res) => {
-  const { email, phone, name, governorate, birthdate, gender, bio } = req.body;
+  const { email, phone, name, governorate, birthdate, gender, coordinates, keepPrivacy, bio } = req.body;
   const formattedPhoneNumber = removeSpacesFromPhoneNumber(phone);
   try {
     const userFound = await User.findByPk(req.decoded.id);
@@ -776,6 +782,8 @@ exports.updateProfile = async (req, res) => {
       governorate_id: governorate,
       birthdate,
       gender,
+      coordinates,
+      keepPrivacy,
       // bio,
     });
     req.files?.gallery?.forEach(async (image) => {
@@ -793,20 +801,6 @@ exports.updateProfile = async (req, res) => {
       if (foundedCode && foundedCode.attempt > 4) {
         return res.status(401).json({ message: "too_many_otp" });
       }
-      // const otp = await sendOTP(formattedPhoneNumber);
-      // const verificationCode = {
-      //   status: otp.status,
-      //   phone_number: otp.to,
-      //   user_id: userFound.id,
-      //   attempt: otp.sendCodeAttempts.length,
-      // };
-      // foundedCode
-      //   ? VerificationCode.update(verificationCode, {
-      //       where: {
-      //         user_id: userFound.id,
-      //       },
-      //     })
-      //   : VerificationCode.create(verificationCode);
     }
     const jwt = await generateJWT(updatedUser);
     return res.status(200).json({ updatedUser, jwt });

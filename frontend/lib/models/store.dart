@@ -51,7 +51,7 @@ class Store {
     data['name'] = name;
     data['description'] = description;
     data['picture'] = picture;
-    data['coordinates'] = coordinates;
+    data['coordinates'] = coordinates?.toCoordinatesString();
     data['governorate_id'] = governorate?.id;
     data['owner_id'] = owner?.id;
     data['services'] = services?.map((e) => e.toJson()).toList();

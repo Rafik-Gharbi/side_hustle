@@ -32,6 +32,8 @@ final Map<String, String> enUs = <String, String>{
   'support': 'Support',
   'help': 'Help',
   'faq': 'FAQ',
+  'keep_location_privacy': 'Keep location privacy',
+  'keep_location_privacy_msg': 'Show a radius instead of an exact marker position',
   'supported_languages': 'Supported languages',
   'max_caching': 'Max data caching',
   'update_authentication': 'Update authentication',
