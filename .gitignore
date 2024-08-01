@@ -25,6 +25,10 @@ frontend/.atom/
 frontend/.buildlog/
 frontend/.history
 frontend/.svn/
+frontend/lib/*firebase_options*
+frontend/firebase.json
+frontend/ios/Runner/GoogleService-Info.plist
+frontend/macOS/Runner/GoogleService-Info.plist
 
 # IntelliJ related
 frontend/*.iml
