@@ -9,7 +9,11 @@ module.exports = (app) => {
 
   let router = require("express").Router();
 
-  router.get("/hot", tokenVerificationOptional, taskController.getHotTasks);
+  router.get(
+    "/hot-nearby",
+    tokenVerificationOptional,
+    taskController.getHotNearbyTasks
+  );
   router.get("/filter", tokenVerificationOptional, taskController.filterTasks);
   router.get("/user-request", tokenVerification, taskController.taskRequest);
   // TODO add role seeker check for below routes

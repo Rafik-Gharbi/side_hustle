@@ -57,7 +57,12 @@ class MarketScreen extends StatelessWidget {
                       suffixIcon: const Icon(Icons.search, color: kPrimaryColor),
                       fillColor: Colors.white,
                       onChanged: (value) => Helper.onSearchDebounce(
-                        () => value.length >= 3 || value.isEmpty ? controller.fetchSearchedStores() : null,
+                        () {
+                          if (value.length >= 3 || value.isEmpty) {
+                            controller.page = 0;
+                            controller.fetchSearchedStores();
+                          }
+                        },
                       ),
                     ),
                   )

@@ -38,7 +38,7 @@ extension RequestTypeExtension on RequestType {
 const String baseUrlLocalWeb = 'http://localhost:3000'; // web localhost
 const String baseUrlLocalAndroid = 'http://10.0.2.2:3000'; // android localhost
 const String baseUrlLocalIos = 'http://127.0.0.1:3000'; // ios localhost
-// const String baseUrlLocalIos = 'http://192.168.1.123:3000'; // real device ip address
+const String baseUrlRealIos = 'http://172.20.10.7:3000'; // real device ip address
 // const String baseUrlRemote = 'https://HustleMatch.net'; // remote
 String _lastRequestedUrl = '';
 
@@ -46,7 +46,7 @@ class ApiBaseHelper extends GetxController {
   static ApiBaseHelper get find => Get.find<ApiBaseHelper>();
   // final String baseUrl = baseUrlRemote;
   final String baseUrl = kReleaseMode
-      ? baseUrlLocalIos //baseUrlRemote
+      ? baseUrlRealIos //baseUrlRemote
       : kIsWeb
           ? baseUrlLocalWeb
           : GetPlatform.isAndroid
@@ -197,8 +197,8 @@ class ApiBaseHelper extends GetxController {
             Helper.snackBar(message: 'session_expired', title: 'login_msg', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
           }
           if (SharedPreferencesService.find.get(refreshTokenKey) != null) {
-            await AuthenticationService.find.renewToken();
-            return await request(RequestTypeExtension.fromString(response.request!.method), response.request!.url.path, body: response.body, sendToken: true);
+            final result = await AuthenticationService.find.renewToken();
+            return result ? await request(RequestTypeExtension.fromString(response.request!.method), response.request!.url.path, body: response.body, sendToken: true) : null;
           } else {
             AuthenticationService.find.logout();
           }

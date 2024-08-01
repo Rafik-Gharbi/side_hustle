@@ -359,6 +359,7 @@ async function generateJWT(response, isRefresh) {
       picture: response.picture,
       name: response.name,
       role: response.role,
+      governorate_id: response.governorate_id,
       isVerified: response.isVerified,
       isMailVerified: response.isMailVerified,
       isArchived: response.isArchived,

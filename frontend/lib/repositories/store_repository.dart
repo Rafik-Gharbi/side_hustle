@@ -23,8 +23,7 @@ class StoreRepository extends GetxService {
           '/store/filter?page=$page&limit=$limit&searchQuery=$searchQuery${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}',
         );
         stores = (result['formattedList'] as List).map((e) => Store.fromJson(e)).toList();
-      }
-      else {
+      } else {
         stores = await StoreDatabaseRepository.find.filterStores(searchQuery, filter);
       }
       if (stores.isNotEmpty && MainAppController.find.isConnected) StoreDatabaseRepository.find.backupStores(stores);
@@ -79,7 +78,7 @@ class StoreRepository extends GetxService {
   Future<Store?> getUserStore() async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/store/user');
-      return Store.fromJson(result['store']);
+      return result['store'] != null ? Store.fromJson(result['store']) : null;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getUserStore:\n$e');
     }

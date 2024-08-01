@@ -3,19 +3,34 @@ const { User } = require("../models/user_model");
 const { Task } = require("../models/task_model");
 const { Governorate } = require("../models/governorate_model");
 const { Category } = require("../models/category_model");
-const { getFavoriteTaskByUserId } = require("../sql/sql_request");
+const {
+  getFavoriteTaskByUserId,
+  populateTasks,
+  fetchAndSortNearbyTasks,
+  fetchUserReservation,
+} = require("../sql/sql_request");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
 const { getFileType, getTaskCondidatesNumber } = require("../helper/helpers");
+const reservationController = require("../controllers/reservation_controller");
+const {
+  CategorySubscriptionModel,
+} = require("../models/category_subscribtion_model");
+const { sendFirebaseNotification } = require("../../firebase-admin");
 
-// get boosted tasks
-exports.getHotTasks = async (req, res) => {
+// get boosted tasks & nearby tasks
+exports.getHotNearbyTasks = async (req, res) => {
   try {
     const currentUserId = req.decoded?.id;
-    let userFavorites = [];
+    let foundUser;
     if (currentUserId) {
-      userFavorites = await getFavoriteTaskByUserId(currentUserId);
+      foundUser = await User.findOne({ where: { id: currentUserId } });
     }
 
+    // get nearby tasks or user governorate tasks
+    let nearbyTasks = [];
+    nearbyTasks = await fetchAndSortNearbyTasks(foundUser, (limit = 3));
+
+    // get hot tasks
     const query = `SELECT task.*, 
       user.id AS user_id,
       user.name,
@@ -26,44 +41,26 @@ exports.getHotTasks = async (req, res) => {
       user.governorate_id as user_governorate_id,
       user.phone_number,
       user.role
-    FROM task JOIN user ON task.owner_id = user.id LIMIT 6
+    FROM task JOIN user ON task.owner_id = user.id LIMIT 3
     ;`;
     const tasks = await sequelize.query(query, {
       type: sequelize.QueryTypes.SELECT,
     });
-    const formattedList = await Promise.all(
-      tasks.map(async (row) => {
-        let owner = {
-          id: row.owner_id,
-          name: row.name,
-          email: row.email,
-          picture: row.picture,
-          phone: row.phone_number,
-        };
+    const hotTasks = await populateTasks(tasks, currentUserId);
 
-        let taskAttachments = [];
-        taskAttachments = await TaskAttachmentModel.findAll({
-          where: { task_id: row.id },
-        });
-
-        return {
-          id: row.id,
-          price: row.price,
-          title: row.title,
-          description: row.description,
-          delivrables: row.delivrables,
-          governorate_id: row.governorate_id,
-          category_id: row.category_id,
-          owner: owner,
-          attachments: taskAttachments.length == 0 ? [] : taskAttachments,
-          isFavorite:
-            currentUserId && userFavorites.length > 0
-              ? userFavorites.some((e) => e.task_id == row.id)
-              : false,
-        };
-      })
-    );
-    return res.status(200).json({ formattedList });
+    // get user's reservation (pending and ongoing tasks)
+    let reservation = [];
+    if (currentUserId) {
+      const userReservations = await fetchUserReservation(currentUserId);
+      reservation = await Promise.all(
+        userReservations.map(async (row) => {
+          if (row.status === "pending" || row.status === "confirmed") {
+            return row;
+          }
+        })
+      );
+    }
+    return res.status(200).json({ hotTasks, nearbyTasks, reservation });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);
@@ -75,24 +72,20 @@ exports.getHotTasks = async (req, res) => {
 exports.filterTasks = async (req, res) => {
   try {
     const searchQuery = req.query.searchQuery ?? "";
-    let categoryId = req.query.categoryId;
     const priceMin = req.query.priceMin;
     const priceMax = req.query.priceMax;
-    const nearby = req.query.nearby;
     const page = req.query.page;
     const limit = req.query.limit;
     const currentUserId = req.decoded?.id;
+    let categoryId = req.query.categoryId;
+    let nearby = req.query.nearby;
 
     const pageQuery = page ?? 1;
     const limitQuery = limit ? parseInt(limit) : 9;
     const offset = (pageQuery - 1) * limit;
 
-    let userFavorites = [];
-    if (currentUserId) {
-      userFavorites = await getFavoriteTaskByUserId(currentUserId);
-    }
-
     if (categoryId == -1) categoryId = undefined;
+    if (nearby <= 1) nearby = undefined;
 
     const query = `SELECT task.*, 
       user.id AS user_id,
@@ -123,38 +116,7 @@ exports.filterTasks = async (req, res) => {
         offset: offset,
       },
     });
-    const formattedList = await Promise.all(
-      tasks.map(async (row) => {
-        let owner = {
-          id: row.owner_id,
-          name: row.name,
-          email: row.email,
-          picture: row.picture,
-          phone: row.phone_number,
-        };
-
-        let taskAttachments = [];
-        taskAttachments = await TaskAttachmentModel.findAll({
-          where: { task_id: row.id },
-        });
-
-        return {
-          id: row.id,
-          price: row.price,
-          title: row.title,
-          description: row.description,
-          delivrables: row.delivrables,
-          governorate_id: row.governorate_id,
-          category_id: row.category_id,
-          owner: owner,
-          attachments: taskAttachments.length == 0 ? [] : taskAttachments,
-          isFavorite:
-            currentUserId && userFavorites.length > 0
-              ? userFavorites.some((e) => e.task_id == row.id)
-              : false,
-        };
-      })
-    );
+    const formattedList = await populateTasks(tasks, currentUserId);
     return res.status(200).json({ formattedList });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -217,7 +179,6 @@ exports.taskRequest = async (req, res) => {
           where: { task_id: row.id },
         });
 
-        // TODO add task's proposals from reservation where user_id == current user and task_id == row.id
         const condidates = await getTaskCondidatesNumber(row.id);
 
         return {
@@ -259,6 +220,7 @@ exports.addTask = async (req, res) => {
     delivrables,
     dueDate,
     owner_id,
+    coordinates,
   } = req.body;
 
   try {
@@ -287,6 +249,7 @@ exports.addTask = async (req, res) => {
       delivrables,
       due_date: dueDate,
       owner_id,
+      coordinates,
     });
 
     let attachments = [];
@@ -315,9 +278,31 @@ exports.addTask = async (req, res) => {
       category_id: result.category_id,
       owner: user,
       attachments,
+      coordinates,
     };
 
-    // Return token
+    // Send notification to subscribed task category
+    const subscribed = await CategorySubscriptionModel.findAll({
+      where: { category_id: task.category_id },
+    });
+    let tokenList = [];
+    tokenList = await Promise.all(
+      subscribed.map(async (subscription) => {
+        const subscribedUser = await User.findOne({
+          where: { id: subscription.user_id },
+        });
+        if (user.id != subscribedUser.id) {
+          return subscribedUser.fcmToken;
+        }
+      })
+    );
+    await sendFirebaseNotification(
+      tokenList,
+      "New Task Available",
+      `A new task in "${category.name}" category has been created. Check it out!`
+    );
+
+    // Return created task
     return res.status(200).json({ task });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -339,6 +324,7 @@ exports.updateTask = async (req, res) => {
       governorate_id,
       delivrables,
       dueDate,
+      coordinates,
     } = req.body;
 
     if (!id) {
@@ -366,6 +352,7 @@ exports.updateTask = async (req, res) => {
         governorate_id,
         delivrables,
         dueDate,
+        coordinates,
       },
       { transaction }
     );
@@ -423,6 +410,7 @@ exports.updateTask = async (req, res) => {
         delivrables: updatedTask.delivrables,
         governorate_id: updatedTask.governorate_id,
         category_id: updatedTask.category_id,
+        coordinates: updatedTask.coordinates,
         owner: foundUser,
       },
     });

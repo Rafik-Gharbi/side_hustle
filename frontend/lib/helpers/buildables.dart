@@ -152,4 +152,9 @@ class Buildables {
           ],
         ),
       );
+
+  static Widget lightVerticalDivider({EdgeInsets? padding, bool expand = false, double? height}) => Padding(
+        padding: padding ?? const EdgeInsets.symmetric(horizontal: Paddings.exceptional),
+        child: Container(color: kNeutralLightColor, width: 1, height: expand ? height ?? Get.height * 0.8 : 50),
+      );
 }

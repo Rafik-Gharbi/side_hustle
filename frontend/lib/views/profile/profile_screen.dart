@@ -10,7 +10,6 @@ import '../../models/user.dart';
 import '../../services/authentication_service.dart';
 import '../../services/shared_preferences.dart';
 import '../../services/theme/theme.dart';
-import '../../widgets/categories_bottomsheet.dart';
 import '../../widgets/custom_buttons.dart';
 import '../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../widgets/hold_in_safe_area.dart';
@@ -81,8 +80,11 @@ class ProfileScreen extends StatelessWidget {
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
                                             Text(controller.loggedInUser!.name ?? 'Someone', style: AppFonts.x16Bold),
-                                            const SizedBox(width: Paddings.small),
-                                            const Tooltip(message: 'Verified user', child: Icon(Icons.verified_outlined, size: 18)),
+                                            if (controller.loggedInUser?.isVerified == VerifyIdentityStatus.verified)
+                                              const Padding(
+                                                padding: EdgeInsets.only(right: Paddings.small),
+                                                child: Tooltip(message: 'Verified user', child: Icon(Icons.verified_outlined, size: 18)),
+                                              ),
                                           ],
                                         ),
                                         const SizedBox(height: Paddings.small),
@@ -180,20 +182,9 @@ class ProfileScreen extends StatelessWidget {
                                                         buildActionTile(
                                                           label: 'subscribe_categories'.tr,
                                                           icon: Icons.loyalty_outlined,
-                                                          onTap: () => Get.bottomSheet(
-                                                            SizedBox(
-                                                              height: Get.height * 0.8,
-                                                              child: CategoriesBottomsheet(
-                                                                maxSelect: 3,
-                                                                nextUpdate: controller.nextUpdateGategory,
-                                                                selected: controller.subscribedCategories,
-                                                                onSelectCategory: (category) => controller.subscribeToCategories(category),
-                                                              ),
-                                                            ),
-                                                            isScrollControlled: true,
-                                                          ),
+                                                          onTap: controller.manageCategoriesSubscription,
                                                         ),
-                                                        if (AuthenticationService.find.jwtUserData?.role != Role.provider)
+                                                        if (AuthenticationService.find.jwtUserData?.role != Role.seeker)
                                                           buildActionTile(
                                                             label: 'my_request'.tr,
                                                             icon: Icons.campaign_outlined,

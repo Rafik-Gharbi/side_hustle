@@ -1,4 +1,8 @@
 const { sequelize } = require("../../db.config");
+const { Reservation } = require("../models/reservation_model");
+const { TaskAttachmentModel } = require("../models/task_attachment_model");
+const { Task } = require("../models/task_model");
+const { User } = require("../models/user_model");
 
 //function to get name and id from a given ids and table
 const fetchNames = async (ids, tableName) => {
@@ -16,6 +20,7 @@ const fetchNames = async (ids, tableName) => {
     name: result.name,
   }));
 };
+
 const fetchNamesAndCount = async (ids, tableName) => {
   const query = `
     SELECT id, name
@@ -40,40 +45,156 @@ const fetchNamesAndCount = async (ids, tableName) => {
   }));
 };
 
-const getImageByPropertyId = async (propertyId) => {
+const getNotSeenMessages = async (discussionId, connected) => {
   const query = `
-    SELECT id,url, thumbnail
-    FROM property_image
-    WHERE property_id = :propertyId
+    SELECT Count(*) as notSeen
+    FROM chat
+    WHERE discussion_id = :discussionId AND seen = false AND reciever_id = :connectedId
   `;
   const results = await sequelize.query(query, {
-    replacements: { propertyId: propertyId },
+    replacements: { discussionId: discussionId, connectedId: connected },
     type: sequelize.QueryTypes.SELECT,
   });
 
-  return results.map((result) => ({
-    id: result.id,
-    url: result.url,
-    thumbnail: result.thumbnail,
-  }));
+  return results[0]["notSeen"];
 };
 
-const getOwnerIdByProperty = async (propertyId) => {
-  const query = `
-    SELECT owner_id
-    FROM property
-    WHERE id = :propertyId
-  `;
-  const results = await sequelize.query(query, {
-    replacements: { propertyId: propertyId },
-    type: sequelize.QueryTypes.SELECT,
-  });
-  if (results.length > 0) {
-    return results[0].owner_id; // Return just the owner_id
-  } else {
-    return null; // Return null if no results found
+async function fetchUserReservation(userId) {
+  let userFound = await User.findByPk(userId);
+  if (!userFound) {
+    return res.status(404).json({ message: "user_not_found" });
   }
-};
+
+  let reservationList = await Reservation.findAll({
+    where: {
+      user_id: userFound.id,
+    },
+  });
+  const formattedList = await Promise.all(
+    reservationList.map(async (row) => {
+      let foundTask = await Task.findByPk(row.task_id);
+      let task = await populateOneTask(foundTask, userFound.id);
+      let taskAttachments = await TaskAttachmentModel.findAll({
+        where: { task_id: row.task_id },
+      });
+
+      return {
+        id: row.id,
+        user: userFound,
+        date: row.createdAt,
+        task: task,
+        totalPrice: row.total_price,
+        coupon: row.coupon,
+        note: row.note,
+        status: row.status,
+        taskAttachments,
+      };
+    })
+  );
+  return formattedList;
+}
+
+async function fetchAndSortNearbyTasks(user, limit = 10, offset = 0) {
+  let userLongitude, userLatitude;
+  if (user && user.coordinates) {
+    [userLongitude, userLatitude] = user?.coordinates?.split(",").map(Number);
+  }
+  const query = `SELECT
+        id,
+        title,
+        description,
+        price,
+        delivrables,
+        coordinates,
+        due_date,
+        owner_id,
+        governorate_id,
+        category_id
+        ${
+          userLongitude && userLatitude
+            ? `, (ST_Distance(
+                ST_GeomFromText(
+                    CONCAT('POINT(',
+                        CAST(SUBSTRING_INDEX(coordinates, ',', 1) AS DECIMAL(10, 6)), ' ',
+                        CAST(SUBSTRING_INDEX(coordinates, ',', -1) AS DECIMAL(10, 6)), 
+                    ')'), 4326
+                ),
+                ST_GeomFromText(
+                    CONCAT('POINT(', :userLongitude, ' ', :userLatitude, ')'), 4326
+                )
+            )) AS distance`
+            : ``
+        }
+        FROM
+        task
+        WHERE
+        ${
+          userLongitude && userLatitude
+            ? `coordinates IS NOT NULL`
+            : `governorate_id = :userGovernorateId`
+        }
+        ${userLongitude && userLatitude ? `ORDER BY distance ASC` : ``}
+        LIMIT :limit OFFSET :offset`;
+  const tasks = await sequelize.query(query, {
+    type: sequelize.QueryTypes.SELECT,
+    replacements: {
+      userLongitude,
+      userLatitude,
+      limit,
+      offset,
+      userGovernorateId: user && user.governorate_id ? user.governorate_id : 1,
+    },
+  });
+
+  const nearbyTasks = await populateTasks(tasks, user?.id);
+
+  return nearbyTasks;
+}
+
+async function populateTasks(fetchedTasks, currentUserId) {
+  const tasks = await Promise.all(
+    fetchedTasks.map(async (row) => {
+      return await populateOneTask(row, currentUserId);
+    })
+  );
+
+  return tasks;
+}
+
+async function populateOneTask(task, currentUserId) {
+  let userFavorites = [];
+  if (currentUserId) {
+    userFavorites = await getFavoriteTaskByUserId(currentUserId);
+  }
+  let owner = {
+    id: task.owner_id,
+    name: task.name,
+    email: task.email,
+    picture: task.picture,
+    phone: task.phone_number,
+  };
+  let taskAttachments = [];
+  taskAttachments = await TaskAttachmentModel.findAll({
+    where: { task_id: task.id },
+  });
+
+  return {
+    id: task.id,
+    price: task.price,
+    title: task.title,
+    description: task.description,
+    delivrables: task.delivrables,
+    governorate_id: task.governorate_id,
+    category_id: task.category_id,
+    owner: owner,
+    attachments: taskAttachments.length == 0 ? [] : taskAttachments,
+    isFavorite:
+      currentUserId && userFavorites.length > 0
+        ? userFavorites.some((e) => e.task_id == task.id)
+        : false,
+    distance: task.distance,
+  };
+}
 
 const getFavoriteTaskByUserId = async (userId) => {
   const query = `
@@ -229,9 +350,7 @@ async function getSubDiscussions(discussion_id) {
 async function getDiscussionIdByChatId(idChat) {
   if (idChat == null) return;
   let query = `
-      SELECT discussion.id FROM chat
-      JOIN sub_discussion ON sub_discussion.id = chat.sub_discussion_id
-      JOIN discussion ON discussion.id = sub_discussion.discussion_id
+      SELECT discussion_id FROM chat
       WHERE chat.id = :idChat
         `;
 
@@ -245,7 +364,7 @@ async function getDiscussionIdByChatId(idChat) {
 }
 
 async function getChat(
-  sub_discussion_list,
+  discussionId,
   idChat,
   connected,
   limitQuery = 11,
@@ -254,30 +373,23 @@ async function getChat(
   const page = pageQuery;
   const limit = parseInt(limitQuery);
   const offset = (page - 1) * limit;
-  const discussionId = await getDiscussionIdByChatId(idChat);
+  if (idChat && !discussionId) {
+    discussionId = await getDiscussionIdByChatId(idChat);
+  }
   let query = `
         SELECT chat.*
         FROM chat
-        JOIN sub_discussion ON sub_discussion.id = chat.sub_discussion_id
-        JOIN discussion ON discussion.id = sub_discussion.discussion_id
         ${
-          sub_discussion_list && !idChat
-            ? "WHERE sub_discussion_id IN (:sub_discussion_id)"
-            : !sub_discussion_list && idChat
-            ? ` WHERE (sender_id = :connected OR reciever_id = :connected) 
-            AND chat.id >= :idChat AND discussion.id = :discussionId`
-            : ""
+          !idChat
+            ? "WHERE discussion_id = :discussionId"
+            : ` WHERE (sender_id = :connected OR reciever_id = :connected) 
+            AND id >= :idChat AND discussion_id = :discussionId`
         } 
         ORDER BY chat.createdAt ${idChat ? "ASC" : "DESC"}
         LIMIT ${idChat ? 4 : ":limit"} OFFSET :offset
         `;
   const chatList = await sequelize.query(query, {
     replacements: {
-      sub_discussion_id: sub_discussion_list
-        ? sub_discussion_list.map((subDiscussion) => {
-            return [subDiscussion.id];
-          })
-        : null,
       limit: limit,
       idChat: idChat,
       discussionId: discussionId,
@@ -294,14 +406,17 @@ module.exports = {
   fetchNamesAndCount,
   getLocationById,
   fetchNames,
-  getImageByPropertyId,
   getFavoriteTaskByUserId,
   getFavoriteStoreByUserId,
-  getOwnerIdByProperty,
   getAvgReviewAndCount,
   getSubDiscussions,
   getChat,
   getDiscussionIdByChatId,
   getFavoriteClientPropertyId,
   getTextByLanguage,
+  fetchAndSortNearbyTasks,
+  populateTasks,
+  fetchUserReservation,
+  populateOneTask,
+  getNotSeenMessages,
 };

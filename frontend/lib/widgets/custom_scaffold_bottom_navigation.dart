@@ -11,6 +11,7 @@ import '../services/navigation_history_observer.dart';
 import '../services/theme/theme.dart';
 import '../views/add_task/add_task_bottomsheet.dart';
 import '../views/chat/chat_screen.dart';
+import '../views/chat/components/messages_screen.dart';
 import '../views/home/home_screen.dart';
 import '../views/market/market_screen.dart';
 import '../views/profile/profile_screen.dart';
@@ -26,6 +27,7 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
   final List<Widget>? appBarActions;
   final bool noAppBar;
   final void Function()? onBack;
+  final bool hideBottomNavigation;
 
   const CustomScaffoldBottomNavigation({
     super.key,
@@ -37,6 +39,7 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
     this.appBarBottom,
     this.onBack,
     this.noAppBar = false,
+    this.hideBottomNavigation = false,
   });
 
   bool get isNotMainRoute =>
@@ -62,7 +65,7 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                       icon: const Icon(Icons.chevron_left, size: 28),
                       onPressed: () {
                         onBack?.call();
-                        if (Get.currentRoute == TaskProposalScreen.routeName) {
+                        if (Get.currentRoute == TaskProposalScreen.routeName || Get.currentRoute == MessagesScreen.routeName) {
                           Get.back();
                         } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && Get.currentRoute != ProfileScreen.routeName) {
                           NavigationHistoryObserver.instance.goToPreviousRoute(popToProfile: true);
@@ -116,27 +119,31 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
           ],
         );
       }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => AuthenticationService.find.isUserLoggedIn.value
-            ? Get.bottomSheet(const AddTaskBottomsheet(), isScrollControlled: true)
-            : Helper.snackBar(message: 'login_add_task_msg'.tr),
-        mini: true,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add, color: kNeutralColor100),
-      ),
+      floatingActionButton: hideBottomNavigation
+          ? null
+          : FloatingActionButton(
+              onPressed: () => AuthenticationService.find.isUserLoggedIn.value
+                  ? Get.bottomSheet(const AddTaskBottomsheet(), isScrollControlled: true)
+                  : Helper.snackBar(message: 'login_add_task_msg'.tr),
+              mini: true,
+              shape: const CircleBorder(),
+              child: const Icon(Icons.add, color: kNeutralColor100),
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: Obx(
-        () => AnimatedBottomNavigationBar(
-          icons: const [Icons.home_outlined, Icons.store_outlined, Icons.chat_outlined, Icons.person_outlined],
-          activeIndex: MainAppController.find.bottomNavIndex.value,
-          gapLocation: GapLocation.center,
-          notchSmoothness: NotchSmoothness.defaultEdge,
-          borderColor: kNeutralLightColor,
-          splashColor: kPrimaryColor,
-          onTap: (index) => MainAppController.find.bottomNavIndex.value = index,
-          activeColor: kPrimaryColor,
-        ),
-      ),
+      bottomNavigationBar: hideBottomNavigation
+          ? null
+          : Obx(
+              () => AnimatedBottomNavigationBar(
+                icons: const [Icons.home_outlined, Icons.store_outlined, Icons.chat_outlined, Icons.person_outlined],
+                activeIndex: MainAppController.find.bottomNavIndex.value,
+                gapLocation: GapLocation.center,
+                notchSmoothness: NotchSmoothness.defaultEdge,
+                borderColor: kNeutralLightColor,
+                splashColor: kPrimaryColor,
+                onTap: (index) => MainAppController.find.bottomNavIndex.value = index,
+                activeColor: kPrimaryColor,
+              ),
+            ),
     );
   }
 }

@@ -8,6 +8,7 @@ backend/public/images/*
 backend/public/task/*
 backend/public/store/*
 backend/*.DS_Store
+backend/*firebase-admin*
 
 # Miscellaneous
 frontend/.env

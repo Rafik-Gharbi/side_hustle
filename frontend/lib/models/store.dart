@@ -39,7 +39,9 @@ class Store {
         description: json['description'],
         coordinates: json['coordinates'] != null ? (json['coordinates'] as String).fromString() : null,
         picture: json['picture'] != null ? ImageDTO(file: XFile(ApiBaseHelper.find.getImageStore(json['picture'])), type: ImageType.image) : null,
-        governorate: json['governorate_id'] != null ? MainAppController.find.getGovernorateById(json['governorate_id']) : null,
+        governorate: json['governorate_id'] != null
+            ? MainAppController.find.getGovernorateById(json['governorate_id'] is String ? int.parse(json['governorate_id']) : json['governorate_id'])
+            : null,
         services: json['services'] != null ? (json['services'] as List).map((e) => Service.fromJson(e)).toList() : [],
         owner: json['owner'] != null ? User.fromJson(json['owner']) : null,
         isFavorite: json['isFavorite'] ?? false,
@@ -61,7 +63,7 @@ class Store {
   StoreTableCompanion toStoreCompanion({bool? isFavoriteUpdate}) => StoreTableCompanion(
         id: id == null ? const Value.absent() : Value(id!),
         governorate: governorate?.id == null ? const Value.absent() : Value(governorate!.id),
-        owner: Value(owner!.id!),
+        owner: owner?.id == null ? const Value.absent() : Value(owner!.id),
         name: Value(name ?? ''),
         description: Value(description ?? ''),
         picture: picture == null ? const Value.absent() : Value(picture!.file.path),

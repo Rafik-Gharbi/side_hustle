@@ -5,18 +5,13 @@ module.exports = (app) => {
   } = require("../middlewares/authentificationHelper");
   var router = require("express").Router();
 
-  router.get("/get-chat", tokenVerification, chatController.getChat);
+  router.get("/get-chat", tokenVerification, chatController.getUserDiscussions);
 
   router.get("/get-not-seen", tokenVerification, chatController.getNotSeenChat);
 
   router.get("/search-chat", tokenVerification, chatController.searchChat);
 
-  router.get(
-    "/chat-id",
-
-    tokenVerification,
-    chatController.getChatsById
-  );
+  router.get("/chat-id", tokenVerification, chatController.getChatsById);
 
   router.get(
     "/chat-before-after",

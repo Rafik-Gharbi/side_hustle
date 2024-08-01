@@ -158,7 +158,7 @@ class TaskDatabaseRepository extends GetxService {
     }
   }
 
-  Future<List<Task>> getHotTasks() async {
+  Future<Map<String, List<Task>>> getHotTasks() async {
     LoggerService.logger?.i('Getting hot tasks...');
     List<Task> result = [];
     final savedIds = SharedPreferencesService.find.get(hotTasksKey);
@@ -169,7 +169,7 @@ class TaskDatabaseRepository extends GetxService {
         if (task != null) result.add(task);
       }
     }
-    return result;
+    return {'hotTasks': result};
   }
 
   Future<List<TaskAttachmentTableData>> _getTaskAttachments(TaskTableCompanion task, {bool withFeedback = false}) async {
@@ -236,5 +236,9 @@ class TaskDatabaseRepository extends GetxService {
     if (favorites == null) return;
     await backupTasks(favorites.savedTasks, isFavorite: true);
     await StoreDatabaseRepository.find.backupStores(favorites.savedStores, isFavorite: true);
+  }
+
+  void backupHomeTasks(Map<String, List> tasks) {
+    // TODO back up home tasks (hot, nearby, reservations)
   }
 }

@@ -19,6 +19,7 @@ class CoordinatesPicker extends StatefulWidget {
   final bool withPicker;
   final bool? currentKeepPrivacy;
   final LatLng? currentPosition;
+  final bool isRequired;
 
   const CoordinatesPicker({
     super.key,
@@ -26,6 +27,7 @@ class CoordinatesPicker extends StatefulWidget {
     this.latitudeController,
     this.onSubmit,
     this.withPicker = true,
+    this.isRequired = true,
     this.keepPrivacy,
     this.currentPosition,
     this.currentKeepPrivacy,
@@ -108,7 +110,7 @@ class _CoordinatesPickerState extends State<CoordinatesPicker> {
                       ),
                 readOnly: true,
                 onTap: widget.withPicker ? _showLocationPicker : _getUserPosition,
-                validator: FormValidators.notEmptyOrNullValidator,
+                validator: widget.isRequired ? FormValidators.notEmptyOrNullValidator : null,
               ),
               const SizedBox(width: Paddings.regular),
               CustomTextField(
@@ -123,7 +125,7 @@ class _CoordinatesPickerState extends State<CoordinatesPicker> {
                       ),
                 readOnly: true,
                 onTap: widget.withPicker ? _showLocationPicker : _getUserPosition,
-                validator: FormValidators.notEmptyOrNullValidator,
+                validator: widget.isRequired ? FormValidators.notEmptyOrNullValidator : null,
               ),
             ],
           ),

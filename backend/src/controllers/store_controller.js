@@ -158,10 +158,20 @@ exports.addStore = async (req, res) => {
       governorate_id,
       owner_id: user.id,
       coordinates,
-      picture: req.files?.photo?.filename,
+      picture: req.files?.photo ? req.files?.photo[0]["filename"] : nill,
     });
 
-    return res.status(200).json({ store: store });
+    return res.status(200).json({
+      store: {
+        id: store.id,
+        name: store.name,
+        description: store.description,
+        governorate_id: store.governorate_id,
+        coordinates: store.coordinates,
+        picture: store.picture,
+        owner: user,
+      },
+    });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

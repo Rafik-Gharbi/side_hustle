@@ -11,6 +11,7 @@ const Task = sequelize.define(
     description: { type: Sequelize.STRING, allowNull: false },
     price: { type: Sequelize.FLOAT, allowNull: false },
     delivrables: { type: Sequelize.STRING, allowNull: true },
+    coordinates: { type: Sequelize.STRING, allowNull: true },
     due_date: {
       type: Sequelize.DATE,
       defaultValue: getOneMinuteBeforeMidnight,

@@ -6,6 +6,7 @@ import '../database/database_repository/task_database_repository.dart';
 import '../helpers/helper.dart';
 import '../models/dto/task_request_dto.dart';
 import '../models/filter_model.dart';
+import '../models/reservation.dart';
 import '../models/task.dart';
 import '../networking/api_base_helper.dart';
 import '../services/logger_service.dart';
@@ -13,19 +14,21 @@ import '../services/logger_service.dart';
 class TaskRepository extends GetxService {
   static TaskRepository get find => Get.find<TaskRepository>();
 
-  Future<List<Task>?> getHotTasks() async {
+  Future<Map<String, List<dynamic>>?> getHomeTasks() async {
     try {
-      List<Task>? tasks;
+      Map<String, List<dynamic>>? tasks = {};
       if (MainAppController.find.isConnected) {
-        final result = await ApiBaseHelper().request(RequestType.get, '/task/hot', sendToken: true);
-        tasks = (result['formattedList'] as List).map((e) => Task.fromJson(e)).toList();
+        final result = await ApiBaseHelper().request(RequestType.get, '/task/hot-nearby', sendToken: true);
+        tasks.putIfAbsent('hotTasks', () => (result['hotTasks'] as List).map((e) => Task.fromJson(e)).toList());
+        tasks.putIfAbsent('nearbyTasks', () => (result['nearbyTasks'] as List).map((e) => Task.fromJson(e)).toList());
+        tasks.putIfAbsent('reservation', () => (result['reservation'] as List).map((e) => Reservation.fromJson(e)).toList());
       } else {
         tasks = await TaskDatabaseRepository.find.getHotTasks();
       }
-      if (tasks.isNotEmpty && MainAppController.find.isConnected) TaskDatabaseRepository.find.backupTasks(tasks, isHotTasks: true);
+      if (tasks.isNotEmpty && MainAppController.find.isConnected) TaskDatabaseRepository.find.backupHomeTasks(tasks);
       return tasks;
     } catch (e) {
-      LoggerService.logger?.e('Error occured in getHotTasks:\n$e');
+      LoggerService.logger?.e('Error occured in getHomeTasks:\n$e');
     }
     return null;
   }

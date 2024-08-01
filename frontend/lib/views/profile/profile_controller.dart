@@ -1,9 +1,11 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../controllers/main_app_controller.dart';
+import '../../helpers/helper.dart';
 import '../../helpers/image_picker_by_platform/image_picker_platform.dart';
 import '../../models/category.dart';
 import '../../models/user.dart';
@@ -11,6 +13,7 @@ import '../../networking/api_base_helper.dart';
 import '../../repositories/user_repository.dart';
 import '../../services/authentication_service.dart';
 import '../../services/logger_service.dart';
+import '../../widgets/categories_bottomsheet.dart';
 
 class ProfileController extends GetxController {
   /// not permanent use with caution
@@ -88,7 +91,44 @@ class ProfileController extends GetxController {
 
   Future<void> subscribeToCategories(List<Category> category) async {
     subscribedCategories = category;
-    await AuthenticationService.find.subscribeToCategories(subscribedCategories);
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    await AuthenticationService.find.subscribeToCategories(subscribedCategories, fcmToken);
     update();
   }
+
+  void manageCategoriesSubscription() => subscribedCategories.isEmpty
+      ? Helper.openConfirmationDialog(
+          title:
+              'Here you can subscribe up to 3 categories so that you get a notification if a new task has been created in those categories.\nFirst, you need to allow notifications in your device.',
+          onConfirm: () async {
+            NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(criticalAlert: true);
+            debugPrint('User granted permission: ${settings.authorizationStatus}');
+            if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+              Get.bottomSheet(
+                SizedBox(
+                  height: Get.height * 0.8,
+                  child: CategoriesBottomsheet(
+                    maxSelect: 3,
+                    nextUpdate: nextUpdateGategory,
+                    selected: subscribedCategories,
+                    onSelectCategory: (category) => subscribeToCategories(category),
+                  ),
+                ),
+                isScrollControlled: true,
+              );
+            }
+          },
+        )
+      : Get.bottomSheet(
+          SizedBox(
+            height: Get.height * 0.8,
+            child: CategoriesBottomsheet(
+              maxSelect: 3,
+              nextUpdate: nextUpdateGategory,
+              selected: subscribedCategories,
+              onSelectCategory: (category) => subscribeToCategories(category),
+            ),
+          ),
+          isScrollControlled: true,
+        );
 }

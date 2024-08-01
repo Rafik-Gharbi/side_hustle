@@ -5,6 +5,7 @@ import '../../controllers/main_app_controller.dart';
 import '../../helpers/helper.dart';
 import '../../models/category.dart';
 import '../../models/filter_model.dart';
+import '../../models/reservation.dart';
 import '../../models/task.dart';
 import '../../networking/api_base_helper.dart';
 import '../../repositories/task_repository.dart';
@@ -15,6 +16,8 @@ class HomeController extends GetxController {
   // List<Task> tasks = [];
   List<Category> mostPopularCategories = [];
   List<Task> hotTasks = [];
+  List<Task> nearbyTasks = [];
+  List<Reservation> reservation = [];
   TextEditingController searchController = TextEditingController();
   // RxBool isSearchMode = false.obs;
   FilterModel _filterModel = FilterModel();
@@ -34,7 +37,10 @@ class HomeController extends GetxController {
     Helper.waitAndExecute(() => MainAppController.find.isReady, () async {
       // TODO adapt user preferences if selected most searched categories
       mostPopularCategories = MainAppController.find.categories.getRange(10, 14).toList();
-      hotTasks = await TaskRepository.find.getHotTasks() ?? [];
+      final result = await TaskRepository.find.getHomeTasks();
+      hotTasks = result?['hotTasks'] != null ? (result?['hotTasks'] as List).map((e) => e as Task).toList() : [];
+      nearbyTasks = result?['nearbyTasks'] != null ? (result?['nearbyTasks'] as List).map((e) => e as Task).toList() : [];
+      reservation = result?['reservation'] != null ? (result?['reservation'] as List).map((e) => e as Reservation).toList() : [];
       update();
     });
   }

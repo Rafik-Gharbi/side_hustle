@@ -1,8 +1,11 @@
 import 'package:drift/drift.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../controllers/main_app_controller.dart';
 import '../database/database.dart';
 import '../helpers/extensions/date_time_extension.dart';
+import '../helpers/extensions/lat_lon_extension.dart';
+import '../helpers/helper.dart';
 import 'category.dart';
 import 'dto/image_dto.dart';
 import 'governorate.dart';
@@ -18,6 +21,8 @@ class Task {
   final String? delivrables;
   final User owner;
   final DateTime? dueDate;
+  final LatLng? coordinates;
+  final String? distance;
   List<ImageDTO>? attachments;
   bool isFavorite;
 
@@ -32,6 +37,8 @@ class Task {
     this.delivrables,
     this.dueDate,
     this.attachments,
+    this.coordinates,
+    this.distance,
     this.isFavorite = false,
   });
 
@@ -48,6 +55,8 @@ class Task {
                 ? double.parse(json['price'])
                 : json['price'],
         delivrables: json['delivrables'],
+        coordinates: json['coordinates'],
+        distance: json['distance'] != null ? Helper.degreesToMeters(json['distance']).toStringAsFixed(1) : null,
         attachments: json['attachments'] != null && (json['attachments'] as List).isNotEmpty
             ? (json['attachments'] as List).map((e) => ImageDTO.fromJson(e)).toList()
             : attachments != null
@@ -66,7 +75,8 @@ class Task {
     data['category_id'] = category?.id;
     data['governorate_id'] = governorate?.id;
     data['delivrables'] = delivrables;
-    data['dueDate'] = dueDate?.toIso8601String();
+    data['coordinates'] = coordinates?.toCoordinatesString();
+    data['dueDate'] = dueDate?.toOneMinuteBeforeMidnight().toIso8601String();
     data['owner_id'] = owner.id;
     // data['attachments'] = attachments;
     return data;

@@ -5,6 +5,7 @@ const app = require("./app");
 const socketio = require("socket.io");
 const dotenv = require("dotenv");
 const initializeSocket = require("./socket");
+const { initializeFirbaseAdmin } = require("./firebase-admin");
 dotenv.config();
 
 // Importing Routes

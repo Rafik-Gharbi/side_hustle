@@ -10,6 +10,7 @@ import '../../services/theme/theme.dart';
 import '../../widgets/custom_buttons.dart';
 import '../../widgets/hold_in_safe_area.dart';
 import '../../widgets/loading_request.dart';
+import '../chat/components/messages_screen.dart';
 import 'user_profile_controller.dart';
 
 class UserProfileScreen extends StatelessWidget {
@@ -58,7 +59,7 @@ class UserProfileScreen extends StatelessWidget {
                   child: SizedBox(
                     height: Get.height,
                     child: Padding(
-                      padding: const EdgeInsets.only(top: Paddings.extraLarge),
+                      padding: const EdgeInsets.symmetric(horizontal: Paddings.large).copyWith(top: Paddings.extraLarge),
                       child: LoadingRequest(
                         child: SingleChildScrollView(
                           child: controller.user == null
@@ -96,7 +97,7 @@ class UserProfileScreen extends StatelessWidget {
                 ),
                 if (onReject != null && onAccept != null && requestStatus == RequestStatus.pending)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: Paddings.large).copyWith(bottom: Paddings.extraLarge * 2, top: Paddings.regular),
+                    padding: const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
                     child: Row(
                       children: [
                         CustomButtons.elevateSecondary(
@@ -113,6 +114,19 @@ class UserProfileScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                if (requestStatus == RequestStatus.pending || requestStatus == RequestStatus.confirmed)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.chat_outlined),
+                      CustomButtons.text(
+                        title: 'Chat with ${user?.name ?? 'User'}',
+                        titleStyle: AppFonts.x14Regular,
+                        onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: user),
+                      ),
+                    ],
+                  ),
+                const SizedBox(height: Paddings.extraLarge * 2),
               ],
             ),
           ),

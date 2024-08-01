@@ -12,6 +12,7 @@ import '../../helpers/helper.dart';
 import '../../models/task.dart';
 import '../../services/theme/theme.dart';
 import '../../widgets/categories_bottomsheet.dart';
+import '../../widgets/coordinates_picker.dart';
 import '../../widgets/custom_buttons.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/governorates_bottomsheet.dart';
@@ -172,6 +173,12 @@ class AddTaskBottomsheet extends StatelessWidget {
                             outlinedBorderColor: Colors.transparent,
                             isTextArea: true,
                             validator: FormValidators.notEmptyOrNullValidator,
+                          ),
+                          Buildables.lightDivider(),
+                          CoordinatesPicker(
+                            onSubmit: (coordinates) => controller.coordinates = coordinates,
+                            currentPosition: controller.coordinates,
+                            isRequired: false,
                           ),
                           Buildables.lightDivider(),
                           ListTile(

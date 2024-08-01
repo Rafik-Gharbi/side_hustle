@@ -11,7 +11,11 @@ const {
   emailReservationForCheckin,
   sendNotificationReservation,
 } = require("../views/template_email");
-const { fetchNames, getImageByTaskId } = require("../sql/sql_request");
+const {
+  fetchNames,
+  getImageByTaskId,
+  fetchUserReservation,
+} = require("../sql/sql_request");
 const { constantId } = require("../helper/constants");
 const { sendMail } = require("../helper/email_service");
 const { Task } = require("../models/task_model");
@@ -182,36 +186,7 @@ exports.initPaiement = async (req, res) => {
 
 exports.listReservation = async (req, res) => {
   try {
-    let userFound = await User.findByPk(req.decoded.id);
-    if (!userFound) {
-      return res.status(404).json({ message: "user_not_found" });
-    }
-
-    let reservationList = await Reservation.findAll({
-      where: {
-        user_id: userFound.id,
-      },
-    });
-    const formattedList = await Promise.all(
-      reservationList.map(async (row) => {
-        let foundTask = await Task.findByPk(row.task_id);
-        let taskAttachments = await TaskAttachmentModel.findAll({
-          where: { task_id: row.task_id },
-        });
-
-        return {
-          id: row.id,
-          user: userFound,
-          date: row.createdAt,
-          task: foundTask,
-          totalPrice: row.total_price,
-          coupon: row.coupon,
-          note: row.note,
-          status: row.status,
-          taskAttachments,
-        };
-      })
-    );
+    const formattedList = await fetchUserReservation(req.decoded.id);
 
     return res.status(200).json({ formattedList });
   } catch (error) {

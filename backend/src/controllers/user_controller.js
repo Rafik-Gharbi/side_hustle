@@ -30,6 +30,7 @@ const { UserDocumentModel } = require("../models/user_document_model");
 const {
   CategorySubscriptionModel,
 } = require("../models/category_subscribtion_model");
+const { sendFirebaseNotification } = require("../../firebase-admin");
 
 exports.renewJWT = async (req, res) => {
   try {
@@ -280,7 +281,7 @@ exports.signUp = async (req, res) => {
 };
 
 exports.subscribeCategory = async (req, res) => {
-  const { categories } = req.body;
+  const { categories, fcmToken } = req.body;
   try {
     // Check if user exists
     const userId = req.decoded.id;
@@ -297,6 +298,8 @@ exports.subscribeCategory = async (req, res) => {
         category_id: category.id,
       });
     });
+    userFound.fcmToken = fcmToken;
+    userFound.save();
 
     return res.status(200).json({ message: "done" });
   } catch (error) {
@@ -435,6 +438,14 @@ exports.approveUser = async (req, res) => {
     userApprove.isVerified = "verified";
     await userApprove.save();
 
+    if (userApprove.fcmToken) {
+      sendFirebaseNotification(
+        [userApprove.fcmToken],
+        "Successfully Approved",
+        "Your profile has been approved."
+      );
+    }
+
     return res.status(200).json({ done: true });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -461,8 +472,14 @@ exports.userNotApprovable = async (req, res) => {
     userDocument.destroy();
     userApprove.isVerified = "none";
     await userApprove.save();
-    // TODO send notification for user to finish his profile and resubmit his documents
-
+    // TODO add a notification table for when user opens the app he could see his notifications
+    if (userApprove.fcmToken) {
+      sendFirebaseNotification(
+        [userApprove.fcmToken],
+        "Failed to Approve",
+        "Your profile hasn't been approved. Probably your profile is missing some needed data or your provided documents weren't acceptable."
+      );
+    }
     return res.status(200).json({ done: true });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -747,7 +764,17 @@ exports.updatePassword = async (req, res) => {
 };
 
 exports.updateProfile = async (req, res) => {
-  const { email, phone, name, governorate, birthdate, gender, coordinates, keepPrivacy, bio } = req.body;
+  const {
+    email,
+    phone,
+    name,
+    governorate,
+    birthdate,
+    gender,
+    coordinates,
+    keepPrivacy,
+    bio,
+  } = req.body;
   const formattedPhoneNumber = removeSpacesFromPhoneNumber(phone);
   try {
     const userFound = await User.findByPk(req.decoded.id);

@@ -10,4 +10,7 @@ class Assets {
   static const String scanIdentityCard = 'assets/lottie/scan_identity_card.json';
   static const String selfieWithIdentityCard = 'assets/lottie/selfie_with_identity_card.json';
   static const String pictureLoading = 'assets/lottie/picture_loading.json';
+  static const String emptyAnimation = 'assets/lottie/empty_animation.json';
+  // Pictures
+  static const String noImage = 'assets/images/no_image.jpg';
 }

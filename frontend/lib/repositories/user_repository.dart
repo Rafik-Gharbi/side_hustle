@@ -244,9 +244,14 @@ class UserRepository extends GetxService {
     return false;
   }
 
-  Future<bool> subscribeToCategories(List<Category> categories) async {
+  Future<bool> subscribeToCategories(List<Category> categories, String? fcmToken) async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.post, sendToken: true, '/user/subscribe-category', body: {'categories': categories.map((e) => e.toJson()).toList()});
+      final result = await ApiBaseHelper().request(
+        RequestType.post,
+        sendToken: true,
+        '/user/subscribe-category',
+        body: {'categories': categories.map((e) => e.toJson()).toList(), 'fcmToken': fcmToken},
+      );
       if (result['message'] == 'done') return true;
     } catch (e) {
       LoggerService.logger?.e('Error occured in subscribeToCategories:\n$e');

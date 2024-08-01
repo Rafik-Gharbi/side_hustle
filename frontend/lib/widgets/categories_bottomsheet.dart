@@ -161,14 +161,12 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                                       return InkWell(
                                         onTap: () {
                                           if (canUpdate) {
-                                            if (selectedCategories.length <= widget.maxSelect) {
-                                              if (isSelected) {
-                                                selectedCategories.remove(subCategory);
-                                              } else {
-                                                selectedCategories.add(subCategory);
-                                              }
-                                              setState(() {});
+                                            if (isSelected) {
+                                              selectedCategories.remove(subCategory);
+                                            } else if (selectedCategories.length < widget.maxSelect) {
+                                              selectedCategories.add(subCategory);
                                             }
+                                            setState(() {});
                                           }
                                         },
                                         child: Center(

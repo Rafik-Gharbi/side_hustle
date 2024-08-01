@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../controllers/main_app_controller.dart';
 import '../../helpers/extensions/date_time_extension.dart';
@@ -25,8 +26,16 @@ class AddTaskController extends GetxController {
   final TextEditingController delivrablesController = TextEditingController();
   Category? _category = MainAppController.find.categories.firstWhere((element) => element.parentId != -1);
   DateTime _createdDate = DateTime.now();
+  LatLng? _coordinates;
 
   DateTime get createdDate => _createdDate;
+
+  LatLng? get coordinates => _coordinates;
+
+  set coordinates(LatLng? value) {
+    _coordinates = value;
+    update();
+  }
 
   set createdDate(DateTime value) {
     _createdDate = value;
@@ -93,8 +102,9 @@ class AddTaskController extends GetxController {
     descriptionController.text = task!.description;
     priceController.text = task!.price.toString();
     delivrablesController.text = task!.delivrables ?? '';
-    governorate = task!.governorate;
-    category = task!.category;
+    _governorate = task!.governorate;
+    _category = task!.category;
+    _coordinates = task!.coordinates;
     update();
   }
 
@@ -119,6 +129,8 @@ class AddTaskController extends GetxController {
         price: double.parse(priceController.text),
         attachments: attachments?.map((e) => ImageDTO(file: e, type: isImage(e.name.toLowerCase()) ? ImageType.image : ImageType.file)).toList(),
         owner: AuthenticationService.find.jwtUserData!,
+        coordinates: coordinates,
+        dueDate: _createdDate,
       );
       if (task?.id == null) {
         await TaskRepository.find.addTask(newtask, withBack: true);

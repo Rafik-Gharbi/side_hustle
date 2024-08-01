@@ -1,139 +1,72 @@
 const { sequelize } = require("../../db.config");
+const { User } = require("../models/user_model");
 const {
   getChat,
   getSubDiscussions,
   getDiscussionIdByChatId,
+  getNotSeenMessages,
 } = require("../sql/sql_request");
 
-exports.getChat = async (req, res) => {
-  const propertyId = req.query.id;
+exports.getUserDiscussions = async (req, res) => {
   const searchText = req.query.searchText;
   const connected = req.decoded.id;
-  const clientId = req.decoded.role.includes("client") ? connected : null;
-  const hostId = req.decoded.role.includes("owner") ? connected : null;
 
-  let result;
-  let discussionList;
-  let newDiscussion;
   try {
     let queryDiscussion = `
-    SELECT
-    discussion.id,
-    property.id AS property_id,
-    property.name,
-    property.owner_id,
-    (SELECT NAME
-     FROM client
-     WHERE id = property.owner_id) AS owner_name,
-    (SELECT NAME
-     FROM client
-     WHERE id = discussion.client_id) AS client_name,
-    MIN(property_image.thumbnail) AS images,
-    discussion.client_id,
-    (SELECT COUNT(*)
-     FROM chat
-     JOIN sub_discussion ON sub_discussion.id = chat.sub_discussion_id
-     LEFT JOIN discussion AS des ON discussion.id = sub_discussion.discussion_id
-     WHERE reciever_id = :connectedUserId
-       AND seen = FALSE
-       AND discussion.id = des.id) AS notSeen,
-    (SELECT message
-     FROM chat
-     WHERE chat.sub_discussion_id = (
-             SELECT MAX(sub_discussion.id)
-             FROM sub_discussion
-             WHERE sub_discussion.discussion_id = discussion.id)
-       AND chat.sender_id = :connectedUserId
-     ORDER BY chat.createdAt DESC
-     LIMIT 1) AS last_message,
-    (SELECT chat.createdAt
-     FROM chat
-     WHERE chat.sub_discussion_id = (
-             SELECT MAX(sub_discussion.id)
-             FROM sub_discussion
-             WHERE sub_discussion.discussion_id = discussion.id)
-       AND chat.sender_id = :connectedUserId 
-     ORDER BY chat.createdAt DESC
-     LIMIT 1) AS last_message_date
-FROM discussion
-LEFT JOIN property ON discussion.property_id = property.id
-LEFT JOIN property_image ON discussion.property_id = property_image.property_id
-    ${
-      hostId
-        ? "WHERE discussion.owner_id = :hostId"
-        : clientId
-        ? "WHERE discussion.client_id = :clientId"
-        : " where false"
-    }
-    ${
-      searchText
-        ? "AND (property.id LIKE :searchText OR (SELECT NAME FROM client WHERE id = discussion.client_id) LIKE :searchText OR property.name LIKE :searchText)"
-        : ""
-    }
-    ${!hostId && !clientId ? "where false" : ""}
-    GROUP BY discussion.client_id,
-            discussion.owner_id,
-            discussion.property_id
-            ORDER BY last_message_date DESC
+      SELECT
+        discussion.*,
+        chat.message,
+        chat.seen,
+        chat.createdAt,
+        chat.sender_id,
+        chat.reciever_id,
+        chat.discussion_id
+      FROM discussion
+      LEFT JOIN(
+          SELECT c1.*
+          FROM chat c1
+          INNER JOIN(
+              SELECT discussion_id, MAX(createdAt) AS latestMessage
+              FROM chat
+              GROUP BY discussion_id
+          ) c2
+      ON c1.discussion_id = c2.discussion_id AND c1.createdAt = c2.latestMessage) chat
+      ON discussion.id = chat.discussion_id
+      WHERE discussion.owner_id = :connectedUserId OR discussion.user_id = :connectedUserId
+      ${searchText ? "AND chat.message LIKE :searchText" : ""}
+      GROUP BY discussion.id
+      ORDER BY chat.createdAt ASC;
     `;
 
-    discussionList = await sequelize.query(queryDiscussion, {
+    let discussionList = await sequelize.query(queryDiscussion, {
       replacements: {
-        clientId: clientId,
-        hostId: hostId,
         connectedUserId: connected,
         searchText: `%${searchText}%`,
       },
       type: sequelize.QueryTypes.SELECT,
     });
-    const mappedDiscussion = discussionList.map((discussion) => {
-      return {
-        id: discussion.id,
-        last_message_date: discussion.last_message_date,
-        last_message: discussion.last_message,
-        property_id: discussion.property_id,
-        name: discussion.name,
-        owner_id: discussion.owner_id,
-        owner_name: discussion.owner_name,
-        client_id: discussion.client_id,
-        client_name: discussion.client_name,
-        images: discussion.images,
-        sender_id: discussion.sender_id,
-        notSeen: discussion.notSeen ? discussion.notSeen : 0,
-      };
-    });
-
-    // If propertyId is provided, add conditions to fetch data related to it
-    if (propertyId) {
-      let queryNewDiscussion = `
-      SELECT
-        property.id as property_id,
-        property.name,
-        property.owner_id,
-        MIN(property_image.thumbnail) AS images
-      FROM property
-      LEFT JOIN property_image ON property.id = property_image.property_id
-      WHERE property.id = :propertyId
-      GROUP BY property.id
-      `;
-      newDiscussion = await sequelize.query(queryNewDiscussion, {
-        replacements: { propertyId: propertyId },
-        type: sequelize.QueryTypes.SELECT,
-      });
-      const mappedNewDiscussion = newDiscussion.map((discussion) => {
+    const result = await Promise.all(
+      discussionList.map(async (discussion) => {
+        const ownerFound = await User.findOne({
+          where: { id: discussion.owner_id },
+        });
+        const userFound = await User.findOne({
+          where: { id: discussion.user_id },
+        });
+        const notSeen = await getNotSeenMessages(discussion.id, connected);
         return {
-          id: -1,
-          property_id: discussion.property_id,
-          name: discussion.name,
+          id: discussion.id,
+          last_message_date: discussion.createdAt,
+          last_message: discussion.message,
           owner_id: discussion.owner_id,
-          images: discussion.images,
-          sender_id: clientId ? clientId : hostId,
+          owner_name: ownerFound.name,
+          user_id: discussion.user_id,
+          user_name: userFound.name,
+          sender_id: discussion.sender_id,
+          notSeen: notSeen ? notSeen : 0,
         };
-      });
-      result = [...mappedNewDiscussion, ...mappedDiscussion];
-    } else {
-      result = mappedDiscussion;
-    }
+      })
+    );
 
     return res.status(200).json({ result: result });
   } catch (error) {

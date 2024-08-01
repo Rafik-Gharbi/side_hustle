@@ -1,16 +1,23 @@
 import 'dart:ui';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'constants/colors.dart';
 import 'database/database_repository/category_database_repository.dart';
 import 'database/database_repository/governorate_database_repository.dart';
 import 'database/database_repository/store_database_repository.dart';
 import 'database/database_repository/task_database_repository.dart';
 import 'database/database_repository/user_database_repository.dart';
+import 'firebase_options.dart';
+import 'helpers/notification_controller.dart';
 import 'networking/api_base_helper.dart';
 import 'repositories/booking_repository.dart';
+import 'repositories/chat_repository.dart';
 import 'repositories/favorite_repository.dart';
 import 'repositories/params_repository.dart';
 import 'repositories/reservation_repository.dart';
@@ -24,6 +31,7 @@ import 'views/approve_user/approve_user_controller.dart';
 import 'views/approve_user/approve_user_screen.dart';
 import 'views/chat/chat_controller.dart';
 import 'views/chat/chat_screen.dart';
+import 'views/chat/components/messages_screen.dart';
 import 'views/favorite/favorite_controller.dart';
 import 'views/favorite/favorite_screen.dart';
 import 'views/home/home_screen.dart';
@@ -62,14 +70,64 @@ import 'views/verify_user/verify_user_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) => AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: message.hashCode,
+          channelKey: 'basic_channel',
+          actionType: ActionType.Default,
+          title: message.notification?.title,
+          body: message.notification?.body,
+        ),
+      ));
+  AwesomeNotifications()
+      .initialize(
+        // 'resource://drawable/res_app_icon',
+        null,
+        [
+          NotificationChannel(
+              channelGroupKey: 'basic_channel_group',
+              channelKey: 'basic_channel',
+              channelName: 'Basic notifications',
+              channelDescription: 'Notification channel for basic tests',
+              defaultColor: kPrimaryColor,
+              ledColor: Colors.white)
+        ],
+        channelGroups: [NotificationChannelGroup(channelGroupKey: 'basic_channel_group', channelGroupName: 'Basic group')],
+        debug: true,
+      )
+      .then(
+        (value) => AwesomeNotifications().setListeners(
+          onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+          onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
+          onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
+          onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
+        ),
+      );
   runApp(const MyApp());
 }
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: message.hashCode,
+      channelKey: 'basic_channel',
+      actionType: ActionType.Default,
+      title: message.notification?.title,
+      body: message.notification?.body,
+    ),
+  );
+}
+
 class MyApp extends StatelessWidget {
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) => GetMaterialApp(
+        navigatorKey: MyApp.navigatorKey,
         debugShowCheckedModeBanner: false,
         title: 'Side Hustle',
         logWriterCallback: (text, {isError = false}) => isError ? LoggerService.logger?.e(text) : LoggerService.logger?.i(text),
@@ -172,6 +230,10 @@ class MyApp extends StatelessWidget {
             page: () => const AddTaskBottomsheet(),
           ),
           GetPage(
+            name: MessagesScreen.routeName,
+            page: () => const MessagesScreen(),
+          ),
+          GetPage(
             name: VerificationScreen.routeName,
             page: () => const VerificationScreen(),
           ),
@@ -190,6 +252,7 @@ class InitialBindings implements Bindings {
     Get.put(ApiBaseHelper(), permanent: true);
     Get.put(ThemeService(), permanent: true);
     // Repositories
+    Get.put(ChatRepository(), permanent: true);
     Get.put(UserRepository(), permanent: true);
     Get.put(ParamsRepository(), permanent: true);
     Get.put(TaskRepository(), permanent: true);

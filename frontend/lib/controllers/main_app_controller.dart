@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter_screen_lock/flutter_screen_lock.dart';
+import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import '../constants/colors.dart';
 import '../constants/shared_preferences_keys.dart';
@@ -17,8 +18,10 @@ import '../models/governorate.dart';
 import '../models/store.dart';
 import '../models/task.dart';
 import '../networking/api_base_helper.dart';
+import '../repositories/chat_repository.dart';
 import '../repositories/favorite_repository.dart';
 import '../repositories/params_repository.dart';
+import '../services/authentication_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/translation/app_localization.dart';
 import '../views/chat/chat_screen.dart';
@@ -43,6 +46,8 @@ class MainAppController extends GetxController {
   RxBool isAuthenticationRequired = false.obs;
   RxBool isAuthenticated = false.obs;
   bool _canCheckBiometric = false;
+  io.Socket? socket;
+  RxInt notSeenMessages = 0.obs;
 
   bool get isConnected => hasInternetConnection.value && isBackReachable.value;
 
@@ -181,6 +186,7 @@ class MainAppController extends GetxController {
           _canCheckBiometric = false;
         }
         isAuthenticationRequired.value = SharedPreferencesService.find.get(userSecretKey) != null;
+        initSocket();
         if (categories.isEmpty) await _initDefaultCategories();
         if (governorates.isEmpty) await _initDefaultGovernorates();
         ever(
@@ -262,4 +268,8 @@ class MainAppController extends GetxController {
     final result = await FavoriteRepository.find.toggleStoreFavorite(idStore: store.id!);
     return result;
   }
+
+  void initSocket() => socket ??= io.io('${ApiBaseHelper.find.baseUrl}/', io.OptionBuilder().setTransports(['websocket']).build());
+
+  Future<void> getNotSeenMessages() async => AuthenticationService.find.isUserLoggedIn.value ? notSeenMessages.value = await ChatRepository.find.getNotSeenMessages() : null;
 }

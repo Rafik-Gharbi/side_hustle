@@ -20,6 +20,7 @@ import '../services/shared_preferences.dart';
 import '../services/translation/app_localization.dart';
 import '../services/logger_service.dart';
 import '../services/theme/theme.dart';
+import '../views/chat/chat_screen.dart';
 import '../views/verification_screen.dart';
 import '../widgets/custom_popup.dart';
 import '../widgets/custom_text_field.dart';
@@ -368,4 +369,28 @@ class Helper {
           ],
         ),
       );
+
+  static double degreesToMeters(double distanceInDegrees) {
+    const double earthRadius = 6371000;
+    double distanceInMeters = distanceInDegrees * (pi / 180) * earthRadius;
+    return distanceInMeters;
+  }
+
+  static void showNotification(String msg, String receiverName) => GetSnackBar(
+        titleText: const Text('New Message', style: AppFonts.x16Bold),
+        messageText: Text('$receiverName: ${msg.tr}', style: AppFonts.x14Regular, overflow: TextOverflow.ellipsis),
+        duration: const Duration(seconds: 4),
+        isDismissible: true,
+        borderColor: kPrimaryColor,
+        borderWidth: 2,
+        borderRadius: 10,
+        dismissDirection: DismissDirection.up,
+        icon: const Icon(Icons.notifications_active_outlined, color: kBlackColor),
+        onTap: (_) => Get.toNamed(ChatScreen.routeName),
+        maxWidth: 400,
+        margin: isMobile ? const EdgeInsets.all(5) : EdgeInsets.only(left: Get.width / 2, right: 50, top: 10),
+        backgroundColor: kNeutralColor100,
+        snackPosition: SnackPosition.TOP,
+        mainButton: TextButton(onPressed: () => Get.toNamed(ChatScreen.routeName), child: const Text('Open')),
+      ).show();
 }

@@ -129,7 +129,16 @@ class TaskCard extends StatelessWidget {
             Text(task.description, softWrap: true, maxLines: 2, overflow: TextOverflow.ellipsis, style: AppFonts.x12Regular),
             const SizedBox(height: Paddings.regular),
             if (task.price != null)
-              Align(alignment: Alignment.bottomRight, child: Text('Price: ${Helper.formatAmount(task.price!)} TND', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (task.distance != null && task.distance!.isNotEmpty)
+                    Text('Distance: ${task.distance} meters', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
+                  else
+                    const SizedBox(),
+                  Text('Price: ${Helper.formatAmount(task.price!)} TND', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                ],
+              ),
           ],
         ),
         leading: task.category != null ? Icon(task.category!.icon) : null,

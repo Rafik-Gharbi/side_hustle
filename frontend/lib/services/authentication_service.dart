@@ -17,6 +17,8 @@ import '../models/dto/profile_dto.dart';
 import '../models/governorate.dart';
 import '../models/user.dart';
 import '../repositories/user_repository.dart';
+import '../views/chat/chat_controller.dart';
+import '../views/chat/chat_screen.dart';
 import '../views/profile/profile_controller.dart';
 import '../views/profile/profile_screen.dart';
 import '../widgets/verify_email_dialog.dart';
@@ -163,6 +165,7 @@ class AuthenticationService extends GetxController {
         if ((isUserMailVerified ?? false) && !isTokenExpired) {
           _jwtUserData = User.fromToken(jwtPayload);
           // init chat messages standBy room
+          _initChatStandByRoom();
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) => update());
         }
       } else if (_googleSignIn.currentUser != null) {
@@ -241,6 +244,11 @@ class AuthenticationService extends GetxController {
     }
     if (_googleSignIn.currentUser != null) await _googleLogout();
     if (isFacebookLoggedIn) await _facebookLogout();
+    try {
+      ChatController.find.clear();
+    } catch (e) {
+      LoggerService.logger?.i('Chat controller is not initialized');
+    }
     SharedPreferencesService.find.removeKey(jwtKey);
     SharedPreferencesService.find.removeKey(refreshTokenKey);
     _jwtUserData = null;
@@ -381,9 +389,9 @@ class AuthenticationService extends GetxController {
       }
       initiateCurrentUser(loginResponse?.token, user: user);
       if (!(isUserMailVerified ?? false)) {
-        // Get.dialog(const VerifyEmailDialog()).then((value) {
-        //   if (GetPlatform.isMobile) Helper.mobileEmailVerification(user.email);
-        // });
+        Get.dialog(const VerifyEmailDialog()).then((value) {
+          if (GetPlatform.isMobile) Helper.mobileEmailVerification(user.email);
+        });
       }
     } else {
       logout();
@@ -402,12 +410,15 @@ class AuthenticationService extends GetxController {
         _jwtUserData ??= user ?? userFromToken;
         jwtUserData?.id = userFromToken.id;
         jwtUserData?.role = userFromToken.role;
+        jwtUserData?.governorate = userFromToken.governorate;
         jwtUserData?.name = userFromToken.name;
         jwtUserData?.picture = userFromToken.picture;
         jwtUserData?.isVerified = userFromToken.isVerified;
         jwtUserData?.isMailVerified = userFromToken.isMailVerified;
         jwtUserData?.password = null;
       }
+      // init chat messages standBy room
+      _initChatStandByRoom();
       if (Get.currentRoute == ProfileScreen.routeName) ProfileController.find.init();
       if ((Get.isDialogOpen ?? false) || (Get.isBottomSheetOpen ?? false)) Get.back();
       update();
@@ -461,7 +472,7 @@ class AuthenticationService extends GetxController {
     WidgetsBinding.instance.addPostFrameCallback((_) => update());
   }
 
-  Future<void> renewToken() async {
+  Future<bool> renewToken() async {
     final savedRefreshToken = SharedPreferencesService.find.get(refreshTokenKey);
     if (savedRefreshToken != null) {
       final isRefreshTokenExpired = JwtDecoder.isExpired(savedRefreshToken);
@@ -479,11 +490,14 @@ class AuthenticationService extends GetxController {
             Helper.snackBar(title: 'oups'.tr, message: 'session_expired'.tr);
           }
           initiateCurrentUser(loginDTO.token);
+          return true;
         }
       }
     } else {
       SharedPreferencesService.find.removeKey(jwtKey);
     }
+    logout();
+    return false;
   }
 
   Future<void> changePassword(GlobalKey<FormState> formKey) async {
@@ -492,12 +506,28 @@ class AuthenticationService extends GetxController {
     }
   }
 
-  Future<void> subscribeToCategories(List<Category> category) async {
-    final result = await UserRepository.find.subscribeToCategories(category);
+  Future<void> subscribeToCategories(List<Category> category, String? fcmToken) async {
+    final result = await UserRepository.find.subscribeToCategories(category, fcmToken);
     if (result) {
       Helper.snackBar(message: 'Category subscription updated successfully');
     } else {
       Helper.snackBar(message: 'Failed to update category subscription');
     }
+  }
+
+  void _initChatStandByRoom() {
+    // init chat messages standBy room
+    if (_jwtUserData == null) return;
+    if (MainAppController.find.socket == null) MainAppController.find.initSocket();
+    MainAppController.find.socket!.emit('standBy', {'userId': _jwtUserData!.id});
+    MainAppController.find.socket!.on('notification', (data) {
+      // Show a notification to the user if not in the chat tab
+      if (Get.currentRoute != ChatScreen.routeName) {
+        Helper.showNotification(data['msg'], data['recieverName']);
+      } else if (Get.currentRoute == ChatScreen.routeName) {
+        ChatController.find.getUserChatHistory();
+      }
+      return MainAppController.find.getNotSeenMessages();
+    });
   }
 }

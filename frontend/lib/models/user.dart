@@ -68,6 +68,8 @@ class User {
     this.isVerified = VerifyIdentityStatus.none,
   });
 
+  bool get isOwner => role != Role.seeker;
+
   factory User.fromToken(Map<String, dynamic> payload) => User(
         id: payload['id'],
         name: payload['name'],
@@ -75,6 +77,7 @@ class User {
         isVerified: VerifyIdentityStatus.fromString(payload['isVerified']),
         role: Role.values.singleWhere((element) => element.name == payload['role']), // Parse roles from string
         picture: payload['picture'] != null ? ApiBaseHelper().getUserImage(payload['picture']) : null,
+        governorate: payload['governorate_id'] != null ? MainAppController.find.getGovernorateById(payload['governorate_id']) : null,
       );
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -122,7 +125,9 @@ class User {
     final Map<String, dynamic> data = {};
     if (email != null) data['email'] = email;
     if (phone != null) data['phoneNumber'] = phone;
-    data['password'] = password;
+    if (facebookId != null) data['facebookId'] = facebookId;
+    if (googleId != null) data['googleId'] = googleId;
+    if (password != null) data['password'] = password;
     return data;
   }
 
