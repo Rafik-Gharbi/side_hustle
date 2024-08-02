@@ -43,8 +43,8 @@ class StoreDatabaseRepository extends GetxService {
     final List<StoreTableData> allStores = await database.select(database.storeTable).get();
     final List<Store> result = <Store>[];
     for (var storeElement in allStores) {
-      final Store store = await _convertStoreTo(storeElement.toCompanion(true));
-      result.add(store);
+      final Store? store = await _convertStoreTo(storeElement.toCompanion(true));
+      if (store != null) result.add(store);
     }
     return result;
   }
@@ -53,8 +53,8 @@ class StoreDatabaseRepository extends GetxService {
     final List<StoreTableData> allStores = await (database.select(database.storeTable)..where((tbl) => condition(tbl))).get();
     final List<Store> result = <Store>[];
     for (var storeElement in allStores) {
-      final Store store = await _convertStoreTo(storeElement.toCompanion(true), withFeedback: withFeedback);
-      result.add(store);
+      final Store? store = await _convertStoreTo(storeElement.toCompanion(true), withFeedback: withFeedback);
+      if (store != null) result.add(store);
     }
     return result;
   }
@@ -191,7 +191,8 @@ class StoreDatabaseRepository extends GetxService {
     return result;
   }
 
-  Future<Store> _convertStoreTo(StoreTableCompanion store, {bool withFeedback = false}) async {
+  Future<Store?> _convertStoreTo(StoreTableCompanion store, {bool withFeedback = false}) async {
+    if (store.owner.value == null) return null;
     final User? storeUser = await UserDatabaseRepository.find.getUserById(store.owner.value as int);
     final services = await _getStoreServices(store, withFeedback: withFeedback);
     return Store.fromStoreData(store: store, owner: storeUser ?? User(id: store.owner.value), services: services);

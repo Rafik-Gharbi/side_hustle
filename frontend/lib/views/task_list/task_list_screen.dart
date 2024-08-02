@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../constants/colors.dart';
-import '../../constants/sizes.dart';
-import '../../helpers/buildables.dart';
-import '../../helpers/helper.dart';
-import '../../models/filter_model.dart';
-import '../../services/theme/theme.dart';
-import '../../widgets/custom_buttons.dart';
-import '../../widgets/custom_scaffold_bottom_navigation.dart';
-import '../../widgets/custom_text_field.dart';
-import '../../widgets/hold_in_safe_area.dart';
-import '../../widgets/loading_request.dart';
-import '../../widgets/task_card.dart';
-import '../task_filter/more_filters_popup.dart';
-import 'task_list_controller.dart';
+import '../../../constants/colors.dart';
+import '../../../constants/sizes.dart';
+import '../../../helpers/buildables.dart';
+import '../../../helpers/helper.dart';
+import '../../../models/filter_model.dart';
+import '../../../services/theme/theme.dart';
+import '../../../widgets/custom_buttons.dart';
+import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_text_field.dart';
+import '../../../widgets/hold_in_safe_area.dart';
+import '../../../widgets/loading_request.dart';
+import '../../../widgets/task_card.dart';
+import '../task/task_filter/more_filters_popup.dart';
+import '../task/task_list/task_list_controller.dart';
 
 class TaskListScreen extends StatelessWidget {
   static const String routeName = '/tasks';

@@ -23,7 +23,7 @@ class TaskRepository extends GetxService {
         tasks.putIfAbsent('nearbyTasks', () => (result['nearbyTasks'] as List).map((e) => Task.fromJson(e)).toList());
         tasks.putIfAbsent('reservation', () => (result['reservation'] as List).map((e) => Reservation.fromJson(e)).toList());
       } else {
-        tasks = await TaskDatabaseRepository.find.getHotTasks();
+        tasks = await TaskDatabaseRepository.find.getHomeTasks();
       }
       if (tasks.isNotEmpty && MainAppController.find.isConnected) TaskDatabaseRepository.find.backupHomeTasks(tasks);
       return tasks;

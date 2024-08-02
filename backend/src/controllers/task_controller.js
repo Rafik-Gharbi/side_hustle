@@ -11,11 +11,10 @@ const {
 } = require("../sql/sql_request");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
 const { getFileType, getTaskCondidatesNumber } = require("../helper/helpers");
-const reservationController = require("../controllers/reservation_controller");
 const {
   CategorySubscriptionModel,
 } = require("../models/category_subscribtion_model");
-const { sendFirebaseNotification } = require("../../firebase-admin");
+const { NotificationType, notificationService } = require("../helper/notification_service");
 
 // get boosted tasks & nearby tasks
 exports.getHotNearbyTasks = async (req, res) => {
@@ -296,10 +295,11 @@ exports.addTask = async (req, res) => {
         }
       })
     );
-    await sendFirebaseNotification(
+    await notificationService.sendNotificationList(
       tokenList,
       "New Task Available",
-      `A new task in "${category.name}" category has been created. Check it out!`
+      `A new task in "${category.name}" category has been created. Check it out!`,
+      NotificationType.NEWTASK
     );
 
     // Return created task

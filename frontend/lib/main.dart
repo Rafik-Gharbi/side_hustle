@@ -19,6 +19,7 @@ import 'networking/api_base_helper.dart';
 import 'repositories/booking_repository.dart';
 import 'repositories/chat_repository.dart';
 import 'repositories/favorite_repository.dart';
+import 'repositories/notification_repository.dart';
 import 'repositories/params_repository.dart';
 import 'repositories/reservation_repository.dart';
 import 'repositories/store_repository.dart';
@@ -26,14 +27,16 @@ import 'repositories/task_repository.dart';
 import 'repositories/user_repository.dart';
 import 'services/authentication_service.dart';
 import 'services/theme/theme_service.dart';
-import 'views/add_task/add_task_bottomsheet.dart';
-import 'views/approve_user/approve_user_controller.dart';
-import 'views/approve_user/approve_user_screen.dart';
+import 'views/notifications/notification_controller.dart';
+import 'views/notifications/notification_screen.dart';
+import 'views/task/add_task/add_task_bottomsheet.dart';
+import 'views/profile/approve_user/approve_user_controller.dart';
+import 'views/profile/approve_user/approve_user_screen.dart';
 import 'views/chat/chat_controller.dart';
 import 'views/chat/chat_screen.dart';
 import 'views/chat/components/messages_screen.dart';
-import 'views/favorite/favorite_controller.dart';
-import 'views/favorite/favorite_screen.dart';
+import 'views/profile/favorite/favorite_controller.dart';
+import 'views/profile/favorite/favorite_screen.dart';
 import 'views/home/home_screen.dart';
 
 import 'controllers/main_app_controller.dart';
@@ -43,29 +46,29 @@ import 'services/shared_preferences.dart';
 import 'services/theme/theme.dart';
 import 'services/translation/app_localization.dart';
 import 'views/home/home_controller.dart';
-import 'views/market/market_controller.dart';
-import 'views/market/market_screen.dart';
-import 'views/my_store/my_store_controller.dart';
-import 'views/my_store/my_store_screen.dart';
-import 'views/profile/profile_controller.dart';
-import 'views/profile/profile_screen.dart';
-import 'views/service_request/service_request_controller.dart';
-import 'views/service_request/service_request_screen.dart';
+import 'views/store/market/market_controller.dart';
+import 'views/store/market/market_screen.dart';
+import 'views/store/my_store/my_store_controller.dart';
+import 'views/store/my_store/my_store_screen.dart';
+import 'views/profile/profile_screen/profile_controller.dart';
+import 'views/profile/profile_screen/profile_screen.dart';
+import 'views/store/service_request/service_request_controller.dart';
+import 'views/store/service_request/service_request_screen.dart';
 import 'views/settings/settings_controller.dart';
 import 'views/settings/settings_screen.dart';
-import 'views/task_details/task_details_screen.dart';
-import 'views/task_history/task_history_controller.dart';
-import 'views/task_history/task_history_screen.dart';
-import 'views/task_list/task_list_controller.dart';
-import 'views/task_list/task_list_screen.dart';
-import 'views/task_proposal/task_proposal_controller.dart';
-import 'views/task_proposal/task_proposal_screen.dart';
-import 'views/task_request/task_request_controller.dart';
-import 'views/task_request/task_request_screen.dart';
-import 'views/user_profile/user_profile_screen.dart';
-import 'views/verification_screen.dart';
-import 'views/verify_user/verify_user_controller.dart';
-import 'views/verify_user/verify_user_screen.dart';
+import 'views/task/task_details/task_details_screen.dart';
+import 'views/task/task_history/task_history_controller.dart';
+import 'views/task/task_history/task_history_screen.dart';
+import 'views/task/task_list/task_list_controller.dart';
+import 'views/task/task_list/task_list_screen.dart';
+import 'views/task/task_proposal/task_proposal_controller.dart';
+import 'views/task/task_proposal/task_proposal_screen.dart';
+import 'views/task/task_request/task_request_controller.dart';
+import 'views/task/task_request/task_request_screen.dart';
+import 'views/profile/user_profile/user_profile_screen.dart';
+import 'views/profile/verification_screen.dart';
+import 'views/profile/verify_user/verify_user_controller.dart';
+import 'views/profile/verify_user/verify_user_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -226,6 +229,11 @@ class MyApp extends StatelessWidget {
             binding: BindingsBuilder.put(() => SettingsController()),
           ),
           GetPage(
+            name: NotificationScreen.routeName,
+            page: () => const NotificationScreen(),
+            binding: BindingsBuilder.put(() => NotificationsController()),
+          ),
+          GetPage(
             name: AddTaskBottomsheet.routeName,
             page: () => const AddTaskBottomsheet(),
           ),
@@ -260,6 +268,7 @@ class InitialBindings implements Bindings {
     Get.put(ReservationRepository(), permanent: true);
     Get.put(BookingRepository(), permanent: true);
     Get.put(StoreRepository(), permanent: true);
+    Get.put(NotificationRepository(), permanent: true);
     // Database repositories
     Get.put(UserDatabaseRepository(), permanent: true);
     Get.put(TaskDatabaseRepository(), permanent: true);

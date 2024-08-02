@@ -10,7 +10,7 @@ import '../constants/sizes.dart';
 import '../models/user.dart';
 import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
-import '../views/account/login_dialog.dart';
+import '../views/profile/account/login_dialog.dart';
 import '../views/home/home_controller.dart';
 import '../widgets/custom_buttons.dart';
 import 'helper.dart';

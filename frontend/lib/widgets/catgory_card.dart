@@ -7,7 +7,7 @@ import '../constants/sizes.dart';
 import '../models/category.dart';
 import '../models/filter_model.dart';
 import '../services/theme/theme.dart';
-import '../views/task_list/task_list_screen.dart';
+import '../views/task/task_list/task_list_screen.dart';
 
 class CategoryCard extends StatelessWidget {
   final Category category;

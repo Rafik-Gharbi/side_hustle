@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../constants/colors.dart';
 import '../../constants/sizes.dart';
+import '../../controllers/main_app_controller.dart';
 import '../../helpers/helper.dart';
 import '../../models/filter_model.dart';
 import '../../services/authentication_service.dart';
@@ -14,10 +15,11 @@ import '../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../widgets/loading_request.dart';
 import '../../widgets/reservation_card.dart';
 import '../../widgets/task_card.dart';
-import '../account/login_dialog.dart';
+import '../notifications/notification_screen.dart';
+import '../profile/account/login_dialog.dart';
 import '../settings/settings_screen.dart';
-import '../task_filter/more_filters_popup.dart';
-import '../task_list/task_list_screen.dart';
+import '../task/task_filter/more_filters_popup.dart';
+import '../task/task_list/task_list_screen.dart';
 import 'home_controller.dart';
 import '../../widgets/custom_buttons.dart';
 import '../../widgets/custom_text_field.dart';
@@ -64,9 +66,19 @@ class HomeScreen extends StatelessWidget {
                               child: Row(
                                 children: [
                                   AuthenticationService.find.isUserLoggedIn.value
-                                      ? CustomButtons.icon(
-                                          icon: const Icon(Icons.notifications_outlined),
-                                          onPressed: () {},
+                                      ? Obx(
+                                          () => Badge(
+                                            offset: const Offset(-5, 6),
+                                            isLabelVisible: MainAppController.find.notSeenNotifications.value > 0,
+                                            label: Text(
+                                              MainAppController.find.notSeenNotifications.value.toString(),
+                                              style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
+                                            ),
+                                            child: CustomButtons.icon(
+                                              icon: const Icon(Icons.notifications_outlined),
+                                              onPressed: () => Get.toNamed(NotificationScreen.routeName),
+                                            ),
+                                          ),
                                         )
                                       : CustomButtons.text(
                                           title: 'Login',

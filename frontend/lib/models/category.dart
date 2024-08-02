@@ -37,11 +37,13 @@ class Category {
         id: category.id,
         name: category.name,
         icon: category.icon.toString().getIconData(),
+        parentId: category.parent,
       );
 
   CategoryTableCompanion toCategoryCompanion() => CategoryTableCompanion(
         id: Value(id),
         name: Value(name),
         icon: Value(icon.codePoint),
+        parent: Value(parentId),
   );
 }

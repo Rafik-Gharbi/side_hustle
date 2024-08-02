@@ -5,7 +5,7 @@ const app = require("./app");
 const socketio = require("socket.io");
 const dotenv = require("dotenv");
 const initializeSocket = require("./socket");
-const { initializeFirbaseAdmin } = require("./firebase-admin");
+const { notificationService } = require("./src/helper/notification_service");
 dotenv.config();
 
 // Importing Routes
@@ -18,14 +18,15 @@ require("./src/routes/reservation_route")(app);
 require("./src/routes/booking_route")(app);
 require("./src/routes/favorite_route")(app);
 require("./src/routes/chat_route")(app);
+require("./src/routes/notification_route")(app);
 
 // Create HTTP server
 
 const server = http.createServer(app);
 // Initialize Socket.io
-// const io = ;
-initializeSocket(socketio(server));
-// require("./socket")(io);
+const io = initializeSocket(socketio(server));
+// Initialize notification service
+notificationService.init(io);
 
 // PORT
 const PORT = process.env.PORT || 3000;
@@ -34,3 +35,5 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
+module.exports = io;

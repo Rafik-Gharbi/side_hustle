@@ -10,7 +10,7 @@ import '../helpers/helper.dart';
 import '../models/store.dart';
 import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
-import '../views/my_store/my_store_screen.dart';
+import '../views/store/my_store/my_store_screen.dart';
 import 'custom_buttons.dart';
 
 class StoreCard extends StatelessWidget {
@@ -46,7 +46,13 @@ class StoreCard extends StatelessWidget {
                   child: DecoratedBox(
                     decoration: BoxDecoration(color: kNeutralColor),
                     child: store.picture?.file.path != null
-                        ? Image.network(store.picture!.file.path, height: 100, width: 100, fit: BoxFit.cover)
+                        ? Image.network(
+                            store.picture!.file.path,
+                            height: 100,
+                            width: 100,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.error_outline, color: kNeutralColor100)),
+                          )
                         : Center(child: Text('No Image', style: AppFonts.x12Regular.copyWith(color: kNeutralColor100))),
                   ),
                 ),

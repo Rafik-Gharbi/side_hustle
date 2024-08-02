@@ -11,13 +11,12 @@ const {
   emailReservationForCheckin,
   sendNotificationReservation,
 } = require("../views/template_email");
-const { fetchNames, getImageByServiceId } = require("../sql/sql_request");
-const { constantId } = require("../helper/constants");
 const { sendMail } = require("../helper/email_service");
 const { Service } = require("../models/service_model");
 const { Booking } = require("../models/booking_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
 const { Store } = require("../models/store_model");
+const { NotificationType, notificationService } = require("../helper/notification_service");
 
 exports.add = async (req, res) => {
   const { serviceId, date, totalPrice, coupon, status, note } = req.body;
@@ -94,6 +93,15 @@ exports.add = async (req, res) => {
     // } catch (error) {
     //   console.error("\x1b[31m%s\x1b[0m", error);
     // }
+
+    // Send a notification for the service owner
+    let store = await Store.findOne({ where: { id: foundService.store_id } });
+    notificationService.sendNotification(
+      store.owner_id,
+      "You Have a New Booking",
+      "Someone has booked a service in your store, check it out!",
+      NotificationType.RESERVATION
+    );
 
     return res.status(200).json({ booking });
   } catch (error) {
@@ -348,6 +356,36 @@ exports.updateStatus = async (req, res) => {
 
     bookingFound.status = req.body.status;
     bookingFound.save();
+
+    // Send a notification to the seeker regarding the new status
+    switch (req.body.status) {
+      case "confirmed":
+        notificationService.sendNotification(
+          bookingFound.user_id,
+          "Your Booking Has Been Confirmed",
+          "The service owner has confirmed your booking.",
+          NotificationType.BOOKING
+        );
+        break;
+      case "rejected":
+        notificationService.sendNotification(
+          bookingFound.user_id,
+          "Your Booking Has Been Rejected",
+          "The service owner has rejected your booking.",
+          NotificationType.BOOKING
+        );
+        break;
+      case "finished": // TODO this should go to the service provider
+        notificationService.sendNotification(
+          bookingFound.user_id,
+          "Your Service Has Been Finished",
+          "The service owner has finished your request.",
+          NotificationType.BOOKING
+        );
+        break;
+      default:
+    }
+
     return res.status(200).json({ done: true });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);

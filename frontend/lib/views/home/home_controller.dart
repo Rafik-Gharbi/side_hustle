@@ -9,7 +9,7 @@ import '../../models/reservation.dart';
 import '../../models/task.dart';
 import '../../networking/api_base_helper.dart';
 import '../../repositories/task_repository.dart';
-import '../task_list/task_list_screen.dart';
+import '../task/task_list/task_list_screen.dart';
 
 class HomeController extends GetxController {
   static HomeController get find => Get.find<HomeController>();

@@ -12,7 +12,7 @@ import '../helpers/helper.dart';
 import '../models/task.dart';
 import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
-import '../views/task_details/task_details_screen.dart';
+import '../views/task/task_details/task_details_screen.dart';
 import 'custom_buttons.dart';
 
 class TaskCard extends StatelessWidget {

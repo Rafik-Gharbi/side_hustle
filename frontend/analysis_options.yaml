@@ -11,6 +11,7 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   errors:
+    avoid_relative_lib_imports: ignore
     use_build_context_synchronously: ignore
   exclude:
     - lib/overrided_packages/**

@@ -20,14 +20,15 @@ import '../models/task.dart';
 import '../networking/api_base_helper.dart';
 import '../repositories/chat_repository.dart';
 import '../repositories/favorite_repository.dart';
+import '../repositories/notification_repository.dart';
 import '../repositories/params_repository.dart';
 import '../services/authentication_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/translation/app_localization.dart';
 import '../views/chat/chat_screen.dart';
 import '../views/home/home_screen.dart';
-import '../views/market/market_screen.dart';
-import '../views/profile/profile_screen.dart';
+import '../views/store/market/market_screen.dart';
+import '../views/profile/profile_screen/profile_screen.dart';
 
 class MainAppController extends GetxController {
   static MainAppController get find => Get.find<MainAppController>();
@@ -48,6 +49,7 @@ class MainAppController extends GetxController {
   bool _canCheckBiometric = false;
   io.Socket? socket;
   RxInt notSeenMessages = 0.obs;
+  RxInt notSeenNotifications = 0.obs;
 
   bool get isConnected => hasInternetConnection.value && isBackReachable.value;
 
@@ -272,4 +274,7 @@ class MainAppController extends GetxController {
   void initSocket() => socket ??= io.io('${ApiBaseHelper.find.baseUrl}/', io.OptionBuilder().setTransports(['websocket']).build());
 
   Future<void> getNotSeenMessages() async => AuthenticationService.find.isUserLoggedIn.value ? notSeenMessages.value = await ChatRepository.find.getNotSeenMessages() : null;
+
+  Future<void> getNotSeenNotifications() async =>
+      AuthenticationService.find.jwtUserData != null ? notSeenNotifications.value = await NotificationRepository.find.getNotSeenNotificationsCount() : null;
 }

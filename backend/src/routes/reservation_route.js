@@ -40,13 +40,13 @@ module.exports = (app) => {
   // get tasks condidates number
   router.get("/condidates", reservationController.getCondidatesNumber);
 
-  // list all reservation for admin
-  router.get(
-    "/list-all",
-    tokenVerification,
-    roleMiddleware(["admin"]),
-    reservationController.getAllReservation
-  );
+  // // list all reservation for admin
+  // router.get(
+  //   "/list-all",
+  //   tokenVerification,
+  //   roleMiddleware(["admin"]),
+  //   reservationController.getAllReservation
+  // );
 
   router.post(
     "/paiement",

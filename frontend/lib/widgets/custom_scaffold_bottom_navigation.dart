@@ -9,13 +9,13 @@ import '../helpers/helper.dart';
 import '../services/authentication_service.dart';
 import '../services/navigation_history_observer.dart';
 import '../services/theme/theme.dart';
-import '../views/add_task/add_task_bottomsheet.dart';
+import '../views/task/add_task/add_task_bottomsheet.dart';
 import '../views/chat/chat_screen.dart';
 import '../views/chat/components/messages_screen.dart';
 import '../views/home/home_screen.dart';
-import '../views/market/market_screen.dart';
-import '../views/profile/profile_screen.dart';
-import '../views/task_proposal/task_proposal_screen.dart';
+import '../views/store/market/market_screen.dart';
+import '../views/profile/profile_screen/profile_screen.dart';
+import '../views/task/task_proposal/task_proposal_screen.dart';
 import 'custom_buttons.dart';
 
 class CustomScaffoldBottomNavigation extends StatelessWidget {
@@ -134,6 +134,19 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
           ? null
           : Obx(
               () => AnimatedBottomNavigationBar(
+                builder: (widget, index) => index == 2
+                    ? Obx(
+                        () => Badge(
+                          offset: const Offset(-28, 8),
+                          isLabelVisible: MainAppController.find.notSeenMessages.value > 0,
+                          label: Text(
+                            MainAppController.find.notSeenMessages.value.toString(),
+                            style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
+                          ),
+                          child: SizedBox(width: 60, height: 60, child: widget),
+                        ),
+                      )
+                    : widget,
                 icons: const [Icons.home_outlined, Icons.store_outlined, Icons.chat_outlined, Icons.person_outlined],
                 activeIndex: MainAppController.find.bottomNavIndex.value,
                 gapLocation: GapLocation.center,

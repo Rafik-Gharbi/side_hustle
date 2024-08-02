@@ -21,7 +21,7 @@ import '../services/translation/app_localization.dart';
 import '../services/logger_service.dart';
 import '../services/theme/theme.dart';
 import '../views/chat/chat_screen.dart';
-import '../views/verification_screen.dart';
+import '../views/profile/verification_screen.dart';
 import '../widgets/custom_popup.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/phone_otp_dialog.dart';
@@ -182,6 +182,8 @@ class Helper {
   }
 
   static String formatDate(DateTime createdAt) => DateFormat('yyyy-MM-dd').format(createdAt);
+  
+  static String formatDateWithTime(DateTime createdAt) => DateFormat('yyyy-MM-dd hh:mm').format(createdAt);
 
   static String formatAmount(double amount) => amount == amount.roundToDouble() ? amount.toInt().toString() : amount.toStringAsFixed(1);
 
@@ -376,9 +378,9 @@ class Helper {
     return distanceInMeters;
   }
 
-  static void showNotification(String msg, String receiverName) => GetSnackBar(
-        titleText: const Text('New Message', style: AppFonts.x16Bold),
-        messageText: Text('$receiverName: ${msg.tr}', style: AppFonts.x14Regular, overflow: TextOverflow.ellipsis),
+  static void showNotification(String title, String body) => GetSnackBar(
+        titleText: Text(title, style: AppFonts.x16Bold),
+        messageText: Text(body, style: AppFonts.x14Regular, overflow: TextOverflow.ellipsis),
         duration: const Duration(seconds: 4),
         isDismissible: true,
         borderColor: kPrimaryColor,

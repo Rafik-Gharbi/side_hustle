@@ -11,16 +11,15 @@ const {
   emailReservationForCheckin,
   sendNotificationReservation,
 } = require("../views/template_email");
-const {
-  fetchNames,
-  getImageByTaskId,
-  fetchUserReservation,
-} = require("../sql/sql_request");
-const { constantId } = require("../helper/constants");
+const { fetchUserReservation } = require("../sql/sql_request");
 const { sendMail } = require("../helper/email_service");
 const { Task } = require("../models/task_model");
 const { Reservation } = require("../models/reservation_model");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
+const {
+  NotificationType,
+  notificationService,
+} = require("../helper/notification_service");
 
 exports.add = async (req, res) => {
   const { taskId, date, totalPrice, coupon, status, note } = req.body;
@@ -98,6 +97,13 @@ exports.add = async (req, res) => {
     //   console.error("\x1b[31m%s\x1b[0m", error);
     // }
 
+    // Send a notification for the task owner
+    notificationService.sendNotification(
+      foundTask.owner_id,
+      "You Have a New Proposal",
+      "Someone has submitted a proposal on your task, check it out!",
+      NotificationType.RESERVATION
+    );
     return res.status(200).json({ reservation });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -333,6 +339,36 @@ exports.updateStatus = async (req, res) => {
 
     reservationFound.status = req.body.status;
     reservationFound.save();
+
+    // Send a notification to the seeker regarding the new status
+    switch (req.body.status) {
+      case "confirmed":
+        notificationService.sendNotification(
+          reservationFound.user_id,
+          "Your Proposal Has Been Confirmed",
+          "The task owner has confirmed your proposal, let's get to work!",
+          NotificationType.RESERVATION
+        );
+        break;
+      case "rejected":
+        notificationService.sendNotification(
+          reservationFound.user_id,
+          "Your Proposal Has Been Rejected",
+          "The task owner has rejected your proposal.",
+          NotificationType.RESERVATION
+        );
+        break;
+      case "finished":
+        notificationService.sendNotification(
+          reservationFound.user_id,
+          "Your Task Has Been Finished",
+          "The task owner has confirmed your work, good job!",
+          NotificationType.RESERVATION
+        );
+        break;
+      default:
+    }
+
     return res.status(200).json({ done: true });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -345,17 +381,6 @@ exports.getCondidatesNumber = async (req, res) => {
   try {
     const condidates = await getTaskCondidatesNumber(req.query.taskId);
     return res.status(200).json({ condidates });
-  } catch (error) {
-    console.log(`Error at ${req.route.path}`);
-    console.error("\x1b[31m%s\x1b[0m", error);
-    return res.status(500).json({ message: error });
-  }
-};
-
-exports.getAllReservation = async (req, res) => {
-  try {
-    // const reservationList = await getReservationFiltered(req.query);
-    // return res.status(200).json({ reservationList });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

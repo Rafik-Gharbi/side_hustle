@@ -5,6 +5,7 @@ const { User } = require("./src/models/user_model");
 const { Discussion } = require("./src/models/discussion_model");
 const { getChat } = require("./src/sql/sql_request");
 const { sendMail } = require("./src/helper/email_service");
+const { NotificationType } = require("./src/helper/notification_service");
 
 function initializeSocket(io) {
   // const io = socketIo(server);
@@ -82,9 +83,9 @@ function initializeSocket(io) {
         }
         // Emit to reciever if not joined a room
         io.to(`${msg.reciever}`).emit("notification", {
-          msg: msg.message,
-          recieverName: reciever.name,
-          senderName: sender.name,
+          title: "You Got a New Message",
+          body: `${sender.name}: ${msg.message}`,
+          type: NotificationType.CHAT,
         });
 
         // Emit the message to all users in the room
@@ -103,21 +104,8 @@ function initializeSocket(io) {
       }
     });
   });
-}
 
-async function markAsSeenByList(chatHistory, connected) {
-  chatHistory.forEach(async (message) => {
-    if (message.reciever_id == connected && message.seen == false) {
-      message.seen = true;
-      await Chat.update(message, {
-        where: {
-          id: message.id,
-        },
-      });
-    }
-  });
-
-  return chatHistory;
+  return io;
 }
 
 async function markAsSeen(sender, connected, discussionId) {

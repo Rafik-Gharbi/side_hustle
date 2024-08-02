@@ -7,7 +7,7 @@ import '../views/home/home_screen.dart';
 import '../../services/shared_preferences.dart';
 import '../constants/shared_preferences_keys.dart';
 import '../helpers/helper.dart';
-import '../views/profile/profile_screen.dart';
+import '../views/profile/profile_screen/profile_screen.dart';
 
 class NavigationHistoryObserver extends NavigatorObserver {
   static final NavigationHistoryObserver instance = NavigationHistoryObserver._();

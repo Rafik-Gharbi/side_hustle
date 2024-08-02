@@ -4,14 +4,12 @@ const { VerificationCode } = require("../models/verification_code");
 const { Op } = require("sequelize");
 const Bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-// const cron = require("node-cron");
 const { sendMail } = require("../helper/email_service");
 const {
   sendConfirmationMail,
   contactUsMail,
   forgotPasswordEmailTemplate,
 } = require("../views/template_email");
-// const { sendOTP, verifyOTP } = require("../helper/twilio_service");
 const {
   verifyPhoneNumber,
   calculateDateDifference,
@@ -30,7 +28,10 @@ const { UserDocumentModel } = require("../models/user_document_model");
 const {
   CategorySubscriptionModel,
 } = require("../models/category_subscribtion_model");
-const { sendFirebaseNotification } = require("../../firebase-admin");
+const {
+  NotificationType,
+  notificationService,
+} = require("../helper/notification_service");
 
 exports.renewJWT = async (req, res) => {
   try {
@@ -439,10 +440,11 @@ exports.approveUser = async (req, res) => {
     await userApprove.save();
 
     if (userApprove.fcmToken) {
-      sendFirebaseNotification(
-        [userApprove.fcmToken],
+      notificationService.sendNotification(
+        userApprove.fcmToken,
         "Successfully Approved",
-        "Your profile has been approved."
+        "Your profile has been approved.",
+        NotificationType.VERIFICATION
       );
     }
 
@@ -474,53 +476,14 @@ exports.userNotApprovable = async (req, res) => {
     await userApprove.save();
     // TODO add a notification table for when user opens the app he could see his notifications
     if (userApprove.fcmToken) {
-      sendFirebaseNotification(
-        [userApprove.fcmToken],
+      notificationService.sendNotification(
+        userApprove.fcmToken,
         "Failed to Approve",
-        "Your profile hasn't been approved. Probably your profile is missing some needed data or your provided documents weren't acceptable."
+        "Your profile hasn't been approved. Probably your profile is missing some needed data or your provided documents weren't acceptable.",
+        NotificationType.VERIFICATION
       );
     }
     return res.status(200).json({ done: true });
-  } catch (error) {
-    console.log(`Error at ${req.route.path}`);
-    console.error("\x1b[31m%s\x1b[0m", error);
-    return res.status(500).json({ message: error });
-  }
-};
-
-exports.verifyPhone = async (req, res) => {
-  try {
-    const { phoneNumber, code, email } = req.body;
-
-    if (!phoneNumber || !code || !email) {
-      return res.status(400).json({ message: "missing_credentials" });
-    }
-    const formattedPhoneNumber = removeSpacesFromPhoneNumber(phoneNumber);
-
-    if (!verifyPhoneNumber(formattedPhoneNumber)) {
-      return res.status(400).json({ message: "wrong_number" });
-    }
-
-    // const responseVerification = await verifyOTP(formattedPhoneNumber, code);
-    // if (responseVerification == "approved") {
-    //   const user = await User.findOne({
-    //     where: { email: email },
-    //   });
-    //   if (user) {
-    //     user.phone_number = formattedPhoneNumber;
-    //     await VerificationCode.destroy({
-    //       where: {
-    //         phone_number: formattedPhoneNumber,
-    //       },
-    //     });
-    //   } else {
-    //     return res.status(404).json({ message: "user_not_found" });
-    //   }
-    //   await user.save();
-    // } else {
-    //   return res.status(400).json({ message: "otp_verif_failed" });
-    // }
-    return res.status(200).json({ message: "otp_approved" });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);
@@ -627,10 +590,6 @@ exports.resendVerification = async (req, res) => {
   }
 };
 
-// exports.showContract = async (req, res) => {
-//   return res.status(200).send(contratHtml());
-// };
-
 async function createAndSaveCode(userId, type) {
   const code = generateRandomCode();
   await VerificationCode.create({ code, user_id: userId, type: type });
@@ -727,6 +686,7 @@ exports.forgotPassword = async (req, res) => {
     return res.status(500).json({ message: error });
   }
 };
+
 exports.updatePassword = async (req, res) => {
   if (!req.body.newPassword) {
     return res.status(404).json({ message: "new_password_missing" });
@@ -869,6 +829,12 @@ exports.verifyIdentity = async (req, res) => {
     await userFound.save();
 
     const jwt = await generateJWT(userFound);
+
+    notificationService.sendNotificationToAdmin(
+      "New User Verification",
+      "A new user has submitted his document, check them out.",
+      NotificationType.VERIFICATION
+    );
 
     return res.status(200).json({ message: "done", jwt: jwt });
   } catch (error) {

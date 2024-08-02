@@ -10,11 +10,8 @@ class CategoryDatabaseRepository extends GetxService {
 
   Future<List<Category>> select() async {
     List<CategoryTableData> result = await database.select(database.categoryTable).get();
-    List<Category> categories = [];
+    List<Category> categories = result.map((e) => Category.fromCategoryData(category: e)).toList();
 
-    for (var category in result.where((element) => element.parent == 0)) {
-      categories.add(Category.fromCategoryData(category: category));
-    }
     return categories;
   }
 

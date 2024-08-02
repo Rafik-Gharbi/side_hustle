@@ -19,8 +19,8 @@ import '../models/user.dart';
 import '../repositories/user_repository.dart';
 import '../views/chat/chat_controller.dart';
 import '../views/chat/chat_screen.dart';
-import '../views/profile/profile_controller.dart';
-import '../views/profile/profile_screen.dart';
+import '../views/profile/profile_screen/profile_controller.dart';
+import '../views/profile/profile_screen/profile_screen.dart';
 import '../widgets/verify_email_dialog.dart';
 import 'logger_service.dart';
 import 'shared_preferences.dart';
@@ -78,7 +78,7 @@ class AuthenticationService extends GetxController {
     if (isUserLoggedIn.value && _jwtUserData == null && savedToken != null) {
       _jwtUserData = User.fromToken(JwtDecoder.decode(savedToken));
     }
-    return isUserLoggedIn.value ? _jwtUserData : null;
+    return _jwtUserData;
   }
 
   LoginWidgetState get currentState => _currentState;
@@ -523,11 +523,13 @@ class AuthenticationService extends GetxController {
     MainAppController.find.socket!.on('notification', (data) {
       // Show a notification to the user if not in the chat tab
       if (Get.currentRoute != ChatScreen.routeName) {
-        Helper.showNotification(data['msg'], data['recieverName']);
+        Helper.showNotification(data['title'], data['body']);
       } else if (Get.currentRoute == ChatScreen.routeName) {
         ChatController.find.getUserChatHistory();
       }
+      MainAppController.find.getNotSeenNotifications();
       return MainAppController.find.getNotSeenMessages();
     });
+    MainAppController.find.getNotSeenNotifications();
   }
 }

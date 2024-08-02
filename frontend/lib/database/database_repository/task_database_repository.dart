@@ -114,14 +114,8 @@ class TaskDatabaseRepository extends GetxService {
     }
   }
 
-  Future<void> backupTasks(List<Task> tasks, {bool isHotTasks = false, bool isFavorite = false}) async {
-    LoggerService.logger?.i('Backing up tasks (isHotTasks: $isHotTasks, isFavorite: $isFavorite)...');
-    if (isHotTasks) {
-      SharedPreferencesService.find.add(hotTasksKey, jsonEncode(tasks.map((e) => e.id).toList()));
-    }
-    if (isFavorite) {
-      SharedPreferencesService.find.add(favoriteTasksKey, jsonEncode(tasks.map((e) => e.id).toList()));
-    }
+  Future<void> backupTasks(List<Task> tasks) async {
+    LoggerService.logger?.i('Backing up tasks...');
     for (var task in tasks) {
       await backupTask(task);
     }
@@ -156,20 +150,6 @@ class TaskDatabaseRepository extends GetxService {
           .toList();
       return filtered;
     }
-  }
-
-  Future<Map<String, List<Task>>> getHotTasks() async {
-    LoggerService.logger?.i('Getting hot tasks...');
-    List<Task> result = [];
-    final savedIds = SharedPreferencesService.find.get(hotTasksKey);
-    List<int> hotTasksId = (jsonDecode(savedIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
-    if (hotTasksId.isNotEmpty) {
-      for (var taskId in hotTasksId) {
-        final task = await getTaskById(taskId);
-        if (task != null) result.add(task);
-      }
-    }
-    return {'hotTasks': result};
   }
 
   Future<List<TaskAttachmentTableData>> _getTaskAttachments(TaskTableCompanion task, {bool withFeedback = false}) async {
@@ -234,11 +214,51 @@ class TaskDatabaseRepository extends GetxService {
 
   Future<void> backupFavorite(FavoriteDTO? favorites) async {
     if (favorites == null) return;
-    await backupTasks(favorites.savedTasks, isFavorite: true);
+    if (favorites.savedTasks.isNotEmpty) {
+      SharedPreferencesService.find.add(favoriteTasksKey, jsonEncode(favorites.savedTasks));
+    }
+    await backupTasks(favorites.savedTasks);
     await StoreDatabaseRepository.find.backupStores(favorites.savedStores, isFavorite: true);
   }
 
-  void backupHomeTasks(Map<String, List> tasks) {
-    // TODO back up home tasks (hot, nearby, reservations)
+  Future<void> backupHomeTasks(Map<String, List> tasks) async {
+    if (tasks['hotTasks'] != null && (tasks['hotTasks'] as List).isNotEmpty) {
+      SharedPreferencesService.find.add(hotTasksKey, jsonEncode((tasks['hotTasks'] as List).map((e) => e.id).toList()));
+    }
+    if (tasks['nearbyTasks'] != null && (tasks['nearbyTasks'] as List).isNotEmpty) {
+      SharedPreferencesService.find.add(nearbyTasksKey, jsonEncode((tasks['nearbyTasks'] as List).map((e) => e.id).toList()));
+    }
+    if (tasks['reservation'] != null && (tasks['reservation'] as List).isNotEmpty) {
+      SharedPreferencesService.find.add(reservationKey, jsonEncode((tasks['reservation'] as List).map((e) => e.id).toList()));
+    }
+    final List<Task> tasksForBackup = [];
+    tasksForBackup.addAll((tasks['hotTasks'] as List).map((e) => e as Task));
+    tasksForBackup.addAll((tasks['nearbyTasks'] as List).map((e) => e as Task));
+    // TODO backup reservations
+    await backupTasks(tasksForBackup);
+  }
+
+  Future<Map<String, List<Task>>> getHomeTasks() async {
+    LoggerService.logger?.i('Getting hot tasks...');
+    List<Task> hotTasks = [];
+    List<Task> nearbyTasks = [];
+    final savedIds = SharedPreferencesService.find.get(hotTasksKey);
+    List<int> hotTasksId = (jsonDecode(savedIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
+    if (hotTasksId.isNotEmpty) {
+      for (var taskId in hotTasksId) {
+        final task = await getTaskById(taskId);
+        if (task != null) hotTasks.add(task);
+      }
+    }
+    final savedNearbyIds = SharedPreferencesService.find.get(nearbyTasksKey);
+    List<int> nearbyTasksId = (jsonDecode(savedNearbyIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
+    if (nearbyTasksId.isNotEmpty) {
+      for (var taskId in nearbyTasksId) {
+        final task = await getTaskById(taskId);
+        if (task != null) nearbyTasks.add(task);
+      }
+    }
+    // TODO get saved reservations
+    return {'hotTasks': hotTasks, 'nearbyTasks': nearbyTasks};
   }
 }
