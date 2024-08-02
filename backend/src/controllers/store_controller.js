@@ -181,7 +181,17 @@ exports.addStore = async (req, res) => {
 
 // add a new store service
 exports.addService = async (req, res) => {
-  const { name, description, price, category_id } = req.body;
+  const {
+    name,
+    description,
+    price,
+    category_id,
+    included,
+    notIncluded,
+    notes,
+    timeEstimationFrom,
+    timeEstimationTo,
+  } = req.body;
 
   try {
     // Check if user exists
@@ -215,6 +225,11 @@ exports.addService = async (req, res) => {
       category_id,
       price,
       store_id: existStore.id,
+      included,
+      notIncluded,
+      notes,
+      timeEstimationFrom,
+      timeEstimationTo,
     });
 
     let gallery = [];
@@ -241,6 +256,11 @@ exports.addService = async (req, res) => {
         category_id: service.category_id,
         price: service.price,
         gallery: gallery,
+        included: service.included,
+        notIncluded: service.notIncluded,
+        notes: service.notes,
+        timeEstimationFrom: service.timeEstimationFrom,
+        timeEstimationTo: service.timeEstimationTo,
       },
     });
   } catch (error) {
@@ -252,7 +272,18 @@ exports.addService = async (req, res) => {
 
 // update a store service
 exports.updateService = async (req, res) => {
-  const { id, name, description, price, category_id } = req.body;
+  const {
+    id,
+    name,
+    description,
+    price,
+    category_id,
+    included,
+    notIncluded,
+    notes,
+    timeEstimationFrom,
+    timeEstimationTo,
+  } = req.body;
 
   try {
     // Check if user exists
@@ -283,6 +314,11 @@ exports.updateService = async (req, res) => {
     foundService.description = description;
     foundService.price = price;
     foundService.category_id = category_id;
+    foundService.included = included;
+    foundService.notIncluded = notIncluded;
+    foundService.notes = notes;
+    foundService.timeEstimationFrom = timeEstimationFrom;
+    foundService.timeEstimationTo = timeEstimationTo;
     await foundService.save();
 
     let gallery = [];
@@ -317,6 +353,11 @@ exports.updateService = async (req, res) => {
         category_id: category_id,
         price: price,
         gallery: gallery,
+        included: included,
+        notIncluded: notIncluded,
+        notes: notes,
+        timeEstimationFrom: timeEstimationFrom,
+        timeEstimationTo: timeEstimationTo,
       },
     });
   } catch (error) {
@@ -389,6 +430,11 @@ exports.getUserStore = async (req, res) => {
           category_id: service.category_id,
           gallery,
           requests,
+          included: service.included,
+          notIncluded: service.notIncluded,
+          notes: service.notes,
+          timeEstimationFrom: service.timeEstimationFrom,
+          timeEstimationTo: service.timeEstimationTo,
         };
       })
     );

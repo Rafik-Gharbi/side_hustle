@@ -7,7 +7,7 @@ const { Reservation } = require("../models/reservation_model");
 const { Service } = require("../models/service_model");
 const { Booking } = require("../models/booking_model");
 const { User } = require("../models/user_model");
-const { getFavoriteByUserId, getFavoriteStoreByUserId } = require("../sql/sql_request");
+const { sequelize } = require("../../db.config");
 
 function adjustString(inputString) {
   const ext = path.extname(inputString).toLowerCase();
@@ -119,7 +119,15 @@ async function checkStoreFavorite(store, currentUserId) {
   if (!userFound) {
     return res.status(404).json({ message: "user_not_found" });
   } else {
-    userFavorites = await getFavoriteStoreByUserId(currentUserId);
+    const query = `
+    SELECT store_id
+    FROM favorite_store
+    WHERE user_id = :userId
+  `;
+    userFavorites = await sequelize.query(query, {
+      type: sequelize.QueryTypes.SELECT,
+      replacements: { userId: currentUserId },
+    });
   }
   return userFavorites.length > 0
     ? userFavorites.some((e) => e.store_id == store.id)

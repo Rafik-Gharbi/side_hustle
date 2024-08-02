@@ -24,6 +24,10 @@ class ProfileController extends GetxController {
   bool _isUpdatingProfile = false;
   List<Category> subscribedCategories = [];
   DateTime? nextUpdateGategory;
+  int myRequestActionRequired = 0;
+  int taskHistoryActionRequired = 0;
+  int myStoreActionRequired = 0;
+  int approveUsersActionRequired = 0;
 
   bool get isLoading => _isLoading;
   bool get isUpdatingProfile => _isUpdatingProfile;
@@ -47,6 +51,10 @@ class ProfileController extends GetxController {
     loggedInUser = result?.user;
     subscribedCategories = result?.subscribedCategories ?? [];
     nextUpdateGategory = result?.nextUpdateGategory;
+    myRequestActionRequired = result?.myRequestActionRequired ?? 0;
+    taskHistoryActionRequired = result?.taskHistoryActionRequired ?? 0;
+    myStoreActionRequired = result?.myStoreActionRequired ?? 0;
+    approveUsersActionRequired = result?.approveUsersActionRequired ?? 0;
     if (!MainAppController.find.isBackReachable.value) ApiBaseHelper.find.isLoading = false;
     isLoading = false;
   }

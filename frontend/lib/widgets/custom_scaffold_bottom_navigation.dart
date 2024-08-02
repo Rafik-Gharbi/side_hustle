@@ -134,7 +134,7 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
           ? null
           : Obx(
               () => AnimatedBottomNavigationBar(
-                builder: (widget, index) => index == 2
+                builder: (widget, index) => index == 2 // Chat
                     ? Obx(
                         () => Badge(
                           offset: const Offset(-28, 8),
@@ -146,7 +146,19 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                           child: SizedBox(width: 60, height: 60, child: widget),
                         ),
                       )
-                    : widget,
+                    : index == 3 // Profile
+                        ? Obx(
+                            () => Badge(
+                              offset: const Offset(-28, 8),
+                              isLabelVisible: MainAppController.find.profileActionRequired.value > 0,
+                              label: Text(
+                                MainAppController.find.profileActionRequired.value.toString(),
+                                style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
+                              ),
+                              child: SizedBox(width: 60, height: 60, child: widget),
+                            ),
+                          )
+                        : widget,
                 icons: const [Icons.home_outlined, Icons.store_outlined, Icons.chat_outlined, Icons.person_outlined],
                 activeIndex: MainAppController.find.bottomNavIndex.value,
                 gapLocation: GapLocation.center,

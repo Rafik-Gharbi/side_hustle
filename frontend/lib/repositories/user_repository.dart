@@ -301,4 +301,14 @@ class UserRepository extends GetxService {
     }
     return false;
   }
+
+  Future<int> getRequiredActionsCount() async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/user/required-actions');
+      return result?['count'] ?? 0;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getRequiredActionsCount:\n$e');
+    }
+    return 0;
+  }
 }

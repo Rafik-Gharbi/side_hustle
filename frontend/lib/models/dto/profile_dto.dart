@@ -6,8 +6,20 @@ class ProfileDTO {
   final User user;
   final List<Category> subscribedCategories;
   final DateTime nextUpdateGategory;
+  final int myRequestActionRequired;
+  final int taskHistoryActionRequired;
+  final int myStoreActionRequired;
+  final int approveUsersActionRequired;
 
-  ProfileDTO({required this.user, required this.subscribedCategories, required this.nextUpdateGategory});
+  ProfileDTO({
+    required this.user,
+    required this.subscribedCategories,
+    required this.nextUpdateGategory,
+    this.approveUsersActionRequired = 0,
+    this.myRequestActionRequired = 0,
+    this.myStoreActionRequired = 0,
+    this.taskHistoryActionRequired = 0,
+  });
 
   factory ProfileDTO.fromJson(Map<String, dynamic> json) => ProfileDTO(
         user: User.fromJson(json['user']),
@@ -16,5 +28,9 @@ class ProfileDTO {
         nextUpdateGategory: json['subscribedCategories'] != null && (json['subscribedCategories'] as List).isNotEmpty
             ? DateTime.parse(json['subscribedCategories'][0]['updatedAt']).add(const Duration(days: 30))
             : DateTime.now(),
+        approveUsersActionRequired: json['approveUsersActionRequired'] ?? 0,
+        myRequestActionRequired: json['myRequestActionRequired'] ?? 0,
+        myStoreActionRequired: json['myStoreActionRequired'] ?? 0,
+        taskHistoryActionRequired: json['taskHistoryActionRequired'] ?? 0,
       );
 }

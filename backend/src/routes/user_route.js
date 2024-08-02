@@ -20,6 +20,9 @@ module.exports = (app) => {
 
   // get profile by token
   router.get("/profile", tokenVerification, userController.profile);
+  
+  // get user required actions count
+  router.get("/required-actions", tokenVerification, userController.userActionsRequiredCount);
 
   // get user by id, available only for owners
   router.get(

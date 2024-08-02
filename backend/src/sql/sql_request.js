@@ -1,5 +1,11 @@
 const { sequelize } = require("../../db.config");
+const {
+  getTaskCondidatesNumber,
+  getServiceCondidatesNumber,
+} = require("../helper/helpers");
 const { Reservation } = require("../models/reservation_model");
+const { Service } = require("../models/service_model");
+const { Store } = require("../models/store_model");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
 const { Task } = require("../models/task_model");
 const { User } = require("../models/user_model");
@@ -57,6 +63,79 @@ const getNotSeenMessages = async (discussionId, connected) => {
   });
 
   return results[0]["notSeen"];
+};
+
+const getMyRequestRequiredActionsCount = async (userId) => {
+  const query = `SELECT task.*, 
+      user.id AS user_id,
+      user.name,
+      user.email,
+      user.gender,
+      user.birthdate,
+      user.picture,
+      user.governorate_id as user_governorate_id,
+      user.phone_number,
+      user.role FROM task JOIN user ON task.owner_id = user.id WHERE task.owner_id = :userId
+  ;`;
+  const tasks = await sequelize.query(query, {
+    type: sequelize.QueryTypes.SELECT,
+    replacements: {
+      userId: userId,
+    },
+  });
+  let result = 0;
+  await Promise.all(
+    tasks.map(async (row) => {
+      const count = await getTaskCondidatesNumber(row.id);
+      result += count;
+    })
+  );
+  return result;
+};
+
+const getTaskHistoryRequiredActionsCount = async (userId) => {
+  let reservationList = await Reservation.findAll({
+    where: {
+      user_id: userId,
+    },
+  });
+
+  let result = 0;
+  await Promise.all(
+    reservationList.map(async (row) => {
+      if (row.status === "pending" || row.status === "confirmed") result++;
+    })
+  );
+  return result;
+};
+
+const getMyStoreRequiredActionsCount = async (userId) => {
+  const existStore = await Store.findOne({
+    where: { owner_id: userId },
+  });
+  if (!existStore) {
+    return 0;
+  }
+  const foundServices = await Service.findAll({
+    where: { store_id: existStore.id },
+  });
+
+  let result = 0;
+  await Promise.all(
+    foundServices.map(async (service) => {
+      const requests = await getServiceCondidatesNumber(service.id);
+      result += requests;
+    })
+  );
+  return result;
+};
+
+const getApproveUsersRequiredActionsCount = async (userId) => {
+  const approveUsers = await User.findAll({
+    where: { isVerified: "pending" },
+  });
+
+  return approveUsers.length;
 };
 
 async function fetchUserReservation(userId) {
@@ -286,6 +365,7 @@ const getLocationById = async (id, language) => {
     return null; // or any default value you prefer when no location is found
   }
 };
+
 const getTextByLanguage = async (id, language) => {
   const query = `
     SELECT name, street, text
@@ -419,4 +499,8 @@ module.exports = {
   fetchUserReservation,
   populateOneTask,
   getNotSeenMessages,
+  getMyRequestRequiredActionsCount,
+  getTaskHistoryRequiredActionsCount,
+  getMyStoreRequiredActionsCount,
+  getApproveUsersRequiredActionsCount,
 };

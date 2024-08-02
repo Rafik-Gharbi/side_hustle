@@ -7,7 +7,12 @@ const Service = sequelize.define(
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: Sequelize.STRING, allowNull: false },
     description: { type: Sequelize.STRING, allowNull: false },
+    included: { type: Sequelize.STRING },
+    notIncluded: { type: Sequelize.STRING },
+    notes: { type: Sequelize.STRING },
     price: { type: Sequelize.FLOAT, allowNull: false },
+    timeEstimationFrom: { type: Sequelize.FLOAT },
+    timeEstimationTo: { type: Sequelize.FLOAT },
   },
   {
     tableName: "service",

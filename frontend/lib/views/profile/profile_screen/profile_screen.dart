@@ -152,6 +152,7 @@ class ProfileScreen extends StatelessWidget {
                                                         ),
                                                         if (AuthenticationService.find.jwtUserData?.isVerified != VerifyIdentityStatus.verified)
                                                           buildActionTile(
+                                                            actionRequired: AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.pending ? 0 : 1,
                                                             label: 'verify_profile'.tr,
                                                             icon: Icons.verified_outlined,
                                                             onTap: () => Get.toNamed(VerifyUserScreen.routeName),
@@ -180,28 +181,33 @@ class ProfileScreen extends StatelessWidget {
                                                           onTap: () => Get.toNamed(FavoriteScreen.routeName),
                                                         ),
                                                         buildActionTile(
+                                                          actionRequired: controller.subscribedCategories.isEmpty ? 1 : 0,
                                                           label: 'subscribe_categories'.tr,
                                                           icon: Icons.loyalty_outlined,
                                                           onTap: controller.manageCategoriesSubscription,
                                                         ),
                                                         if (AuthenticationService.find.jwtUserData?.role != Role.seeker)
                                                           buildActionTile(
+                                                            actionRequired: controller.myRequestActionRequired,
                                                             label: 'my_request'.tr,
                                                             icon: Icons.campaign_outlined,
                                                             onTap: () => Get.toNamed(TaskRequestScreen.routeName),
                                                           ),
                                                         buildActionTile(
+                                                          actionRequired: controller.taskHistoryActionRequired,
                                                           label: 'tasks_history'.tr,
                                                           icon: Icons.history_outlined,
                                                           onTap: () => Get.toNamed(TaskHistoryScreen.routeName),
                                                         ),
                                                         buildActionTile(
+                                                          actionRequired: controller.myStoreActionRequired,
                                                           label: 'my_store'.tr,
                                                           icon: Icons.store_outlined,
                                                           onTap: () => Get.toNamed(MyStoreScreen.routeName),
                                                         ),
                                                         if (AuthenticationService.find.jwtUserData?.role == Role.admin)
                                                           buildActionTile(
+                                                            actionRequired: controller.approveUsersActionRequired,
                                                             label: 'approve_users'.tr,
                                                             icon: Icons.verified_user_outlined,
                                                             onTap: () => Get.toNamed(ApproveUserScreen.routeName),
@@ -235,13 +241,22 @@ class ProfileScreen extends StatelessWidget {
         ),
       );
 
-  Widget buildActionTile({required String label, required IconData icon, required void Function() onTap}) => CustomButtons.text(
-        onPressed: onTap,
-        child: ListTile(
-          title: Text(label, style: AppFonts.x14Bold),
-          contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
-          leading: CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: Icon(icon, size: 24)),
-          trailing: const Icon(Icons.chevron_right_rounded),
+  Widget buildActionTile({required String label, required IconData icon, required void Function() onTap, int actionRequired = 0}) => Badge(
+        offset: const Offset(-45, 19),
+        largeSize: 18,
+        isLabelVisible: actionRequired > 0,
+        label: Text(
+          actionRequired.toString(),
+          style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
+        ),
+        child: CustomButtons.text(
+          onPressed: onTap,
+          child: ListTile(
+            title: Text(label, style: AppFonts.x14Bold),
+            contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
+            leading: CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: Icon(icon, size: 24)),
+            trailing: const Icon(Icons.chevron_right_rounded),
+          ),
         ),
       );
 }

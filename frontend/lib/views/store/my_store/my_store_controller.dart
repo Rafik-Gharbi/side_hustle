@@ -28,6 +28,11 @@ class MyStoreController extends GetxController {
   final TextEditingController serviceDescriptionController = TextEditingController();
   final TextEditingController serviceNameController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
+  final TextEditingController serviceIncludedController = TextEditingController();
+  final TextEditingController serviceNotIncludedController = TextEditingController();
+  final TextEditingController serviceNoteController = TextEditingController();
+  final TextEditingController serviceTimeFromController = TextEditingController();
+  final TextEditingController serviceTimeToController = TextEditingController();
   XFile? storePicture;
   Store? userStore;
   bool isLoading = true;
@@ -106,31 +111,23 @@ class MyStoreController extends GetxController {
 
   Future<void> upsertService({bool isUpdate = false}) async {
     Service? result;
+    final service = Service(
+      id: updateServiceId,
+      name: serviceNameController.text,
+      description: serviceDescriptionController.text,
+      category: category!,
+      gallery: serviceGallery.map((e) => ImageDTO(file: e, type: ImageType.image)).toList(),
+      price: double.tryParse(servicePriceController.text),
+      included: serviceIncludedController.text,
+      notIncluded: serviceNotIncludedController.text,
+      notes: serviceNoteController.text,
+      timeEstimationFrom: serviceTimeFromController.text.isNotEmpty ? double.tryParse(serviceTimeFromController.text) : null,
+      timeEstimationTo: serviceTimeToController.text.isNotEmpty ? double.tryParse(serviceTimeToController.text) : null,
+    );
     if (!isUpdate) {
-      result = await StoreRepository.find.addService(
-        Service(
-          name: serviceNameController.text,
-          description: serviceDescriptionController.text,
-          category: category!,
-          gallery: serviceGallery.map((e) => ImageDTO(file: e, type: ImageType.image)).toList(),
-          price: double.tryParse(servicePriceController.text),
-        ),
-        userStore!,
-        withBack: true,
-      );
+      result = await StoreRepository.find.addService(service, userStore!, withBack: true);
     } else {
-      result = await StoreRepository.find.updateService(
-        Service(
-          id: updateServiceId,
-          name: serviceNameController.text,
-          description: serviceDescriptionController.text,
-          category: category!,
-          gallery: serviceGallery.map((e) => ImageDTO(file: e, type: ImageType.image)).toList(),
-          price: double.tryParse(servicePriceController.text),
-        ),
-        userStore!,
-        withBack: true,
-      );
+      result = await StoreRepository.find.updateService(service, userStore!, withBack: true);
     }
     if (result != null) {
       userStore!.services = [...userStore!.services?.where((element) => element.id != result?.id).toList() ?? [], result];
@@ -216,7 +213,6 @@ class MyStoreController extends GetxController {
       Get.back();
       Helper.snackBar(message: 'Service has been booked successfully');
     }
-    // TODO add service booking
   }
 
   void _clearStoreFields() {

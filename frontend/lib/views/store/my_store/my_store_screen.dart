@@ -145,6 +145,7 @@ class MyStoreScreen extends StatelessWidget {
                             itemBuilder: (context, index) {
                               final service = controller.userStore?.services![index];
                               return ServiceCard(
+                                store: store ?? controller.userStore!,
                                 service: service!,
                                 requests: service.requests,
                                 onBookService: () => isOwner

@@ -32,6 +32,12 @@ const {
   NotificationType,
   notificationService,
 } = require("../helper/notification_service");
+const {
+  getMyRequestRequiredActionsCount,
+  getTaskHistoryRequiredActionsCount,
+  getMyStoreRequiredActionsCount,
+  getApproveUsersRequiredActionsCount,
+} = require("../sql/sql_request");
 
 exports.renewJWT = async (req, res) => {
   try {
@@ -321,9 +327,25 @@ exports.profile = async (req, res) => {
       where: { user_id: userId },
     });
 
-    return res
-      .status(200)
-      .json({ user: userFound, subscribedCategories: categories });
+    let myRequestActionRequired = await getMyRequestRequiredActionsCount(
+      userId
+    );
+    let taskHistoryActionRequired = await getTaskHistoryRequiredActionsCount(
+      userId
+    );
+    let myStoreActionRequired = await getMyStoreRequiredActionsCount(userId);
+    let approveUsersActionRequired = await getApproveUsersRequiredActionsCount(
+      userId
+    );
+
+    return res.status(200).json({
+      user: userFound,
+      subscribedCategories: categories,
+      myRequestActionRequired,
+      taskHistoryActionRequired,
+      myStoreActionRequired,
+      approveUsersActionRequired,
+    });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);
@@ -837,6 +859,43 @@ exports.verifyIdentity = async (req, res) => {
     );
 
     return res.status(200).json({ message: "done", jwt: jwt });
+  } catch (error) {
+    const errorMessage = error.errors?.[0].message || error.message;
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: errorMessage });
+  }
+};
+
+exports.userActionsRequiredCount = async (req, res) => {
+  try {
+    const userFound = await User.findByPk(req.decoded.id);
+    if (!userFound) {
+      return res.status(404).json({ message: "user_not_found" });
+    }
+    let myRequestActionRequired = await getMyRequestRequiredActionsCount(
+      userFound.id
+    );
+    let taskHistoryActionRequired = await getTaskHistoryRequiredActionsCount(
+      userFound.id
+    );
+    let myStoreActionRequired = await getMyStoreRequiredActionsCount(
+      userFound.id
+    );
+    let approveUsersActionRequired = await getApproveUsersRequiredActionsCount(
+      userFound.id
+    );
+    const categories = await CategorySubscriptionModel.findAll({
+      where: { user_id: userFound.id },
+    });
+
+    let count =
+      myRequestActionRequired +
+      taskHistoryActionRequired +
+      myStoreActionRequired +
+      approveUsersActionRequired;
+    if (categories.length == 0) count++;
+    return res.status(200).json({ count });
   } catch (error) {
     const errorMessage = error.errors?.[0].message || error.message;
     console.log(`Error at ${req.route.path}`);

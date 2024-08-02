@@ -17,11 +17,13 @@ import '../models/category.dart';
 import '../models/governorate.dart';
 import '../models/store.dart';
 import '../models/task.dart';
+import '../models/user.dart';
 import '../networking/api_base_helper.dart';
 import '../repositories/chat_repository.dart';
 import '../repositories/favorite_repository.dart';
 import '../repositories/notification_repository.dart';
 import '../repositories/params_repository.dart';
+import '../repositories/user_repository.dart';
 import '../services/authentication_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/translation/app_localization.dart';
@@ -50,6 +52,7 @@ class MainAppController extends GetxController {
   io.Socket? socket;
   RxInt notSeenMessages = 0.obs;
   RxInt notSeenNotifications = 0.obs;
+  RxInt profileActionRequired = 0.obs;
 
   bool get isConnected => hasInternetConnection.value && isBackReachable.value;
 
@@ -277,4 +280,12 @@ class MainAppController extends GetxController {
 
   Future<void> getNotSeenNotifications() async =>
       AuthenticationService.find.jwtUserData != null ? notSeenNotifications.value = await NotificationRepository.find.getNotSeenNotificationsCount() : null;
+
+  Future<void> resolveProfileActionRequired() async {
+    int requiredActions = 0;
+    if (AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.none) requiredActions++;
+    final count = await UserRepository.find.getRequiredActionsCount();
+    requiredActions += count;
+    profileActionRequired.value = requiredActions;
+  }
 }

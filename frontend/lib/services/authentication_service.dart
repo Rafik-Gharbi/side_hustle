@@ -531,5 +531,6 @@ class AuthenticationService extends GetxController {
       return MainAppController.find.getNotSeenMessages();
     });
     MainAppController.find.getNotSeenNotifications();
+    MainAppController.find.resolveProfileActionRequired();
   }
 }

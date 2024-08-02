@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 
@@ -6,10 +7,13 @@ import '../constants/constants.dart';
 import '../constants/sizes.dart';
 import '../helpers/helper.dart';
 import '../models/service.dart';
+import '../models/store.dart';
 import '../services/theme/theme.dart';
+import '../views/store/service_details/service_details_screen.dart';
 import 'custom_buttons.dart';
 
 class ServiceCard extends StatelessWidget {
+  final Store store;
   final Service service;
   final void Function() onBookService;
   final void Function()? onDeleteService;
@@ -19,6 +23,7 @@ class ServiceCard extends StatelessWidget {
 
   const ServiceCard({
     super.key,
+    required this.store,
     required this.service,
     required this.onBookService,
     this.onDeleteService,
@@ -29,27 +34,32 @@ class ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isOwner
-        ? SwipeActionCell(
-            key: ObjectKey(service),
-            backgroundColor: Colors.transparent,
-            trailingActions: [
-              SwipeAction(
-                performsFirstActionWithFullSwipe: true,
-                icon: const Icon(Icons.delete_forever_rounded, color: kNeutralColor100),
-                onTap: (handler) => onDeleteService?.call(),
-                color: kErrorColor,
-              ),
-              SwipeAction(
-                performsFirstActionWithFullSwipe: true,
-                icon: const Icon(Icons.edit_outlined, color: kNeutralColor100),
-                onTap: (handler) => onEditService?.call(),
-                color: kSelectedColor,
-              ),
-            ],
-            child: buildServiceCard(),
-          )
-        : buildServiceCard();
+    return OpenContainer(
+      closedElevation: 0,
+      transitionDuration: const Duration(milliseconds: 600),
+      openBuilder: (_, __) => ServiceDetailsScreen(service: service, store: store),
+      closedBuilder: (_, openContainer) => isOwner
+          ? SwipeActionCell(
+              key: ObjectKey(service),
+              backgroundColor: Colors.transparent,
+              trailingActions: [
+                SwipeAction(
+                  performsFirstActionWithFullSwipe: true,
+                  icon: const Icon(Icons.delete_forever_rounded, color: kNeutralColor100),
+                  onTap: (handler) => onDeleteService?.call(),
+                  color: kErrorColor,
+                ),
+                SwipeAction(
+                  performsFirstActionWithFullSwipe: true,
+                  icon: const Icon(Icons.edit_outlined, color: kNeutralColor100),
+                  onTap: (handler) => onEditService?.call(),
+                  color: kSelectedColor,
+                ),
+              ],
+              child: buildServiceCard(),
+            )
+          : buildServiceCard(),
+    );
   }
 
   ListTile buildServiceCard() {
