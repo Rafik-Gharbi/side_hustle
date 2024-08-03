@@ -13,6 +13,7 @@ import '../services/theme/theme.dart';
 import '../views/profile/account/login_dialog.dart';
 import '../views/home/home_controller.dart';
 import '../widgets/custom_buttons.dart';
+import '../widgets/custom_text_field.dart';
 import 'helper.dart';
 
 class Buildables {
@@ -156,5 +157,43 @@ class Buildables {
   static Widget lightVerticalDivider({EdgeInsets? padding, bool expand = false, double? height}) => Padding(
         padding: padding ?? const EdgeInsets.symmetric(horizontal: Paddings.exceptional),
         child: Container(color: kNeutralLightColor, width: 1, height: expand ? height ?? Get.height * 0.8 : 50),
+      );
+
+  static Future<void> requestBottomsheet({
+    required TextEditingController noteController,
+    required void Function() onSubmit,
+    bool isTask = false,
+  }) async =>
+      await Get.bottomSheet(
+        SizedBox(
+          height: 330,
+          child: Material(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+            child: Padding(
+              padding: const EdgeInsets.all(Paddings.large),
+              child: Column(
+                children: [
+                  const SizedBox(height: Paddings.regular),
+                  Center(child: Text(isTask ? 'Add proposal' : 'Request a service', style: AppFonts.x16Bold)),
+                  const SizedBox(height: Paddings.exceptional),
+                  CustomTextField(
+                    fieldController: noteController,
+                    isTextArea: true,
+                    outlinedBorder: true,
+                    outlinedBorderColor: kNeutralColor,
+                    hintText: isTask ? 'Add a note for the task owner' : 'Add a note for the store owner',
+                  ),
+                  const SizedBox(height: Paddings.exceptional),
+                  CustomButtons.elevatePrimary(
+                    title: isTask ? 'Submit proposal' : 'Submit a request',
+                    width: Get.width,
+                    onPressed: onSubmit,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+        isScrollControlled: true,
       );
 }

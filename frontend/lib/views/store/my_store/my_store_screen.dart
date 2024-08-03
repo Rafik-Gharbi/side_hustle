@@ -3,16 +3,17 @@ import 'package:get/get.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/sizes.dart';
+import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/store.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
-import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../../widgets/service_card.dart';
+import '../../profile/profile_screen/profile_controller.dart';
 import '../service_request/service_request_screen.dart';
 import 'my_store_controller.dart';
 
@@ -34,11 +35,17 @@ class MyStoreScreen extends StatelessWidget {
                   )
                 : CustomScaffoldBottomNavigation(
                     appBarTitle: 'My Store',
+                    onBack: () => ProfileController.find.init(),
                     appBarActions: [
                       if (isOwner)
                         CustomButtons.icon(
                           icon: const Icon(Icons.edit_outlined),
                           onPressed: controller.editStore,
+                        ),
+                      if (controller.userStore?.coordinates != null)
+                        CustomButtons.icon(
+                          icon: const Icon(Icons.near_me_outlined),
+                          onPressed: controller.openStoreItinerary,
                         )
                     ],
                     body: buildStoreContent(controller, isOwner),
@@ -83,7 +90,11 @@ class MyStoreScreen extends StatelessWidget {
                         children: [
                           CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
                           Text('store'.tr, style: AppFonts.x15Bold),
-                          const SizedBox(width: 40),
+                          if (controller.userStore?.coordinates != null)
+                            CustomButtons.icon(
+                              icon: const Icon(Icons.near_me_outlined),
+                              onPressed: controller.openStoreItinerary,
+                            ),
                         ],
                       ),
                     ),
@@ -151,38 +162,8 @@ class MyStoreScreen extends StatelessWidget {
                                 onBookService: () => isOwner
                                     ? Get.toNamed(ServiceRequestScreen.routeName, arguments: service)
                                     : AuthenticationService.find.isUserLoggedIn.value
-                                        ? Get.bottomSheet(
-                                            SizedBox(
-                                              height: Get.height * 0.4,
-                                              child: Material(
-                                                borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(Paddings.large),
-                                                  child: Column(
-                                                    children: [
-                                                      const SizedBox(height: Paddings.regular),
-                                                      const Center(child: Text('Request a service', style: AppFonts.x16Bold)),
-                                                      const SizedBox(height: Paddings.exceptional),
-                                                      CustomTextField(
-                                                        fieldController: controller.noteController,
-                                                        isTextArea: true,
-                                                        outlinedBorder: true,
-                                                        outlinedBorderColor: kNeutralColor,
-                                                        hintText: 'Add a note for the store owner',
-                                                      ),
-                                                      const SizedBox(height: Paddings.exceptional),
-                                                      CustomButtons.elevatePrimary(
-                                                        title: 'Submit a request',
-                                                        width: Get.width,
-                                                        onPressed: () => controller.bookService(service),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            isScrollControlled: true,
-                                          ).then((value) => controller.clearRequestFormFields())
+                                        ? Buildables.requestBottomsheet(noteController: controller.noteController, onSubmit: () => controller.bookService(service))
+                                            .then((value) => controller.clearRequestFormFields())
                                         : Helper.snackBar(message: 'login_express_interest_msg'.tr),
                                 isOwner: AuthenticationService.find.jwtUserData?.id == controller.userStore?.owner?.id,
                                 onDeleteService: () => controller.deleteService(service),

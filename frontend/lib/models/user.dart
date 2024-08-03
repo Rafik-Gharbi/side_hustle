@@ -68,7 +68,7 @@ class User {
     this.isVerified = VerifyIdentityStatus.none,
   });
 
-  bool get isOwner => role != Role.seeker;
+  bool get isOwner => role != null && role != Role.seeker;
 
   factory User.fromToken(Map<String, dynamic> payload) => User(
         id: payload['id'],

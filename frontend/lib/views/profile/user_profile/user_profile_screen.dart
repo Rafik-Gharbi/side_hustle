@@ -19,13 +19,17 @@ class UserProfileScreen extends StatelessWidget {
   final RequestStatus requestStatus;
   final void Function()? onReject;
   final void Function()? onAccept;
+  final void Function()? onMarkDone;
+  final bool isService;
 
   const UserProfileScreen({
     super.key,
     this.user,
     this.onReject,
     this.onAccept,
+    this.onMarkDone,
     this.requestStatus = RequestStatus.finished,
+    this.isService = false,
   });
 
   @override
@@ -114,7 +118,7 @@ class UserProfileScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                if (requestStatus == RequestStatus.pending || requestStatus == RequestStatus.confirmed)
+                if (requestStatus == RequestStatus.pending)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -124,6 +128,28 @@ class UserProfileScreen extends StatelessWidget {
                         titleStyle: AppFonts.x14Regular,
                         onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: user),
                       ),
+                    ],
+                  )
+                else if (requestStatus == RequestStatus.confirmed && onMarkDone != null)
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomButtons.elevateSecondary(
+                        title: 'Chat with ${user?.name ?? 'User'}',
+                        titleStyle: AppFonts.x14Regular,
+                        icon: const Icon(Icons.chat_outlined),
+                        width: Get.width - 40,
+                        onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: user),
+                      ),
+                      const SizedBox(height: Paddings.regular),
+                      if (!isService)
+                        CustomButtons.elevatePrimary(
+                          title: 'Mark task as done',
+                          titleStyle: AppFonts.x14Regular,
+                          icon: const Icon(Icons.done, color: kNeutralColor100),
+                          width: Get.width - 40,
+                          onPressed: onMarkDone!,
+                        ),
                     ],
                   ),
                 const SizedBox(height: Paddings.extraLarge * 2),

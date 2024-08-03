@@ -85,7 +85,7 @@ class MessagesScreen extends StatelessWidget {
                                           // Chat Messages
                                           EmptyAnimation(
                                             message: 'no_messages'.tr,
-                                            height: Get.height * 0.68,
+                                            height: Get.height * 0.67,
                                             itemCount: controller.discussionHistory.length,
                                             child: const BuildChatMessages(),
                                           ),

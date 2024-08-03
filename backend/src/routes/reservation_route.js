@@ -2,6 +2,7 @@ const {
   tokenVerification,
   clientIsVerified,
   roleMiddleware,
+  tokenVerificationOptional,
 } = require("../middlewares/authentificationHelper");
 
 module.exports = (app) => {
@@ -9,16 +10,20 @@ module.exports = (app) => {
 
   var router = require("express").Router();
 
-  // create reservation 
+  // create reservation
   router.post(
     "/add",
     tokenVerification,
     clientIsVerified,
     reservationController.add
   );
-  
-  // update reservation 
-  router.post("/update-status", tokenVerification, reservationController.updateStatus);
+
+  // update reservation
+  router.post(
+    "/update-status",
+    tokenVerification,
+    reservationController.updateStatus
+  );
 
   // list own reservation via JWT
   router.get("/list", tokenVerification, reservationController.listReservation);
@@ -38,7 +43,11 @@ module.exports = (app) => {
   );
 
   // get tasks condidates number
-  router.get("/condidates", reservationController.getCondidatesNumber);
+  router.get(
+    "/details",
+    tokenVerificationOptional,
+    reservationController.getReservationDetails
+  );
 
   // // list all reservation for admin
   // router.get(

@@ -8,6 +8,7 @@ import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../../widgets/reservation_card.dart';
+import '../../profile/profile_screen/profile_controller.dart';
 import 'task_history_controller.dart';
 
 class TaskHistoryScreen extends StatelessWidget {
@@ -19,6 +20,7 @@ class TaskHistoryScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<TaskHistoryController>(
         builder: (controller) => CustomScaffoldBottomNavigation(
+          onBack: () => ProfileController.find.init(),
           appBarTitle: 'Task History',
           body: LoadingRequest(
             isLoading: controller.isLoading,

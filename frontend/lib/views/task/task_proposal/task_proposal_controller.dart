@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/enum/request_status.dart';
 import '../../../models/reservation.dart';
@@ -38,6 +39,15 @@ class TaskProposalController extends GetxController {
         onConfirm: () async {
           await ReservationRepository.find.updateReservationStatus(reservation, RequestStatus.rejected);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
+        },
+      );
+
+  void markDoneProposals(Reservation reservation) => Helper.openConfirmationDialog(
+        title: 'Are you sure to mark this task as done?\nThis will automatically pay the task seeker.',
+        onConfirm: () async {
+          await ReservationRepository.find.updateReservationStatus(reservation, RequestStatus.finished);
+          NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
+          MainAppController.find.resolveProfileActionRequired();
         },
       );
 }

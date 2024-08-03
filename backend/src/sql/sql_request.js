@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { sequelize } = require("../../db.config");
 const {
   getTaskCondidatesNumber,
@@ -9,6 +10,8 @@ const { Store } = require("../models/store_model");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
 const { Task } = require("../models/task_model");
 const { User } = require("../models/user_model");
+const { Booking } = require("../models/booking_model");
+const { ServiceGalleryModel } = require("../models/service_gallery_model");
 
 //function to get name and id from a given ids and table
 const fetchNames = async (ids, tableName) => {
@@ -51,6 +54,22 @@ const fetchNamesAndCount = async (ids, tableName) => {
   }));
 };
 
+const getServiceOwner = async (serviceId) => {
+  const query = `
+    SELECT user.*
+    FROM user
+    LEFT JOIN store ON store.owner_id = user.id
+    LEFT JOIN service ON service.store_id = store.id
+    WHERE service.id = :serviceId
+  `;
+  const results = await sequelize.query(query, {
+    replacements: { serviceId: serviceId },
+    type: sequelize.QueryTypes.SELECT,
+  });
+
+  return results[0];
+};
+
 const getNotSeenMessages = async (discussionId, connected) => {
   const query = `
     SELECT Count(*) as notSeen
@@ -86,8 +105,28 @@ const getMyRequestRequiredActionsCount = async (userId) => {
   let result = 0;
   await Promise.all(
     tasks.map(async (row) => {
+      let existReservation = await Reservation.findOne({
+        where: { task_id: row.id },
+      });
       const count = await getTaskCondidatesNumber(row.id);
-      result += count;
+      if (count != -1) result += count;
+      if (existReservation && existReservation.status === "confirmed") result++;
+    })
+  );
+  return result;
+};
+
+const getServiceHistoryRequiredActionsCount = async (userId) => {
+  let bookingList = await Booking.findAll({
+    where: {
+      user_id: userId,
+    },
+  });
+
+  let result = 0;
+  await Promise.all(
+    bookingList.map(async (row) => {
+      if (row.status === "pending" || row.status === "confirmed") result++;
     })
   );
   return result;
@@ -137,6 +176,144 @@ const getApproveUsersRequiredActionsCount = async (userId) => {
 
   return approveUsers.length;
 };
+
+async function fetchUserBooking(userId) {
+  let userFound = await User.findByPk(userId);
+  if (!userFound) {
+    return res.status(404).json({ message: "user_not_found" });
+  }
+
+  // Check user service bookings
+  let bookingList = await Booking.findAll({
+    where: {
+      user_id: userFound.id,
+    },
+  });
+  let formattedList = await Promise.all(
+    bookingList.map(async (row) => {
+      let foundService = await Service.findByPk(row.service_id);
+      let service = await populateOneService(foundService, userFound.id);
+      let serviceAttachments = await ServiceGalleryModel.findAll({
+        where: { service_id: row.service_id },
+      });
+
+      return {
+        id: row.id,
+        user: userFound,
+        date: row.createdAt,
+        service: service,
+        totalPrice: row.total_price,
+        coupon: row.coupon,
+        note: row.note,
+        status: row.status,
+        serviceAttachments,
+      };
+    })
+  );
+
+  return formattedList;
+}
+
+async function fetchUserOngoingBooking(userId) {
+  let userFound = await User.findByPk(userId);
+  if (!userFound) {
+    return res.status(404).json({ message: "user_not_found" });
+  }
+
+  // Check user store service bookings
+  let formattedList = [];
+  const userStore = await Store.findOne({ where: { owner_id: userId } });
+  if (userStore) {
+    const storeServices = await Service.findAll({
+      where: { store_id: userStore.id },
+    });
+    if (storeServices.length > 0) {
+      await Promise.all(
+        storeServices.map(async (service) => {
+          let bookingList = await Booking.findAll({
+            where: {
+              [Op.or]: [{ status: "pending" }, { status: "confirmed" }],
+              service_id: service.id,
+            },
+          });
+          if (bookingList.length > 0) {
+            formattedList = await Promise.all(
+              bookingList.map(async (row) => {
+                let populatedService = await populateOneService(
+                  service,
+                  userFound.id
+                );
+                let serviceAttachments = await ServiceGalleryModel.findAll({
+                  where: { service_id: row.service_id },
+                });
+
+                return {
+                  id: row.id,
+                  user: userFound,
+                  date: row.createdAt,
+                  service: populatedService,
+                  totalPrice: row.total_price,
+                  coupon: row.coupon,
+                  note: row.note,
+                  status: row.status,
+                  serviceAttachments,
+                };
+              })
+            );
+          }
+        })
+      );
+    }
+  }
+  return formattedList;
+}
+
+async function fetchUserOngoingReservation(userId) {
+  let userFound = await User.findByPk(userId);
+  if (!userFound) {
+    return res.status(404).json({ message: "user_not_found" });
+  }
+
+  let formattedList = [];
+  const userTasks = await Task.findAll({ where: { owner_id: userId } });
+  if (userTasks.length > 0) {
+    await Promise.all(
+      userTasks.map(async (task) => {
+        let reservationList = await Reservation.findAll({
+          where: {
+            [Op.or]: [{ status: "pending" }, { status: "confirmed" }],
+            task_id: task.id,
+          },
+        });
+        if (reservationList.length > 0) {
+          formattedList = await Promise.all(
+            reservationList.map(async (row) => {
+              let foundTask = await Task.findByPk(row.task_id);
+              let task = await populateOneTask(foundTask, userFound.id);
+              let taskAttachments = await TaskAttachmentModel.findAll({
+                where: { task_id: row.task_id },
+              });
+
+              return {
+                id: row.id,
+                user: userFound,
+                date: row.createdAt,
+                task: task,
+                totalPrice: row.total_price,
+                coupon: row.coupon,
+                note: row.note,
+                status: row.status,
+                taskAttachments,
+              };
+            })
+          );
+        }
+      })
+    );
+  }
+
+  return formattedList;
+}
 
 async function fetchUserReservation(userId) {
   let userFound = await User.findByPk(userId);
@@ -245,13 +422,7 @@ async function populateOneTask(task, currentUserId) {
   if (currentUserId) {
     userFavorites = await getFavoriteTaskByUserId(currentUserId);
   }
-  let owner = {
-    id: task.owner_id,
-    name: task.name,
-    email: task.email,
-    picture: task.picture,
-    phone: task.phone_number,
-  };
+  const owner = await User.findOne({ where: { id: task.owner_id } });
   let taskAttachments = [];
   taskAttachments = await TaskAttachmentModel.findAll({
     where: { task_id: task.id },
@@ -272,6 +443,39 @@ async function populateOneTask(task, currentUserId) {
         ? userFavorites.some((e) => e.task_id == task.id)
         : false,
     distance: task.distance,
+  };
+}
+
+async function populateServices(fetchedServices) {
+  const tasks = await Promise.all(
+    fetchedServices.map(async (row) => {
+      return await populateOneService(row);
+    })
+  );
+
+  return tasks;
+}
+
+async function populateOneService(service) {
+  let gallery = [];
+  gallery = await ServiceGalleryModel.findAll({
+    where: { service_id: service.id },
+  });
+
+  const requests = await getServiceCondidatesNumber(service.id);
+  return {
+    id: service.id,
+    price: service.price,
+    name: service.name,
+    description: service.description,
+    category_id: service.category_id,
+    gallery,
+    requests,
+    included: service.included,
+    notIncluded: service.notIncluded,
+    notes: service.notes,
+    timeEstimationFrom: service.timeEstimationFrom,
+    timeEstimationTo: service.timeEstimationTo,
   };
 }
 
@@ -503,4 +707,11 @@ module.exports = {
   getTaskHistoryRequiredActionsCount,
   getMyStoreRequiredActionsCount,
   getApproveUsersRequiredActionsCount,
+  getServiceHistoryRequiredActionsCount,
+  getServiceOwner,
+  populateServices,
+  populateOneService,
+  fetchUserBooking,
+  fetchUserOngoingBooking,
+  fetchUserOngoingReservation,
 };

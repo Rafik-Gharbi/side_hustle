@@ -13,6 +13,7 @@ import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
+import '../profile_screen/profile_controller.dart';
 import 'approve_user_controller.dart';
 
 class ApproveUserScreen extends StatelessWidget {
@@ -26,6 +27,7 @@ class ApproveUserScreen extends StatelessWidget {
         autoRemove: false,
         builder: (controller) => CustomScaffoldBottomNavigation(
           appBarTitle: 'Approve Users',
+          onBack: () => ProfileController.find.init(),
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.userApproveList.isEmpty

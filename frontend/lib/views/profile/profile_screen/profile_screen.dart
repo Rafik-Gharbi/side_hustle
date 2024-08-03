@@ -14,6 +14,7 @@ import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
+import '../../store/service_history/service_history_screen.dart';
 import '../account/components/signup_fields.dart';
 import '../approve_user/approve_user_screen.dart';
 import '../favorite/favorite_screen.dart';
@@ -200,10 +201,16 @@ class ProfileScreen extends StatelessWidget {
                                                           onTap: () => Get.toNamed(TaskHistoryScreen.routeName),
                                                         ),
                                                         buildActionTile(
+                                                          actionRequired: controller.serviceHistoryActionRequired,
+                                                          label: 'booked_services'.tr,
+                                                          icon: Icons.library_books_outlined,
+                                                          onTap: () => Get.toNamed(ServiceHistoryScreen.routeName),
+                                                        ),
+                                                        buildActionTile(
                                                           actionRequired: controller.myStoreActionRequired,
                                                           label: 'my_store'.tr,
                                                           icon: Icons.store_outlined,
-                                                          onTap: () => Get.toNamed(MyStoreScreen.routeName),
+                                                          onTap: () => Get.toNamed(MyStoreScreen.routeName), // TODO check init after coming back from my store
                                                         ),
                                                         if (AuthenticationService.find.jwtUserData?.role == Role.admin)
                                                           buildActionTile(

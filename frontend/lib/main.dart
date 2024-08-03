@@ -29,6 +29,8 @@ import 'services/authentication_service.dart';
 import 'services/theme/theme_service.dart';
 import 'views/notifications/notification_controller.dart';
 import 'views/notifications/notification_screen.dart';
+import 'views/store/service_history/service_history_controller.dart';
+import 'views/store/service_history/service_history_screen.dart';
 import 'views/task/add_task/add_task_bottomsheet.dart';
 import 'views/profile/approve_user/approve_user_controller.dart';
 import 'views/profile/approve_user/approve_user_screen.dart';
@@ -197,6 +199,11 @@ class MyApp extends StatelessWidget {
             name: TaskHistoryScreen.routeName,
             page: () => const TaskHistoryScreen(),
             binding: BindingsBuilder.put(() => TaskHistoryController()),
+          ),
+          GetPage(
+            name: ServiceHistoryScreen.routeName,
+            page: () => const ServiceHistoryScreen(),
+            binding: BindingsBuilder.put(() => ServiceHistoryController()),
           ),
           GetPage(
             name: ChatScreen.routeName,

@@ -167,6 +167,10 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                                               selectedCategories.add(subCategory);
                                             }
                                             setState(() {});
+                                            if (canUpdate && widget.maxSelect == 1 && selectedCategories.length == widget.maxSelect) {
+                                              widget.onSelectCategory.call(selectedCategories);
+                                              Get.back();
+                                            }
                                           }
                                         },
                                         child: Center(

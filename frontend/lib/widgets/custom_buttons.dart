@@ -39,9 +39,9 @@ class CustomButtons extends StatelessWidget {
     this.buttonColor,
     this.padding,
     this.borderSide,
+    this.icon,
+    this.isIconLeft = true,
   })  : buttonType = ButtonType.elevatePrimary,
-        icon = null,
-        isIconLeft = null,
         iconSize = null,
         iconColor = null,
         minimumSize = null;
@@ -141,7 +141,7 @@ class CustomButtons extends StatelessWidget {
                 side: borderSide ?? BorderSide.none,
               ),
             ),
-            padding: WidgetStateProperty.all(padding ?? const EdgeInsets.symmetric(horizontal: Paddings.regular)),
+            padding: WidgetStateProperty.all(padding ?? EdgeInsets.zero),
             minimumSize: WidgetStateProperty.all(
               Size(
                 width ?? 50,
@@ -166,15 +166,40 @@ class CustomButtons extends StatelessWidget {
                   height: (height ?? 50) - 20,
                   child: const CircularProgressIndicator(color: Colors.white),
                 )
-              : child ??
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      title ?? '',
-                      textAlign: TextAlign.center,
-                      style: (titleStyle ?? AppFonts.x16Bold).copyWith(color: kNeutralColor100),
-                    ),
-                  ),
+              : icon != null
+                  ? SizedBox(
+                      width: width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          if (isIconLeft!)
+                            Padding(
+                              padding: const EdgeInsets.only(left: Paddings.regular),
+                              child: icon,
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                            child: Text(
+                              title ?? '',
+                              style: (titleStyle ?? AppFonts.x16Bold).copyWith(color: kNeutralColor100),
+                            ),
+                          ),
+                          if (!isIconLeft!)
+                            Padding(
+                              padding: const EdgeInsets.only(right: Paddings.regular),
+                              child: icon,
+                            ),
+                        ],
+                      ),
+                    )
+                  : child ??
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          title ?? '',
+                          style: (titleStyle ?? AppFonts.x16Bold).copyWith(color: kNeutralColor100),
+                        ),
+                      ),
         );
       case ButtonType.elevateSecondary:
         return OnHover(
@@ -205,31 +230,30 @@ class CustomButtons extends StatelessWidget {
             child: loading
                 ? const CircularProgressIndicator(color: kPrimaryColor)
                 : icon != null
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          if (isIconLeft!)
+                    ? SizedBox(
+                        width: width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            if (isIconLeft!)
+                              Padding(
+                                padding: const EdgeInsets.only(left: Paddings.regular),
+                                child: icon,
+                              ),
                             Padding(
-                              padding: const EdgeInsets.only(left: Paddings.regular),
-                              child: icon,
-                            ),
-                          Flexible(
-                            child: Center(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  title ?? '',
-                                  style: titleStyle ?? AppFonts.x15Bold,
-                                ),
+                              padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                              child: Text(
+                                title ?? '',
+                                style: titleStyle ?? AppFonts.x15Bold,
                               ),
                             ),
-                          ),
-                          if (!isIconLeft!)
-                            Padding(
-                              padding: const EdgeInsets.only(right: Paddings.regular),
-                              child: icon,
-                            ),
-                        ],
+                            if (!isIconLeft!)
+                              Padding(
+                                padding: const EdgeInsets.only(right: Paddings.regular),
+                                child: icon,
+                              ),
+                          ],
+                        ),
                       )
                     : child ??
                         FittedBox(

@@ -16,7 +16,11 @@ const { Service } = require("../models/service_model");
 const { Booking } = require("../models/booking_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
 const { Store } = require("../models/store_model");
-const { NotificationType, notificationService } = require("../helper/notification_service");
+const {
+  NotificationType,
+  notificationService,
+} = require("../helper/notification_service");
+const { getServiceOwner, populateOneService } = require("../sql/sql_request");
 
 exports.add = async (req, res) => {
   const { serviceId, date, totalPrice, coupon, status, note } = req.body;
@@ -244,8 +248,8 @@ exports.userServicesHistory = async (req, res) => {
     });
     const formattedList = await Promise.all(
       bookingList.map(async (row) => {
-        let foundService = await Service.findByPk(row.service_id);
-        let serviceOwnerFound = await User.findByPk(foundService.owner_id);
+        const foundService = await Service.findByPk(row.service_id);
+        const populatedService = await populateOneService(foundService);
         let serviceGallerys = await ServiceGalleryModel.findAll({
           where: { service_id: row.service_id },
         });
@@ -254,16 +258,7 @@ exports.userServicesHistory = async (req, res) => {
           id: row.id,
           user: userFound,
           date: row.createdAt,
-          service: {
-            id: foundService.id,
-            price: foundService.price,
-            name: foundService.name,
-            description: foundService.description,
-            store_id: foundService.store_id,
-            category_id: foundService.category_id,
-            gallerys: serviceGallerys.length == 0 ? [] : serviceGallerys,
-            isFavorite: false,
-          },
+          service: populatedService,
           totalPrice: row.total_price,
           coupon: row.coupon,
           note: row.note,
@@ -375,11 +370,12 @@ exports.updateStatus = async (req, res) => {
           NotificationType.BOOKING
         );
         break;
-      case "finished": // TODO this should go to the service provider
+      case "finished":
+        const serviceOwner = await getServiceOwner(bookingFound.service_id);
         notificationService.sendNotification(
-          bookingFound.user_id,
+          serviceOwner.id,
           "Your Service Has Been Finished",
-          "The service owner has finished your request.",
+          "The service seeker has finished the booking. Good job!",
           NotificationType.BOOKING
         );
         break;

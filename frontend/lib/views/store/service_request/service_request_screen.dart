@@ -11,6 +11,7 @@ import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../profile/user_profile/user_profile_screen.dart';
+import '../my_store/my_store_controller.dart';
 import 'service_request_controller.dart';
 
 class ServiceRequestScreen extends StatelessWidget {
@@ -23,6 +24,7 @@ class ServiceRequestScreen extends StatelessWidget {
       child: GetBuilder<ServiceRequestController>(
         builder: (controller) => CustomScaffoldBottomNavigation(
           appBarTitle: 'Service Requests',
+          onBack: () => MyStoreController.find.init(),
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.bookingList.isEmpty
@@ -40,6 +42,7 @@ class ServiceRequestScreen extends StatelessWidget {
                           openBuilder: (_, __) => UserProfileScreen(
                             user: booking.user,
                             requestStatus: booking.status,
+                            isService: true,
                             onAccept: () => controller.acceptProposal(booking),
                             onReject: () => controller.rejectProposals(booking),
                           ),

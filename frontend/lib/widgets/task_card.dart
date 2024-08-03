@@ -14,6 +14,7 @@ import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
 import '../views/task/task_details/task_details_screen.dart';
 import 'custom_buttons.dart';
+import 'overflowed_text_with_tooltip.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
@@ -80,7 +81,7 @@ class TaskCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(task.title, style: AppFonts.x14Bold),
+                SizedBox(width: Get.width - 160, child: OverflowedTextWithTooltip(title: task.title, style: AppFonts.x14Bold, expand: false)),
                 if (task.category != null && !dense) Text(task.category!.name, style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
               ],
             ),

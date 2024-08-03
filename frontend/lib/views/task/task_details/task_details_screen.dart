@@ -8,6 +8,7 @@ import '../../../constants/colors.dart';
 import '../../../constants/constants.dart';
 import '../../../constants/sizes.dart';
 import '../../../controllers/main_app_controller.dart';
+import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/dto/image_dto.dart';
 import '../../../models/task.dart';
@@ -16,8 +17,8 @@ import '../../../services/logger_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
-import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/hold_in_safe_area.dart';
+import '../../chat/components/messages_screen.dart';
 import '../task_proposal/task_proposal_screen.dart';
 import '../../profile/user_profile/user_profile_screen.dart';
 import 'task_details_controller.dart';
@@ -152,60 +153,73 @@ class TaskDetailsScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        if (controller.condidates.value != -1 || AuthenticationService.find.jwtUserData?.id == task.owner.id) ...[
-                          const SizedBox(height: Paddings.exceptional * 2),
-                          if (AuthenticationService.find.jwtUserData?.id == task.owner.id)
-                            CustomButtons.elevatePrimary(
-                              title: 'check_proposal'.tr,
-                              onPressed: () => Get.toNamed(TaskProposalScreen.routeName, arguments: task),
-                              width: Get.width,
-                            )
-                          else
-                            CustomButtons.elevatePrimary(
-                              title: 'Im_interested'.tr,
-                              onPressed: () => AuthenticationService.find.isUserLoggedIn.value
-                                  ? Get.bottomSheet(
-                                      SizedBox(
-                                        height: Get.height * 0.4,
-                                        child: Material(
-                                          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(Paddings.large),
-                                            child: Column(
-                                              children: [
-                                                const SizedBox(height: Paddings.regular),
-                                                const Center(child: Text('Add proposal', style: AppFonts.x16Bold)),
-                                                const SizedBox(height: Paddings.exceptional),
-                                                CustomTextField(
-                                                  fieldController: controller.noteController,
-                                                  isTextArea: true,
-                                                  outlinedBorder: true,
-                                                  outlinedBorderColor: kNeutralColor,
-                                                  hintText: 'Add a note for the task owner',
-                                                ),
-                                                const SizedBox(height: Paddings.exceptional),
-                                                CustomButtons.elevatePrimary(
-                                                  title: 'Submit proposal',
-                                                  width: Get.width,
-                                                  onPressed: () => controller.submitProposal(task),
-                                                )
-                                              ],
-                                            ),
+                        Obx(
+                          () => controller.condidates.value != -1 || AuthenticationService.find.jwtUserData?.id == task.owner.id
+                              ? Column(
+                                  children: [
+                                    const SizedBox(height: Paddings.exceptional * 2),
+                                    if (AuthenticationService.find.jwtUserData?.id == task.owner.id && controller.condidates.value == -1)
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          CustomButtons.elevateSecondary(
+                                            title: 'Chat with ${controller.confirmedTaskUser.value?.name ?? 'User'}',
+                                            titleStyle: AppFonts.x14Regular,
+                                            icon: const Icon(Icons.chat_outlined),
+                                            width: Get.width - 40,
+                                            onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: controller.confirmedTaskUser.value),
                                           ),
-                                        ),
+                                          const SizedBox(height: Paddings.regular),
+                                          CustomButtons.elevatePrimary(
+                                            title: 'Mark task as done',
+                                            titleStyle: AppFonts.x14Regular,
+                                            icon: const Icon(Icons.done, color: kNeutralColor100),
+                                            width: Get.width - 40,
+                                            onPressed: controller.markDoneProposals,
+                                          ),
+                                        ],
+                                      )
+                                    else if (AuthenticationService.find.jwtUserData?.id == task.owner.id)
+                                      CustomButtons.elevatePrimary(
+                                        title: 'check_proposal'.tr,
+                                        onPressed: () => Get.toNamed(TaskProposalScreen.routeName, arguments: task),
+                                        width: Get.width,
+                                      )
+                                    else
+                                      CustomButtons.elevatePrimary(
+                                        title: 'Im_interested'.tr,
+                                        onPressed: () => AuthenticationService.find.isUserLoggedIn.value
+                                            ? Buildables.requestBottomsheet(
+                                                    noteController: controller.noteController, onSubmit: () => controller.submitProposal(task), isTask: true)
+                                                .then((value) => controller.clearFormFields())
+                                            : Helper.snackBar(message: 'login_express_interest_msg'.tr),
+                                        width: Get.width,
                                       ),
-                                      isScrollControlled: true,
-                                    ).then((value) => controller.clearFormFields())
-                                  : Helper.snackBar(message: 'login_express_interest_msg'.tr),
-                              width: Get.width,
-                            ),
-                          const SizedBox(height: Paddings.small),
-                          Obx(
-                            () => Align(
-                                alignment: Alignment.centerRight,
-                                child: Text('${controller.condidates.value} ${'expressed_interest'.tr}', style: AppFonts.x12Regular.copyWith(color: kNeutralColor))),
-                          ),
-                        ],
+                                    const SizedBox(height: Paddings.small),
+                                    if (controller.condidates.value != -1)
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text('${controller.condidates.value} ${'expressed_interest'.tr}', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                                      ),
+                                  ],
+                                )
+                              : controller.isUserConfirmedTaskSeeker.value
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(top: Paddings.exceptional * 2),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(Icons.chat_outlined),
+                                          CustomButtons.text(
+                                            title: 'Chat with ${task.owner.name ?? 'User'}',
+                                            titleStyle: AppFonts.x14Regular,
+                                            onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: task.owner),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : const SizedBox(),
+                        ),
                         const SizedBox(height: Paddings.exceptional),
                       ],
                     ),

@@ -37,6 +37,7 @@ const {
   getTaskHistoryRequiredActionsCount,
   getMyStoreRequiredActionsCount,
   getApproveUsersRequiredActionsCount,
+  getServiceHistoryRequiredActionsCount,
 } = require("../sql/sql_request");
 
 exports.renewJWT = async (req, res) => {
@@ -333,6 +334,9 @@ exports.profile = async (req, res) => {
     let taskHistoryActionRequired = await getTaskHistoryRequiredActionsCount(
       userId
     );
+    let servieHistoryActionRequired = await getServiceHistoryRequiredActionsCount(
+      userId
+    );
     let myStoreActionRequired = await getMyStoreRequiredActionsCount(userId);
     let approveUsersActionRequired = await getApproveUsersRequiredActionsCount(
       userId
@@ -345,6 +349,7 @@ exports.profile = async (req, res) => {
       taskHistoryActionRequired,
       myStoreActionRequired,
       approveUsersActionRequired,
+      servieHistoryActionRequired,
     });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -885,6 +890,9 @@ exports.userActionsRequiredCount = async (req, res) => {
     let approveUsersActionRequired = await getApproveUsersRequiredActionsCount(
       userFound.id
     );
+    let servieHistoryActionRequired = await getServiceHistoryRequiredActionsCount(
+      userFound.id
+    );
     const categories = await CategorySubscriptionModel.findAll({
       where: { user_id: userFound.id },
     });
@@ -893,6 +901,7 @@ exports.userActionsRequiredCount = async (req, res) => {
       myRequestActionRequired +
       taskHistoryActionRequired +
       myStoreActionRequired +
+      servieHistoryActionRequired +
       approveUsersActionRequired;
     if (categories.length == 0) count++;
     return res.status(200).json({ count });

@@ -10,6 +10,7 @@ class ProfileDTO {
   final int taskHistoryActionRequired;
   final int myStoreActionRequired;
   final int approveUsersActionRequired;
+  final int servieHistoryActionRequired;
 
   ProfileDTO({
     required this.user,
@@ -19,6 +20,7 @@ class ProfileDTO {
     this.myRequestActionRequired = 0,
     this.myStoreActionRequired = 0,
     this.taskHistoryActionRequired = 0,
+    this.servieHistoryActionRequired = 0,
   });
 
   factory ProfileDTO.fromJson(Map<String, dynamic> json) => ProfileDTO(
@@ -32,5 +34,6 @@ class ProfileDTO {
         myRequestActionRequired: json['myRequestActionRequired'] ?? 0,
         myStoreActionRequired: json['myStoreActionRequired'] ?? 0,
         taskHistoryActionRequired: json['taskHistoryActionRequired'] ?? 0,
+        servieHistoryActionRequired: json['servieHistoryActionRequired'] ?? 0,
       );
 }

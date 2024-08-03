@@ -28,6 +28,7 @@ class ProfileController extends GetxController {
   int taskHistoryActionRequired = 0;
   int myStoreActionRequired = 0;
   int approveUsersActionRequired = 0;
+  int serviceHistoryActionRequired = 0;
 
   bool get isLoading => _isLoading;
   bool get isUpdatingProfile => _isUpdatingProfile;
@@ -55,6 +56,8 @@ class ProfileController extends GetxController {
     taskHistoryActionRequired = result?.taskHistoryActionRequired ?? 0;
     myStoreActionRequired = result?.myStoreActionRequired ?? 0;
     approveUsersActionRequired = result?.approveUsersActionRequired ?? 0;
+    serviceHistoryActionRequired = result?.servieHistoryActionRequired ?? 0;
+    MainAppController.find.resolveProfileActionRequired();
     if (!MainAppController.find.isBackReachable.value) ApiBaseHelper.find.isLoading = false;
     isLoading = false;
   }

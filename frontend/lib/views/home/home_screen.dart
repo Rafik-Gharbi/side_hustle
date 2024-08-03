@@ -9,9 +9,11 @@ import '../../models/filter_model.dart';
 import '../../services/authentication_service.dart';
 import '../../services/shared_preferences.dart';
 import '../../services/theme/theme.dart';
+import '../../widgets/booking_card.dart';
 import '../../widgets/categories_bottomsheet.dart';
 import '../../widgets/catgory_card.dart';
 import '../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../widgets/loading_card_effect.dart';
 import '../../widgets/loading_request.dart';
 import '../../widgets/reservation_card.dart';
 import '../../widgets/task_card.dart';
@@ -143,20 +145,50 @@ class HomeScreen extends StatelessWidget {
                           isScrollControlled: true,
                         ),
                       ),
-                      Row(
-                        children: List.generate(
-                          controller.mostPopularCategories.length,
-                          (index) => Padding(
-                            padding: EdgeInsets.only(right: index < controller.mostPopularCategories.length - 1 ? Paddings.regular : 0),
-                            child: CategoryCard(category: controller.mostPopularCategories[index]),
+                      LoadingCardEffect(
+                        isLoading: controller.isLoading,
+                        isRowCards: true,
+                        child: Row(
+                          children: List.generate(
+                            controller.mostPopularCategories.length,
+                            (index) => Padding(
+                              padding: EdgeInsets.only(right: index < controller.mostPopularCategories.length - 1 ? Paddings.regular : 0),
+                              child: CategoryCard(category: controller.mostPopularCategories[index]),
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(height: Paddings.exceptional),
                       Column(
                         children: [
+                          if (controller.ongoingReservation.isNotEmpty) ...[
+                            buildTitle('Ongoing Reservations'),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: controller.ongoingReservation.length,
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.only(bottom: Paddings.small),
+                                child: ReservationCard(reservation: controller.ongoingReservation[index]),
+                              ),
+                            ),
+                            const SizedBox(height: Paddings.regular),
+                          ],
+                          if (controller.ongoingBooking.isNotEmpty) ...[
+                            buildTitle('Ongoing Bookings'),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: controller.ongoingBooking.length,
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.only(bottom: Paddings.small),
+                                child: BookingCard(booking: controller.ongoingBooking[index]),
+                              ),
+                            ),
+                            const SizedBox(height: Paddings.regular),
+                          ],
                           if (controller.reservation.isNotEmpty) ...[
-                            buildTitle('My reservations'),
+                            buildTitle('My Reservations'),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -166,10 +198,28 @@ class HomeScreen extends StatelessWidget {
                                 child: ReservationCard(reservation: controller.reservation[index]),
                               ),
                             ),
+                            const SizedBox(height: Paddings.regular),
+                          ],
+                          if (controller.booking.isNotEmpty) ...[
+                            buildTitle('My Bookings'),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: controller.booking.length,
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.only(bottom: Paddings.small),
+                                child: BookingCard(
+                                  booking: controller.booking[index],
+                                  onMarkDone: () => controller.markBookingAsDone(controller.booking[index]),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: Paddings.regular),
                           ],
                           buildTitle('Hot Tasks', onSeeMore: () {}),
-                          if (controller.hotTasks.isNotEmpty)
-                            ListView.builder(
+                          LoadingCardEffect(
+                            isLoading: controller.isLoading,
+                            child: ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: controller.hotTasks.length,
@@ -178,14 +228,16 @@ class HomeScreen extends StatelessWidget {
                                 child: TaskCard(task: controller.hotTasks[index]),
                               ),
                             ),
+                          ),
                           // TODO add a button to share user coordinates if not provided for showing nearby tasks
                           if (SharedPreferencesService.find.isReady)
                             buildTitle(
                               'New Tasks ${controller.nearbyTasks.any((element) => element.distance != null) ? 'Nearby' : 'in ${AuthenticationService.find.jwtUserData?.governorate?.name ?? 'All Tunisia'}'}',
                               onSeeMore: () => Get.toNamed(TaskListScreen.routeName),
                             ),
-                          if (controller.nearbyTasks.isNotEmpty)
-                            ListView.builder(
+                          LoadingCardEffect(
+                            isLoading: controller.isLoading,
+                            child: ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: controller.nearbyTasks.length,
@@ -194,6 +246,7 @@ class HomeScreen extends StatelessWidget {
                                 child: TaskCard(task: controller.nearbyTasks[index]),
                               ),
                             ),
+                          ),
                         ],
                       ),
                     ],

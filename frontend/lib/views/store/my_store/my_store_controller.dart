@@ -21,6 +21,8 @@ import 'components/add_service_bottomsheet.dart';
 import 'components/add_store_bottomsheet.dart';
 
 class MyStoreController extends GetxController {
+  /// not permanent, use with caution
+  static MyStoreController get find => Get.find<MyStoreController>();
   final GlobalKey<FormState> formKey = GlobalKey();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -64,10 +66,10 @@ class MyStoreController extends GetxController {
   }
 
   MyStoreController({Store? store}) {
-    _init(store: store);
+    init(store: store);
   }
 
-  Future<void> _init({Store? store}) async {
+  Future<void> init({Store? store}) async {
     userStore = store ?? await StoreRepository.find.getUserStore();
     isLoading = false;
     update();
@@ -235,5 +237,11 @@ class MyStoreController extends GetxController {
 
   clearRequestFormFields() {
     noteController.clear();
+  }
+
+  void openStoreItinerary() {
+    if (userStore?.coordinates == null) return;
+    final String googleMapslocationUrl = 'https://www.google.com/maps/search/?api=1&query=${userStore!.coordinates!.latitude},${userStore!.coordinates!.longitude}';
+    Helper.launchUrlHelper(Uri.encodeFull(googleMapslocationUrl));
   }
 }

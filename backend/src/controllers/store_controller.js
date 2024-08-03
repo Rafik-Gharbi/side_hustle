@@ -10,6 +10,7 @@ const {
 } = require("../helper/helpers");
 const { Service } = require("../models/service_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
+const { populateServices } = require("../sql/sql_request");
 
 // filter stores
 exports.filterStores = async (req, res) => {
@@ -82,29 +83,8 @@ exports.filterStores = async (req, res) => {
         const foundServices = await Service.findAll({
           where: { store_id: row.id },
         });
-        const services = await Promise.all(
-          foundServices.map(async (service) => {
-            let gallery = [];
-            gallery = await ServiceGalleryModel.findAll({
-              where: { service_id: service.id },
-            });
-
-            const requests =
-              currentUserId == row.owner_id
-                ? await getServiceCondidatesNumber(service.id)
-                : -1;
-
-            return {
-              id: service.id,
-              price: service.price,
-              name: service.name,
-              description: service.description,
-              category_id: service.category_id,
-              gallery,
-              requests,
-            };
-          })
-        );
+        const services = await populateServices(foundServices);
+         
         const isFavorite = await checkStoreFavorite(row, currentUserId);
 
         return {
@@ -414,30 +394,7 @@ exports.getUserStore = async (req, res) => {
     const foundServices = await Service.findAll({
       where: { store_id: existStore.id },
     });
-    const services = await Promise.all(
-      foundServices.map(async (service) => {
-        let gallery = [];
-        gallery = await ServiceGalleryModel.findAll({
-          where: { service_id: service.id },
-        });
-
-        const requests = await getServiceCondidatesNumber(service.id);
-        return {
-          id: service.id,
-          price: service.price,
-          name: service.name,
-          description: service.description,
-          category_id: service.category_id,
-          gallery,
-          requests,
-          included: service.included,
-          notIncluded: service.notIncluded,
-          notes: service.notes,
-          timeEstimationFrom: service.timeEstimationFrom,
-          timeEstimationTo: service.timeEstimationTo,
-        };
-      })
-    );
+    const services = await populateServices(foundServices);
     return res.status(200).json({
       store: {
         id: existStore.id,

@@ -10,9 +10,9 @@ module.exports = (app) => {
   let router = require("express").Router();
 
   router.get(
-    "/hot-nearby",
+    "/home-tasks",
     tokenVerificationOptional,
-    taskController.getHotNearbyTasks
+    taskController.getHomeTasks
   );
   router.get("/filter", tokenVerificationOptional, taskController.filterTasks);
   router.get("/user-request", tokenVerification, taskController.taskRequest);

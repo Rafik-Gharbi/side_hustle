@@ -42,6 +42,7 @@ class TaskProposalScreen extends StatelessWidget {
                             requestStatus: reservation.status,
                             onAccept: () => controller.acceptProposal(reservation),
                             onReject: () => controller.rejectProposals(reservation),
+                            onMarkDone: () => controller.markDoneProposals(reservation),
                           ),
                           closedBuilder: (_, openContainer) => Padding(
                             padding: const EdgeInsets.only(bottom: Paddings.regular),

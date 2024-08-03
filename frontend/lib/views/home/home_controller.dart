@@ -3,11 +3,14 @@ import 'package:get/get.dart';
 
 import '../../controllers/main_app_controller.dart';
 import '../../helpers/helper.dart';
+import '../../models/booking.dart';
 import '../../models/category.dart';
+import '../../models/enum/request_status.dart';
 import '../../models/filter_model.dart';
 import '../../models/reservation.dart';
 import '../../models/task.dart';
 import '../../networking/api_base_helper.dart';
+import '../../repositories/booking_repository.dart';
 import '../../repositories/task_repository.dart';
 import '../task/task_list/task_list_screen.dart';
 
@@ -18,9 +21,13 @@ class HomeController extends GetxController {
   List<Task> hotTasks = [];
   List<Task> nearbyTasks = [];
   List<Reservation> reservation = [];
+  List<Reservation> ongoingReservation = [];
+  List<Booking> booking = [];
+  List<Booking> ongoingBooking = [];
   TextEditingController searchController = TextEditingController();
   // RxBool isSearchMode = false.obs;
   FilterModel _filterModel = FilterModel();
+  RxBool isLoading = true.obs;
 
   FilterModel get filterModel => _filterModel;
 
@@ -30,10 +37,10 @@ class HomeController extends GetxController {
   }
 
   HomeController() {
-    _init();
+    init();
   }
 
-  Future<void> _init() async {
+  Future<void> init() async {
     Helper.waitAndExecute(() => MainAppController.find.isReady, () async {
       // TODO adapt user preferences if selected most searched categories
       mostPopularCategories = MainAppController.find.categories.getRange(10, 14).toList();
@@ -41,6 +48,10 @@ class HomeController extends GetxController {
       hotTasks = result?['hotTasks'] != null ? (result?['hotTasks'] as List).map((e) => e as Task).toList() : [];
       nearbyTasks = result?['nearbyTasks'] != null ? (result?['nearbyTasks'] as List).map((e) => e as Task).toList() : [];
       reservation = result?['reservation'] != null ? (result?['reservation'] as List).map((e) => e as Reservation).toList() : [];
+      ongoingReservation = result?['ongoingReservation'] != null ? (result?['ongoingReservation'] as List).map((e) => e as Reservation).toList() : [];
+      booking = result?['booking'] != null ? (result?['booking'] as List).map((e) => e as Booking).toList() : [];
+      ongoingBooking = result?['ongoingBooking'] != null ? (result?['ongoingBooking'] as List).map((e) => e as Booking).toList() : [];
+      isLoading.value = false;
       update();
     });
   }
@@ -66,4 +77,14 @@ class HomeController extends GetxController {
     MainAppController.find.isBackReachable.value = await ApiBaseHelper.find.checkConnectionToBackend();
     // TODO fetch other tasks in hotTasks and nearbyTasks
   }
+
+  void markBookingAsDone(Booking booking) => Helper.openConfirmationDialog(
+        title: 'Are you sure to mark this service done?',
+        onConfirm: () async {
+          await BookingRepository.find.updateBookingStatus(booking, RequestStatus.finished);
+          Get.back();
+          init();
+          MainAppController.find.resolveProfileActionRequired();
+        },
+      );
 }

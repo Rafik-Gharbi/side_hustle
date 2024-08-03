@@ -8,8 +8,10 @@ import '../../../constants/colors.dart';
 import '../../../constants/constants.dart';
 import '../../../constants/sizes.dart';
 import '../../../controllers/main_app_controller.dart';
+import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/dto/image_dto.dart';
+import '../../../models/enum/request_status.dart';
 import '../../../models/service.dart';
 import '../../../models/store.dart';
 import '../../../services/authentication_service.dart';
@@ -17,16 +19,18 @@ import '../../../services/logger_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
-import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../service_request/service_request_screen.dart';
 import 'service_details_controller.dart';
 
 class ServiceDetailsScreen extends StatelessWidget {
   static const String routeName = '/service-details';
-  final Store store;
   final Service service;
-  const ServiceDetailsScreen({super.key, required this.service, required this.store});
+  final Store? store;
+  final RequestStatus? bookingStatus;
+  final void Function()? onMarkDone;
+
+  const ServiceDetailsScreen({super.key, required this.service, this.store, this.bookingStatus, this.onMarkDone});
 
   @override
   Widget build(BuildContext context) {
@@ -146,52 +150,32 @@ class ServiceDetailsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  if (controller.condidates.value != -1 || AuthenticationService.find.jwtUserData?.id == store.owner?.id) ...[
+                  if (controller.condidates.value != -1 ||
+                      store != null && AuthenticationService.find.jwtUserData?.id == store!.owner?.id ||
+                      bookingStatus == RequestStatus.confirmed) ...[
                     const SizedBox(height: Paddings.exceptional * 2),
-                    if (AuthenticationService.find.jwtUserData?.id == store.owner?.id)
+                    if (AuthenticationService.find.jwtUserData?.id == store?.owner?.id && store != null)
                       CustomButtons.elevatePrimary(
                         title: 'check_request'.tr,
                         onPressed: () => Get.toNamed(ServiceRequestScreen.routeName, arguments: service),
                         width: Get.width,
                       )
-                    else
+                    else if (bookingStatus == null)
                       CustomButtons.elevatePrimary(
                         title: 'book_service'.tr,
                         onPressed: () => AuthenticationService.find.isUserLoggedIn.value
-                            ? Get.bottomSheet(
-                                SizedBox(
-                                  height: Get.height * 0.4,
-                                  child: Material(
-                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(Paddings.large),
-                                      child: Column(
-                                        children: [
-                                          const SizedBox(height: Paddings.regular),
-                                          const Center(child: Text('Request a service', style: AppFonts.x16Bold)),
-                                          const SizedBox(height: Paddings.exceptional),
-                                          CustomTextField(
-                                            fieldController: controller.noteController,
-                                            isTextArea: true,
-                                            outlinedBorder: true,
-                                            outlinedBorderColor: kNeutralColor,
-                                            hintText: 'Add a note for the store owner',
-                                          ),
-                                          const SizedBox(height: Paddings.exceptional),
-                                          CustomButtons.elevatePrimary(
-                                            title: 'Submit a request',
-                                            width: Get.width,
-                                            onPressed: () => controller.bookService(service),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                isScrollControlled: true,
-                              ).then((value) => controller.clearFormFields())
+                            ? Buildables.requestBottomsheet(noteController: controller.noteController, onSubmit: () => controller.bookService(service))
+                                .then((value) => controller.clearFormFields())
                             : Helper.snackBar(message: 'login_express_interest_msg'.tr),
                         width: Get.width,
+                      )
+                    else if (bookingStatus == RequestStatus.confirmed && onMarkDone != null)
+                      CustomButtons.elevatePrimary(
+                        title: 'Mark service as done',
+                        titleStyle: AppFonts.x14Regular,
+                        icon: const Icon(Icons.done, color: kNeutralColor100),
+                        width: Get.width - 40,
+                        onPressed: onMarkDone!,
                       ),
                   ],
                   const SizedBox(height: Paddings.exceptional),

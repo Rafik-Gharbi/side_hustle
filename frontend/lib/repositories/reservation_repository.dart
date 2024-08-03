@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../helpers/helper.dart';
+import '../models/dto/task_details_dto.dart';
 import '../models/enum/request_status.dart';
 import '../models/reservation.dart';
 import '../models/task.dart';
@@ -48,14 +49,14 @@ class ReservationRepository extends GetxService {
     return [];
   }
 
-  Future<int> getTaskCondidates(Task task) async {
+  Future<TaskReservationDetailsDTO?> getTaskReservationDetails(Task task) async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.get, '/reservation/condidates?taskId=${task.id}');
-      return result['condidates'] ?? 0;
+      final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/reservation/details?taskId=${task.id}');
+      return TaskReservationDetailsDTO.fromJson(result);
     } catch (e) {
       LoggerService.logger?.e('Error occured in listReservation:\n$e');
     }
-    return 0;
+    return null;
   }
 
   Future<void> updateReservationStatus(Reservation reservation, RequestStatus status) async {
@@ -82,4 +83,5 @@ class ReservationRepository extends GetxService {
     }
     return [];
   }
+
 }

@@ -11,7 +11,7 @@ const {
   emailReservationForCheckin,
   sendNotificationReservation,
 } = require("../views/template_email");
-const { fetchUserReservation } = require("../sql/sql_request");
+const { fetchUserReservation, populateOneTask } = require("../sql/sql_request");
 const { sendMail } = require("../helper/email_service");
 const { Task } = require("../models/task_model");
 const { Reservation } = require("../models/reservation_model");
@@ -267,12 +267,7 @@ exports.getReservationByTask = async (req, res) => {
         task_id: taskFound.id,
       },
     });
-    let taskOwnerFound = await User.findOne({
-      where: { id: taskFound.owner_id },
-    });
-    let taskAttachments = await TaskAttachmentModel.findAll({
-      where: { task_id: taskFound.id },
-    });
+    const populatedTask = await populateOneTask(taskFound, req.decoded.id);
 
     const formattedList = await Promise.all(
       reservationList.map(async (row) => {
@@ -284,23 +279,12 @@ exports.getReservationByTask = async (req, res) => {
           id: row.id,
           user: userFound,
           date: row.createdAt,
-          task: {
-            id: taskFound.id,
-            price: taskFound.price,
-            title: taskFound.title,
-            description: taskFound.description,
-            delivrables: taskFound.delivrables,
-            governorate_id: taskFound.governorate_id,
-            category_id: taskFound.category_id,
-            owner: taskOwnerFound,
-            attachments: taskAttachments.length == 0 ? [] : taskAttachments,
-            isFavorite: false,
-          },
+          task: populatedTask,
           totalPrice: row.total_price,
           coupon: row.coupon,
           note: row.note,
           status: row.status,
-          taskAttachments,
+          taskAttachments: populatedTask.attachments,
         };
       })
     );
@@ -377,10 +361,57 @@ exports.updateStatus = async (req, res) => {
   }
 };
 
-exports.getCondidatesNumber = async (req, res) => {
+exports.getReservationDetails = async (req, res) => {
   try {
     const condidates = await getTaskCondidatesNumber(req.query.taskId);
-    return res.status(200).json({ condidates });
+    const confirmedReservation = await Reservation.findOne({
+      where: {
+        task_id: req.query.taskId,
+        status: "confirmed",
+      },
+    });
+
+    let isUserTaskSeeker = false;
+    if (
+      confirmedReservation &&
+      confirmedReservation.user_id === req.decoded?.id
+    ) {
+      isUserTaskSeeker = true;
+    }
+
+    let confirmedTaskUser;
+    let reservation;
+    let taskFound = await Task.findByPk(req.query.taskId);
+    reservation = await Reservation.findOne({
+      where: {
+        task_id: taskFound.id,
+        status: "confirmed",
+      },
+    });
+    if (reservation) {
+      const populatedTask = await populateOneTask(taskFound, req.decoded.id);
+      let userFound = await User.findOne({
+        where: { id: reservation.user_id },
+      });
+      confirmedTaskUser = await User.findOne({
+        where: { id: reservation.user_id },
+      });
+      reservation = {
+        id: reservation.id,
+        user: userFound,
+        date: reservation.createdAt,
+        task: populatedTask,
+        totalPrice: reservation.total_price,
+        coupon: reservation.coupon,
+        note: reservation.note,
+        status: reservation.status,
+        taskAttachments: populatedTask.attachments,
+      };
+    }
+
+    return res
+      .status(200)
+      .json({ condidates, isUserTaskSeeker, confirmedTaskUser, reservation });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

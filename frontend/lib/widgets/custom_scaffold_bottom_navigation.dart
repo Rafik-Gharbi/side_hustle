@@ -9,6 +9,7 @@ import '../helpers/helper.dart';
 import '../services/authentication_service.dart';
 import '../services/navigation_history_observer.dart';
 import '../services/theme/theme.dart';
+import '../views/store/service_request/service_request_screen.dart';
 import '../views/task/add_task/add_task_bottomsheet.dart';
 import '../views/chat/chat_screen.dart';
 import '../views/chat/components/messages_screen.dart';
@@ -65,7 +66,9 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                       icon: const Icon(Icons.chevron_left, size: 28),
                       onPressed: () {
                         onBack?.call();
-                        if (Get.currentRoute == TaskProposalScreen.routeName || Get.currentRoute == MessagesScreen.routeName) {
+                        if (Get.currentRoute == TaskProposalScreen.routeName ||
+                            Get.currentRoute == MessagesScreen.routeName ||
+                            Get.currentRoute == ServiceRequestScreen.routeName) {
                           Get.back();
                         } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && Get.currentRoute != ProfileScreen.routeName) {
                           NavigationHistoryObserver.instance.goToPreviousRoute(popToProfile: true);

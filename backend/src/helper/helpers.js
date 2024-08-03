@@ -8,6 +8,7 @@ const { Service } = require("../models/service_model");
 const { Booking } = require("../models/booking_model");
 const { User } = require("../models/user_model");
 const { sequelize } = require("../../db.config");
+const { Op } = require("sequelize");
 
 function adjustString(inputString) {
   const ext = path.extname(inputString).toLowerCase();
@@ -87,29 +88,14 @@ async function getServiceCondidatesNumber(serviceId) {
   if (!serviceFound) {
     return res.status(404).json({ message: "service_not_found" });
   }
-  let confirmedBooking = await Booking.findOne({
+  let bookingList = await Booking.findAll({
     where: {
-      service_id: serviceId,
-      status: "confirmed",
+      service_id: serviceFound.id,
+      [Op.or]: [{ status: "pending" }, { status: "confirmed" }],
     },
   });
-  let finishedBooking = await Booking.findOne({
-    where: {
-      service_id: serviceId,
-      status: "finished",
-    },
-  });
-  if (confirmedBooking || finishedBooking) {
-    return -1;
-  } else {
-    let bookingList = await Booking.findAll({
-      where: {
-        service_id: serviceFound.id,
-      },
-    });
 
-    return bookingList.length;
-  }
+  return bookingList.length;
 }
 
 async function checkStoreFavorite(store, currentUserId) {

@@ -8,16 +8,22 @@ const {
   populateTasks,
   fetchAndSortNearbyTasks,
   fetchUserReservation,
+  fetchUserBooking,
+  fetchUserOngoingReservation,
+  fetchUserOngoingBooking,
 } = require("../sql/sql_request");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
 const { getFileType, getTaskCondidatesNumber } = require("../helper/helpers");
 const {
   CategorySubscriptionModel,
 } = require("../models/category_subscribtion_model");
-const { NotificationType, notificationService } = require("../helper/notification_service");
+const {
+  NotificationType,
+  notificationService,
+} = require("../helper/notification_service");
 
 // get boosted tasks & nearby tasks
-exports.getHotNearbyTasks = async (req, res) => {
+exports.getHomeTasks = async (req, res) => {
   try {
     const currentUserId = req.decoded?.id;
     let foundUser;
@@ -51,15 +57,87 @@ exports.getHotNearbyTasks = async (req, res) => {
     let reservation = [];
     if (currentUserId) {
       const userReservations = await fetchUserReservation(currentUserId);
-      reservation = await Promise.all(
-        userReservations.map(async (row) => {
-          if (row.status === "pending" || row.status === "confirmed") {
-            return row;
-          }
-        })
-      );
+      if (
+        userReservations.some(
+          (e) => e.status === "pending" || e.status === "confirmed"
+        )
+      ) {
+        reservation = await Promise.all(
+          userReservations.map(async (row) => {
+            if (row.status === "pending" || row.status === "confirmed") {
+              return row;
+            }
+          })
+        );
+      }
     }
-    return res.status(200).json({ hotTasks, nearbyTasks, reservation });
+
+    // get user's booking (pending and ongoing tasks)
+    let booking = [];
+    if (currentUserId) {
+      const userBookings = await fetchUserBooking(currentUserId);
+      if (
+        userBookings.some(
+          (e) => e.status === "pending" || e.status === "confirmed"
+        )
+      ) {
+        booking = await Promise.all(
+          userBookings.map(async (row) => {
+            if (row.status === "pending" || row.status === "confirmed") {
+              return row;
+            }
+          })
+        );
+      }
+    }
+
+    // get user's ongoing reservation (pending and ongoing tasks)
+    let ongoingReservation = [];
+    if (currentUserId) {
+      const userReservations = await fetchUserOngoingReservation(currentUserId);
+      if (
+        userReservations.some(
+          (e) => e.status === "pending" || e.status === "confirmed"
+        )
+      ) {
+        ongoingReservation = await Promise.all(
+          userReservations.map(async (row) => {
+            if (row.status === "pending" || row.status === "confirmed") {
+              return row;
+            }
+          })
+        );
+      }
+    }
+
+    // get user's ongoing booking (pending and ongoing tasks)
+    let ongoingBooking = [];
+    if (currentUserId) {
+      const userBookings = await fetchUserOngoingBooking(currentUserId);
+      if (
+        userBookings.some(
+          (e) => e.status === "pending" || e.status === "confirmed"
+        )
+      ) {
+        ongoingBooking = await Promise.all(
+          userBookings.map(async (row) => {
+            if (row.status === "pending" || row.status === "confirmed") {
+              return row;
+            }
+          })
+        );
+      }
+    }
+    return res
+      .status(200)
+      .json({
+        hotTasks,
+        nearbyTasks,
+        reservation,
+        booking,
+        ongoingReservation,
+        ongoingBooking,
+      });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

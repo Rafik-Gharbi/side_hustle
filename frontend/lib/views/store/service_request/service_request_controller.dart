@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/booking.dart';
 import '../../../models/enum/request_status.dart';
@@ -30,6 +31,7 @@ class ServiceRequestController extends GetxController {
         onConfirm: () async {
           await BookingRepository.find.updateBookingStatus(booking, RequestStatus.confirmed);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
+          MainAppController.find.resolveProfileActionRequired();
         },
       );
 
@@ -38,6 +40,7 @@ class ServiceRequestController extends GetxController {
         onConfirm: () async {
           await BookingRepository.find.updateBookingStatus(booking, RequestStatus.rejected);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
+          MainAppController.find.resolveProfileActionRequired();
         },
       );
 }

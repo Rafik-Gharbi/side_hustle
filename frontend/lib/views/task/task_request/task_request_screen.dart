@@ -8,6 +8,7 @@ import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../../widgets/task_card.dart';
+import '../../profile/profile_screen/profile_controller.dart';
 import 'task_request_controller.dart';
 
 class TaskRequestScreen extends StatelessWidget {
@@ -19,6 +20,7 @@ class TaskRequestScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<TaskRequestController>(
         builder: (controller) => CustomScaffoldBottomNavigation(
+          onBack: () => ProfileController.find.init(),
           appBarTitle: 'Tasks Request',
           body: LoadingRequest(
             isLoading: controller.isLoading,
