@@ -114,6 +114,9 @@ PODS:
   - flutter_facebook_auth (7.0.1):
     - FBSDKLoginKit (~> 17.0.2)
     - Flutter
+  - flutter_libphonenumber_ios (1.1.4):
+    - Flutter
+    - PhoneNumberKit/PhoneNumberKitCore (= 3.7.9)
   - flutter_secure_storage (6.0.0):
     - Flutter
   - geolocator_apple (1.2.0):
@@ -201,6 +204,7 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - PhoneNumberKit/PhoneNumberKitCore (3.7.9)
   - PromisesObjC (2.4.0)
   - SDWebImage (5.19.4):
     - SDWebImage/Core (= 5.19.4)
@@ -245,6 +249,7 @@ DEPENDENCIES:
   - flutter_compass (from `.symlinks/plugins/flutter_compass/ios`)
   - flutter_config (from `.symlinks/plugins/flutter_config/ios`)
   - flutter_facebook_auth (from `.symlinks/plugins/flutter_facebook_auth/ios`)
+  - flutter_libphonenumber_ios (from `.symlinks/plugins/flutter_libphonenumber_ios/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
@@ -279,6 +284,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - IosAwnCore
     - nanopb
+    - PhoneNumberKit
     - PromisesObjC
     - SDWebImage
     - sqlite3
@@ -303,6 +309,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_config/ios"
   flutter_facebook_auth:
     :path: ".symlinks/plugins/flutter_facebook_auth/ios"
+  flutter_libphonenumber_ios:
+    :path: ".symlinks/plugins/flutter_libphonenumber_ios/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
   geolocator_apple:
@@ -347,6 +355,7 @@ SPEC CHECKSUMS:
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
   flutter_config: f48f0d47a284f1791aacce2687eabb3309ba7a41
   flutter_facebook_auth: 4fa1dc3fa624284a5ddfdf9e4a2b7945b3835949
+  flutter_libphonenumber_ios: eb22e6f6e97c9604805f00bff961ca397071dfdc
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
   geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450
   google_sign_in_ios: 07375bfbf2620bc93a602c0e27160d6afc6ead38
@@ -361,6 +370,7 @@ SPEC CHECKSUMS:
   local_auth_darwin: 4d56c90c2683319835a61274b57620df9c4520ab
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  PhoneNumberKit: 9c8d546d65c3784721d575a29e712ae8b992fe79
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   SDWebImage: 066c47b573f408f18caa467d71deace7c0f8280d
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78

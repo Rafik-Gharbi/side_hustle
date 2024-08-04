@@ -1,3 +1,6 @@
+import 'package:drift/drift.dart';
+
+import '../database/database.dart';
 import 'enum/request_status.dart';
 import 'task.dart';
 import 'user.dart';
@@ -45,4 +48,26 @@ class Reservation {
     data['status'] = status.name;
     return data;
   }
+
+  factory Reservation.fromReservationData({required ReservationTableCompanion reservation, required Task task}) => Reservation(
+        id: reservation.id.value,
+        task: task,
+        date: reservation.date.value,
+        totalPrice: reservation.totalPrice.value,
+        coupon: reservation.coupon.value,
+        note: reservation.note.value,
+        status: reservation.status.value,
+        user: User(id: reservation.user.value),
+      );
+
+  ReservationTableCompanion toReservationCompanion({RequestStatus? statusUpdate}) => ReservationTableCompanion(
+        id: id == null ? const Value.absent() : Value(id!),
+        task: task.id == null ? const Value.absent() : Value(task.id!),
+        date: Value(date),
+        totalPrice: Value(totalPrice),
+        coupon: coupon == null ? const Value.absent() : Value(coupon!),
+        note: Value(note),
+        status: Value(statusUpdate ?? status),
+        user: user.id == null ? const Value.absent() : Value(user.id!),
+      );
 }

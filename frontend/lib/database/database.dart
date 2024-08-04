@@ -1,8 +1,11 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart' show Color;
 
+import '../models/enum/request_status.dart';
 import '../models/user.dart';
 import 'connection/connection.dart' as impl;
+import 'tables/booking.dart';
+import 'tables/reservation.dart';
 import 'tables/service.dart';
 import 'tables/service_gallery.dart';
 import 'tables/store.dart';
@@ -14,7 +17,18 @@ import 'tables/task.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: <Type>[TaskTable, UserTable, CategoryTable, GovernorateTable, TaskAttachmentTable, StoreTable, ServiceTable, ServiceGalleryTable])
+@DriftDatabase(tables: <Type>[
+  TaskTable,
+  UserTable,
+  CategoryTable,
+  GovernorateTable,
+  TaskAttachmentTable,
+  StoreTable,
+  ServiceTable,
+  ServiceGalleryTable,
+  ReservationTable,
+  BookingTable,
+])
 class Database extends _$Database {
   // Private constructor to prevent external instantiation
   Database._(super.e);

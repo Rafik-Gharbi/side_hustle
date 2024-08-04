@@ -55,6 +55,7 @@ dependencies:
   firebase_messaging: ^15.0.4
   awesome_notifications: ^0.9.3+1
   card_loading: ^0.3.2
+  flutter_libphonenumber: ^2.3.0
 
 dependency_overrides:
   animated_bottom_navigation_bar:

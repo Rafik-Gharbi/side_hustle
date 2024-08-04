@@ -15,6 +15,7 @@ import '../helpers/helper.dart';
 import '../models/category.dart';
 import '../models/dto/profile_dto.dart';
 import '../models/governorate.dart';
+import '../models/notification.dart';
 import '../models/user.dart';
 import '../repositories/user_repository.dart';
 import '../views/chat/chat_controller.dart';
@@ -523,7 +524,7 @@ class AuthenticationService extends GetxController {
     MainAppController.find.socket!.on('notification', (data) {
       // Show a notification to the user if not in the chat tab
       if (Get.currentRoute != ChatScreen.routeName) {
-        Helper.showNotification(data['title'], data['body']);
+        Helper.showNotification(NotificationModel.fromJson(data));
       } else if (Get.currentRoute == ChatScreen.routeName) {
         ChatController.find.getUserChatHistory();
       }

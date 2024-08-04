@@ -1,3 +1,6 @@
+import 'package:drift/drift.dart';
+
+import '../database/database.dart';
 import 'enum/request_status.dart';
 import 'service.dart';
 import 'user.dart';
@@ -45,4 +48,26 @@ class Booking {
     data['status'] = status.name;
     return data;
   }
+
+  factory Booking.fromBookingData({required BookingTableCompanion booking, required Service service}) => Booking(
+        id: booking.id.value,
+        service: service,
+        date: booking.date.value,
+        totalPrice: booking.totalPrice.value,
+        coupon: booking.coupon.value,
+        note: booking.note.value,
+        status: booking.status.value,
+        user: User(id: booking.user.value),
+      );
+
+  BookingTableCompanion toBookingCompanion({RequestStatus? statusUpdate}) => BookingTableCompanion(
+        id: id == null ? const Value.absent() : Value(id!),
+        service: service.id == null ? const Value.absent() : Value(service.id!),
+        date: Value(date),
+        totalPrice: Value(totalPrice),
+        coupon: coupon == null ? const Value.absent() : Value(coupon!),
+        note: Value(note),
+        status: Value(statusUpdate ?? status),
+        user: user.id == null ? const Value.absent() : Value(user.id!),
+      );
 }

@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../controllers/main_app_controller.dart';
+import '../database/database_repository/booking_database_repository.dart';
 import '../helpers/helper.dart';
 import '../models/booking.dart';
 import '../models/enum/request_status.dart';
@@ -14,6 +16,7 @@ class BookingRepository extends GetxService {
   Future<bool> addBooking({required Booking booking}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/booking/add', body: booking.toJson(), sendToken: true);
+      if (MainAppController.find.isConnected) BookingDatabaseRepository.find.addBooking(Booking.fromJson(result));
       return result['booking'] != null && result['booking'].toString().isNotEmpty;
     } catch (e) {
       if (e.toString().contains('booking_already_exist')) {
@@ -26,16 +29,16 @@ class BookingRepository extends GetxService {
     return false;
   }
 
-  Future<List<Booking>> listBooking() async {
-    try {
-      final result = await ApiBaseHelper().request(RequestType.get, '/booking/list', sendToken: true);
-      final services = (result['formattedList'] as List).map((e) => Booking.fromJson(e)).toList();
-      return services;
-    } catch (e) {
-      LoggerService.logger?.e('Error occured in listBooking:\n$e');
-    }
-    return [];
-  }
+  // Future<List<Booking>> listBooking() async {
+  //   try {
+  //     final result = await ApiBaseHelper().request(RequestType.get, '/booking/list', sendToken: true);
+  //     final services = (result['formattedList'] as List).map((e) => Booking.fromJson(e)).toList();
+  //     return services;
+  //   } catch (e) {
+  //     LoggerService.logger?.e('Error occured in listBooking:\n$e');
+  //   }
+  //   return [];
+  // }
 
   Future<List<Booking>> getBookingByServiceId(int serviceId) async {
     try {
@@ -66,6 +69,7 @@ class BookingRepository extends GetxService {
         sendToken: true,
         body: {'booking': booking.toJson(), 'status': status.name},
       );
+      if (MainAppController.find.isConnected) BookingDatabaseRepository.find.updateBookingStatus(booking, status);
     } catch (e) {
       Helper.snackBar(message: 'An error has occurred');
       LoggerService.logger?.e('Error occured in listBooking:\n$e');
@@ -74,9 +78,15 @@ class BookingRepository extends GetxService {
 
   Future<List<Booking>> getUserServicesHistory() async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.get, '/booking/services-history', sendToken: true);
-      final services = (result['formattedList'] as List).map((e) => Booking.fromJson(e)).toList();
-      return services;
+      List<Booking> bookings = [];
+      if (MainAppController.find.isConnected) {
+        final result = await ApiBaseHelper().request(RequestType.get, '/booking/services-history', sendToken: true);
+        bookings = (result['formattedList'] as List).map((e) => Booking.fromJson(e)).toList();
+      } else {
+        bookings = await BookingDatabaseRepository.find.select();
+      }
+      if (bookings.isNotEmpty && MainAppController.find.isConnected) BookingDatabaseRepository.find.backupBookings(bookings);
+      return bookings;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getUserServicesHistory:\n$e');
     }

@@ -8,6 +8,7 @@ import '../../../repositories/user_repository.dart';
 class ApproveUserController extends GetxController {
   bool isLoading = true;
   List<UserApproveDTO> userApproveList = [];
+  UserApproveDTO? highlightedUserApprove;
 
   ApproveUserController() {
     _init();
@@ -42,6 +43,14 @@ class ApproveUserController extends GetxController {
 
   Future<void> _init() async {
     userApproveList = await UserRepository.find.listUsersApprove() ?? [];
+    if (Get.arguments != null) highlightedUserApprove = userApproveList.cast<UserApproveDTO?>().singleWhere((element) => element?.user?.id == Get.arguments, orElse: () => null);
+    if (highlightedUserApprove != null) {
+      Future.delayed(const Duration(milliseconds: 1600), () {
+        highlightedUserApprove = null;
+        update();
+      });
+    }
+
     isLoading = false;
     update();
   }

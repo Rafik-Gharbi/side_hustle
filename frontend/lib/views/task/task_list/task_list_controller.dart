@@ -41,14 +41,14 @@ class TaskListController extends GetxController {
     update();
   }
 
-  Future<void> fetchSearchedTasks({FilterModel? filter, String? searchQuery}) async {
+  Future<void> fetchSearchedTasks({FilterModel? filter, String? searchQuery, int? taskId}) async {
     if (searchQuery != null && searchQuery.isNotEmpty) {
       openSearchBar.value = true;
       searchTaskController.text = searchQuery;
     }
     if (filter != null) _filterModel = filter;
     if (page > 1) isLoadingMore.value = true;
-    taskList = await TaskRepository.find.filterTasks(page: ++page, searchQuery: searchTaskController.text, filter: _filterModel) ?? [];
+    taskList = await TaskRepository.find.filterTasks(page: ++page, searchQuery: searchTaskController.text, filter: _filterModel, taskId: taskId) ?? [];
     if ((taskList.isEmpty) || taskList.length < kLoadMoreLimit) isEndList = true;
     if (page == 1) {
       filteredTaskList = taskList;

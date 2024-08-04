@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'constants/colors.dart';
@@ -14,7 +15,7 @@ import 'database/database_repository/store_database_repository.dart';
 import 'database/database_repository/task_database_repository.dart';
 import 'database/database_repository/user_database_repository.dart';
 import 'firebase_options.dart';
-import 'helpers/notification_controller.dart';
+import 'helpers/notification_service.dart';
 import 'networking/api_base_helper.dart';
 import 'repositories/booking_repository.dart';
 import 'repositories/chat_repository.dart';
@@ -75,6 +76,7 @@ import 'views/profile/verify_user/verify_user_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();
+  await init();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging.onMessage.listen((RemoteMessage message) => AwesomeNotifications().createNotification(
@@ -104,10 +106,10 @@ Future<void> main() async {
       )
       .then(
         (value) => AwesomeNotifications().setListeners(
-          onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-          onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
-          onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
-          onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
+          onActionReceivedMethod: NotificationService.onActionReceivedMethod,
+          onNotificationCreatedMethod: NotificationService.onNotificationCreatedMethod,
+          onNotificationDisplayedMethod: NotificationService.onNotificationDisplayedMethod,
+          onDismissActionReceivedMethod: NotificationService.onDismissActionReceivedMethod,
         ),
       );
   runApp(const MyApp());
@@ -238,7 +240,6 @@ class MyApp extends StatelessWidget {
           GetPage(
             name: NotificationScreen.routeName,
             page: () => const NotificationScreen(),
-            binding: BindingsBuilder.put(() => NotificationsController()),
           ),
           GetPage(
             name: AddTaskBottomsheet.routeName,
@@ -266,6 +267,7 @@ class InitialBindings implements Bindings {
     Get.put(AuthenticationService(), permanent: true);
     Get.put(ApiBaseHelper(), permanent: true);
     Get.put(ThemeService(), permanent: true);
+    Get.put(NotificationsController(), permanent: true);
     // Repositories
     Get.put(ChatRepository(), permanent: true);
     Get.put(UserRepository(), permanent: true);

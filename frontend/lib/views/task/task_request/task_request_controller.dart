@@ -18,6 +18,7 @@ class TaskRequestController extends GetxController {
   bool isEndList = false;
   int page = 0;
   RxBool isLoadingMore = true.obs;
+  Task? highlightedTask;
 
   TaskRequestController() {
     scrollController.addListener(() {
@@ -36,6 +37,14 @@ class TaskRequestController extends GetxController {
     page = 0;
     isEndList = false;
     await _fetchTaskRequest();
+    if (Get.arguments != null) highlightedTask = filteredTaskList.cast<Task?>().singleWhere((element) => element?.id == Get.arguments, orElse: () => null);
+    if (highlightedTask != null) {
+      Future.delayed(const Duration(milliseconds: 1600), () {
+        highlightedTask = null;
+        update();
+      });
+    }
+
     isLoading = false;
     update();
   }

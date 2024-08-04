@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 
 import '../../../constants/colors.dart';
@@ -36,6 +37,7 @@ class ProfileScreen extends StatelessWidget {
         child: GetBuilder<AuthenticationService>(
           builder: (authService) => GetBuilder<ProfileController>(
             autoRemove: false,
+            initState: (state) => Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()),
             builder: (controller) => PopScope(
               onPopInvoked: (didPop) => didPop
                   ? Future.delayed(const Duration(milliseconds: 200), () {
@@ -113,14 +115,16 @@ class ProfileScreen extends StatelessWidget {
                                                         Buildables.buildProfileInfoRow('email'.tr, controller.loggedInUser?.email ?? 'not_provided'.tr),
                                                         Buildables.lightDivider(),
                                                         Buildables.buildProfileInfoRow(
-                                                            'birthdate'.tr,
-                                                            controller.loggedInUser?.birthdate != null
-                                                                ? Helper.formatDate(controller.loggedInUser!.birthdate!)
-                                                                : 'not_provided'.tr),
+                                                          'birthdate'.tr,
+                                                          controller.loggedInUser?.birthdate != null ? Helper.formatDate(controller.loggedInUser!.birthdate!) : 'not_provided'.tr,
+                                                        ),
                                                         Buildables.lightDivider(),
                                                         Buildables.buildProfileInfoRow('gender'.tr, controller.loggedInUser?.gender?.value ?? 'not_provided'.tr),
                                                         Buildables.lightDivider(),
-                                                        Buildables.buildProfileInfoRow('phone'.tr, controller.loggedInUser?.phone ?? 'not_provided'.tr),
+                                                        Buildables.buildProfileInfoRow(
+                                                          'phone'.tr,
+                                                          controller.loggedInUser?.phone != null ? formatNumberSync(controller.loggedInUser!.phone!) : 'not_provided'.tr,
+                                                        ),
                                                       ],
                                                     ),
                                                   ),

@@ -9,6 +9,7 @@ import '../../../repositories/booking_repository.dart';
 class ServiceHistoryController extends GetxController {
   List<Booking> _taskHistoryList = [];
   bool isLoading = true;
+  Booking? highlightedBooking;
 
   List<Booking> get ongoingServices => _taskHistoryList.where((element) => element.status == RequestStatus.confirmed).toList();
   List<Booking> get pendingServices => _taskHistoryList.where((element) => element.status == RequestStatus.pending).toList();
@@ -22,6 +23,13 @@ class ServiceHistoryController extends GetxController {
 
   Future<void> init() async {
     _taskHistoryList = await BookingRepository.find.getUserServicesHistory();
+    if (Get.arguments != null) highlightedBooking = _taskHistoryList.cast<Booking?>().singleWhere((element) => element?.id == Get.arguments, orElse: () => null);
+    if (highlightedBooking != null) {
+      Future.delayed(const Duration(milliseconds: 1600), () {
+        highlightedBooking = null;
+        update();
+      });
+    }
     isLoading = false;
     update();
   }

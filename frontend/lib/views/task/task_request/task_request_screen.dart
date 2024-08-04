@@ -44,6 +44,7 @@ class TaskRequestScreen extends StatelessWidget {
                                 onDeleteTask: () => controller.deleteTask(task),
                                 onOpenProposals: () => controller.openProposals(task),
                                 condidates: controller.getTaskCondidates(task),
+                                isHighlighted: controller.highlightedTask?.id == task.id,
                               ),
                             );
                           },

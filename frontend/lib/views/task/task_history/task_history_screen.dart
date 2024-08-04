@@ -47,14 +47,16 @@ class TaskHistoryScreen extends StatelessWidget {
 
   Widget buildStatusTaskGroup(String title, List<Reservation> reservations, {bool initiallyOpen = false}) {
     return reservations.isNotEmpty
-        ? Theme(
-            data: ThemeData(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              initiallyExpanded: initiallyOpen,
-              title: Text(title, style: AppFonts.x15Bold),
-              children: List.generate(
-                reservations.length,
-                (index) => ReservationCard(reservation: reservations[index]),
+        ? GetBuilder<TaskHistoryController>(
+            builder: (controller) => Theme(
+              data: ThemeData(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                initiallyExpanded: initiallyOpen,
+                title: Text(title, style: AppFonts.x15Bold),
+                children: List.generate(
+                  reservations.length,
+                  (index) => ReservationCard(reservation: reservations[index], isHighlited: controller.highlightedReservation?.id == reservations[index].id),
+                ),
               ),
             ),
           )

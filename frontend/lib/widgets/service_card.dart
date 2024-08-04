@@ -26,6 +26,7 @@ class ServiceCard extends StatelessWidget {
   final int requests;
   final RequestStatus? bookingStatus;
   final bool dense;
+  final bool isHighlighted;
 
   const ServiceCard({
     super.key,
@@ -39,6 +40,7 @@ class ServiceCard extends StatelessWidget {
     this.bookingStatus,
     this.onMarkDone,
     this.dense = false,
+    this.isHighlighted = false,
   });
 
   @override
@@ -71,47 +73,51 @@ class ServiceCard extends StatelessWidget {
     );
   }
 
-  ListTile buildServiceCard() {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-      shape: dense
-          ? const OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
-          : RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
-      tileColor: kNeutralLightOpacityColor,
-      splashColor: kPrimaryOpacityColor,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(width: Get.width - 160, child: OverflowedTextWithTooltip(title: service.name ?? 'NA', style: AppFonts.x14Bold, expand: false)),
-                Text(service.description ?? 'NA', softWrap: true, maxLines: 2, overflow: TextOverflow.ellipsis, style: AppFonts.x12Regular),
-              ],
-            ),
-          ),
-          if (!dense)
-            Badge(
-              isLabelVisible: isOwner,
-              offset: Offset(requests > 99 ? -5 : 0, 5),
-              label: Text(requests > 99 ? '+99' : requests.toString(), style: AppFonts.x11Bold.copyWith(color: kNeutralColor100)),
-              backgroundColor: isOwner ? kErrorColor : Colors.transparent,
-              child: CustomButtons.icon(
-                icon: Icon(isOwner ? Icons.three_p_outlined : Icons.shopping_cart_outlined, size: 18),
-                onPressed: onBookService?.call ?? () {},
+  Widget buildServiceCard() {
+    bool highlighted = false;
+    return StatefulBuilder(builder: (context, setState) {
+      if (context.mounted) Future.delayed(const Duration(milliseconds: 600), () => setState(() => highlighted = isHighlighted));
+      return ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+        shape: dense
+            ? const OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
+            : RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
+        tileColor: highlighted ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
+        splashColor: kPrimaryOpacityColor,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(width: Get.width - 160, child: OverflowedTextWithTooltip(title: service.name ?? 'NA', style: AppFonts.x14Bold, expand: false)),
+                  Text(service.description ?? 'NA', softWrap: true, maxLines: 2, overflow: TextOverflow.ellipsis, style: AppFonts.x12Regular),
+                ],
               ),
             ),
-        ],
-      ),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: Paddings.regular),
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: Text('Price: ${Helper.formatAmount(service.price ?? 0)} TND', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+            if (!dense)
+              Badge(
+                isLabelVisible: isOwner,
+                offset: Offset(requests > 99 ? -5 : 0, 5),
+                label: Text(requests > 99 ? '+99' : requests.toString(), style: AppFonts.x11Bold.copyWith(color: kNeutralColor100)),
+                backgroundColor: isOwner ? kErrorColor : Colors.transparent,
+                child: CustomButtons.icon(
+                  icon: Icon(isOwner ? Icons.three_p_outlined : Icons.shopping_cart_outlined, size: 18),
+                  onPressed: onBookService?.call ?? () {},
+                ),
+              ),
+          ],
         ),
-      ),
-      leading: Icon(service.category?.icon ?? Icons.error_outline),
-    );
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: Paddings.regular),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text('Price: ${Helper.formatAmount(service.price ?? 0)} TND', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+          ),
+        ),
+        leading: Icon(service.category?.icon ?? Icons.error_outline),
+      );
+    });
   }
 }

@@ -12,6 +12,7 @@ import '../../constants/colors.dart';
 import '../../constants/constants.dart';
 import '../../controllers/main_app_controller.dart';
 import '../../models/notification.dart';
+import '../../widgets/overflowed_text_with_tooltip.dart';
 import 'notification_controller.dart';
 
 class NotificationScreen extends StatelessWidget {
@@ -24,7 +25,10 @@ class NotificationScreen extends StatelessWidget {
       child: GetBuilder<NotificationsController>(
         initState: (state) => Helper.waitAndExecute(
           () => state.controller != null,
-          () => state.controller?.fetchNotifications(),
+          () {
+            state.controller?.page = 0;
+            state.controller?.fetchNotifications();
+          },
         ),
         builder: (controller) => CustomScaffoldBottomNavigation(
           onBack: () => MainAppController.find.getNotSeenNotifications(),
@@ -51,7 +55,7 @@ class NotificationScreen extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: 2),
                           child: ListTile(
-                            onTap: () => controller.markAsRead(notification),
+                            onTap: () => controller.resolveNotificationAction(notification),
                             contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
                             shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
                             tileColor: notification.seen ? kNeutralLightOpacityColor : kPrimaryOpacityColor,
@@ -60,7 +64,7 @@ class NotificationScreen extends StatelessWidget {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(notification.body, style: AppFonts.x14Regular, softWrap: true, maxLines: 2, overflow: TextOverflow.ellipsis),
+                                OverflowedTextWithTooltip(title: notification.body, style: AppFonts.x14Regular, maxLine: 2, expand: false),
                                 if (notification.date != null)
                                   Padding(
                                     padding: const EdgeInsets.only(top: Paddings.small),

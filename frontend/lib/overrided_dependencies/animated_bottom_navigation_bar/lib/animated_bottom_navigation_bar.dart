@@ -33,7 +33,7 @@ class AnimatedBottomNavigationBar extends StatefulWidget {
   final Function(int) onTap;
 
   // Custom builder for customizing the icons
-  final Widget Function(Widget, int)? builder;
+  final Widget Function(Widget, int, bool)? builder;
 
   /// Current index of selected tab bar item.
   final int activeIndex;
@@ -185,7 +185,7 @@ class AnimatedBottomNavigationBar extends StatefulWidget {
     required List<IconData> icons,
     required int activeIndex,
     required Function(int) onTap,
-    Widget Function(Widget, int)? builder,
+    Widget Function(Widget, int, bool)? builder,
     double? height,
     double? splashRadius,
     int? splashSpeedInMilliseconds,
@@ -469,7 +469,7 @@ class _AnimatedBottomNavigationBarState extends State<AnimatedBottomNavigationBa
         bubbleColor: widget.splashColor,
         activeColor: widget.activeColor,
         inactiveColor: widget.inactiveColor,
-        child: widget.builder?.call(Icon(widget.icons?.elementAt(i)), i) ?? widget.tabBuilder?.call(i, isActive),
+        child: widget.builder?.call(Icon(widget.icons?.elementAt(i)), i, isActive) ?? widget.tabBuilder?.call(i, isActive),
         iconData: widget.icons?.elementAt(i),
         iconScale: _iconScale,
         iconSize: widget.iconSize,

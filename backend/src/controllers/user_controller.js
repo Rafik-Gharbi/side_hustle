@@ -334,9 +334,8 @@ exports.profile = async (req, res) => {
     let taskHistoryActionRequired = await getTaskHistoryRequiredActionsCount(
       userId
     );
-    let servieHistoryActionRequired = await getServiceHistoryRequiredActionsCount(
-      userId
-    );
+    let servieHistoryActionRequired =
+      await getServiceHistoryRequiredActionsCount(userId);
     let myStoreActionRequired = await getMyStoreRequiredActionsCount(userId);
     let approveUsersActionRequired = await getApproveUsersRequiredActionsCount(
       userId
@@ -466,14 +465,13 @@ exports.approveUser = async (req, res) => {
     userApprove.isVerified = "verified";
     await userApprove.save();
 
-    if (userApprove.fcmToken) {
-      notificationService.sendNotification(
-        userApprove.fcmToken,
-        "Successfully Approved",
-        "Your profile has been approved.",
-        NotificationType.VERIFICATION
-      );
-    }
+    notificationService.sendNotification(
+      userApprove.id,
+      "Successfully Approved",
+      "Your profile has been approved.",
+      NotificationType.VERIFICATION,
+      { userId: userApprove.id, Approved: true }
+    );
 
     return res.status(200).json({ done: true });
   } catch (error) {
@@ -501,15 +499,14 @@ exports.userNotApprovable = async (req, res) => {
     userDocument.destroy();
     userApprove.isVerified = "none";
     await userApprove.save();
-    // TODO add a notification table for when user opens the app he could see his notifications
-    if (userApprove.fcmToken) {
-      notificationService.sendNotification(
-        userApprove.fcmToken,
-        "Failed to Approve",
-        "Your profile hasn't been approved. Probably your profile is missing some needed data or your provided documents weren't acceptable.",
-        NotificationType.VERIFICATION
-      );
-    }
+
+    notificationService.sendNotification(
+      userApprove.id,
+      "Failed to Approve",
+      "Your profile hasn't been approved. Probably your profile is missing some needed data or your provided documents weren't acceptable.",
+      NotificationType.VERIFICATION,
+      { userId: userApprove.id, Approved: false }
+    );
     return res.status(200).json({ done: true });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -860,7 +857,8 @@ exports.verifyIdentity = async (req, res) => {
     notificationService.sendNotificationToAdmin(
       "New User Verification",
       "A new user has submitted his document, check them out.",
-      NotificationType.VERIFICATION
+      NotificationType.VERIFICATION,
+      { userId: userFound.id, isAdmin: true }
     );
 
     return res.status(200).json({ message: "done", jwt: jwt });
@@ -887,12 +885,13 @@ exports.userActionsRequiredCount = async (req, res) => {
     let myStoreActionRequired = await getMyStoreRequiredActionsCount(
       userFound.id
     );
-    let approveUsersActionRequired = await getApproveUsersRequiredActionsCount(
-      userFound.id
-    );
-    let servieHistoryActionRequired = await getServiceHistoryRequiredActionsCount(
-      userFound.id
-    );
+    let approveUsersActionRequired = 0;
+    if (userFound.role === "admin")
+      approveUsersActionRequired = await getApproveUsersRequiredActionsCount(
+        userFound.id
+      );
+    let servieHistoryActionRequired =
+      await getServiceHistoryRequiredActionsCount(userFound.id);
     const categories = await CategorySubscriptionModel.findAll({
       where: { user_id: userFound.id },
     });

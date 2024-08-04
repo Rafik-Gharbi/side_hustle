@@ -137,31 +137,34 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
           ? null
           : Obx(
               () => AnimatedBottomNavigationBar(
-                builder: (widget, index) => index == 2 // Chat
-                    ? Obx(
-                        () => Badge(
-                          offset: const Offset(-28, 8),
-                          isLabelVisible: MainAppController.find.notSeenMessages.value > 0,
-                          label: Text(
-                            MainAppController.find.notSeenMessages.value.toString(),
-                            style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
-                          ),
-                          child: SizedBox(width: 60, height: 60, child: widget),
-                        ),
-                      )
-                    : index == 3 // Profile
-                        ? Obx(
-                            () => Badge(
-                              offset: const Offset(-28, 8),
-                              isLabelVisible: MainAppController.find.profileActionRequired.value > 0,
-                              label: Text(
-                                MainAppController.find.profileActionRequired.value.toString(),
-                                style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
-                              ),
-                              child: SizedBox(width: 60, height: 60, child: widget),
+                builder: (widget, index, isActive) {
+                  widget = Icon((widget as Icon).icon ,color: isActive ? kPrimaryColor : kBlackColor);
+                  return index == 2 // Chat
+                      ? Obx(
+                          () => Badge(
+                            offset: const Offset(-28, 8),
+                            isLabelVisible: MainAppController.find.notSeenMessages.value > 0,
+                            label: Text(
+                              MainAppController.find.notSeenMessages.value.toString(),
+                              style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
                             ),
-                          )
-                        : widget,
+                            child: SizedBox(width: 60, height: 60, child: widget),
+                          ),
+                        )
+                      : index == 3 // Profile
+                          ? Obx(
+                              () => Badge(
+                                offset: const Offset(-28, 8),
+                                isLabelVisible: MainAppController.find.profileActionRequired.value > 0,
+                                label: Text(
+                                  MainAppController.find.profileActionRequired.value.toString(),
+                                  style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
+                                ),
+                                child: SizedBox(width: 60, height: 60, child: widget),
+                              ),
+                            )
+                          : widget;
+                },
                 icons: const [Icons.home_outlined, Icons.store_outlined, Icons.chat_outlined, Icons.person_outlined],
                 activeIndex: MainAppController.find.bottomNavIndex.value,
                 gapLocation: GapLocation.center,

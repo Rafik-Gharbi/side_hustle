@@ -19,7 +19,7 @@ const Task = sequelize.define(
   },
   {
     tableName: "task",
-    timestamps: false,
+    timestamps: true,
   }
 );
 

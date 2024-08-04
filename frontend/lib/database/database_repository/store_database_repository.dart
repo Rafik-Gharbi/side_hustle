@@ -101,6 +101,15 @@ class StoreDatabaseRepository extends GetxService {
     return gallery?.toCompanion(true);
   }
 
+  Future<List<ImageDTO>> getGalleryByServiceId(int serviceId) async {
+    final List<ServiceGalleryTableData> gallery = (await (database.select(database.serviceGalleryTable)..where((tbl) => tbl.serviceId.equals(serviceId))).get());
+    List<ImageDTO> result = [];
+    for (var picture in gallery) {
+      result.add(ImageDTO(file: XFile(picture.url), type: ImageType.image));
+    }
+    return result;
+  }
+
   Future<void> backupStore(Store store, {bool isFavorite = false}) async {
     if (store.id == null) return;
     final existStore = await getStoreById(store.id!);

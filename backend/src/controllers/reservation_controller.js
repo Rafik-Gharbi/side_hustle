@@ -102,7 +102,8 @@ exports.add = async (req, res) => {
       foundTask.owner_id,
       "You Have a New Proposal",
       "Someone has submitted a proposal on your task, check it out!",
-      NotificationType.RESERVATION
+      NotificationType.RESERVATION,
+      { reservationId: reservation.id, taskId: taskId, isOwner: true }
     );
     return res.status(200).json({ reservation });
   } catch (error) {
@@ -317,6 +318,16 @@ exports.updateStatus = async (req, res) => {
         if (reservation.id != reservationFound.id) {
           reservation.status = "rejected";
           await reservation.save();
+          await notificationService.sendNotification(
+            reservation.user_id,
+            "Your Proposal Has Been Rejected",
+            "The task owner has rejected your proposal.",
+            NotificationType.RESERVATION,
+            {
+              reservationId: reservationFound.id,
+              taskId: reservationFound.task_id,
+            }
+          );
         }
       });
     }
@@ -331,7 +342,11 @@ exports.updateStatus = async (req, res) => {
           reservationFound.user_id,
           "Your Proposal Has Been Confirmed",
           "The task owner has confirmed your proposal, let's get to work!",
-          NotificationType.RESERVATION
+          NotificationType.RESERVATION,
+          {
+            reservationId: reservationFound.id,
+            taskId: reservationFound.task_id,
+          }
         );
         break;
       case "rejected":
@@ -339,7 +354,11 @@ exports.updateStatus = async (req, res) => {
           reservationFound.user_id,
           "Your Proposal Has Been Rejected",
           "The task owner has rejected your proposal.",
-          NotificationType.RESERVATION
+          NotificationType.RESERVATION,
+          {
+            reservationId: reservationFound.id,
+            taskId: reservationFound.task_id,
+          }
         );
         break;
       case "finished":
@@ -347,7 +366,11 @@ exports.updateStatus = async (req, res) => {
           reservationFound.user_id,
           "Your Task Has Been Finished",
           "The task owner has confirmed your work, good job!",
-          NotificationType.RESERVATION
+          NotificationType.RESERVATION,
+          {
+            reservationId: reservationFound.id,
+            taskId: reservationFound.task_id,
+          }
         );
         break;
       default:

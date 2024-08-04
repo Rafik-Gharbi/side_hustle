@@ -4,6 +4,7 @@ class NotificationModel {
   final String id;
   final String title;
   final String body;
+  final String? action;
   final NotificationType type;
   final DateTime? date;
   final bool seen;
@@ -15,6 +16,7 @@ class NotificationModel {
     required this.type,
     required this.date,
     required this.seen,
+    required this.action,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) => NotificationModel(
@@ -24,6 +26,7 @@ class NotificationModel {
         type: NotificationType.values.singleWhere((element) => element.name == json['type']),
         date: DateTime.tryParse(json['createdAt']),
         seen: json['seen'] == 1,
+        action: json['action'],
       );
 
   Map<String, dynamic> toJson() {
@@ -34,6 +37,7 @@ class NotificationModel {
     data['type'] = type.name;
     data['date'] = date?.toIso8601String();
     data['seen'] = seen;
+    data['action'] = action;
     return data;
   }
 }

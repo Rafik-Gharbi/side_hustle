@@ -24,6 +24,7 @@ class TaskCard extends StatelessWidget {
   final void Function()? onOpenProposals;
   final int condidates;
   final bool dense;
+  final bool isHighlighted;
 
   const TaskCard({
     super.key,
@@ -34,6 +35,7 @@ class TaskCard extends StatelessWidget {
     this.onOpenProposals,
     this.condidates = 0,
     this.dense = false,
+    this.isHighlighted = false,
   });
 
   @override
@@ -64,86 +66,90 @@ class TaskCard extends StatelessWidget {
             : buildTaskCard(openContainer),
       );
 
-  Padding buildTaskCard(VoidCallback openContainer) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: dense ? 0 : Paddings.regular),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-        shape: dense
-            ? const OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
-            : RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
-        tileColor: kNeutralLightOpacityColor,
-        splashColor: kPrimaryOpacityColor,
-        onTap: openContainer,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(width: Get.width - 160, child: OverflowedTextWithTooltip(title: task.title, style: AppFonts.x14Bold, expand: false)),
-                if (task.category != null && !dense) Text(task.category!.name, style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
-              ],
-            ),
-            // Bookmark task
-            if (task.owner.id != AuthenticationService.find.jwtUserData?.id && !dense)
-              StatefulBuilder(builder: (context, setState) {
-                Future<void> toggleFavorite() async {
-                  final result = await MainAppController.find.toggleFavoriteTask(task);
-                  setState(() => task.isFavorite = result);
-                  if (!result) onRemoveFavorite?.call();
-                  TaskDatabaseRepository.find.backupTask(task, isFavorite: true);
-                }
-
-                return Padding(
-                  padding: const EdgeInsets.only(left: Paddings.regular),
-                  child: CustomButtons.icon(
-                    icon: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined, size: 18),
-                    onPressed: () => AuthenticationService.find.isUserLoggedIn.value ? toggleFavorite() : Helper.snackBar(message: 'login_save_task_msg'.tr),
-                  ),
-                );
-              })
-            else if (AuthenticationService.find.isUserLoggedIn.value && task.owner.id == AuthenticationService.find.jwtUserData?.id && !dense)
+  Widget buildTaskCard(VoidCallback openContainer) {
+    bool highlightTile = false;
+    return StatefulBuilder(builder: (context, setState) {
+      if (context.mounted) Future.delayed(const Duration(milliseconds: 600), () => setState(() => highlightTile = isHighlighted));
+      return Padding(
+        padding: EdgeInsets.only(bottom: dense ? 0 : Paddings.regular),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+          shape: dense
+              ? const OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
+              : RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
+          tileColor: highlightTile ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
+          splashColor: kPrimaryOpacityColor,
+          onTap: openContainer,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Badge(
-                    offset: Offset(condidates > 99 ? -5 : 0, 5),
-                    label: condidates == -1
-                        ? const Icon(Icons.done_outlined, size: 16, color: kNeutralColor100)
-                        : Text(condidates > 99 ? '+99' : condidates.toString(), style: AppFonts.x11Bold.copyWith(color: kNeutralColor100)),
-                    backgroundColor: condidates == -1 ? kConfirmedColor : kErrorColor,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: Paddings.regular),
-                      child: CustomButtons.icon(
-                        icon: const Icon(Icons.three_p_outlined, size: 24),
-                        onPressed: () => condidates > 0 || condidates == -1 ? onOpenProposals?.call() : Helper.snackBar(message: 'No proposals have been submitted yet!'),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(task.description, softWrap: true, maxLines: 2, overflow: TextOverflow.ellipsis, style: AppFonts.x12Regular),
-            const SizedBox(height: Paddings.regular),
-            if (task.price != null)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (task.distance != null && task.distance!.isNotEmpty)
-                    Text('Distance: ${task.distance} meters', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
-                  else
-                    const SizedBox(),
-                  Text('Price: ${Helper.formatAmount(task.price!)} TND', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                  SizedBox(width: Get.width - 160, child: OverflowedTextWithTooltip(title: task.title, style: AppFonts.x14Bold, expand: false)),
+                  if (task.category != null && !dense) Text(task.category!.name, style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
                 ],
               ),
-          ],
+              // Bookmark task
+              if (task.owner.id != AuthenticationService.find.jwtUserData?.id && !dense)
+                StatefulBuilder(builder: (context, setState) {
+                  Future<void> toggleFavorite() async {
+                    final result = await MainAppController.find.toggleFavoriteTask(task);
+                    setState(() => task.isFavorite = result);
+                    if (!result) onRemoveFavorite?.call();
+                    TaskDatabaseRepository.find.backupTask(task, isFavorite: true);
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.only(left: Paddings.regular),
+                    child: CustomButtons.icon(
+                      icon: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined, size: 18),
+                      onPressed: () => AuthenticationService.find.isUserLoggedIn.value ? toggleFavorite() : Helper.snackBar(message: 'login_save_task_msg'.tr),
+                    ),
+                  );
+                })
+              else if (AuthenticationService.find.isUserLoggedIn.value && task.owner.id == AuthenticationService.find.jwtUserData?.id && !dense)
+                Column(
+                  children: [
+                    Badge(
+                      offset: Offset(condidates > 99 ? -5 : 0, 5),
+                      label: condidates == -1
+                          ? const Icon(Icons.done_outlined, size: 16, color: kNeutralColor100)
+                          : Text(condidates > 99 ? '+99' : condidates.toString(), style: AppFonts.x11Bold.copyWith(color: kNeutralColor100)),
+                      backgroundColor: condidates == -1 ? kConfirmedColor : kErrorColor,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: Paddings.regular),
+                        child: CustomButtons.icon(
+                          icon: const Icon(Icons.three_p_outlined, size: 24),
+                          onPressed: () => condidates > 0 || condidates == -1 ? onOpenProposals?.call() : Helper.snackBar(message: 'No proposals have been submitted yet!'),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(task.description, softWrap: true, maxLines: 2, overflow: TextOverflow.ellipsis, style: AppFonts.x12Regular),
+              const SizedBox(height: Paddings.regular),
+              if (task.price != null)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (task.distance != null && task.distance!.isNotEmpty)
+                      Text('Distance: ${task.distance} meters', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
+                    else
+                      const SizedBox(),
+                    Text('Price: ${Helper.formatAmount(task.price!)} TND', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                  ],
+                ),
+            ],
+          ),
+          leading: task.category != null ? Icon(task.category!.icon) : null,
         ),
-        leading: task.category != null ? Icon(task.category!.icon) : null,
-      ),
-    );
+      );
+    });
   }
 }

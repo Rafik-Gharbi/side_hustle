@@ -9,6 +9,7 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' 
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../models/notification.dart';
 import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/icon_map.dart';
@@ -21,6 +22,7 @@ import '../services/translation/app_localization.dart';
 import '../services/logger_service.dart';
 import '../services/theme/theme.dart';
 import '../views/chat/chat_screen.dart';
+import '../views/notifications/notification_controller.dart';
 import '../views/profile/verification_screen.dart';
 import '../widgets/custom_popup.dart';
 import '../widgets/custom_text_field.dart';
@@ -182,7 +184,7 @@ class Helper {
   }
 
   static String formatDate(DateTime createdAt) => DateFormat('yyyy-MM-dd').format(createdAt);
-  
+
   static String formatDateWithTime(DateTime createdAt) => DateFormat('yyyy-MM-dd hh:mm').format(createdAt);
 
   static String formatAmount(double amount) => amount == amount.roundToDouble() ? amount.toInt().toString() : amount.toStringAsFixed(1);
@@ -378,9 +380,9 @@ class Helper {
     return distanceInMeters;
   }
 
-  static void showNotification(String title, String body) => GetSnackBar(
-        titleText: Text(title, style: AppFonts.x16Bold),
-        messageText: Text(body, style: AppFonts.x14Regular, overflow: TextOverflow.ellipsis),
+  static void showNotification(NotificationModel notification) => GetSnackBar(
+        titleText: Text(notification.title, style: AppFonts.x16Bold),
+        messageText: Text(notification.body, style: AppFonts.x14Regular, overflow: TextOverflow.ellipsis),
         duration: const Duration(seconds: 4),
         isDismissible: true,
         borderColor: kPrimaryColor,
@@ -393,6 +395,6 @@ class Helper {
         margin: isMobile ? const EdgeInsets.all(5) : EdgeInsets.only(left: Get.width / 2, right: 50, top: 10),
         backgroundColor: kNeutralColor100,
         snackPosition: SnackPosition.TOP,
-        mainButton: TextButton(onPressed: () => Get.toNamed(ChatScreen.routeName), child: const Text('Open')),
+        mainButton: TextButton(onPressed: () => NotificationsController.find.resolveNotificationAction(notification), child: const Text('Open')),
       ).show();
 }

@@ -94,7 +94,9 @@ class MyStoreScreen extends StatelessWidget {
                             CustomButtons.icon(
                               icon: const Icon(Icons.near_me_outlined),
                               onPressed: controller.openStoreItinerary,
-                            ),
+                            )
+                          else
+                            const SizedBox(width: 40)
                         ],
                       ),
                     ),
@@ -168,6 +170,7 @@ class MyStoreScreen extends StatelessWidget {
                                 isOwner: AuthenticationService.find.jwtUserData?.id == controller.userStore?.owner?.id,
                                 onDeleteService: () => controller.deleteService(service),
                                 onEditService: () => controller.editService(service),
+                                isHighlighted: controller.highlightedService?.id == service.id,
                               );
                             },
                           )

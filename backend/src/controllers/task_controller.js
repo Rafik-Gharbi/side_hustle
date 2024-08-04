@@ -57,87 +57,45 @@ exports.getHomeTasks = async (req, res) => {
     let reservation = [];
     if (currentUserId) {
       const userReservations = await fetchUserReservation(currentUserId);
-      if (
-        userReservations.some(
-          (e) => e.status === "pending" || e.status === "confirmed"
-        )
-      ) {
-        reservation = await Promise.all(
-          userReservations.map(async (row) => {
-            if (row.status === "pending" || row.status === "confirmed") {
-              return row;
-            }
-          })
-        );
-      }
+      reservation = userReservations.filter(
+        (e) => e.status === "pending" || e.status === "confirmed"
+      );
     }
 
     // get user's booking (pending and ongoing tasks)
     let booking = [];
     if (currentUserId) {
       const userBookings = await fetchUserBooking(currentUserId);
-      if (
-        userBookings.some(
-          (e) => e.status === "pending" || e.status === "confirmed"
-        )
-      ) {
-        booking = await Promise.all(
-          userBookings.map(async (row) => {
-            if (row.status === "pending" || row.status === "confirmed") {
-              return row;
-            }
-          })
-        );
-      }
+      booking = userBookings.filter(
+        (e) => e.status === "pending" || e.status === "confirmed"
+      );
     }
 
     // get user's ongoing reservation (pending and ongoing tasks)
     let ongoingReservation = [];
     if (currentUserId) {
       const userReservations = await fetchUserOngoingReservation(currentUserId);
-      if (
-        userReservations.some(
-          (e) => e.status === "pending" || e.status === "confirmed"
-        )
-      ) {
-        ongoingReservation = await Promise.all(
-          userReservations.map(async (row) => {
-            if (row.status === "pending" || row.status === "confirmed") {
-              return row;
-            }
-          })
-        );
-      }
+      ongoingReservation = userReservations.filter(
+        (e) => e.status === "pending" || e.status === "confirmed"
+      );
     }
 
     // get user's ongoing booking (pending and ongoing tasks)
     let ongoingBooking = [];
     if (currentUserId) {
       const userBookings = await fetchUserOngoingBooking(currentUserId);
-      if (
-        userBookings.some(
-          (e) => e.status === "pending" || e.status === "confirmed"
-        )
-      ) {
-        ongoingBooking = await Promise.all(
-          userBookings.map(async (row) => {
-            if (row.status === "pending" || row.status === "confirmed") {
-              return row;
-            }
-          })
-        );
-      }
+      ongoingBooking = userBookings.filter(
+        (e) => e.status === "pending" || e.status === "confirmed"
+      );
     }
-    return res
-      .status(200)
-      .json({
-        hotTasks,
-        nearbyTasks,
-        reservation,
-        booking,
-        ongoingReservation,
-        ongoingBooking,
-      });
+    return res.status(200).json({
+      hotTasks,
+      nearbyTasks,
+      reservation,
+      booking,
+      ongoingReservation,
+      ongoingBooking,
+    });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);
@@ -156,6 +114,7 @@ exports.filterTasks = async (req, res) => {
     const currentUserId = req.decoded?.id;
     let categoryId = req.query.categoryId;
     let nearby = req.query.nearby;
+    let taskId = req.query.taskId;
 
     const pageQuery = page ?? 1;
     const limitQuery = limit ? parseInt(limit) : 9;
@@ -175,6 +134,7 @@ exports.filterTasks = async (req, res) => {
       user.phone_number,
       user.role FROM task JOIN user ON task.owner_id = user.id WHERE (task.title LIKE :searchQuery OR task.description LIKE :searchQuery)
       ${categoryId ? `AND task.category_id = :categoryId` : ``}
+      ${taskId ? `AND task.id = :taskId` : ``}
       ${
         priceMin && priceMax
           ? `AND task.price >= :priceMin AND task.price <= :priceMax`
@@ -189,6 +149,7 @@ exports.filterTasks = async (req, res) => {
         categoryId: categoryId,
         priceMin: priceMin,
         priceMax: priceMax,
+        taskId: taskId,
         limit: limitQuery,
         offset: offset,
       },
@@ -369,7 +330,7 @@ exports.addTask = async (req, res) => {
           where: { id: subscription.user_id },
         });
         if (user.id != subscribedUser.id) {
-          return subscribedUser.fcmToken;
+          return subscribedUser.id;
         }
       })
     );
@@ -377,7 +338,8 @@ exports.addTask = async (req, res) => {
       tokenList,
       "New Task Available",
       `A new task in "${category.name}" category has been created. Check it out!`,
-      NotificationType.NEWTASK
+      NotificationType.NEWTASK,
+      { taskId: task.id }
     );
 
     // Return created task

@@ -8,6 +8,7 @@ const Notification = sequelize.define(
     body: { type: Sequelize.STRING, allowNull: true },
     type: { type: Sequelize.STRING, allowNull: true },
     seen: { type: Sequelize.BOOLEAN, defaultValue: false },
+    action: { type: Sequelize.STRING, allowNull: true },
   },
   {
     tableName: "notification",

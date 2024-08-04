@@ -36,102 +36,112 @@ class ApproveUserScreen extends StatelessWidget {
                     itemCount: controller.userApproveList.length,
                     itemBuilder: (context, index) {
                       final userApprove = controller.userApproveList[index];
+                      bool highlighted = false;
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: 2),
                         child: Theme(
                           data: ThemeData(dividerColor: Colors.transparent),
                           child: ClipRRect(
                             borderRadius: smallRadius,
-                            child: ExpansionTile(
-                              title: buildUserCard(userApprove),
-                              tilePadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                              childrenPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                              shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
-                              backgroundColor: kNeutralLightOpacityColor,
-                              collapsedBackgroundColor: kNeutralLightOpacityColor,
-                              expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Buildables.buildProfileInfoRow('email'.tr, userApprove.user?.email ?? 'not_provided'.tr),
-                                Buildables.lightDivider(),
-                                Buildables.buildProfileInfoRow(
-                                  'birthdate'.tr,
-                                  userApprove.user?.birthdate != null ? Helper.formatDate(userApprove.user!.birthdate!) : 'not_provided'.tr,
-                                ),
-                                Buildables.lightDivider(),
-                                Buildables.buildProfileInfoRow('gender'.tr, userApprove.user?.gender?.value ?? 'not_provided'.tr),
-                                Buildables.lightDivider(),
-                                const SizedBox(height: Paddings.large),
-                                const Text('User document:', style: AppFonts.x15Bold),
-                                const SizedBox(height: Paddings.regular),
-                                if (userApprove.userDocument == null)
-                                  Text('User document not available', style: AppFonts.x12Bold.copyWith(color: kErrorColor))
-                                else
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: [
-                                        if (userApprove.userDocument!.isPassport)
-                                          // Passport pictures
-                                          Column(
-                                            children: [
-                                              buildImage(userApprove.userDocument!.passport!, context),
-                                              const SizedBox(height: Paddings.regular),
-                                              const Text('Passport picture', style: AppFonts.x12Bold),
-                                            ],
-                                          )
-                                        else ...[
-                                          // Identity pictures
-                                          Column(
-                                            children: [
-                                              buildImage(userApprove.userDocument!.frontIdentity!, context),
-                                              const SizedBox(height: Paddings.regular),
-                                              const Text('Front picture', style: AppFonts.x12Bold),
-                                            ],
-                                          ),
+                            child: StatefulBuilder(builder: (context, setState) {
+                              if (context.mounted) {
+                                Future.delayed(
+                                const Duration(milliseconds: 600),
+                                () => setState(() => highlighted = userApprove.user?.id == controller.highlightedUserApprove?.user?.id),
+                              );
+                              }
+                              return ExpansionTile(
+                                key: Key(userApprove.hashCode.toString()),
+                                title: buildUserCard(userApprove),
+                                tilePadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                                childrenPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                                shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
+                                backgroundColor: kNeutralLightOpacityColor,
+                                collapsedBackgroundColor: highlighted ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
+                                expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Buildables.buildProfileInfoRow('email'.tr, userApprove.user?.email ?? 'not_provided'.tr),
+                                  Buildables.lightDivider(),
+                                  Buildables.buildProfileInfoRow(
+                                    'birthdate'.tr,
+                                    userApprove.user?.birthdate != null ? Helper.formatDate(userApprove.user!.birthdate!) : 'not_provided'.tr,
+                                  ),
+                                  Buildables.lightDivider(),
+                                  Buildables.buildProfileInfoRow('gender'.tr, userApprove.user?.gender?.value ?? 'not_provided'.tr),
+                                  Buildables.lightDivider(),
+                                  const SizedBox(height: Paddings.large),
+                                  const Text('User document:', style: AppFonts.x15Bold),
+                                  const SizedBox(height: Paddings.regular),
+                                  if (userApprove.userDocument == null)
+                                    Text('User document not available', style: AppFonts.x12Bold.copyWith(color: kErrorColor))
+                                  else
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: [
+                                          if (userApprove.userDocument!.isPassport)
+                                            // Passport pictures
+                                            Column(
+                                              children: [
+                                                buildImage(userApprove.userDocument!.passport!, context),
+                                                const SizedBox(height: Paddings.regular),
+                                                const Text('Passport picture', style: AppFonts.x12Bold),
+                                              ],
+                                            )
+                                          else ...[
+                                            // Identity pictures
+                                            Column(
+                                              children: [
+                                                buildImage(userApprove.userDocument!.frontIdentity!, context),
+                                                const SizedBox(height: Paddings.regular),
+                                                const Text('Front picture', style: AppFonts.x12Bold),
+                                              ],
+                                            ),
+                                            const SizedBox(width: Paddings.regular),
+                                            Column(
+                                              children: [
+                                                buildImage(userApprove.userDocument!.backIdentity!, context),
+                                                const SizedBox(height: Paddings.regular),
+                                                const Text('Back picture', style: AppFonts.x12Bold),
+                                              ],
+                                            ),
+                                          ],
+                                          // Selfie picture
                                           const SizedBox(width: Paddings.regular),
                                           Column(
                                             children: [
-                                              buildImage(userApprove.userDocument!.backIdentity!, context),
+                                              buildImage(userApprove.userDocument!.selfie!, context),
                                               const SizedBox(height: Paddings.regular),
-                                              const Text('Back picture', style: AppFonts.x12Bold),
+                                              const Text('Selfie picture', style: AppFonts.x12Bold),
                                             ],
                                           ),
                                         ],
-                                        // Selfie picture
-                                        const SizedBox(width: Paddings.regular),
-                                        Column(
-                                          children: [
-                                            buildImage(userApprove.userDocument!.selfie!, context),
-                                            const SizedBox(height: Paddings.regular),
-                                            const Text('Selfie picture', style: AppFonts.x12Bold),
-                                          ],
-                                        ),
-                                      ],
+                                      ),
                                     ),
+                                  const SizedBox(height: Paddings.extraLarge),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomButtons.text(
+                                        title: 'Not Approvable',
+                                        titleStyle: AppFonts.x14Regular,
+                                        onPressed: () => controller.couldNotApprove(userApprove.user),
+                                      ),
+                                      CustomButtons.icon(
+                                        icon: const Icon(Icons.phone_outlined),
+                                        onPressed: () => controller.callUser(userApprove.user),
+                                      ),
+                                      CustomButtons.elevatePrimary(
+                                        title: 'Approve',
+                                        width: (Get.width - 120) / 2,
+                                        onPressed: () => controller.approveUser(userApprove.user),
+                                      )
+                                    ],
                                   ),
-                                const SizedBox(height: Paddings.extraLarge),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    CustomButtons.text(
-                                      title: 'Not Approvable',
-                                      titleStyle: AppFonts.x14Regular,
-                                      onPressed: () => controller.couldNotApprove(userApprove.user),
-                                    ),
-                                    CustomButtons.icon(
-                                      icon: const Icon(Icons.phone_outlined),
-                                      onPressed: () => controller.callUser(userApprove.user),
-                                    ),
-                                    CustomButtons.elevatePrimary(
-                                      title: 'Approve',
-                                      width: (Get.width - 120) / 2,
-                                      onPressed: () => controller.approveUser(userApprove.user),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(height: Paddings.regular),
-                              ],
-                            ),
+                                  const SizedBox(height: Paddings.regular),
+                                ],
+                              );
+                            }),
                           ),
                         ),
                       );

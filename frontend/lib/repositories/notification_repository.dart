@@ -31,7 +31,7 @@ class NotificationRepository extends GetxService {
   Future<List<NotificationModel>?> getNotifications({int page = 0, int limit = kLoadMoreLimit}) async {
     try {
       List<NotificationModel> notifications = [];
-      final result = await ApiBaseHelper().request(RequestType.get, '/notification/list?page=$page&limit=$limit', sendToken: true);
+      final result = await ApiBaseHelper().request(RequestType.get, '/notification/list?pageQuery=$page&limitQuery=$limit', sendToken: true);
       notifications = (result['notificationList'] as List).map((e) => NotificationModel.fromJson(e)).toList();
       return notifications;
     } catch (e) {
@@ -41,13 +41,12 @@ class NotificationRepository extends GetxService {
   }
 
   Future<bool> markAsReadAllNotification({required List<NotificationModel> notifications}) async {
-        try {
+    try {
       final result = await ApiBaseHelper().request(RequestType.post, '/notification/mark-read-all', body: notifications.map((e) => e.toJson()).toList(), sendToken: true);
       return result['done'];
     } catch (e) {
       LoggerService.logger?.e('Error occured in markAsReadAllNotification:\n$e');
     }
     return false;
-
   }
 }

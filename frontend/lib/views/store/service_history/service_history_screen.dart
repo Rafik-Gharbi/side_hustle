@@ -52,17 +52,19 @@ class ServiceHistoryScreen extends StatelessWidget {
 
   Widget buildStatusServiceGroup(String title, List<Booking> bookings, {void Function(Booking)? onMarkDone, bool initiallyOpen = false}) {
     return bookings.isNotEmpty
-        ? Theme(
-            data: ThemeData(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              initiallyExpanded: initiallyOpen,
-              title: Text(title, style: AppFonts.x15Bold),
-              children: List.generate(
-                bookings.length,
-                (index) => BookingCard(booking: bookings[index], onMarkDone: () => onMarkDone?.call(bookings[index])),
+        ? GetBuilder<ServiceHistoryController>(
+        builder: (controller) => Theme(
+              data: ThemeData(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                initiallyExpanded: initiallyOpen,
+                title: Text(title, style: AppFonts.x15Bold),
+                children: List.generate(
+                  bookings.length,
+                  (index) => BookingCard(booking: bookings[index], onMarkDone: () => onMarkDone?.call(bookings[index]), isHighlited: controller.highlightedBooking?.id == bookings[index].id),
+                ),
               ),
             ),
-          )
+        )
         : const SizedBox();
   }
 }

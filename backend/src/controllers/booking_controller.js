@@ -21,6 +21,7 @@ const {
   notificationService,
 } = require("../helper/notification_service");
 const { getServiceOwner, populateOneService } = require("../sql/sql_request");
+const { Op } = require("sequelize");
 
 exports.add = async (req, res) => {
   const { serviceId, date, totalPrice, coupon, status, note } = req.body;
@@ -40,6 +41,7 @@ exports.add = async (req, res) => {
       where: {
         user_id: userFound.id,
         service_id: serviceId,
+        [Op.or]: [{ status: "pending" }, { status: "confirmed" }],
       },
     });
     if (existBooking) {
@@ -104,7 +106,8 @@ exports.add = async (req, res) => {
       store.owner_id,
       "You Have a New Booking",
       "Someone has booked a service in your store, check it out!",
-      NotificationType.RESERVATION
+      NotificationType.BOOKING,
+      { storeId: store.id, serviceId: foundService.id, isOwner: true }
     );
 
     return res.status(200).json({ booking });
@@ -359,7 +362,8 @@ exports.updateStatus = async (req, res) => {
           bookingFound.user_id,
           "Your Booking Has Been Confirmed",
           "The service owner has confirmed your booking.",
-          NotificationType.BOOKING
+          NotificationType.BOOKING,
+          { bookingId: bookingFound.id, serviceId: bookingFound.service_id }
         );
         break;
       case "rejected":
@@ -367,7 +371,8 @@ exports.updateStatus = async (req, res) => {
           bookingFound.user_id,
           "Your Booking Has Been Rejected",
           "The service owner has rejected your booking.",
-          NotificationType.BOOKING
+          NotificationType.BOOKING,
+          { bookingId: bookingFound.id, serviceId: bookingFound.service_id }
         );
         break;
       case "finished":
@@ -376,7 +381,8 @@ exports.updateStatus = async (req, res) => {
           serviceOwner.id,
           "Your Service Has Been Finished",
           "The service seeker has finished the booking. Good job!",
-          NotificationType.BOOKING
+          NotificationType.BOOKING,
+          { bookingId: bookingFound.id, serviceId: bookingFound.service_id, isOwner: true }
         );
         break;
       default:

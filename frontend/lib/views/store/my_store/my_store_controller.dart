@@ -42,6 +42,7 @@ class MyStoreController extends GetxController {
   Category? _category;
   int? updateServiceId;
   LatLng? _coordinates;
+  Service? highlightedService;
 
   List<XFile> serviceGallery = [];
 
@@ -71,6 +72,14 @@ class MyStoreController extends GetxController {
 
   Future<void> init({Store? store}) async {
     userStore = store ?? await StoreRepository.find.getUserStore();
+    if (Get.arguments != null) highlightedService = userStore?.services?.cast<Service?>().singleWhere((element) => element?.id == Get.arguments, orElse: () => null);
+    if (highlightedService != null) {
+      Future.delayed(const Duration(milliseconds: 1600), () {
+        highlightedService = null;
+        update();
+      });
+    }
+
     isLoading = false;
     update();
   }
