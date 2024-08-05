@@ -3,6 +3,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
+const { adjustString } = require("../helper/helpers");
 
 //config
 var storage = multer.diskStorage({
@@ -46,16 +47,4 @@ const taskImageUpload = upload.fields([
   { name: "gallery", maxCount: 25 },
 ]);
 
-function adjustString(inputString, ext) {
-  let sanitizedString = inputString.toLowerCase();
-  // Remove the provided extension if it exists at the end of the string
-  if (sanitizedString.endsWith(ext.toLowerCase())) {
-    sanitizedString = sanitizedString.slice(0, -ext.length);
-  }
-  // Remove special characters and spaces
-  sanitizedString = sanitizedString.replace(/[^\w\s]/gi, ""); // Remove special characters
-  sanitizedString = sanitizedString.replace(/\s+/g, ""); // Remove spaces
-
-  return sanitizedString;
-}
 module.exports = { taskImageUpload };

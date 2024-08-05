@@ -15,6 +15,7 @@ import '../constants/constants.dart';
 import '../constants/icon_map.dart';
 import '../constants/shared_preferences_keys.dart';
 import '../constants/sizes.dart';
+import '../models/review.dart';
 import '../repositories/user_repository.dart';
 import '../services/authentication_service.dart';
 import '../services/shared_preferences.dart';
@@ -397,4 +398,38 @@ class Helper {
         snackPosition: SnackPosition.TOP,
         mainButton: TextButton(onPressed: () => NotificationsController.find.resolveNotificationAction(notification), child: const Text('Open')),
       ).show();
+
+  static double resolveDouble(json) => json == null
+      ? 0
+      : json is int
+          ? json.toDouble()
+          : json is String
+              ? double.parse(json)
+              : json as double;
+
+  static Icon resolveRatingSatisfaction(double rating) {
+    if (rating < 1) {
+      return const Icon(Icons.sentiment_very_dissatisfied, color: Colors.red);
+    } else if (rating < 2) {
+      return const Icon(Icons.sentiment_dissatisfied, color: Colors.redAccent);
+    } else if (rating < 3) {
+      return const Icon(Icons.sentiment_neutral, color: Colors.amber);
+    } else if (rating <= 4) {
+      return const Icon(Icons.sentiment_satisfied, color: Colors.lightGreen);
+    } else {
+      return const Icon(Icons.sentiment_very_satisfied, color: Colors.green);
+    }
+  }
+
+  static double getRatingPercentage(List<Review> reviews, int index) {
+    int reviewCount = 0;
+    for (Review review in reviews) {
+      if (review.rating.toInt() == index) {
+        reviewCount++;
+      }
+    }
+    double percentage = reviewCount > 0 ? (reviewCount / reviews.length) : 0;
+
+    return percentage;
+  }
 }

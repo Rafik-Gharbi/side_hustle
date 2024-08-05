@@ -8,28 +8,21 @@ const { adjustString } = require("../helper/helpers");
 //config
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    if (!fs.existsSync(path.join(__dirname, "../../public/store/"))) {
-      execSync(`mkdir "${path.join(__dirname, "../../public/store/")}"`);
+    if (!fs.existsSync(path.join(__dirname, "../../public/review/"))) {
+      execSync(`mkdir "${path.join(__dirname, "../../public/review/")}"`);
     }
-    cb(null, "public/store/");
+    cb(null, "public/review/");
   },
   filename: function (req, file, cb) {
     var ext = path.extname(file.originalname).toLocaleLowerCase();
-    if (
-      ext !== ".jpg" &&
-      ext !== ".jpeg" &&
-      ext !== ".png" &&
-      ext !== ".pdf" &&
-      ext !== ".docx" &&
-      ext !== ".doc"
-    ) {
+    if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png") {
       var error = new Error("File type not allowed");
       error.status = 415; // Set the status code to 415
       return cb(error);
     }
     cb(
       null,
-      `store-${adjustString(file.originalname, ext)}-${req.decoded.id}${ext}`
+      `review-${adjustString(file.originalname, ext)}-${req.decoded.id}${ext}`
     );
   },
 });
@@ -42,9 +35,8 @@ const upload = multer({
   },
 });
 
-const storeImageUpload = upload.fields([
+const reviewImageUpload = upload.fields([
   { name: "photo", maxCount: 1 },
-  { name: "gallery", maxCount: 25 },
 ]);
 
-module.exports = { storeImageUpload };
+module.exports = { reviewImageUpload };

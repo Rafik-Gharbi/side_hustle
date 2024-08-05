@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../models/review.dart';
 import '../../../models/user.dart';
 import '../../../repositories/user_repository.dart';
 
@@ -11,6 +12,16 @@ class UserProfileController extends GetxController {
   bool _isLoading = true;
   XFile? profilePicture;
   bool _initialized = false;
+  bool _showAllReviews = false;
+  int userReviewers = 0;
+  List<Review> userReviews = [];
+
+  bool get showAllReviews => _showAllReviews;
+
+  set showAllReviews(bool value) {
+    _showAllReviews = value;
+    update();
+  }
 
   bool get isLoading => _isLoading;
 

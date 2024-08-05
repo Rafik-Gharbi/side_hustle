@@ -16,8 +16,11 @@ class ReservationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool highlighted = false;
+    bool isInitialized = false;
+
     return StatefulBuilder(builder: (context, setState) {
-      if (context.mounted) Future.delayed(const Duration(microseconds: 600), () => setState(() => highlighted = isHighlited));
+      if (context.mounted && !isInitialized) Future.delayed(const Duration(microseconds: 600), () => setState(() => highlighted = isHighlited));
+      isInitialized = true;
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
         child: ListTile(

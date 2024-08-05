@@ -37,6 +37,7 @@ class ApproveUserScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final userApprove = controller.userApproveList[index];
                       bool highlighted = false;
+                      bool isInitialized = false;
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: 2),
                         child: Theme(
@@ -44,12 +45,13 @@ class ApproveUserScreen extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: smallRadius,
                             child: StatefulBuilder(builder: (context, setState) {
-                              if (context.mounted) {
+                              if (context.mounted && !isInitialized) {
                                 Future.delayed(
-                                const Duration(milliseconds: 600),
-                                () => setState(() => highlighted = userApprove.user?.id == controller.highlightedUserApprove?.user?.id),
-                              );
+                                  const Duration(milliseconds: 600),
+                                  () => setState(() => highlighted = userApprove.user?.id == controller.highlightedUserApprove?.user?.id),
+                                );
                               }
+                              isInitialized = true;
                               return ExpansionTile(
                                 key: Key(userApprove.hashCode.toString()),
                                 title: buildUserCard(userApprove),

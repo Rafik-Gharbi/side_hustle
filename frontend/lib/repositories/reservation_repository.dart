@@ -86,7 +86,7 @@ class ReservationRepository extends GetxService {
       } else {
         reservations = await ReservationDatabaseRepository.find.select();
       }
-      if (reservations.isNotEmpty && MainAppController.find.isConnected) ReservationDatabaseRepository.find.backupReservations(reservations);
+      // if (reservations.isNotEmpty && MainAppController.find.isConnected) ReservationDatabaseRepository.find.backupReservations(reservations);
       return reservations;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getUserTasksHistory:\n$e');

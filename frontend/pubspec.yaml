@@ -56,6 +56,7 @@ dependencies:
   awesome_notifications: ^0.9.3+1
   card_loading: ^0.3.2
   flutter_libphonenumber: ^2.3.0
+  flutter_rating_bar: ^4.0.1
 
 dependency_overrides:
   animated_bottom_navigation_bar:

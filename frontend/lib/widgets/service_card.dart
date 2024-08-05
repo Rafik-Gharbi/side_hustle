@@ -75,8 +75,11 @@ class ServiceCard extends StatelessWidget {
 
   Widget buildServiceCard() {
     bool highlighted = false;
+    bool isInitialized = false;
+
     return StatefulBuilder(builder: (context, setState) {
-      if (context.mounted) Future.delayed(const Duration(milliseconds: 600), () => setState(() => highlighted = isHighlighted));
+      if (context.mounted && !isInitialized) Future.delayed(const Duration(milliseconds: 600), () => setState(() => highlighted = isHighlighted));
+      isInitialized = true;
       return ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
         shape: dense

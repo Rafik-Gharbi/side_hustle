@@ -11,6 +11,7 @@ import '../../../models/booking.dart';
 import '../../../models/category.dart';
 import '../../../models/dto/image_dto.dart';
 import '../../../models/governorate.dart';
+import '../../../models/review.dart';
 import '../../../models/service.dart';
 import '../../../models/store.dart';
 import '../../../repositories/booking_repository.dart';
@@ -43,6 +44,15 @@ class MyStoreController extends GetxController {
   int? updateServiceId;
   LatLng? _coordinates;
   Service? highlightedService;
+  bool _showAllReviews = false;
+  List<Review> storeOwnerReviews = [];
+
+  bool get showAllReviews => _showAllReviews;
+
+  set showAllReviews(bool value) {
+    _showAllReviews = value;
+    update();
+  }
 
   List<XFile> serviceGallery = [];
 
@@ -90,29 +100,18 @@ class MyStoreController extends GetxController {
 
   Future<void> upsertStore() async {
     Store? result;
+    final store = Store(
+      id: userStore?.id,
+      name: nameController.text,
+      description: descriptionController.text,
+      governorate: governorate!,
+      picture: ImageDTO(file: storePicture!, type: ImageType.image),
+      coordinates: coordinates,
+    );
     if (userStore == null) {
-      result = await StoreRepository.find.addStore(
-        Store(
-          name: nameController.text,
-          description: descriptionController.text,
-          governorate: governorate!,
-          picture: ImageDTO(file: storePicture!, type: ImageType.image),
-          coordinates: coordinates,
-        ),
-        withBack: true,
-      );
+      result = await StoreRepository.find.addStore(store, withBack: true);
     } else {
-      result = await StoreRepository.find.updateStore(
-        Store(
-          id: userStore!.id,
-          name: nameController.text,
-          description: descriptionController.text,
-          governorate: governorate!,
-          picture: ImageDTO(file: storePicture!, type: ImageType.image),
-          coordinates: coordinates,
-        ),
-        withBack: true,
-      );
+      result = await StoreRepository.find.updateStore(store, withBack: true);
     }
     if (result != null) {
       userStore = result;

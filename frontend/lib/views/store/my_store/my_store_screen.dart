@@ -14,6 +14,8 @@ import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../../widgets/service_card.dart';
 import '../../profile/profile_screen/profile_controller.dart';
+import '../../review/all_reviews.dart';
+import '../../review/rating_overview.dart';
 import '../service_request/service_request_screen.dart';
 import 'my_store_controller.dart';
 
@@ -183,6 +185,13 @@ class MyStoreScreen extends StatelessWidget {
                             onPressed: () => controller.addService(),
                           ),
                         ],
+                        const Text('Store\'s owner rating', style: AppFonts.x15Bold),
+                        const SizedBox(height: Paddings.regular),
+                        RatingOverview(
+                          onShowAllReviews: () => Get.bottomSheet(const AllReviews(isBottomsheet: true), isScrollControlled: true),
+                          rating: controller.userStore?.owner?.rating ?? 0,
+                          reviews: controller.storeOwnerReviews,
+                        ),
                         const SizedBox(height: Paddings.exceptional),
                       ],
                     ),

@@ -187,7 +187,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                 Text('${'attachments'.tr}: ', style: AppFonts.x14Regular),
                                 CustomButtons.text(
                                   title: 'attach_files_pictures'.tr,
-                                  titleStyle: AppFonts.x14Regular,
+                                  titleStyle: AppFonts.x12Regular,
                                   onPressed: () => controller.uploadAttachments(),
                                 ),
                               ],

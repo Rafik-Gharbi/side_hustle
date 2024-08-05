@@ -9,8 +9,10 @@ import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'constants/colors.dart';
+import 'database/database_repository/booking_database_repository.dart';
 import 'database/database_repository/category_database_repository.dart';
 import 'database/database_repository/governorate_database_repository.dart';
+import 'database/database_repository/reservation_database_repository.dart';
 import 'database/database_repository/store_database_repository.dart';
 import 'database/database_repository/task_database_repository.dart';
 import 'database/database_repository/user_database_repository.dart';
@@ -23,6 +25,7 @@ import 'repositories/favorite_repository.dart';
 import 'repositories/notification_repository.dart';
 import 'repositories/params_repository.dart';
 import 'repositories/reservation_repository.dart';
+import 'repositories/review_repository.dart';
 import 'repositories/store_repository.dart';
 import 'repositories/task_repository.dart';
 import 'repositories/user_repository.dart';
@@ -278,11 +281,14 @@ class InitialBindings implements Bindings {
     Get.put(BookingRepository(), permanent: true);
     Get.put(StoreRepository(), permanent: true);
     Get.put(NotificationRepository(), permanent: true);
+    Get.put(ReviewRepository(), permanent: true);
     // Database repositories
     Get.put(UserDatabaseRepository(), permanent: true);
     Get.put(TaskDatabaseRepository(), permanent: true);
     Get.put(CategoryDatabaseRepository(), permanent: true);
     Get.put(GovernorateDatabaseRepository(), permanent: true);
     Get.put(StoreDatabaseRepository(), permanent: true);
+    Get.put(ReservationDatabaseRepository(), permanent: true);
+    Get.put(BookingDatabaseRepository(), permanent: true);
   }
 }

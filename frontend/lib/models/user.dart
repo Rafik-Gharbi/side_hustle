@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import '../controllers/main_app_controller.dart';
 import '../database/database.dart';
 import '../helpers/extensions/lat_lon_extension.dart';
+import '../helpers/helper.dart';
 import '../networking/api_base_helper.dart';
 import 'governorate.dart';
 
@@ -47,6 +48,7 @@ class User {
   Gender? gender;
   VerifyIdentityStatus isVerified;
   bool? isMailVerified;
+  double rating;
 
   User({
     this.id,
@@ -66,6 +68,7 @@ class User {
     this.isMailVerified,
     this.keepPrivacy = false,
     this.isVerified = VerifyIdentityStatus.none,
+    this.rating = 0,
   });
 
   bool get isOwner => role != null && role != Role.seeker;
@@ -98,6 +101,7 @@ class User {
         bio: json['bio'],
         isMailVerified: json['isMailVerified'],
         isVerified: json['isVerified'] != null ? VerifyIdentityStatus.fromString(json['isVerified']) : VerifyIdentityStatus.none,
+        rating: Helper.resolveDouble(json['rating']),
       );
 
   Map<String, dynamic> toJson() {

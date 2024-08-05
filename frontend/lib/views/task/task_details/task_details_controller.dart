@@ -10,6 +10,7 @@ import '../../../models/user.dart';
 import '../../../repositories/reservation_repository.dart';
 import '../../../services/authentication_service.dart';
 import '../../home/home_controller.dart';
+import '../../review/add_review/add_review_bottomsheet.dart';
 
 class TaskDetailsController extends GetxController {
   final TextEditingController noteController = TextEditingController();
@@ -61,6 +62,7 @@ class TaskDetailsController extends GetxController {
             Get.back();
             HomeController.find.init();
             MainAppController.find.resolveProfileActionRequired();
+            Get.bottomSheet(AddReviewBottomsheet(user: reservation!.user), isScrollControlled: true);
           },
         )
       : null;

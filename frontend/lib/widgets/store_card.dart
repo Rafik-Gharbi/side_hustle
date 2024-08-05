@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 
 import '../constants/colors.dart';
@@ -79,6 +80,15 @@ class StoreCard extends StatelessWidget {
                                   Text(store.governorate!.name, style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
                                 ],
                               ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: Paddings.small),
+                              child: RatingBarIndicator(
+                                rating: store.owner?.rating ?? 0,
+                                itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
+                                itemCount: 5,
+                                itemSize: 18,
+                              ),
+                            ),
                           ],
                         ),
                         // Bookmark store

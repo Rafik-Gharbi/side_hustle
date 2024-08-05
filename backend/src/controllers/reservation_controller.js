@@ -203,7 +203,7 @@ exports.listReservation = async (req, res) => {
   }
 };
 
-exports.userTasksHistory = async (req, res) => {
+exports.userReservationsHistory = async (req, res) => {
   try {
     let userFound = await User.findByPk(req.decoded.id);
     if (!userFound) {

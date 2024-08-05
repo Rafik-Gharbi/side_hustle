@@ -20,8 +20,11 @@ class BookingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool highlighted = false;
+    bool isInitialized = false;
+
     return StatefulBuilder(builder: (context, setState) {
-      if (context.mounted) Future.delayed(const Duration(microseconds: 600), () => setState(() => highlighted = isHighlited));
+      if (context.mounted && !isInitialized) Future.delayed(const Duration(microseconds: 600), () => setState(() => highlighted = isHighlited));
+      isInitialized = true;
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
         child: ListTile(
@@ -49,7 +52,7 @@ class BookingCard extends StatelessWidget {
                   ),
                 ],
               ),
-              // TODO Add task owner review for the user if task is finished
+              // TODO Add task owner review for the user if service is finished
             ],
           ),
         ),

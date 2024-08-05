@@ -24,7 +24,7 @@ class NotificationModel {
         title: json['title'],
         body: json['body'],
         type: NotificationType.values.singleWhere((element) => element.name == json['type']),
-        date: DateTime.tryParse(json['createdAt']),
+        date: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
         seen: json['seen'] == 1,
         action: json['action'],
       );

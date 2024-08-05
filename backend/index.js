@@ -18,6 +18,7 @@ require("./src/routes/reservation_route")(app);
 require("./src/routes/booking_route")(app);
 require("./src/routes/favorite_route")(app);
 require("./src/routes/chat_route")(app);
+require("./src/routes/review_route")(app);
 require("./src/routes/notification_route")(app);
 
 // Create HTTP server

@@ -35,6 +35,7 @@ final Map<String, String> enUs = <String, String>{
   'notes': 'Notes',
   'gallery': 'Gallery',
   'store': 'Store',
+  'all_reviews': 'All Reviews',
   'booked_services': 'Booked services',
   'check_proposal': 'Check proposals',
   'check_request': 'Check requests',

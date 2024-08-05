@@ -141,12 +141,9 @@ class TaskDetailsScreen extends StatelessWidget {
                               title: task.owner.name ?? 'User',
                               titleStyle: AppFonts.x14Bold.copyWith(color: kNeutralColor),
                               onPressed: () => Get.bottomSheet(
-                                Padding(
-                                  padding: EdgeInsets.only(top: Get.height * 0.4),
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-                                    child: UserProfileScreen(user: task.owner),
-                                  ),
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                                  child: UserProfileScreen(user: task.owner),
                                 ),
                                 isScrollControlled: true,
                               ),

@@ -61,15 +61,17 @@ class TaskCard extends StatelessWidget {
                     color: kSelectedColor,
                   ),
                 ],
-                child: buildTaskCard(openContainer),
+                child: buildTaskCard(openContainer, context),
               )
-            : buildTaskCard(openContainer),
+            : buildTaskCard(openContainer, context),
       );
 
-  Widget buildTaskCard(VoidCallback openContainer) {
+  Widget buildTaskCard(VoidCallback openContainer, BuildContext context) {
     bool highlightTile = false;
-    return StatefulBuilder(builder: (context, setState) {
-      if (context.mounted) Future.delayed(const Duration(milliseconds: 600), () => setState(() => highlightTile = isHighlighted));
+    bool isInitialized = false;
+    return StatefulBuilder(builder: (_, setState) {
+      if (context.mounted && !isInitialized) Future.delayed(const Duration(milliseconds: 600), () => context.mounted ? setState(() => highlightTile = isHighlighted) : null);
+      isInitialized = true;
       return Padding(
         padding: EdgeInsets.only(bottom: dense ? 0 : Paddings.regular),
         child: ListTile(

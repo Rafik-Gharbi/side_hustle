@@ -30,9 +30,9 @@ module.exports = (app) => {
 
   // list own reservation via JWT
   router.get(
-    "/tasks-history",
+    "/reservations-history",
     tokenVerification,
-    reservationController.userTasksHistory
+    reservationController.userReservationsHistory
   );
 
   // list reservation by task

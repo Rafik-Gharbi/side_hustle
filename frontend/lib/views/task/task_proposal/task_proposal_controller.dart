@@ -7,6 +7,7 @@ import '../../../models/reservation.dart';
 import '../../../models/task.dart';
 import '../../../repositories/reservation_repository.dart';
 import '../../../services/navigation_history_observer.dart';
+import '../../review/add_review/add_review_bottomsheet.dart';
 
 class TaskProposalController extends GetxController {
   List<Reservation> reservationList = [];
@@ -48,6 +49,7 @@ class TaskProposalController extends GetxController {
           await ReservationRepository.find.updateReservationStatus(reservation, RequestStatus.finished);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
           MainAppController.find.resolveProfileActionRequired();
+          Get.bottomSheet(AddReviewBottomsheet(user: reservation.user), isScrollControlled: true);
         },
       );
 }
