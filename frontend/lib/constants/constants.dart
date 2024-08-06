@@ -2,9 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../models/category.dart';
 import 'colors.dart';
+
+const LatLng defaultLocation = LatLng(34.7403, 10.7604);
 
 const String defaultPrefix = '+216';
 const String defaultIsoCode = 'TN';

@@ -106,6 +106,7 @@ exports.getHomeTasks = async (req, res) => {
 // filter tasks
 exports.filterTasks = async (req, res) => {
   try {
+    const withCoordinates = req.query.withCoordinates;
     const searchQuery = req.query.searchQuery ?? "";
     const priceMin = req.query.priceMin;
     const priceMax = req.query.priceMax;
@@ -116,13 +117,32 @@ exports.filterTasks = async (req, res) => {
     let nearby = req.query.nearby;
     let taskId = req.query.taskId;
 
-    const pageQuery = page ?? 1;
+    const pageQuery = !page || page === "0" ? 1 : page;
     const limitQuery = limit ? parseInt(limit) : 9;
     const offset = (pageQuery - 1) * limit;
 
     if (categoryId == -1) categoryId = undefined;
     if (nearby <= 1) nearby = undefined;
 
+    const queryCoordinates = `SELECT task.*, 
+      user.id AS user_id,
+      user.name,
+      user.email,
+      user.gender,
+      user.birthdate,
+      user.picture,
+      user.governorate_id as user_governorate_id,
+      user.phone_number,
+      user.role FROM task JOIN user ON task.owner_id = user.id 
+      WHERE (task.title LIKE :searchQuery OR task.description LIKE :searchQuery)
+      AND task.coordinates IS NOT NULL
+      ${categoryId ? `AND task.category_id = :categoryId` : ``}
+      ${
+        priceMin && priceMax
+          ? `AND task.price >= :priceMin AND task.price <= :priceMax`
+          : ``
+      }
+    ;`;
     const query = `SELECT task.*, 
       user.id AS user_id,
       user.name,
@@ -141,19 +161,22 @@ exports.filterTasks = async (req, res) => {
           : ``
       }
       LIMIT :limit OFFSET :offset
-;`;
-    const tasks = await sequelize.query(query, {
-      type: sequelize.QueryTypes.SELECT,
-      replacements: {
-        searchQuery: `%${searchQuery}%`,
-        categoryId: categoryId,
-        priceMin: priceMin,
-        priceMax: priceMax,
-        taskId: taskId,
-        limit: limitQuery,
-        offset: offset,
-      },
-    });
+    ;`;
+    const tasks = await sequelize.query(
+      withCoordinates ? queryCoordinates : query,
+      {
+        type: sequelize.QueryTypes.SELECT,
+        replacements: {
+          searchQuery: `%${searchQuery}%`,
+          categoryId: categoryId,
+          priceMin: priceMin,
+          priceMax: priceMax,
+          taskId: taskId,
+          limit: limitQuery,
+          offset: offset,
+        },
+      }
+    );
     const formattedList = await populateTasks(tasks, currentUserId);
     return res.status(200).json({ formattedList });
   } catch (error) {

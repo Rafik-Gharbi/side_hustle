@@ -1,4 +1,5 @@
 const { User } = require("../models/user_model");
+const { Review } = require("../models/review_model");
 const { Governorate } = require("../models/governorate_model");
 const { VerificationCode } = require("../models/verification_code");
 const { Op } = require("sequelize");
@@ -368,6 +369,43 @@ exports.getUserById = async (req, res) => {
     }
     const userFound = await User.findByPk(id);
 
+    const userReviews = await Review.findAll({
+      where: { user_id: userFound.id },
+    });
+
+    let reviews = [];
+    reviews = await Promise.all(
+      userReviews.map(async (review) => {
+        const reviewee = await User.findOne({
+          where: { id: review.reviewee_id },
+        });
+        return {
+          id: review.id,
+          message: review.message,
+          rating: review.rating,
+          reviewee: {
+            id: reviewee.id,
+            name: reviewee.name,
+            governorate_id: reviewee.governorate_id,
+            picture: reviewee.picture,
+            isVerified: reviewee.isVerified,
+          },
+          user: {
+            id: userFound.id,
+            name: userFound.name,
+            governorate_id: userFound.governorate_id,
+            picture: userFound.picture,
+            isVerified: userFound.isVerified,
+          },
+          quality: review.quality,
+          createdAt: review.createdAt,
+          fees: review.fees,
+          punctuality: review.punctuality,
+          politeness: review.politeness,
+        };
+      })
+    );
+
     return res.status(200).json({
       user: {
         id: userFound.id,
@@ -376,6 +414,7 @@ exports.getUserById = async (req, res) => {
         picture: userFound.picture,
         isVerified: userFound.isVerified,
       },
+      reviews: reviews,
     });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);

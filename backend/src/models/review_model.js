@@ -9,7 +9,7 @@ const Review = sequelize.define(
     rating: { type: Sequelize.DOUBLE, allowNull: false },
     quality: { type: Sequelize.DOUBLE },
     fees: { type: Sequelize.DOUBLE },
-    puctuality: { type: Sequelize.DOUBLE },
+    punctuality: { type: Sequelize.DOUBLE },
     politeness: { type: Sequelize.DOUBLE },
   },
   {

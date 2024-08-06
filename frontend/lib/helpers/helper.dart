@@ -16,6 +16,7 @@ import '../constants/icon_map.dart';
 import '../constants/shared_preferences_keys.dart';
 import '../constants/sizes.dart';
 import '../models/review.dart';
+import '../models/store.dart';
 import '../repositories/user_repository.dart';
 import '../services/authentication_service.dart';
 import '../services/shared_preferences.dart';
@@ -431,5 +432,16 @@ class Helper {
     double percentage = reviewCount > 0 ? (reviewCount / reviews.length) : 0;
 
     return percentage;
+  }
+
+  static double calculateRating(List<Review> userReviews) =>
+      userReviews.isEmpty ? 0 : userReviews.map((e) => e.rating).reduce((value, element) => value + element) / userReviews.length;
+
+  static double getStoreCheapestService(Store store) {
+    double cheapestService = 9999;
+    for (var element in store.services!) {
+      if ((element.price ?? 0) < cheapestService) cheapestService = element.price ?? 0;
+    }
+    return cheapestService;
   }
 }

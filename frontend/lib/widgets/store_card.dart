@@ -17,7 +17,9 @@ import 'custom_buttons.dart';
 class StoreCard extends StatelessWidget {
   final Store store;
   final void Function()? onRemoveFavorite;
-  const StoreCard({super.key, required this.store, this.onRemoveFavorite});
+  final bool isDense;
+
+  const StoreCard({super.key, required this.store, this.onRemoveFavorite, this.isDense = false});
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +28,11 @@ class StoreCard extends StatelessWidget {
       transitionDuration: const Duration(milliseconds: 600),
       openBuilder: (_, __) => MyStoreScreen(store: store),
       closedBuilder: (_, openContainer) => Padding(
-        padding: const EdgeInsets.only(bottom: Paddings.regular),
+        padding: EdgeInsets.only(bottom: isDense ? 0 : Paddings.regular),
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
           shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
-          tileColor: kNeutralLightOpacityColor,
+          tileColor: isDense ? kNeutralLightColor : kNeutralLightOpacityColor,
           splashColor: kPrimaryOpacityColor,
           onTap: openContainer,
           minVerticalPadding: Paddings.regular,
@@ -83,7 +85,7 @@ class StoreCard extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(top: Paddings.small),
                               child: RatingBarIndicator(
-                                rating: store.owner?.rating ?? 0,
+                                rating: store.rating,
                                 itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
                                 itemCount: 5,
                                 itemSize: 18,
@@ -122,7 +124,7 @@ class StoreCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text('Has ${store.services!.length} services', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
-                            Text('Starting from ${Helper.formatAmount(getStoreCheapestService(store))} TND', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                            Text('Starting from ${Helper.formatAmount(Helper.getStoreCheapestService(store))} TND', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
                           ],
                         ),
                       ),
@@ -134,13 +136,5 @@ class StoreCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  double getStoreCheapestService(Store store) {
-    double cheapestService = 9999;
-    for (var element in store.services!) {
-      if ((element.price ?? 0) < cheapestService) cheapestService = element.price ?? 0;
-    }
-    return cheapestService;
   }
 }

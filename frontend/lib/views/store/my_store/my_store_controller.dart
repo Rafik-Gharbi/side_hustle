@@ -10,6 +10,7 @@ import '../../../helpers/image_picker_by_platform/image_picker_platform.dart';
 import '../../../models/booking.dart';
 import '../../../models/category.dart';
 import '../../../models/dto/image_dto.dart';
+import '../../../models/dto/store_review_dto.dart';
 import '../../../models/governorate.dart';
 import '../../../models/review.dart';
 import '../../../models/service.dart';
@@ -37,7 +38,7 @@ class MyStoreController extends GetxController {
   final TextEditingController serviceTimeFromController = TextEditingController();
   final TextEditingController serviceTimeToController = TextEditingController();
   XFile? storePicture;
-  Store? userStore;
+  Store? currentStore;
   bool isLoading = true;
   Governorate? _governorate;
   Category? _category;
@@ -81,8 +82,15 @@ class MyStoreController extends GetxController {
   }
 
   Future<void> init({Store? store}) async {
-    userStore = store ?? await StoreRepository.find.getUserStore();
-    if (Get.arguments != null) highlightedService = userStore?.services?.cast<Service?>().singleWhere((element) => element?.id == Get.arguments, orElse: () => null);
+    StoreReviewDTO? result;
+    if (store != null) {
+      result = await StoreRepository.find.getStoreById(store.id);
+    } else {
+      result = await StoreRepository.find.getUserStore();
+    }
+    currentStore = result?.store;
+    storeOwnerReviews = result?.reviews ?? [];
+    if (Get.arguments != null) highlightedService = currentStore?.services?.cast<Service?>().singleWhere((element) => element?.id == Get.arguments, orElse: () => null);
     if (highlightedService != null) {
       Future.delayed(const Duration(milliseconds: 1600), () {
         highlightedService = null;
@@ -101,20 +109,20 @@ class MyStoreController extends GetxController {
   Future<void> upsertStore() async {
     Store? result;
     final store = Store(
-      id: userStore?.id,
+      id: currentStore?.id,
       name: nameController.text,
       description: descriptionController.text,
       governorate: governorate!,
       picture: ImageDTO(file: storePicture!, type: ImageType.image),
       coordinates: coordinates,
     );
-    if (userStore == null) {
+    if (currentStore == null) {
       result = await StoreRepository.find.addStore(store, withBack: true);
     } else {
       result = await StoreRepository.find.updateStore(store, withBack: true);
     }
     if (result != null) {
-      userStore = result;
+      currentStore = result;
       update();
     }
   }
@@ -135,12 +143,12 @@ class MyStoreController extends GetxController {
       timeEstimationTo: serviceTimeToController.text.isNotEmpty ? double.tryParse(serviceTimeToController.text) : null,
     );
     if (!isUpdate) {
-      result = await StoreRepository.find.addService(service, userStore!, withBack: true);
+      result = await StoreRepository.find.addService(service, currentStore!, withBack: true);
     } else {
-      result = await StoreRepository.find.updateService(service, userStore!, withBack: true);
+      result = await StoreRepository.find.updateService(service, currentStore!, withBack: true);
     }
     if (result != null) {
-      userStore!.services = [...userStore!.services?.where((element) => element.id != result?.id).toList() ?? [], result];
+      currentStore!.services = [...currentStore!.services?.where((element) => element.id != result?.id).toList() ?? [], result];
       update();
     }
   }
@@ -182,10 +190,10 @@ class MyStoreController extends GetxController {
   }
 
   void editStore() {
-    nameController.text = userStore?.name ?? '';
-    descriptionController.text = userStore?.description ?? '';
-    governorate = userStore?.governorate;
-    storePicture = userStore?.picture?.file;
+    nameController.text = currentStore?.name ?? '';
+    descriptionController.text = currentStore?.description ?? '';
+    governorate = currentStore?.governorate;
+    storePicture = currentStore?.picture?.file;
     createStore(update: true);
   }
 
@@ -203,7 +211,7 @@ class MyStoreController extends GetxController {
         title: 'Are you sure you want to delete the service "${service.name}"!',
         onConfirm: () async {
           final result = await StoreRepository.find.deleteService(service);
-          if (result) userStore!.services!.removeWhere((element) => element.id == service.id);
+          if (result) currentStore!.services!.removeWhere((element) => element.id == service.id);
           update();
         },
       );
@@ -248,8 +256,8 @@ class MyStoreController extends GetxController {
   }
 
   void openStoreItinerary() {
-    if (userStore?.coordinates == null) return;
-    final String googleMapslocationUrl = 'https://www.google.com/maps/search/?api=1&query=${userStore!.coordinates!.latitude},${userStore!.coordinates!.longitude}';
+    if (currentStore?.coordinates == null) return;
+    final String googleMapslocationUrl = 'https://www.google.com/maps/search/?api=1&query=${currentStore!.coordinates!.latitude},${currentStore!.coordinates!.longitude}';
     Helper.launchUrlHelper(Uri.encodeFull(googleMapslocationUrl));
   }
 }

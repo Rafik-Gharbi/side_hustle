@@ -55,7 +55,7 @@ class Task {
                 ? double.parse(json['price'])
                 : json['price'],
         delivrables: json['delivrables'],
-        coordinates: json['coordinates'],
+        coordinates: json['coordinates'] != null ? (json['coordinates'] as String).fromString() : null,
         distance: json['distance'] != null ? Helper.degreesToMeters(json['distance']).toStringAsFixed(1) : null,
         attachments: json['attachments'] != null && (json['attachments'] as List).isNotEmpty
             ? (json['attachments'] as List).map((e) => ImageDTO.fromJson(e)).toList()

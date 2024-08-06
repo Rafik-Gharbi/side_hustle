@@ -436,6 +436,7 @@ async function populateOneTask(task, currentUserId) {
     delivrables: task.delivrables,
     governorate_id: task.governorate_id,
     category_id: task.category_id,
+    coordinates: task.coordinates,
     owner: owner,
     attachments: taskAttachments.length == 0 ? [] : taskAttachments,
     isFavorite:

@@ -4,6 +4,7 @@ import '../constants/constants.dart';
 import '../controllers/main_app_controller.dart';
 import '../database/database_repository/store_database_repository.dart';
 import '../helpers/helper.dart';
+import '../models/dto/store_review_dto.dart';
 import '../models/filter_model.dart';
 import '../models/service.dart';
 import '../models/store.dart';
@@ -13,14 +14,16 @@ import '../services/logger_service.dart';
 class StoreRepository extends GetxService {
   static StoreRepository get find => Get.find<StoreRepository>();
 
-  Future<List<Store>?> filterStores({int page = 0, int limit = kLoadMoreLimit, String searchQuery = '', FilterModel? filter}) async {
+  Future<List<Store>?> filterStores({int page = 0, int limit = kLoadMoreLimit, String searchQuery = '', FilterModel? filter, bool withCoordinates = false}) async {
     try {
       List<Store>? stores;
       if (MainAppController.find.isConnected) {
         final result = await ApiBaseHelper().request(
           RequestType.get,
           sendToken: true,
-          '/store/filter?page=$page&limit=$limit&searchQuery=$searchQuery${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}',
+          withCoordinates
+              ? '/store/filter?withCoordinates=$withCoordinates${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}'
+              : '/store/filter?page=$page&limit=$limit&searchQuery=$searchQuery${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}',
         );
         stores = (result['formattedList'] as List).map((e) => Store.fromJson(e)).toList();
       } else {
@@ -75,10 +78,10 @@ class StoreRepository extends GetxService {
     return null;
   }
 
-  Future<Store?> getUserStore() async {
+  Future<StoreReviewDTO?> getUserStore() async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/store/user');
-      return result['store'] != null ? Store.fromJson(result['store']) : null;
+      return result != null ? StoreReviewDTO.fromJson(result) : null;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getUserStore:\n$e');
     }
@@ -129,5 +132,15 @@ class StoreRepository extends GetxService {
       LoggerService.logger?.e('Error occured in deleteService:\n$e');
     }
     return false;
+  }
+
+  Future<StoreReviewDTO?> getStoreById(int? id) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/store/id/$id');
+      return result != null ? StoreReviewDTO.fromJson(result) : null;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getUserStore:\n$e');
+    }
+    return null;
   }
 }

@@ -10,34 +10,38 @@ module.exports = (app) => {
   let router = require("express").Router();
 
   router.get("/user", tokenVerification, storeController.getUserStore);
+
+  router.get("/id/:id", storeController.getStoreById);
+
   router.get(
     "/filter",
     tokenVerificationOptional,
     storeController.filterStores
   );
+
   router.post(
     "/",
     tokenVerification,
     storeImageUpload,
     storeController.addStore
   );
+
   router.post(
     "/service",
     tokenVerification,
     storeImageUpload,
     storeController.addService
   );
+
   router.put(
     "/service",
     tokenVerification,
     storeImageUpload,
     storeController.updateService
   );
-  router.delete(
-    "/service",
-    tokenVerification,
-    storeController.deleteService
-  );
+
+  router.delete("/service", tokenVerification, storeController.deleteService);
+
   //   router.get(
   //     "/getAll",
   //     tokenVerification,
@@ -48,5 +52,6 @@ module.exports = (app) => {
   //   router.get("/:id/:location", storeController.getCalendarPropertyId);
   //   router.post("/get-price", storeController.getPriceProperty);
   //   router.delete("/remove/:id", storeController.deleteProperty);
+
   app.use("/store", router);
 };

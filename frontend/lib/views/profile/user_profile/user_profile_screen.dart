@@ -102,7 +102,7 @@ class UserProfileScreen extends StatelessWidget {
                                       ),
                                       const SizedBox(height: Paddings.exceptional),
                                       if (controller.showAllReviews)
-                                        const AllReviews()
+                                        AllReviews(reviews: controller.userReviews)
                                       else
                                         RatingOverview(
                                           onShowAllReviews: () => controller.showAllReviews = true,

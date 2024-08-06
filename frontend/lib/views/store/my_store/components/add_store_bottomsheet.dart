@@ -38,7 +38,7 @@ class AddStoreBottomsheet extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
                               child: isUpdate
-                                  ? Image.network(controller.userStore!.picture!.file.path, height: 199, width: Get.width - 1, fit: BoxFit.cover)
+                                  ? Image.network(controller.currentStore!.picture!.file.path, height: 199, width: Get.width - 1, fit: BoxFit.cover)
                                   : Image.file(File(controller.storePicture!.path), height: 198, width: Get.width - 1, fit: BoxFit.cover),
                             ),
                           )

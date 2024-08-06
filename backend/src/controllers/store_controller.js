@@ -11,10 +11,12 @@ const {
 const { Service } = require("../models/service_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
 const { populateServices } = require("../sql/sql_request");
+const { Review } = require("../models/review_model");
 
 // filter stores
 exports.filterStores = async (req, res) => {
   try {
+    const withCoordinates = req.query.withCoordinates;
     const searchQuery = req.query.searchQuery ?? "";
     let categoryId = req.query.categoryId;
     const priceMin = req.query.priceMin;
@@ -24,7 +26,7 @@ exports.filterStores = async (req, res) => {
     const limit = req.query.limit;
     const currentUserId = req.decoded?.id;
 
-    const pageQuery = page ?? 1;
+    const pageQuery = !page || page === "0" ? 1 : page;
     const limitQuery = limit ? parseInt(limit) : 9;
     const offset = (pageQuery - 1) * limit;
 
@@ -35,6 +37,30 @@ exports.filterStores = async (req, res) => {
     // }
 
     if (categoryId == -1) categoryId = undefined;
+
+    const queryCoordinates = `SELECT store.*, 
+      user.id AS user_id,
+      user.name AS user_name,
+      user.email,
+      user.gender,
+      user.birthdate,
+      user.picture,
+      user.governorate_id as user_governorate_id,
+      user.phone_number,
+      user.role
+      FROM store 
+      JOIN user ON store.owner_id = user.id 
+      JOIN service ON service.store_id = store.id 
+      WHERE (store.name LIKE :searchQuery OR store.description LIKE :searchQuery)
+      AND store.coordinates IS NOT NULL
+      ${categoryId ? `AND service.category_id = :categoryId` : ``}
+      ${
+        priceMin && priceMax
+          ? `AND service.price >= :priceMin AND service.price <= :priceMax`
+          : ``
+      }
+      GROUP BY store.id
+    ;`;
 
     const query = `SELECT store.*, 
       user.id AS user_id,
@@ -58,18 +84,21 @@ exports.filterStores = async (req, res) => {
       }
       GROUP BY store.id
       LIMIT :limit OFFSET :offset
-;`;
-    const stores = await sequelize.query(query, {
-      type: sequelize.QueryTypes.SELECT,
-      replacements: {
-        searchQuery: `%${searchQuery}%`,
-        categoryId: categoryId,
-        priceMin: priceMin,
-        priceMax: priceMax,
-        limit: limitQuery,
-        offset: offset,
-      },
-    });
+    ;`;
+    const stores = await sequelize.query(
+      withCoordinates ? queryCoordinates : query,
+      {
+        type: sequelize.QueryTypes.SELECT,
+        replacements: {
+          searchQuery: `%${searchQuery}%`,
+          categoryId: categoryId,
+          priceMin: priceMin,
+          priceMax: priceMax,
+          limit: limitQuery,
+          offset: offset,
+        },
+      }
+    );
     const formattedList = await Promise.all(
       stores.map(async (row) => {
         let owner = {
@@ -84,9 +113,19 @@ exports.filterStores = async (req, res) => {
           where: { store_id: row.id },
         });
         const services = await populateServices(foundServices);
-         
+
         const isFavorite = await checkStoreFavorite(row, currentUserId);
 
+        const storeOwnerReviews = await Review.findAll({
+          where: { user_id: owner.id },
+        });
+        const storeOwnerRating =
+          storeOwnerReviews.length > 0
+            ? storeOwnerReviews
+                .map((review) => review.rating)
+                .reduce((total, rating) => total + rating, 0) /
+              storeOwnerReviews.length
+            : 0;
         return {
           id: row.id,
           price: row.price,
@@ -98,6 +137,7 @@ exports.filterStores = async (req, res) => {
           owner: owner,
           services,
           isFavorite,
+          rating: storeOwnerRating,
         };
       })
     );
@@ -395,6 +435,43 @@ exports.getUserStore = async (req, res) => {
       where: { store_id: existStore.id },
     });
     const services = await populateServices(foundServices);
+
+    const storeReviews = await Review.findAll({
+      where: { user_id: existStore.owner_id },
+    });
+    let reviews = [];
+    reviews = await Promise.all(
+      storeReviews.map(async (review) => {
+        const reviewee = await User.findOne({
+          where: { id: review.reviewee_id },
+        });
+        return {
+          id: review.id,
+          message: review.message,
+          rating: review.rating,
+          reviewee: {
+            id: reviewee.id,
+            name: reviewee.name,
+            governorate_id: reviewee.governorate_id,
+            picture: reviewee.picture,
+            isVerified: reviewee.isVerified,
+          },
+          user: {
+            id: user.id,
+            name: user.name,
+            governorate_id: user.governorate_id,
+            picture: user.picture,
+            isVerified: user.isVerified,
+          },
+          quality: review.quality,
+          createdAt: review.createdAt,
+          fees: review.fees,
+          punctuality: review.punctuality,
+          politeness: review.politeness,
+        };
+      })
+    );
+
     return res.status(200).json({
       store: {
         id: existStore.id,
@@ -406,6 +483,89 @@ exports.getUserStore = async (req, res) => {
         services,
         owner: user,
       },
+      reviews: reviews,
+    });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// get user's store
+exports.getStoreById = async (req, res) => {
+  try {
+    const ID = req.params.id;
+    const existStore = await Store.findOne({
+      where: { id: ID },
+    });
+    if (!existStore) {
+      return res.status(200).json({ store: null });
+    }
+    const user = await User.findOne({ where: { id: existStore.owner_id } });
+    if (!user) {
+      return res.status(404).json({ message: "user_not_found" });
+    }
+    const foundServices = await Service.findAll({
+      where: { store_id: existStore.id },
+    });
+    const services = await populateServices(foundServices);
+
+    const storeReviews = await Review.findAll({
+      where: { user_id: existStore.owner_id },
+    });
+    let reviews = [];
+    reviews = await Promise.all(
+      storeReviews.map(async (review) => {
+        const reviewee = await User.findOne({
+          where: { id: review.reviewee_id },
+        });
+        return {
+          id: review.id,
+          message: review.message,
+          rating: review.rating,
+          reviewee: {
+            id: reviewee.id,
+            name: reviewee.name,
+            governorate_id: reviewee.governorate_id,
+            picture: reviewee.picture,
+            isVerified: reviewee.isVerified,
+          },
+          user: {
+            id: user.id,
+            name: user.name,
+            governorate_id: user.governorate_id,
+            picture: user.picture,
+            isVerified: user.isVerified,
+          },
+          quality: review.quality,
+          createdAt: review.createdAt,
+          fees: review.fees,
+          punctuality: review.punctuality,
+          politeness: review.politeness,
+        };
+      })
+    );
+    const storeOwnerRating =
+      reviews.length > 0
+        ? reviews
+            .map((review) => review.rating)
+            .reduce((total, rating) => total + rating, 0) / reviews.length
+        : 0;
+
+    return res.status(200).json({
+      store: {
+        id: existStore.id,
+        name: existStore.name,
+        description: existStore.description,
+        coordinates: existStore.coordinates,
+        picture: existStore.picture,
+        governorate_id: existStore.governorate_id,
+        services,
+        owner: user,
+        rating: storeOwnerRating,
+      },
+      reviews: reviews,
     });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);

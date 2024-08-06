@@ -8,6 +8,7 @@ import '../models/category.dart';
 import '../models/dto/login_dto.dart';
 import '../models/dto/profile_dto.dart';
 import '../models/dto/user_approve_dto.dart';
+import '../models/dto/user_review_dto.dart';
 import '../models/user.dart';
 import '../networking/api_base_helper.dart';
 import '../networking/api_exceptions.dart';
@@ -154,10 +155,10 @@ class UserRepository extends GetxService {
     }
   }
 
-  Future<User?> getUserById(int id) async {
+  Future<UserReviewDTO?> getUserById(int id) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/user/user-id?id=$id', sendToken: true);
-      return User.fromJson(result['user']);
+      return UserReviewDTO.fromJson(result);
     } catch (e) {
       LoggerService.logger?.e('Error occurred in getUserById:\n$e');
       return null;

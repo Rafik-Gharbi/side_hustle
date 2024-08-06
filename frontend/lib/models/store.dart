@@ -20,6 +20,7 @@ class Store {
   final User? owner;
   List<Service>? services;
   bool isFavorite;
+  double rating;
 
   Store({
     this.id,
@@ -31,6 +32,7 @@ class Store {
     this.services,
     this.owner,
     this.isFavorite = false,
+    this.rating = 0,
   });
 
   factory Store.fromJson(Map<String, dynamic> json) => Store(
@@ -45,6 +47,7 @@ class Store {
         services: json['services'] != null ? (json['services'] as List).map((e) => Service.fromJson(e)).toList() : [],
         owner: json['owner'] != null ? User.fromJson(json['owner']) : null,
         isFavorite: json['isFavorite'] ?? false,
+        rating: json['rating'] ?? 0,
       );
 
   Map<String, dynamic> toJson() {

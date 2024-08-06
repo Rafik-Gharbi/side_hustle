@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../helpers/helper.dart';
 import '../../../models/review.dart';
 import '../../../models/user.dart';
 import '../../../repositories/user_repository.dart';
@@ -37,7 +38,11 @@ class UserProfileController extends GetxController {
   Future<void> _init() async {
     if (providedUser?.id != null && !_initialized) {
       _initialized = true;
-      user = await UserRepository.find.getUserById(providedUser!.id!);
+      final result = await UserRepository.find.getUserById(providedUser!.id!);
+      user = result?.user;
+      userReviews = result?.reviews ?? [];
+      userReviewers = userReviews.length;
+      user?.rating = Helper.calculateRating(userReviews);
       isLoading = false;
       update();
     }

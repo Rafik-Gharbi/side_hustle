@@ -17,6 +17,7 @@ import '../../widgets/loading_card_effect.dart';
 import '../../widgets/loading_request.dart';
 import '../../widgets/reservation_card.dart';
 import '../../widgets/task_card.dart';
+import '../map/map_screen.dart';
 import '../notifications/notification_screen.dart';
 import '../profile/account/login_dialog.dart';
 import '../settings/settings_screen.dart';
@@ -91,6 +92,10 @@ class HomeScreen extends StatelessWidget {
                                             controller.update();
                                           }),
                                         ),
+                                  CustomButtons.icon(
+                                    icon: const Icon(Icons.map_outlined),
+                                    onPressed: () => Get.bottomSheet(const MapScreen(isTasks: true), isScrollControlled: true),
+                                  ),
                                   CustomButtons.icon(
                                     icon: const Icon(Icons.settings_outlined),
                                     onPressed: () => Get.toNamed(SettingsScreen.routeName),

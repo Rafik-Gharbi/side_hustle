@@ -29,7 +29,7 @@ class MyStoreScreen extends StatelessWidget {
         child: GetBuilder<MyStoreController>(
           init: MyStoreController(store: store),
           builder: (controller) {
-            final isOwner = controller.userStore?.owner?.id == AuthenticationService.find.jwtUserData?.id;
+            final isOwner = controller.currentStore?.owner?.id == AuthenticationService.find.jwtUserData?.id;
             return store != null
                 ? Scaffold(
                     backgroundColor: kNeutralColor100,
@@ -44,7 +44,7 @@ class MyStoreScreen extends StatelessWidget {
                           icon: const Icon(Icons.edit_outlined),
                           onPressed: controller.editStore,
                         ),
-                      if (controller.userStore?.coordinates != null)
+                      if (controller.currentStore?.coordinates != null)
                         CustomButtons.icon(
                           icon: const Icon(Icons.near_me_outlined),
                           onPressed: controller.openStoreItinerary,
@@ -59,7 +59,7 @@ class MyStoreScreen extends StatelessWidget {
   Widget buildStoreContent(MyStoreController controller, bool isOwner) {
     return LoadingRequest(
       isLoading: controller.isLoading,
-      child: controller.userStore == null
+      child: controller.currentStore == null && isOwner
           ? Padding(
               padding: const EdgeInsets.all(Paddings.large),
               child: Column(
@@ -92,7 +92,7 @@ class MyStoreScreen extends StatelessWidget {
                         children: [
                           CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
                           Text('store'.tr, style: AppFonts.x15Bold),
-                          if (controller.userStore?.coordinates != null)
+                          if (controller.currentStore?.coordinates != null)
                             CustomButtons.icon(
                               icon: const Icon(Icons.near_me_outlined),
                               onPressed: controller.openStoreItinerary,
@@ -102,8 +102,8 @@ class MyStoreScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  if (controller.userStore?.picture?.file.path != null)
-                    Image.network(controller.userStore!.picture!.file.path, height: 200, width: Get.width, fit: BoxFit.cover)
+                  if (controller.currentStore?.picture?.file.path != null)
+                    Image.network(controller.currentStore!.picture!.file.path, height: 200, width: Get.width, fit: BoxFit.cover)
                   else if (!isOwner)
                     DecoratedBox(
                       decoration: BoxDecoration(color: kNeutralLightOpacityColor),
@@ -134,33 +134,33 @@ class MyStoreScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: Paddings.small),
-                        Text(controller.userStore?.name ?? 'User store', style: AppFonts.x18Bold),
+                        Text(controller.currentStore?.name ?? 'User store', style: AppFonts.x18Bold),
                         const SizedBox(height: Paddings.small),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(Icons.pin_drop_outlined, size: 14),
                             const SizedBox(width: Paddings.regular),
-                            Text(controller.userStore?.governorate?.name ?? 'City', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                            Text(controller.currentStore?.governorate?.name ?? 'City', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                           ],
                         ),
                         const SizedBox(height: Paddings.extraLarge),
                         const Text('Store description:', style: AppFonts.x15Bold),
                         const SizedBox(height: Paddings.regular),
-                        Text(controller.userStore?.description ?? '', style: AppFonts.x14Regular, softWrap: true),
+                        Text(controller.currentStore?.description ?? '', style: AppFonts.x14Regular, softWrap: true),
                         const SizedBox(height: Paddings.exceptional),
-                        if (controller.userStore?.services?.isNotEmpty ?? false) ...[
+                        if (controller.currentStore?.services?.isNotEmpty ?? false) ...[
                           const Text('Store services', style: AppFonts.x15Bold),
                           const SizedBox(height: Paddings.large),
                           ListView.separated(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: controller.userStore?.services?.length ?? 0,
+                            itemCount: controller.currentStore?.services?.length ?? 0,
                             separatorBuilder: (context, index) => const SizedBox(height: Paddings.regular),
                             itemBuilder: (context, index) {
-                              final service = controller.userStore?.services![index];
+                              final service = controller.currentStore?.services![index];
                               return ServiceCard(
-                                store: store ?? controller.userStore!,
+                                store: store ?? controller.currentStore!,
                                 service: service!,
                                 requests: service.requests,
                                 onBookService: () => isOwner
@@ -169,7 +169,7 @@ class MyStoreScreen extends StatelessWidget {
                                         ? Buildables.requestBottomsheet(noteController: controller.noteController, onSubmit: () => controller.bookService(service))
                                             .then((value) => controller.clearRequestFormFields())
                                         : Helper.snackBar(message: 'login_express_interest_msg'.tr),
-                                isOwner: AuthenticationService.find.jwtUserData?.id == controller.userStore?.owner?.id,
+                                isOwner: AuthenticationService.find.jwtUserData?.id == controller.currentStore?.owner?.id,
                                 onDeleteService: () => controller.deleteService(service),
                                 onEditService: () => controller.editService(service),
                                 isHighlighted: controller.highlightedService?.id == service.id,
@@ -188,8 +188,8 @@ class MyStoreScreen extends StatelessWidget {
                         const Text('Store\'s owner rating', style: AppFonts.x15Bold),
                         const SizedBox(height: Paddings.regular),
                         RatingOverview(
-                          onShowAllReviews: () => Get.bottomSheet(const AllReviews(isBottomsheet: true), isScrollControlled: true),
-                          rating: controller.userStore?.owner?.rating ?? 0,
+                          onShowAllReviews: () => Get.bottomSheet(AllReviews(reviews: controller.storeOwnerReviews, isBottomsheet: true), isScrollControlled: true),
+                          rating: controller.currentStore?.rating ?? 0,
                           reviews: controller.storeOwnerReviews,
                         ),
                         const SizedBox(height: Paddings.exceptional),
