@@ -11,6 +11,7 @@ const {
   fetchUserBooking,
   fetchUserOngoingReservation,
   fetchUserOngoingBooking,
+  getRandomHotTasks,
 } = require("../sql/sql_request");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
 const { getFileType, getTaskCondidatesNumber } = require("../helper/helpers");
@@ -36,22 +37,7 @@ exports.getHomeTasks = async (req, res) => {
     nearbyTasks = await fetchAndSortNearbyTasks(foundUser, (limit = 3));
 
     // get hot tasks
-    const query = `SELECT task.*, 
-      user.id AS user_id,
-      user.name,
-      user.email,
-      user.gender,
-      user.birthdate,
-      user.picture,
-      user.governorate_id as user_governorate_id,
-      user.phone_number,
-      user.role
-    FROM task JOIN user ON task.owner_id = user.id LIMIT 3
-    ;`;
-    const tasks = await sequelize.query(query, {
-      type: sequelize.QueryTypes.SELECT,
-    });
-    const hotTasks = await populateTasks(tasks, currentUserId);
+    const hotTasks = await getRandomHotTasks(foundUser, (limit = 3));
 
     // get user's reservation (pending and ongoing tasks)
     let reservation = [];

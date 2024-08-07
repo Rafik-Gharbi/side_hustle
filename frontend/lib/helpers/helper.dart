@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -29,6 +30,7 @@ import '../views/profile/verification_screen.dart';
 import '../widgets/custom_popup.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/phone_otp_dialog.dart';
+import 'extensions/date_time_extension.dart';
 
 class Helper {
   static Timer? _searchOnStoppedTyping;
@@ -443,5 +445,31 @@ class Helper {
       if ((element.price ?? 0) < cheapestService) cheapestService = element.price ?? 0;
     }
     return cheapestService;
+  }
+
+  // Helper method to calculate distance between two coordinates using the Haversine formula
+  static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    // Helper method to convert degrees to radians
+    double degreesToRadians(double degrees) => degrees * pi / 180;
+
+    const double R = 6371; // Radius of the Earth in kilometers
+    double dLat = degreesToRadians(lat2 - lat1);
+    double dLon = degreesToRadians(lon2 - lon1);
+    double a = sin(dLat / 2) * sin(dLat / 2) + cos(degreesToRadians(lat1)) * cos(degreesToRadians(lat2)) * sin(dLon / 2) * sin(dLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    return R * c; // Distance in kilometers
+  }
+
+  // Method to check if coordinates have changed by more than 10 km and update if necessary
+  static bool shouldUpdateCoordinates(LatLng initialPosition, LatLng newPostion) {
+    double distance = calculateDistance(initialPosition.latitude, initialPosition.longitude, newPostion.latitude, newPostion.longitude);
+    return distance > 10;
+  }
+
+  static String resolveDisplayDate(DateTime createdDate) {
+    if (createdDate.isSameDate(DateTime.now())) return 'today'.tr;
+    if (createdDate.isSameDate(DateTime.now().subtract(const Duration(days: 1)))) return 'yesterday'.tr;
+    if (createdDate.isSameDate(DateTime.now().add(const Duration(days: 1)))) return 'tomorrow'.tr;
+    return DateFormat.MMMEd().format(createdDate);
   }
 }

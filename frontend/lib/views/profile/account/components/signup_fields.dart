@@ -11,7 +11,6 @@ import '../../../../services/authentication_service.dart';
 import '../../../../services/theme/theme.dart';
 import '../../../../constants/colors.dart';
 import '../../../../constants/sizes.dart';
-import '../../../../widgets/coordinates_picker.dart';
 import '../../../../widgets/custom_buttons.dart';
 import '../../../../widgets/custom_dropdown.dart';
 import '../../../../widgets/custom_text_field.dart';
@@ -72,12 +71,6 @@ class SignUpFields extends StatelessWidget {
               onChanged: (number) => controller.phoneNumber = number?.international,
               isRequired: controller.phoneNumber?.isNotEmpty ?? false,
             ),
-            const SizedBox(height: Paddings.small),
-            if (!isEditProfile)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
-                child: Text('verify_number_msg'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-              ),
             const SizedBox(height: Paddings.regular),
             CustomDropDownMenu<Governorate>(
               items: MainAppController.find.governorates,
@@ -106,12 +99,17 @@ class SignUpFields extends StatelessWidget {
               onChanged: (value) => controller.gender = Gender.fromString(value!),
             ),
             const SizedBox(height: Paddings.regular),
-            CoordinatesPicker(
-              onSubmit: (coordinates) => controller.coordinates = coordinates,
-              keepPrivacy: (privacy) => controller.keepPrivacy = privacy,
-              withPicker: false,
-              currentKeepPrivacy: user?.keepPrivacy,
-              currentPosition: user?.coordinates,
+            CustomButtons.elevateSecondary(
+              title: 'Share my position',
+              titleStyle: AppFonts.x14Regular,
+              icon: Icon(controller.coordinates != null ? Icons.my_location_outlined : Icons.location_searching_outlined),
+              width: double.infinity,
+              onPressed: controller.getUserCoordinates,
+            ),
+            const SizedBox(height: Paddings.small),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
+              child: Text('For a better user experience and tasks suggesting.'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
             ),
             const SizedBox(height: Paddings.exceptional),
             CustomButtons.elevatePrimary(

@@ -17,9 +17,11 @@ import 'database/database_repository/store_database_repository.dart';
 import 'database/database_repository/task_database_repository.dart';
 import 'database/database_repository/user_database_repository.dart';
 import 'firebase_options.dart';
+import 'helpers/helper.dart';
 import 'helpers/notification_service.dart';
 import 'networking/api_base_helper.dart';
 import 'repositories/booking_repository.dart';
+import 'repositories/boost_repository.dart';
 import 'repositories/chat_repository.dart';
 import 'repositories/favorite_repository.dart';
 import 'repositories/notification_repository.dart';
@@ -131,9 +133,30 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _checkUserPosition();
+  }
+
+  Future<void> _checkUserPosition() async {
+    final user = AuthenticationService.find.jwtUserData;
+    if (AuthenticationService.find.isUserLoggedIn.value && (user?.hasSharedPosition ?? false)) {
+      final coordinates = await Helper.getPosition();
+      if (coordinates != null && Helper.shouldUpdateCoordinates(user!.coordinates!, coordinates)) {
+        user.coordinates = coordinates;
+        UserRepository.find.updateUser(user, silent: true);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) => GetMaterialApp(
@@ -282,6 +305,7 @@ class InitialBindings implements Bindings {
     Get.put(StoreRepository(), permanent: true);
     Get.put(NotificationRepository(), permanent: true);
     Get.put(ReviewRepository(), permanent: true);
+    Get.put(BoostRepository(), permanent: true);
     // Database repositories
     Get.put(UserDatabaseRepository(), permanent: true);
     Get.put(TaskDatabaseRepository(), permanent: true);

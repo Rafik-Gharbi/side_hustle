@@ -3,8 +3,10 @@ const { sequelize } = require("../../db.config");
 const {
   getTaskCondidatesNumber,
   getServiceCondidatesNumber,
+  shuffleArray,
 } = require("../helper/helpers");
 const { Reservation } = require("../models/reservation_model");
+const { Boost } = require("../models/boost_model");
 const { Service } = require("../models/service_model");
 const { Store } = require("../models/store_model");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
@@ -390,21 +392,50 @@ async function fetchAndSortNearbyTasks(user, limit = 10, offset = 0) {
             : `governorate_id = :userGovernorateId`
         }
         ${userLongitude && userLatitude ? `ORDER BY distance ASC` : ``}
-        LIMIT :limit OFFSET :offset`;
+      `;
   const tasks = await sequelize.query(query, {
     type: sequelize.QueryTypes.SELECT,
     replacements: {
       userLongitude,
       userLatitude,
-      limit,
-      offset,
       userGovernorateId: user && user.governorate_id ? user.governorate_id : 1,
     },
   });
 
-  const nearbyTasks = await populateTasks(tasks, user?.id);
+  // Shuffle the tasks array
+  shuffleArray(tasks);
+
+  // Apply limit and offset to the shuffled array
+  const limitedTasks = tasks.slice(offset, offset + limit);
+
+  const nearbyTasks = await populateTasks(limitedTasks, user?.id);
 
   return nearbyTasks;
+}
+
+async function getRandomHotTasks(user, limit = 10, offset = 0) {
+  // get hot tasks
+  const activeBoost = await Boost.findAll({
+    where: {
+      isTask: true,
+      isActive: true,
+      endDate: { [Op.gt]: new Date() }, // grater than today
+    },
+  });
+  const tasks = await Promise.all(
+    activeBoost.map(async (row) => {
+      const task = await Task.findOne({ where: { id: row.task_service_id } });
+      return await populateOneTask(task, user?.id);
+    })
+  );
+
+  // Shuffle the tasks array
+  shuffleArray(tasks);
+
+  // Apply limit and offset to the shuffled array
+  const hotTasks = tasks.slice(offset, offset + limit);
+
+  return hotTasks;
 }
 
 async function populateTasks(fetchedTasks, currentUserId) {
@@ -715,4 +746,5 @@ module.exports = {
   fetchUserBooking,
   fetchUserOngoingBooking,
   fetchUserOngoingReservation,
+  getRandomHotTasks,
 };

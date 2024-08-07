@@ -2,11 +2,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../../controllers/main_app_controller.dart';
-import '../../../helpers/extensions/date_time_extension.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/category.dart';
 import '../../../models/dto/image_dto.dart';
@@ -82,13 +80,6 @@ class AddTaskController extends GetxController {
       titleController.text = '${MainAppController.find.currency.value} ${value.replaceAll('${MainAppController.find.currency.value} ', '')}';
     }
     update();
-  }
-
-  String resolveDisplayDate() {
-    if (createdDate.isSameDate(DateTime.now())) return 'today'.tr;
-    if (createdDate.isSameDate(DateTime.now().subtract(const Duration(days: 1)))) return 'yesterday'.tr;
-    if (createdDate.isSameDate(DateTime.now().add(const Duration(days: 1)))) return 'tomorrow'.tr;
-    return DateFormat.MMMEd().format(createdDate);
   }
 
   @override

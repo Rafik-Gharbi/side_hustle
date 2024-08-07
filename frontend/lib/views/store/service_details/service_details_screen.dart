@@ -20,6 +20,7 @@ import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
+import '../../boost/add_boost_bottomsheet.dart';
 import '../service_request/service_request_screen.dart';
 import 'service_details_controller.dart';
 
@@ -34,6 +35,7 @@ class ServiceDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isOwner = AuthenticationService.find.jwtUserData?.id == store?.owner?.id;
     double attachmentSize = (Get.width - 50) / 3;
     if ((service.gallery?.length ?? 0) > 3) attachmentSize = attachmentSize * 0.9;
     return GetBuilder<ServiceDetailsController>(
@@ -49,7 +51,17 @@ class ServiceDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
+                  Row(
+                    mainAxisAlignment: isOwner ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
+                    children: [
+                      CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
+                      if (isOwner)
+                        CustomButtons.icon(
+                          icon: const Icon(Icons.rocket_launch_outlined),
+                          onPressed: () => Get.bottomSheet(AddBoostBottomsheet(serviceId: service.id), isScrollControlled: true),
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: Paddings.large),
                   Text(service.name ?? 'Service', style: AppFonts.x16Bold),
                   Row(
@@ -150,11 +162,9 @@ class ServiceDetailsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  if (controller.condidates.value != -1 ||
-                      store != null && AuthenticationService.find.jwtUserData?.id == store!.owner?.id ||
-                      bookingStatus == RequestStatus.confirmed) ...[
+                  if (controller.condidates.value != -1 || store != null && isOwner || bookingStatus == RequestStatus.confirmed) ...[
                     const SizedBox(height: Paddings.exceptional * 2),
-                    if (AuthenticationService.find.jwtUserData?.id == store?.owner?.id && store != null)
+                    if (isOwner && store != null)
                       CustomButtons.elevatePrimary(
                         title: 'check_request'.tr,
                         onPressed: () => Get.toNamed(ServiceRequestScreen.routeName, arguments: service),

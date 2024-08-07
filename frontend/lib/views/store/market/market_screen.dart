@@ -11,7 +11,9 @@ import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/hold_in_safe_area.dart';
+import '../../../widgets/loading_card_effect.dart';
 import '../../../widgets/loading_request.dart';
+import '../../../widgets/service_card.dart';
 import '../../../widgets/store_card.dart';
 import '../../task/task_filter/more_filters_popup.dart';
 import 'market_controller.dart';
@@ -68,7 +70,8 @@ class MarketScreen extends StatelessWidget {
                   )
                 : null,
             body: LoadingRequest(
-              isLoading: controller.isLoading,
+              // TODO replace this loading with card loading
+              isLoading: controller.isLoading.value,
               child: controller.filteredStoreList.isEmpty
                   ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
                   : SingleChildScrollView(
@@ -77,6 +80,23 @@ class MarketScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
                         child: Column(
                           children: [
+                            if (controller.hotServices.isNotEmpty) ...[
+                              Buildables.buildTitle('Hot Services', onSeeMore: () {}),
+                              LoadingCardEffect(
+                                isLoading: controller.isLoading,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: controller.hotServices.length,
+                                  itemBuilder: (context, index) => Padding(
+                                    padding: const EdgeInsets.only(bottom: Paddings.small),
+                                    child: ServiceCard(service: controller.hotServices[index]),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: Paddings.extraLarge),
+                            Buildables.buildTitle('Stores', onSeeMore: () {}),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),

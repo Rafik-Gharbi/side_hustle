@@ -7,11 +7,14 @@ const {
   getFileType,
   getServiceCondidatesNumber,
   checkStoreFavorite,
+  shuffleArray,
 } = require("../helper/helpers");
 const { Service } = require("../models/service_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
-const { populateServices } = require("../sql/sql_request");
+const { populateServices, populateOneTask, populateOneService } = require("../sql/sql_request");
 const { Review } = require("../models/review_model");
+const { Boost } = require("../models/boost_model");
+const { Op } = require("sequelize");
 
 // filter stores
 exports.filterStores = async (req, res) => {
@@ -567,6 +570,39 @@ exports.getStoreById = async (req, res) => {
       },
       reviews: reviews,
     });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// get user's store
+exports.getHotServices = async (req, res) => {
+  try {
+    // get hot tasks
+    const activeBoost = await Boost.findAll({
+      where: {
+        isTask: false,
+        isActive: true,
+        endDate: { [Op.gt]: new Date() }, // grater than today
+      },
+    });
+    const services = await Promise.all(
+      activeBoost.map(async (row) => {
+        const service = await Service.findOne({
+          where: { id: row.task_service_id },
+        });
+        return await populateOneService(service);
+      })
+    );
+
+    // Shuffle the services array
+    shuffleArray(services);
+
+    // Apply limit and offset to the shuffled array
+    const hotServices = services.slice(0, 3);
+    return res.status(200).json({ hotServices });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

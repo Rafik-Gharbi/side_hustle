@@ -130,7 +130,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                       onTap: () =>
                                           Helper.openDatePicker(currentTime: controller.createdDate, onConfirm: (date) => controller.createdDate = date, isFutureDate: true),
                                       child: Text(
-                                        controller.resolveDisplayDate(),
+                                        Helper.resolveDisplayDate(controller.createdDate),
                                         style: AppFonts.x15Bold.copyWith(decoration: TextDecoration.underline, decorationThickness: 0.6),
                                       ),
                                     ),

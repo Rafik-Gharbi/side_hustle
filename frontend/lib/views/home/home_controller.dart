@@ -42,7 +42,7 @@ class HomeController extends GetxController {
 
   Future<void> init() async {
     Helper.waitAndExecute(() => MainAppController.find.isReady, () async {
-      // TODO adapt user preferences if selected most searched categories
+      // TODO adapt user preferences if selected most searched categories and fix this below by getting true popular categories from BE
       mostPopularCategories = MainAppController.find.categories.getRange(10, 14).toList();
       final result = await TaskRepository.find.getHomeTasks();
       hotTasks = result?['hotTasks'] != null ? (result?['hotTasks'] as List).map((e) => e as Task).toList() : [];
@@ -75,7 +75,7 @@ class HomeController extends GetxController {
 
   Future<void> onRefreshScreen() async {
     MainAppController.find.isBackReachable.value = await ApiBaseHelper.find.checkConnectionToBackend();
-    // TODO fetch other tasks in hotTasks and nearbyTasks
+    init();
   }
 
   void markBookingAsDone(Booking booking) => Helper.openConfirmationDialog(

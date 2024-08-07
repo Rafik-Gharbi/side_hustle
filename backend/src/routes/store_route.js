@@ -19,6 +19,12 @@ module.exports = (app) => {
     storeController.filterStores
   );
 
+  router.get(
+    "/hot-services",
+    tokenVerificationOptional,
+    storeController.getHotServices
+  );
+
   router.post(
     "/",
     tokenVerification,

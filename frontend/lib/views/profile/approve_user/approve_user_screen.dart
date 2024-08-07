@@ -48,7 +48,7 @@ class ApproveUserScreen extends StatelessWidget {
                               if (context.mounted && !isInitialized) {
                                 Future.delayed(
                                   const Duration(milliseconds: 600),
-                                  () => setState(() => highlighted = userApprove.user?.id == controller.highlightedUserApprove?.user?.id),
+                                  () => context.mounted ? setState(() => highlighted = userApprove.user?.id == controller.highlightedUserApprove?.user?.id) : null,
                                 );
                               }
                               isInitialized = true;

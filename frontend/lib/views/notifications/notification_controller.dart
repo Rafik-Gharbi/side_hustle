@@ -13,6 +13,7 @@ import '../../repositories/notification_repository.dart';
 import '../../services/authentication_service.dart';
 import '../profile/approve_user/approve_user_screen.dart';
 import '../profile/profile_screen/profile_screen.dart';
+import '../review/add_review/add_review_bottomsheet.dart';
 import '../store/my_store/my_store_screen.dart';
 import '../store/service_history/service_history_screen.dart';
 import '../task/task_history/task_history_screen.dart';
@@ -107,6 +108,12 @@ class NotificationsController extends GetxController {
             }
           });
           MainAppController.find.manageNavigation(ProfileScreen.routeName);
+          break;
+        case NotificationType.review:
+          if (decodedAction['userId'] != null) {
+            // TODO add more details about the task/service for reminding the user (decodedAction['serviceId'], decodedAction['taskId'])
+            Get.bottomSheet(AddReviewBottomsheet(user: decodedAction['userId']), isScrollControlled: true);
+          }
           break;
         case NotificationType.others:
           break;

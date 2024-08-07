@@ -57,6 +57,7 @@ dependencies:
   card_loading: ^0.3.2
   flutter_libphonenumber: ^2.3.0
   flutter_rating_bar: ^4.0.1
+  icons_launcher: ^2.1.7
 
 dependency_overrides:
   animated_bottom_navigation_bar:
@@ -68,6 +69,21 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   drift_dev: ^2.9.0
   build_runner: ^2.4.5
+
+icons_launcher:
+  image_path: "assets/images/side_hustle_logo.png"
+  platforms:
+    android:
+      enable: true
+      image_path: "assets/images/side_hustle_logo.png"
+      # adaptive_background_color: '#ffffff'
+    ios:
+      enable: true
+      image_path: "assets/images/side_hustle_logo.png"
+    web:
+      enable: true
+      image_path: "assets/images/side_hustle_logo.png"
+      favicon_path: "assets/images/side_hustle_logo.png"
 
 flutter:
   uses-material-design: true

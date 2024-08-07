@@ -20,6 +20,7 @@ require("./src/routes/favorite_route")(app);
 require("./src/routes/chat_route")(app);
 require("./src/routes/review_route")(app);
 require("./src/routes/notification_route")(app);
+require("./src/routes/boost_route")(app);
 
 // Create HTTP server
 

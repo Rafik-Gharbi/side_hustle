@@ -18,6 +18,7 @@ import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
+import '../../boost/add_boost_bottomsheet.dart';
 import '../../chat/components/messages_screen.dart';
 import '../task_proposal/task_proposal_screen.dart';
 import '../../profile/user_profile/user_profile_screen.dart';
@@ -31,6 +32,7 @@ class TaskDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double attachmentSize = (Get.width - 50) / 3;
+    final isOwner = AuthenticationService.find.jwtUserData?.id == task.owner.id;
     if ((task.attachments?.length ?? 0) > 3) attachmentSize = attachmentSize * 0.9;
     return GetBuilder<TaskDetailsController>(
         init: TaskDetailsController(task),
@@ -49,7 +51,16 @@ class TaskDetailsScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
-                            CustomButtons.icon(icon: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined), onPressed: () {}),
+                            Row(
+                              children: [
+                                CustomButtons.icon(icon: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined), onPressed: () {}),
+                                if (isOwner)
+                                  CustomButtons.icon(
+                                    icon: const Icon(Icons.rocket_launch_outlined),
+                                    onPressed: () => Get.bottomSheet(AddBoostBottomsheet(taskId: task.id), isScrollControlled: true),
+                                  ),
+                              ],
+                            ),
                           ],
                         ),
                         const SizedBox(height: Paddings.large),
@@ -151,7 +162,7 @@ class TaskDetailsScreen extends StatelessWidget {
                           ],
                         ),
                         Obx(
-                          () => controller.condidates.value != -1 || AuthenticationService.find.jwtUserData?.id == task.owner.id
+                          () => controller.condidates.value != -1 || isOwner
                               ? Column(
                                   children: [
                                     const SizedBox(height: Paddings.exceptional * 2),

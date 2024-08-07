@@ -143,4 +143,16 @@ class StoreRepository extends GetxService {
     }
     return null;
   }
+
+  Future<List<Service>> getHotServices() async {
+    try {
+      List<Service>? services;
+      final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/store/hot-services');
+      services = (result['hotServices'] as List).map((e) => Service.fromJson(e)).toList();
+      return services;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getHotServices:\n$e');
+    }
+    return [];
+  }
 }

@@ -64,7 +64,6 @@ class AuthenticationService extends GetxController {
   Gender? _gender;
   Governorate? _governorate;
   LatLng? _coordinates;
-  bool _keepPrivacy = false;
 
   // Available logged in user data from JWT token
   bool? isUserMailVerified;
@@ -97,13 +96,6 @@ class AuthenticationService extends GetxController {
   Governorate? get governorate => _governorate;
 
   LatLng? get coordinates => _coordinates;
-
-  bool get keepPrivacy => _keepPrivacy;
-
-  set keepPrivacy(bool value) {
-    _keepPrivacy = value;
-    update();
-  }
 
   set coordinates(LatLng? value) {
     _coordinates = value;
@@ -157,7 +149,7 @@ class AuthenticationService extends GetxController {
       scopes: ['email', 'openid', 'profile'],
     );
     // Check if exist a saved token and relogin the user
-    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () async {
+    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady && MainAppController.find.isReady, () async {
       final savedToken = SharedPreferencesService.find.get(jwtKey);
       if (savedToken != null) {
         final jwtPayload = JwtDecoder.decode(savedToken);
@@ -280,7 +272,7 @@ class AuthenticationService extends GetxController {
         governorate: governorate,
         phone: Helper.isNullOrEmpty(phoneNumber) ? null : phoneNumber,
         coordinates: coordinates,
-        keepPrivacy: keepPrivacy,
+        hasSharedPosition: coordinates != null,
       );
       final jwt = await UserRepository.find.signup(user: user);
       isLoggingIn = false;
@@ -416,6 +408,7 @@ class AuthenticationService extends GetxController {
         jwtUserData?.picture = userFromToken.picture;
         jwtUserData?.isVerified = userFromToken.isVerified;
         jwtUserData?.isMailVerified = userFromToken.isMailVerified;
+        jwtUserData?.hasSharedPosition = userFromToken.hasSharedPosition;
         jwtUserData?.password = null;
       }
       // init chat messages standBy room
@@ -437,7 +430,7 @@ class AuthenticationService extends GetxController {
           governorate: governorate,
           gender: gender,
           coordinates: coordinates,
-          keepPrivacy: keepPrivacy,
+          hasSharedPosition: coordinates != null,
           birthdate: birthdateController.text.isNotEmpty ? DateFormat('yyyy-MM-dd').parse(birthdateController.text) : null,
         ),
         withBack: true,
@@ -469,7 +462,6 @@ class AuthenticationService extends GetxController {
     _governorate = user?.governorate;
     _gender = user?.gender;
     _coordinates = user?.coordinates;
-    _keepPrivacy = user?.keepPrivacy ?? false;
     WidgetsBinding.instance.addPostFrameCallback((_) => update());
   }
 
@@ -516,6 +508,11 @@ class AuthenticationService extends GetxController {
     }
   }
 
+  Future<void> getUserCoordinates() async {
+    coordinates = await Helper.getPosition();
+    if (coordinates != null) Helper.snackBar(message: 'Location has been successfully shared');
+  }
+
   void _initChatStandByRoom() {
     // init chat messages standBy room
     if (_jwtUserData == null) return;
@@ -523,8 +520,9 @@ class AuthenticationService extends GetxController {
     MainAppController.find.socket!.emit('standBy', {'userId': _jwtUserData!.id});
     MainAppController.find.socket!.on('notification', (data) {
       // Show a notification to the user if not in the chat tab
+      final notification = NotificationModel.fromJson(data);
       if (Get.currentRoute != ChatScreen.routeName) {
-        Helper.showNotification(NotificationModel.fromJson(data));
+        Helper.showNotification(notification);
       } else if (Get.currentRoute == ChatScreen.routeName) {
         ChatController.find.getUserChatHistory();
       }

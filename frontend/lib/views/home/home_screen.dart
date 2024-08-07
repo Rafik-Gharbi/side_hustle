@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../constants/colors.dart';
 import '../../constants/sizes.dart';
 import '../../controllers/main_app_controller.dart';
+import '../../helpers/buildables.dart';
 import '../../helpers/helper.dart';
 import '../../models/filter_model.dart';
 import '../../services/authentication_service.dart';
@@ -132,7 +133,7 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: Paddings.exceptional),
-                      buildTitle(
+                      Buildables.buildTitle(
                         'Popular Categories',
                         onSeeMore: () => Get.bottomSheet(
                           SizedBox(
@@ -167,7 +168,7 @@ class HomeScreen extends StatelessWidget {
                       Column(
                         children: [
                           if (controller.ongoingReservation.isNotEmpty) ...[
-                            buildTitle('Ongoing Reservations'),
+                            Buildables.buildTitle('Ongoing Reservations'),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -180,7 +181,7 @@ class HomeScreen extends StatelessWidget {
                             const SizedBox(height: Paddings.regular),
                           ],
                           if (controller.ongoingBooking.isNotEmpty) ...[
-                            buildTitle('Ongoing Bookings'),
+                            Buildables.buildTitle('Ongoing Bookings'),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -193,7 +194,7 @@ class HomeScreen extends StatelessWidget {
                             const SizedBox(height: Paddings.regular),
                           ],
                           if (controller.reservation.isNotEmpty) ...[
-                            buildTitle('My Reservations'),
+                            Buildables.buildTitle('My Reservations'),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -206,7 +207,7 @@ class HomeScreen extends StatelessWidget {
                             const SizedBox(height: Paddings.regular),
                           ],
                           if (controller.booking.isNotEmpty) ...[
-                            buildTitle('My Bookings'),
+                            Buildables.buildTitle('My Bookings'),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -221,22 +222,24 @@ class HomeScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: Paddings.regular),
                           ],
-                          buildTitle('Hot Tasks', onSeeMore: () {}),
-                          LoadingCardEffect(
-                            isLoading: controller.isLoading,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: controller.hotTasks.length,
-                              itemBuilder: (context, index) => Padding(
-                                padding: const EdgeInsets.only(bottom: Paddings.small),
-                                child: TaskCard(task: controller.hotTasks[index]),
+                          if (controller.hotTasks.isNotEmpty) ...[
+                            Buildables.buildTitle('Hot Tasks', onSeeMore: () {}),
+                            LoadingCardEffect(
+                              isLoading: controller.isLoading,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: controller.hotTasks.length,
+                                itemBuilder: (context, index) => Padding(
+                                  padding: const EdgeInsets.only(bottom: Paddings.small),
+                                  child: TaskCard(task: controller.hotTasks[index]),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                           // TODO add a button to share user coordinates if not provided for showing nearby tasks
                           if (SharedPreferencesService.find.isReady)
-                            buildTitle(
+                            Buildables.buildTitle(
                               'New Tasks ${controller.nearbyTasks.any((element) => element.distance != null) ? 'Nearby' : 'in ${AuthenticationService.find.jwtUserData?.governorate?.name ?? 'All Tunisia'}'}',
                               onSeeMore: () => Get.toNamed(TaskListScreen.routeName),
                             ),
@@ -264,23 +267,4 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget buildTitle(String title, {void Function()? onSeeMore}) => Padding(
-        padding: const EdgeInsets.only(bottom: Paddings.regular),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(title, style: AppFonts.x16Bold),
-            if (onSeeMore != null)
-              Padding(
-                padding: const EdgeInsets.only(left: Paddings.regular),
-                child: CustomButtons.text(
-                  title: 'See more',
-                  titleStyle: AppFonts.x11Bold.copyWith(color: kAccentColor),
-                  onPressed: onSeeMore,
-                ),
-              ),
-          ],
-        ),
-      );
 }

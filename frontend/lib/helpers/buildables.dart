@@ -196,4 +196,22 @@ class Buildables {
         ),
         isScrollControlled: true,
       );
+  static Widget buildTitle(String title, {void Function()? onSeeMore}) => Padding(
+        padding: const EdgeInsets.only(bottom: Paddings.regular),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title, style: AppFonts.x16Bold),
+            if (onSeeMore != null)
+              Padding(
+                padding: const EdgeInsets.only(left: Paddings.regular),
+                child: CustomButtons.text(
+                  title: 'See more',
+                  titleStyle: AppFonts.x11Bold.copyWith(color: kAccentColor),
+                  onPressed: onSeeMore,
+                ),
+              ),
+          ],
+        ),
+      );
 }

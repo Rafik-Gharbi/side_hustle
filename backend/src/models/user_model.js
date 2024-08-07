@@ -26,7 +26,7 @@ const User = sequelize.define(
     picture: { type: Sequelize.STRING },
     coordinates: { type: Sequelize.STRING },
     phone_number: { type: Sequelize.STRING, unique: true },
-    keepPrivacy: { type: Sequelize.BOOLEAN, defaultValue: false },
+    hasSharedPosition: { type: Sequelize.BOOLEAN, defaultValue: false },
     isArchived: { type: Sequelize.BOOLEAN, defaultValue: false },
     isVerified: { type: Sequelize.STRING, defaultValue: "none" },
     isMailVerified: { type: Sequelize.BOOLEAN, defaultValue: false },

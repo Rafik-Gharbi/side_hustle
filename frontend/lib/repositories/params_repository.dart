@@ -44,4 +44,9 @@ class ParamsRepository extends GetxService {
     }
     return null;
   }
+
+  int getMaxActiveUsers() {
+    // TODO
+    return 1000;
+  }
 }

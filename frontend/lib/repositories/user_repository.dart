@@ -175,14 +175,14 @@ class UserRepository extends GetxService {
     }
   }
 
-  Future<User?> updateUser(User user, {XFile? picture, bool withBack = false}) async {
+  Future<User?> updateUser(User user, {XFile? picture, bool withBack = false, bool silent = false}) async {
     try {
       // TODO fix the gov files upload
       List<XFile?>? uploadFiles;
       if (picture != null) uploadFiles = [picture];
       final result = await ApiBaseHelper().request(RequestType.put, '/user/update-profile', body: user.toUpdateJson(), files: uploadFiles, sendToken: true);
       if (withBack) Get.back();
-      Helper.snackBar(title: 'success'.tr, message: 'update_profile_success'.tr);
+      if(!silent) Helper.snackBar(title: 'success'.tr, message: 'update_profile_success'.tr);
       final currentUser = User.fromJson(result['updatedUser']);
       if (result['jwt'] != null) AuthenticationService.find.initiateCurrentUser(result['jwt'], user: currentUser, refresh: false);
       return currentUser;

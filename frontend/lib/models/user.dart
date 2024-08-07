@@ -44,7 +44,7 @@ class User {
   Governorate? governorate;
   String? bio;
   LatLng? coordinates;
-  bool keepPrivacy;
+  bool hasSharedPosition;
   Gender? gender;
   VerifyIdentityStatus isVerified;
   bool? isMailVerified;
@@ -66,7 +66,7 @@ class User {
     this.role,
     this.picture,
     this.isMailVerified,
-    this.keepPrivacy = false,
+    this.hasSharedPosition = false,
     this.isVerified = VerifyIdentityStatus.none,
     this.rating = 0,
   });
@@ -90,7 +90,7 @@ class User {
         phone: json['phone_number'],
         password: json['password'],
         coordinates: json['coordinates'] != null ? (json['coordinates'] as String).fromString() : null,
-        keepPrivacy: json['keepPrivacy'] ?? false,
+        hasSharedPosition: json['hasSharedPosition'] ?? false,
         birthdate: json['birthdate'] != null ? DateTime.parse(json['birthdate']) : null,
         gender: json['gender'] != null ? Gender.fromString(json['gender']) : null,
         role: json['role'] != null ? Role.values.singleWhere((element) => element.name == json['role']) : null,
@@ -111,7 +111,7 @@ class User {
     data['name'] = name;
     data['phoneNumber'] = phone;
     data['coordinates'] = coordinates?.toCoordinatesString();
-    data['keepPrivacy'] = keepPrivacy;
+    data['hasSharedPosition'] = hasSharedPosition;
     data['birthdate'] = birthdate?.toIso8601String();
     data['gender'] = gender?.value.toLowerCase();
     data['role'] = role?.name;
@@ -142,7 +142,7 @@ class User {
     data['name'] = name;
     data['phone'] = phone;
     data['coordinates'] = coordinates?.toCoordinatesString();
-    data['keepPrivacy'] = keepPrivacy;
+    data['hasSharedPosition'] = hasSharedPosition;
     data['governorate'] = governorate?.id;
     data['birthdate'] = birthdate?.toIso8601String();
     data['gender'] = gender?.value.toLowerCase();

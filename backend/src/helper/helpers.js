@@ -346,6 +346,14 @@ function isDate(str) {
   const datePattern = /\b\d{4}-\d{2}-\d{2}\b/;
   return datePattern.test(str);
 }
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
 async function generateJWT(response, isRefresh) {
   return (token = jwt.sign(
     {
@@ -356,6 +364,7 @@ async function generateJWT(response, isRefresh) {
       governorate_id: response.governorate_id,
       isVerified: response.isVerified,
       isMailVerified: response.isMailVerified,
+      hasSharedPosition: response.hasSharedPosition,
       isArchived: response.isArchived,
     },
     process.env.JWT_SECRET,
@@ -461,4 +470,5 @@ module.exports = {
   getServiceCondidatesNumber,
   checkStoreFavorite,
   adjustString,
+  shuffleArray,
 };

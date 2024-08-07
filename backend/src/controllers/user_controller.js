@@ -1,3 +1,4 @@
+const cron = require("node-cron");
 const { User } = require("../models/user_model");
 const { Review } = require("../models/review_model");
 const { Governorate } = require("../models/governorate_model");
@@ -40,6 +41,10 @@ const {
   getApproveUsersRequiredActionsCount,
   getServiceHistoryRequiredActionsCount,
 } = require("../sql/sql_request");
+const { Reservation } = require("../models/reservation_model");
+const { Task } = require("../models/task_model");
+const { Booking } = require("../models/booking_model");
+const { Service } = require("../models/service_model");
 
 exports.renewJWT = async (req, res) => {
   try {
@@ -1042,11 +1047,72 @@ async function resendConfirmationMail(user, host, isMobile) {
   return verificationCode.code;
 }
 
-// cron.schedule("0 0 * * *", async () => {
-//   try {
-//     await VerificationCode.destroy({ where: {} });
-//     console.log("Deleted rows successfully.");
-//   } catch (error) {
-//     console.error("Error occurred while deleting rows:", error);
-//   }
-// });
+async function checkUnreviewed() {
+  try {
+    let counter = 0;
+    // Fetch task reservations that are finished but not reviewed
+    const finishedReservations = await Reservation.findAll({
+      where: { status: "finished" },
+    });
+    await Promise.all(
+      finishedReservations.map(async (reservation) => {
+        const foundTask = await Task.findOne({
+          where: { id: reservation.task_id },
+        });
+        const existReview = await Review.findOne({
+          where: {
+            reviewee_id: foundTask.owner_id,
+            user_id: reservation.user_id,
+          },
+        });
+        if (!existReview) {
+          counter++;
+          await notificationService.sendNotification(
+            foundTask.owner_id,
+            "Please review your finished task",
+            `You have a finished task titled "${foundTask.title}" that hasn't been reviewed yet. Please leave a review for creating a more trustworthy community in our app.`,
+            NotificationType.REVIEW,
+            { userId: reservation.user_id, taskId: reservation.task_id }
+          );
+        }
+      })
+    );
+
+    // Fetch service bookings that are finished but not reviewed
+    const finishedBookings = await Booking.findAll({
+      where: { status: "finished" },
+    });
+    await Promise.all(
+      finishedBookings.map(async (booking) => {
+        const foundService = await Service.findOne({
+          where: { id: booking.service_id },
+        });
+        const existReview = await Review.findOne({
+          where: {
+            reviewee_id: foundService.owner_id,
+            user_id: booking.user_id,
+          },
+        });
+        if (!existReview) {
+          counter++;
+          await notificationService.sendNotification(
+            booking.user_id,
+            "Please review your finished service",
+            `You have a finished service titled "${foundService.title}" that hasn't been reviewed yet. Please leave a review for creating a more trustworthy community in our app.`,
+            NotificationType.REVIEW,
+            { userId: foundService.owner_id, serviceId: booking.service_id }
+          );
+        }
+      })
+    );
+
+    console.log(`Checked for unreviewed tasks and sent ${counter} reminders.`);
+  } catch (error) {
+    console.error("Error checking unreviewed tasks: \x1b[31m%s\x1b[0m", error);
+  }
+}
+
+cron.schedule("0 20 * * *", () => {
+  console.log("Running cron job to check for unreviewed tasks/services");
+  checkUnreviewed();
+});

@@ -1,4 +1,4 @@
-enum NotificationType { verification, chat, reservation, booking, newTask, others }
+enum NotificationType { verification, chat, reservation, booking, newTask, review, others }
 
 class NotificationModel {
   final String id;

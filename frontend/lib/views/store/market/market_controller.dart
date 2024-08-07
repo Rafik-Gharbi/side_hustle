@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../constants/constants.dart';
 import '../../../models/filter_model.dart';
+import '../../../models/service.dart';
 import '../../../models/store.dart';
 import '../../../networking/api_base_helper.dart';
 import '../../../repositories/store_repository.dart';
@@ -13,11 +14,12 @@ class MarketController extends GetxController {
   List<Store> storeList = [];
   List<Store> filteredStoreList = [];
   RxBool openSearchBar = false.obs;
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   RxBool isLoadingMore = true.obs;
   FilterModel _filterModel = FilterModel();
   bool isEndList = false;
   int page = 0;
+  List<Service> hotServices = [];
 
   FilterModel get filterModel => _filterModel;
 
@@ -32,6 +34,7 @@ class MarketController extends GetxController {
     scrollController.addListener(() {
       if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 50) _loadMore();
     });
+    _init();
   }
 
   Future<void> fetchSearchedStores({FilterModel? filter, String? searchQuery}) async {
@@ -45,7 +48,7 @@ class MarketController extends GetxController {
     if ((storeList.isEmpty) || storeList.length < kLoadMoreLimit) isEndList = true;
     if (page == 1) {
       filteredStoreList = storeList;
-      isLoading = false;
+      isLoading.value = false;
     } else {
       filteredStoreList.addAll(storeList);
       isLoadingMore.value = false;
@@ -57,5 +60,10 @@ class MarketController extends GetxController {
     if (isEndList || ApiBaseHelper.find.blockRequest) return;
     ApiBaseHelper.find.blockRequest = true;
     fetchSearchedStores().then((value) => Future.delayed(Durations.long1, () => ApiBaseHelper.find.blockRequest = false));
+  }
+
+  Future<void> _init() async {
+    hotServices = await StoreRepository.find.getHotServices();
+    update();
   }
 }
