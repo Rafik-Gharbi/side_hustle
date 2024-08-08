@@ -11,15 +11,21 @@ class Boost {
   final DateTime endDate;
   final int? minAge;
   final int? maxAge;
+  final bool isTask;
+  final int taskServiceId;
+  bool isActive;
 
   Boost({
     required this.budget,
     required this.endDate,
+    required this.taskServiceId,
+    required this.isTask,
     this.id,
     this.governorate,
     this.gender,
     this.minAge,
     this.maxAge,
+    this.isActive = true,
   });
 
   factory Boost.fromJson(Map<String, dynamic> json) => Boost(
@@ -30,6 +36,9 @@ class Boost {
         gender: json['gender'] != null ? Gender.fromString(json['gender']) : null,
         minAge: json['minAge'],
         maxAge: json['maxAge'],
+        isActive: json['isActive'] ?? false,
+        isTask: json['isTask'] ?? true,
+        taskServiceId: json['task_service_id'],
       );
 
   Map<String, dynamic> toJson({required int taskServiceId, required bool isTask}) {
@@ -43,6 +52,7 @@ class Boost {
     data['maxAge'] = maxAge;
     data['taskServiceId'] = taskServiceId;
     data['isTask'] = isTask;
+    data['isActive'] = isActive;
     return data;
   }
 }

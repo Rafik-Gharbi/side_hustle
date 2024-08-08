@@ -10,6 +10,8 @@ import '../helpers/helper.dart';
 import '../models/enum/request_status.dart';
 import '../models/service.dart';
 import '../models/store.dart';
+import '../models/user.dart';
+import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
 import '../views/store/service_details/service_details_screen.dart';
 import 'custom_buttons.dart';
@@ -27,6 +29,7 @@ class ServiceCard extends StatelessWidget {
   final RequestStatus? bookingStatus;
   final bool dense;
   final bool isHighlighted;
+  final String? additionSubtitle;
 
   const ServiceCard({
     super.key,
@@ -36,9 +39,10 @@ class ServiceCard extends StatelessWidget {
     this.onDeleteService,
     this.onEditService,
     this.isOwner = false,
-    this.requests = -1,
+    this.requests = 0,
     this.bookingStatus,
     this.onMarkDone,
+    this.additionSubtitle,
     this.dense = false,
     this.isHighlighted = false,
   });
@@ -48,7 +52,7 @@ class ServiceCard extends StatelessWidget {
     return OpenContainer(
       closedElevation: 0,
       transitionDuration: const Duration(milliseconds: 600),
-      openBuilder: (_, __) => ServiceDetailsScreen(service: service, store: store, bookingStatus: bookingStatus, onMarkDone: onMarkDone),
+      openBuilder: (_, __) => ServiceDetailsScreen(service: service, store: store, bookingStatus: bookingStatus, onMarkDone: onMarkDone, isTheOwner: isOwner),
       closedBuilder: (_, openContainer) => isOwner
           ? SwipeActionCell(
               key: ObjectKey(service),
@@ -96,6 +100,7 @@ class ServiceCard extends StatelessWidget {
                 children: [
                   SizedBox(width: Get.width - 160, child: OverflowedTextWithTooltip(title: service.name ?? 'NA', style: AppFonts.x14Bold, expand: false)),
                   Text(service.description ?? 'NA', softWrap: true, maxLines: 2, overflow: TextOverflow.ellipsis, style: AppFonts.x12Regular),
+                  if (additionSubtitle != null) OverflowedTextWithTooltip(title: additionSubtitle!, style: AppFonts.x12Bold, expand: false),
                 ],
               ),
             ),
@@ -107,7 +112,11 @@ class ServiceCard extends StatelessWidget {
                 backgroundColor: isOwner ? kErrorColor : Colors.transparent,
                 child: CustomButtons.icon(
                   icon: Icon(isOwner ? Icons.three_p_outlined : Icons.shopping_cart_outlined, size: 18),
-                  onPressed: onBookService?.call ?? () {},
+                  onPressed: () => AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.verified
+                      ? onBookService != null
+                          ? onBookService!()
+                          : {}
+                      : Helper.snackBar(message: 'verify_profile_msg'.tr),
                 ),
               ),
           ],

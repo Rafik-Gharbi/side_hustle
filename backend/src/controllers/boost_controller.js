@@ -5,6 +5,7 @@ const { Service } = require("../models/service_model");
 const { Boost } = require("../models/boost_model");
 const { Op } = require("sequelize");
 const { Governorate } = require("../models/governorate_model");
+const { populateOneTask, populateOneService } = require("../sql/sql_request");
 
 exports.getBoostByTaskId = async (req, res) => {
   const ID = req.params.id;
@@ -56,6 +57,12 @@ exports.getBoostByServiceId = async (req, res) => {
 
 exports.getUserBoosts = async (req, res) => {
   try {
+    const page = req.query.pageQuery;
+    const limitQuery = req.query.limitQuery;
+    const pageQuery = !page || page === "0" ? 1 : page;
+    const limit = limitQuery ? parseInt(limitQuery) : 9;
+    const offset = (pageQuery - 1) * limit;
+
     let userFound = await User.findByPk(req.decoded.id);
     if (!userFound) {
       return res.status(404).json({ message: "user_not_found" });
@@ -64,9 +71,32 @@ exports.getUserBoosts = async (req, res) => {
     let existActiveBoost = [];
     existActiveBoost = await Boost.findAll({
       where: { user_id: userFound.id },
+      limit: limit,
+      offset: offset,
     });
 
-    return res.status(200).json({ boosts: existActiveBoost });
+    let activeBoost = [];
+    activeBoost = await Promise.all(
+      existActiveBoost.map(async (boost) => {
+        let task;
+        let service;
+        if (boost.isTask) {
+          task = await Task.findOne({
+            where: { id: boost.task_service_id },
+          });
+          task = await populateOneTask(task, userFound.id);
+        } else {
+          service = await Service.findOne({
+            where: { id: boost.task_service_id },
+          });
+          service = await populateOneService(service);
+        }
+        if (boost.isTask) return { boost, task };
+        else return { boost, service };
+      })
+    );
+
+    return res.status(200).json({ boosts: activeBoost });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);
@@ -149,7 +179,7 @@ exports.update = async (req, res) => {
     gender,
     minAge,
     maxAge,
-    active,
+    isActive,
   } = req.body;
   if (!id || !endDate || !budget) {
     return res.status(400).json({ message: "missing" });
@@ -167,18 +197,19 @@ exports.update = async (req, res) => {
     const existActiveBoost = await Boost.findOne({
       where: { id: id },
     });
-    if (existActiveBoost) {
+    if (!existActiveBoost) {
       return res.status(400).json({ message: "boost_not_found" });
     }
 
-    const boost = await Boost.update({
+    const boost = await existActiveBoost.update({
+      id: id,
       budget: budget,
       gender: gender,
       endDate: endDate,
       minAge: minAge,
       maxAge: maxAge,
       governorate_id: governorate_id,
-      active: active,
+      isActive: isActive,
     });
 
     return res.status(200).json({ boost });

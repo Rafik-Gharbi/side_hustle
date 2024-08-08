@@ -6,6 +6,7 @@ import '../constants/colors.dart';
 import '../constants/sizes.dart';
 import '../controllers/main_app_controller.dart';
 import '../helpers/helper.dart';
+import '../models/user.dart';
 import '../services/authentication_service.dart';
 import '../services/navigation_history_observer.dart';
 import '../services/theme/theme.dart';
@@ -126,7 +127,9 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
           ? null
           : FloatingActionButton(
               onPressed: () => AuthenticationService.find.isUserLoggedIn.value
-                  ? Get.bottomSheet(const AddTaskBottomsheet(), isScrollControlled: true)
+                  ? AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.verified
+                      ? Get.bottomSheet(const AddTaskBottomsheet(), isScrollControlled: true)
+                      : Helper.snackBar(message: 'verify_profile_msg'.tr)
                   : Helper.snackBar(message: 'login_add_task_msg'.tr),
               mini: true,
               shape: const CircleBorder(),
@@ -138,7 +141,7 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
           : Obx(
               () => AnimatedBottomNavigationBar(
                 builder: (widget, index, isActive) {
-                  widget = Icon((widget as Icon).icon ,color: isActive ? kPrimaryColor : kBlackColor);
+                  widget = Icon((widget as Icon).icon, color: isActive ? kPrimaryColor : kBlackColor);
                   return index == 2 // Chat
                       ? Obx(
                           () => Badge(

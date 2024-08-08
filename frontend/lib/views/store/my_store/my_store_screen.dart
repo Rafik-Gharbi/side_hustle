@@ -29,7 +29,7 @@ class MyStoreScreen extends StatelessWidget {
         child: GetBuilder<MyStoreController>(
           init: MyStoreController(store: store),
           builder: (controller) {
-            final isOwner = controller.currentStore?.owner?.id == AuthenticationService.find.jwtUserData?.id;
+            final isOwner = controller.currentStore == null || controller.currentStore?.owner?.id == AuthenticationService.find.jwtUserData?.id;
             return store != null
                 ? Scaffold(
                     backgroundColor: kNeutralColor100,
@@ -39,7 +39,7 @@ class MyStoreScreen extends StatelessWidget {
                     appBarTitle: 'My Store',
                     onBack: () => ProfileController.find.init(),
                     appBarActions: [
-                      if (isOwner)
+                      if (isOwner && controller.currentStore != null)
                         CustomButtons.icon(
                           icon: const Icon(Icons.edit_outlined),
                           onPressed: controller.editStore,

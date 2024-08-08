@@ -33,6 +33,8 @@ import 'repositories/task_repository.dart';
 import 'repositories/user_repository.dart';
 import 'services/authentication_service.dart';
 import 'services/theme/theme_service.dart';
+import 'views/boost/list_boost/list_boost_controller.dart';
+import 'views/boost/list_boost/list_boost_screen.dart';
 import 'views/notifications/notification_controller.dart';
 import 'views/notifications/notification_screen.dart';
 import 'views/store/service_history/service_history_controller.dart';
@@ -262,6 +264,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             name: SettingsScreen.routeName,
             page: () => const SettingsScreen(),
             binding: BindingsBuilder.put(() => SettingsController()),
+          ),
+          GetPage(
+            name: ListBoostScreen.routeName,
+            page: () => const ListBoostScreen(),
+            binding: BindingsBuilder.put(() => ListBoostController()),
           ),
           GetPage(
             name: NotificationScreen.routeName,

@@ -16,6 +16,7 @@ import '../../../services/logger_service.dart';
 import '../../../widgets/categories_bottomsheet.dart';
 
 class ProfileController extends GetxController {
+
   /// not permanent use with caution
   static ProfileController get find => Get.find<ProfileController>();
   User? loggedInUser;
@@ -29,6 +30,7 @@ class ProfileController extends GetxController {
   int myStoreActionRequired = 0;
   int approveUsersActionRequired = 0;
   int serviceHistoryActionRequired = 0;
+  bool userHasBoosts = false;
 
   bool get isLoading => _isLoading;
   bool get isUpdatingProfile => _isUpdatingProfile;
@@ -57,6 +59,7 @@ class ProfileController extends GetxController {
     myStoreActionRequired = result?.myStoreActionRequired ?? 0;
     approveUsersActionRequired = result?.approveUsersActionRequired ?? 0;
     serviceHistoryActionRequired = result?.servieHistoryActionRequired ?? 0;
+    userHasBoosts = result?.userHasBoosts ?? false;
     MainAppController.find.resolveProfileActionRequired();
     if (!MainAppController.find.isBackReachable.value) ApiBaseHelper.find.isLoading = false;
     isLoading = false;

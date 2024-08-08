@@ -15,6 +15,7 @@ import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
+import '../../boost/list_boost/list_boost_screen.dart';
 import '../../store/service_history/service_history_screen.dart';
 import '../account/components/signup_fields.dart';
 import '../approve_user/approve_user_screen.dart';
@@ -214,7 +215,7 @@ class ProfileScreen extends StatelessWidget {
                                                           actionRequired: controller.myStoreActionRequired,
                                                           label: 'my_store'.tr,
                                                           icon: Icons.store_outlined,
-                                                          onTap: () => Get.toNamed(MyStoreScreen.routeName), // TODO check init after coming back from my store
+                                                          onTap: () => Get.toNamed(MyStoreScreen.routeName),
                                                         ),
                                                         if (AuthenticationService.find.jwtUserData?.role == Role.admin)
                                                           buildActionTile(
@@ -222,6 +223,12 @@ class ProfileScreen extends StatelessWidget {
                                                             label: 'approve_users'.tr,
                                                             icon: Icons.verified_user_outlined,
                                                             onTap: () => Get.toNamed(ApproveUserScreen.routeName),
+                                                          ),
+                                                        if (controller.userHasBoosts)
+                                                          buildActionTile(
+                                                            label: 'my_boosts'.tr,
+                                                            icon: Icons.rocket_launch_outlined,
+                                                            onTap: () => Get.toNamed(ListBoostScreen.routeName),
                                                           ),
                                                         buildActionTile(
                                                           label: 'logout'.tr,

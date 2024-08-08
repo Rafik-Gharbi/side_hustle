@@ -6,12 +6,14 @@ import '../../../constants/colors.dart';
 import '../../../constants/constants.dart';
 import '../../../constants/sizes.dart';
 import '../../../helpers/helper.dart';
+import '../../../services/navigation_history_observer.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../profile/user_profile/user_profile_screen.dart';
 import '../my_store/my_store_controller.dart';
+import '../my_store/my_store_screen.dart';
 import 'service_request_controller.dart';
 
 class ServiceRequestScreen extends StatelessWidget {
@@ -24,7 +26,7 @@ class ServiceRequestScreen extends StatelessWidget {
       child: GetBuilder<ServiceRequestController>(
         builder: (controller) => CustomScaffoldBottomNavigation(
           appBarTitle: 'Service Requests',
-          onBack: () => MyStoreController.find.init(),
+          onBack: NavigationHistoryObserver.instance.previousRouteHistory == MyStoreScreen.routeName ? () => MyStoreController.find.init() : null,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.bookingList.isEmpty

@@ -20,7 +20,7 @@ import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
-import '../../boost/add_boost_bottomsheet.dart';
+import '../../boost/add_boost/add_boost_bottomsheet.dart';
 import '../service_request/service_request_screen.dart';
 import 'service_details_controller.dart';
 
@@ -30,12 +30,13 @@ class ServiceDetailsScreen extends StatelessWidget {
   final Store? store;
   final RequestStatus? bookingStatus;
   final void Function()? onMarkDone;
+  final bool? isTheOwner;
 
-  const ServiceDetailsScreen({super.key, required this.service, this.store, this.bookingStatus, this.onMarkDone});
+  const ServiceDetailsScreen({super.key, required this.service, this.store, this.bookingStatus, this.onMarkDone, this.isTheOwner});
 
   @override
   Widget build(BuildContext context) {
-    final isOwner = AuthenticationService.find.jwtUserData?.id == store?.owner?.id;
+    final isOwner = isTheOwner ?? AuthenticationService.find.jwtUserData?.id == store?.owner?.id;
     double attachmentSize = (Get.width - 50) / 3;
     if ((service.gallery?.length ?? 0) > 3) attachmentSize = attachmentSize * 0.9;
     return GetBuilder<ServiceDetailsController>(
@@ -170,7 +171,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                         onPressed: () => Get.toNamed(ServiceRequestScreen.routeName, arguments: service),
                         width: Get.width,
                       )
-                    else if (bookingStatus == null)
+                    else if (bookingStatus == null && !isOwner)
                       CustomButtons.elevatePrimary(
                         title: 'book_service'.tr,
                         onPressed: () => AuthenticationService.find.isUserLoggedIn.value

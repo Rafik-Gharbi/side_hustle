@@ -89,7 +89,6 @@ class Buildables {
     Widget buildPicture({double fontSize = 24}) => Stack(
           children: [
             Badge(
-              // TODO add user verified badge
               isLabelVisible: false, // isAvatarIcon && AuthenticationService.find.notSeenMessages.value != 0,
               // label: Text(AuthenticationService.find.notSeenMessages.value.toString(), style: AppFonts.x10Regular.copyWith(color: kNeutralColor100)),
               child: ClipRRect(

@@ -47,6 +47,12 @@ exports.add = async (req, res) => {
     if (existBooking) {
       return res.status(400).json({ message: "booking_already_exist" });
     }
+    const serviceStore = await Store.findOne({
+      where: { id: foundService.store_id },
+    });
+    if (serviceStore.owner_id == userFound.id) {
+      return res.status(400).json({ message: "cannot_book_your_own_service" });
+    }
 
     const booking = await Booking.create({
       date,
@@ -382,7 +388,11 @@ exports.updateStatus = async (req, res) => {
           "Your Service Has Been Finished",
           "The service seeker has finished the booking. Good job!",
           NotificationType.BOOKING,
-          { bookingId: bookingFound.id, serviceId: bookingFound.service_id, isOwner: true }
+          {
+            bookingId: bookingFound.id,
+            serviceId: bookingFound.service_id,
+            isOwner: true,
+          }
         );
         break;
       default:

@@ -21,6 +21,8 @@ class BookingRepository extends GetxService {
     } catch (e) {
       if (e.toString().contains('booking_already_exist')) {
         Helper.snackBar(message: 'booking_already_exist'.tr);
+      } else if (e.toString().contains('cannot_book_your_own_service')) {
+        Helper.snackBar(message: 'cannot_book_your_own_service'.tr);
       } else {
         Helper.snackBar(message: 'error_sending_request'.tr);
       }

@@ -15,6 +15,7 @@ import '../../../models/governorate.dart';
 import '../../../models/review.dart';
 import '../../../models/service.dart';
 import '../../../models/store.dart';
+import '../../../models/user.dart';
 import '../../../repositories/booking_repository.dart';
 import '../../../repositories/store_repository.dart';
 import '../../../services/authentication_service.dart';
@@ -102,7 +103,9 @@ class MyStoreController extends GetxController {
     update();
   }
 
-  void createStore({bool update = false}) => Get.bottomSheet(AddStoreBottomsheet(isUpdate: update), isScrollControlled: true).then((value) => _clearStoreFields());
+  void createStore({bool update = false}) => AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.verified
+      ? Get.bottomSheet(AddStoreBottomsheet(isUpdate: update), isScrollControlled: true).then((value) => _clearStoreFields())
+      : Helper.snackBar(message: 'verify_profile_msg'.tr);
 
   void addService({bool update = false}) => Get.bottomSheet(AddServiceBottomsheet(isUpdate: update), isScrollControlled: true).then((value) => _clearServiceFields());
 

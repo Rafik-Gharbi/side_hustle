@@ -11,7 +11,11 @@ const {
 } = require("../helper/helpers");
 const { Service } = require("../models/service_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
-const { populateServices, populateOneTask, populateOneService } = require("../sql/sql_request");
+const {
+  populateServices,
+  populateOneTask,
+  populateOneService,
+} = require("../sql/sql_request");
 const { Review } = require("../models/review_model");
 const { Boost } = require("../models/boost_model");
 const { Op } = require("sequelize");
@@ -593,7 +597,26 @@ exports.getHotServices = async (req, res) => {
         const service = await Service.findOne({
           where: { id: row.task_service_id },
         });
-        return await populateOneService(service);
+        const populatedService = await populateOneService(service);
+        const serviceStore = await Store.findOne({
+          where: { id: service.store_id },
+        });
+        const storeOwner = await User.findOne({
+          where: { id: serviceStore.owner_id },
+        });
+        const foundStore = {
+          id: serviceStore.id,
+          name: serviceStore.name,
+          description: serviceStore.description,
+          governorate_id: serviceStore.governorate_id,
+          coordinates: serviceStore.coordinates,
+          picture: serviceStore.picture,
+          owner: storeOwner,
+        };
+        return {
+          service: populatedService,
+          store: foundStore,
+        };
       })
     );
 

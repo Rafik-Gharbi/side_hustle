@@ -177,7 +177,6 @@ class UserRepository extends GetxService {
 
   Future<User?> updateUser(User user, {XFile? picture, bool withBack = false, bool silent = false}) async {
     try {
-      // TODO fix the gov files upload
       List<XFile?>? uploadFiles;
       if (picture != null) uploadFiles = [picture];
       final result = await ApiBaseHelper().request(RequestType.put, '/user/update-profile', body: user.toUpdateJson(), files: uploadFiles, sendToken: true);

@@ -45,6 +45,7 @@ const { Reservation } = require("../models/reservation_model");
 const { Task } = require("../models/task_model");
 const { Booking } = require("../models/booking_model");
 const { Service } = require("../models/service_model");
+const { Boost } = require("../models/boost_model");
 
 exports.renewJWT = async (req, res) => {
   try {
@@ -347,6 +348,12 @@ exports.profile = async (req, res) => {
       userId
     );
 
+    let userHasBoosts = false;
+    const userBoosts = await Boost.findAll({
+      where: { user_id: userFound.id },
+    });
+    userHasBoosts = userBoosts.length > 0;
+
     return res.status(200).json({
       user: userFound,
       subscribedCategories: categories,
@@ -355,6 +362,7 @@ exports.profile = async (req, res) => {
       myStoreActionRequired,
       approveUsersActionRequired,
       servieHistoryActionRequired,
+      userHasBoosts,
     });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);

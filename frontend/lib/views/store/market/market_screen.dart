@@ -6,6 +6,7 @@ import '../../../constants/sizes.dart';
 import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/filter_model.dart';
+import '../../../services/authentication_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
@@ -16,6 +17,7 @@ import '../../../widgets/loading_request.dart';
 import '../../../widgets/service_card.dart';
 import '../../../widgets/store_card.dart';
 import '../../task/task_filter/more_filters_popup.dart';
+import '../service_request/service_request_screen.dart';
 import 'market_controller.dart';
 
 class MarketScreen extends StatelessWidget {
@@ -81,22 +83,36 @@ class MarketScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             if (controller.hotServices.isNotEmpty) ...[
-                              Buildables.buildTitle('Hot Services', onSeeMore: () {}),
+                              Buildables.buildTitle('Hot Services'),
                               LoadingCardEffect(
                                 isLoading: controller.isLoading,
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: controller.hotServices.length,
-                                  itemBuilder: (context, index) => Padding(
-                                    padding: const EdgeInsets.only(bottom: Paddings.small),
-                                    child: ServiceCard(service: controller.hotServices[index]),
-                                  ),
+                                  itemBuilder: (context, index) {
+                                    var service = controller.hotServices[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: Paddings.small),
+                                      child: ServiceCard(
+                                        additionSubtitle: 'By ${controller.getServiceStore(service).name} store',
+                                        service: service,
+                                        store: controller.getServiceStore(service),
+                                        onBookService: () => controller.getServiceStore(service).owner?.id == AuthenticationService.find.jwtUserData?.id
+                                            ? Get.toNamed(ServiceRequestScreen.routeName, arguments: service)
+                                            : AuthenticationService.find.isUserLoggedIn.value
+                                                ? Buildables.requestBottomsheet(noteController: controller.noteController, onSubmit: () => controller.bookService(service))
+                                                    .then((value) => controller.clearRequestFormFields())
+                                                : Helper.snackBar(message: 'login_express_interest_msg'.tr),
+                                        isOwner: AuthenticationService.find.jwtUserData?.id == controller.getServiceStore(service).owner?.id,
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ],
                             const SizedBox(height: Paddings.extraLarge),
-                            Buildables.buildTitle('Stores', onSeeMore: () {}),
+                            Buildables.buildTitle('Stores'),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),

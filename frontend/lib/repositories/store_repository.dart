@@ -4,6 +4,7 @@ import '../constants/constants.dart';
 import '../controllers/main_app_controller.dart';
 import '../database/database_repository/store_database_repository.dart';
 import '../helpers/helper.dart';
+import '../models/dto/service_dto.dart';
 import '../models/dto/store_review_dto.dart';
 import '../models/filter_model.dart';
 import '../models/service.dart';
@@ -144,11 +145,11 @@ class StoreRepository extends GetxService {
     return null;
   }
 
-  Future<List<Service>> getHotServices() async {
+  Future<List<ServiceDTO>> getHotServices() async {
     try {
-      List<Service>? services;
+      List<ServiceDTO>? services;
       final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/store/hot-services');
-      services = (result['hotServices'] as List).map((e) => Service.fromJson(e)).toList();
+      services = (result['hotServices'] as List).map((e) => ServiceDTO.fromJson(e)).toList();
       return services;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getHotServices:\n$e');

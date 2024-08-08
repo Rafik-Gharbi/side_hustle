@@ -36,7 +36,6 @@ class RatingOverview extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: Paddings.regular),
                     child: Icon(controller.isExpansionTileExpanded ? Icons.expand_less : Icons.expand_more),
                   ),
-                  controller: controller.ratingExpansionController,
                   onExpansionChanged: (value) => controller.isExpansionTileExpanded = value,
                   title: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,

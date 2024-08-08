@@ -12,13 +12,14 @@ import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/dto/image_dto.dart';
 import '../../../models/task.dart';
+import '../../../models/user.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/logger_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
-import '../../boost/add_boost_bottomsheet.dart';
+import '../../boost/add_boost/add_boost_bottomsheet.dart';
 import '../../chat/components/messages_screen.dart';
 import '../task_proposal/task_proposal_screen.dart';
 import '../../profile/user_profile/user_profile_screen.dart';
@@ -197,9 +198,13 @@ class TaskDetailsScreen extends StatelessWidget {
                                       CustomButtons.elevatePrimary(
                                         title: 'Im_interested'.tr,
                                         onPressed: () => AuthenticationService.find.isUserLoggedIn.value
-                                            ? Buildables.requestBottomsheet(
-                                                    noteController: controller.noteController, onSubmit: () => controller.submitProposal(task), isTask: true)
-                                                .then((value) => controller.clearFormFields())
+                                            ? AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.verified
+                                                ? Buildables.requestBottomsheet(
+                                                    noteController: controller.noteController,
+                                                    onSubmit: () => controller.submitProposal(task),
+                                                    isTask: true,
+                                                  ).then((value) => controller.clearFormFields())
+                                                : Helper.snackBar(message: 'verify_profile_msg'.tr)
                                             : Helper.snackBar(message: 'login_express_interest_msg'.tr),
                                         width: Get.width,
                                       ),

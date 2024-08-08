@@ -76,7 +76,6 @@ class AddStoreBottomsheet extends StatelessWidget {
                             isTextArea: true,
                             validator: FormValidators.notEmptyOrNullValidator,
                           ),
-                          // TODO add store coordinates
                           const SizedBox(height: Paddings.regular),
                           CustomDropDownMenu<Governorate>(
                             items: MainAppController.find.governorates,

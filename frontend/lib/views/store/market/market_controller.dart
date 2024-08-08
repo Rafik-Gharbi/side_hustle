@@ -2,15 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constants/constants.dart';
+import '../../../helpers/helper.dart';
+import '../../../models/booking.dart';
+import '../../../models/dto/service_dto.dart';
 import '../../../models/filter_model.dart';
 import '../../../models/service.dart';
 import '../../../models/store.dart';
 import '../../../networking/api_base_helper.dart';
+import '../../../repositories/booking_repository.dart';
 import '../../../repositories/store_repository.dart';
+import '../../../services/authentication_service.dart';
 
 class MarketController extends GetxController {
   final ScrollController scrollController = ScrollController();
   final TextEditingController searchStoreController = TextEditingController();
+  final TextEditingController noteController = TextEditingController();
   List<Store> storeList = [];
   List<Store> filteredStoreList = [];
   RxBool openSearchBar = false.obs;
@@ -20,6 +26,7 @@ class MarketController extends GetxController {
   bool isEndList = false;
   int page = 0;
   List<Service> hotServices = [];
+  List<ServiceDTO> _hotServicesDTO = [];
 
   FilterModel get filterModel => _filterModel;
 
@@ -36,6 +43,8 @@ class MarketController extends GetxController {
     });
     _init();
   }
+
+  Store getServiceStore(Service service) => _hotServicesDTO.singleWhere((element) => element.service?.id == service.id).store!;
 
   Future<void> fetchSearchedStores({FilterModel? filter, String? searchQuery}) async {
     if (searchQuery != null && searchQuery.isNotEmpty) {
@@ -63,7 +72,30 @@ class MarketController extends GetxController {
   }
 
   Future<void> _init() async {
-    hotServices = await StoreRepository.find.getHotServices();
+    final result = await StoreRepository.find.getHotServices();
+    _hotServicesDTO = result;
+    hotServices = result.where((element) => element.service != null).map((e) => e.service!).toList();
     update();
+  }
+
+  Future<void> bookService(Service service) async {
+    final result = await BookingRepository.find.addBooking(
+      booking: Booking(
+        service: service,
+        date: DateTime.now(),
+        totalPrice: service.price ?? 0,
+        user: AuthenticationService.find.jwtUserData!,
+        note: noteController.text,
+        // coupon: coupon,
+      ),
+    );
+    if (result) {
+      Get.back();
+      Helper.snackBar(message: 'Service has been booked successfully');
+    }
+  }
+
+  void clearRequestFormFields() {
+    noteController.clear();
   }
 }

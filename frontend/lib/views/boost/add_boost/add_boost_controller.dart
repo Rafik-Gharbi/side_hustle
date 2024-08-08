@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../helpers/helper.dart';
-import '../../models/boost.dart';
-import '../../models/governorate.dart';
-import '../../models/user.dart';
-import '../../repositories/boost_repository.dart';
-import '../../repositories/params_repository.dart';
+import '../../../helpers/helper.dart';
+import '../../../models/boost.dart';
+import '../../../models/governorate.dart';
+import '../../../models/user.dart';
+import '../../../repositories/boost_repository.dart';
+import '../../../repositories/params_repository.dart';
 
 class AddBoostController extends GetxController {
   Boost? boost;
@@ -56,7 +56,14 @@ class AddBoostController extends GetxController {
   }
 
   AddBoostController({this.boost, this.taskId, this.serviceId}) {
-    assert(taskId != null || serviceId != null, 'taskId or serviceId is required');
+    assert(taskId != null || serviceId != null || boost?.taskServiceId != null, 'taskId or serviceId is required');
+    if (boost != null) {
+      if (boost!.isTask) {
+        taskId = boost!.taskServiceId;
+      } else {
+        serviceId = boost!.taskServiceId;
+      }
+    }
     _getMaxUsersReach();
     if (boost != null) _loadFieldsData();
   }
@@ -70,10 +77,12 @@ class AddBoostController extends GetxController {
       governorate: governorate,
       maxAge: maxAge,
       minAge: minAge,
+      taskServiceId: taskId ?? serviceId!,
+      isTask: taskId != null,
     );
     bool? result;
     if (boost?.id != null) {
-      result = await BoostRepository.find.updateBoost(boost: newBoost, taskServiceId: taskId ?? serviceId!, isTask: taskId != null);
+      result = await BoostRepository.find.updateBoost(boost: newBoost);
     } else {
       result = await BoostRepository.find.addBoost(boost: newBoost, taskServiceId: taskId ?? serviceId!, isTask: taskId != null);
     }

@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 import '../helpers/helper.dart';
 import '../models/boost.dart';
+import '../models/dto/boost_dto.dart';
 import '../networking/api_base_helper.dart';
 import '../services/logger_service.dart';
 
@@ -57,13 +58,13 @@ class BoostRepository extends GetxService {
     return null;
   }
 
-  Future<bool> updateBoost({required Boost boost, required int taskServiceId, required bool isTask}) async {
+  Future<bool> updateBoost({required Boost boost}) async {
     try {
       final result = await ApiBaseHelper().request(
         RequestType.put,
         '/boost/update',
         sendToken: true,
-        body: boost.toJson(taskServiceId: taskServiceId, isTask: isTask),
+        body: boost.toJson(taskServiceId: boost.taskServiceId, isTask: boost.isTask),
       );
       return result['boost'] != null && result['boost'].toString().isNotEmpty;
     } catch (e) {
@@ -73,10 +74,10 @@ class BoostRepository extends GetxService {
     return false;
   }
 
-  Future<List<Boost>> getUserBoosts() async {
+  Future<List<BoostDTO>> getUserBoosts({required int page, int limit = 9}) async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.get, '/boost/list', sendToken: true);
-      List<Boost> boosts = (result['boost'] as List).map((e) => Boost.fromJson(e)).toList();
+      final result = await ApiBaseHelper().request(RequestType.get, '/boost/list?pageQuery=$page&limitQuery=$limit', sendToken: true);
+      List<BoostDTO> boosts = (result['boosts'] as List).map((e) => BoostDTO.fromJson(e)).toList();
       return boosts;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getUserBoosts:\n$e');
