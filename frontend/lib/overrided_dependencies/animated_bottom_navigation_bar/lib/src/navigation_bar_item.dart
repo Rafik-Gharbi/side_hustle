@@ -15,7 +15,7 @@ class NavigationBarItem extends StatelessWidget {
   final VoidCallback onTap;
   final Widget? child;
 
-  NavigationBarItem({
+  NavigationBarItem({Key? key, 
     required this.isActive,
     required this.bubbleRadius,
     required this.maxBubbleRadius,
@@ -27,7 +27,7 @@ class NavigationBarItem extends StatelessWidget {
     required this.iconSize,
     required this.onTap,
     this.child,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +40,11 @@ class NavigationBarItem extends StatelessWidget {
             maxBubbleRadius: maxBubbleRadius,
           ),
           child: InkWell(
+            splashColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            onTap: onTap,
             child: Transform.scale(
               scale: isActive ? iconScale : 1,
               child: TabItem(
@@ -51,11 +56,6 @@ class NavigationBarItem extends StatelessWidget {
                 child: child,
               ),
             ),
-            splashColor: Colors.transparent,
-            focusColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-            onTap: onTap,
           ),
         ),
       ),

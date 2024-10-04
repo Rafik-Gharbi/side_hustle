@@ -40,7 +40,7 @@ class ProfileScreen extends StatelessWidget {
             autoRemove: false,
             initState: (state) => Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()),
             builder: (controller) => PopScope(
-              onPopInvoked: (didPop) => didPop
+              onPopInvokedWithResult: (didPop, result) => didPop
                   ? Future.delayed(const Duration(milliseconds: 200), () {
                       MainAppController.find.bottomNavIndex.value = 0;
                       HomeController.find.update();

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-@immutable
 class AroundCustomPainter extends StatelessWidget {
   final CustomClipper<Path> clipper;
 
@@ -11,25 +10,25 @@ class AroundCustomPainter extends StatelessWidget {
 
   final Widget child;
 
-  AroundCustomPainter({
+  AroundCustomPainter({Key? key, 
     required this.clipper,
     required this.borderWidth,
     required this.borderColor,
     required this.child,
     this.shadow,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
       key: UniqueKey(),
       painter: _AroundCustomPainter(
-        clipper: this.clipper,
-        shadow: this.shadow,
-        borderColor: this.borderColor,
-        borderWidth: this.borderWidth,
+        clipper: clipper,
+        shadow: shadow,
+        borderColor: borderColor,
+        borderWidth: borderWidth,
       ),
-      child: ClipPath(child: child, clipper: this.clipper),
+      child: ClipPath(clipper: clipper, child: child),
     );
   }
 }

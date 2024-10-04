@@ -2,68 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location in the background.</string>    
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to location when in the background.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open and in the background.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to the photo library.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to the camera.</string>
-	<key>UIBackgroundModes</key>
-	<array>
-	<string>fetch</string>
-	<string>remote-notification</string>
-	</array>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Upload task attachments</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-	<string>sms</string>
-	<string>tel</string>
-	</array>
-	<key>FacebookAppID</key>
-	<string>1538434026745544</string>
-	<key>FacebookClientToken</key>
-	<string>c6fc56124c6e75f6b682bcc3231445bd</string>
-	<key>FacebookDisplayName</key>
-	<string>Side Hustle</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-	<string>fbapi</string>
-	<string>fb-messenger-share-api</string>
-	</array>
-	<key>CFBundleURLTypes</key>
-	<array>
-	<dict>
-		<key>CFBundleTypeRole</key>
-		<string>Editor</string>
-		<key>CFBundleURLSchemes</key>
-		<array>
-		<string>fb1538434026745544</string>
-		<string>com.googleusercontent.apps.495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq</string>
-		</array>
-	</dict>
-	</array>
-	<key>GIDClientID</key>
-	<string>495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq.apps.googleusercontent.com</string>
-	<key>CLIENT_ID</key>
-	<string>495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.side_hustle</string>
-	<key>UISupportsDocumentBrowser</key>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
-	<key>NWPathMonitor</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-	<key>NSAllowsArbitraryLoads</key>
-	<true/>
-	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -82,10 +24,63 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1538434026745544</string>
+				<string>com.googleusercontent.apps.495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>CLIENT_ID</key>
+	<string>495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq.apps.googleusercontent.com</string>
+	<key>FacebookAppID</key>
+	<string>1538434026745544</string>
+	<key>FacebookClientToken</key>
+	<string>c6fc56124c6e75f6b682bcc3231445bd</string>
+	<key>FacebookDisplayName</key>
+	<string>Side Hustle</string>
+	<key>GIDClientID</key>
+	<string>495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq.apps.googleusercontent.com</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to the camera.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs access to location when open and in the background.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs access to location when in the background.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to location in the background.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Upload task attachments</string>
+	<key>NWPathMonitor</key>
+	<true/>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -103,9 +98,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<key>UISupportsDocumentBrowser</key>
 	<true/>
 </dict>
 </plist>

@@ -168,15 +168,17 @@ class AnimatedBottomNavigationBar extends StatefulWidget {
         ),
         super(key: key) {
     if (gapLocation == GapLocation.end) {
-      if (rightCornerRadius != 0)
+      if (rightCornerRadius != 0) {
         throw NonAppropriatePathException('RightCornerRadius along with ${GapLocation.end} or/and ${FloatingActionButtonLocation.endDocked} causes render issue => '
             'consider set rightCornerRadius to 0.');
+      }
     }
     if (gapLocation == GapLocation.center) {
       final iconsCountIsOdd = (itemCount ?? icons!.length).isOdd;
-      if (iconsCountIsOdd)
+      if (iconsCountIsOdd) {
         throw NonAppropriatePathException('Odd count of icons along with $gapLocation causes render issue => '
             'consider set gapLocation to ${GapLocation.end}');
+      }
     }
   }
 
@@ -307,10 +309,10 @@ class AnimatedBottomNavigationBar extends StatefulWidget {
         );
 
   @override
-  _AnimatedBottomNavigationBarState createState() => _AnimatedBottomNavigationBarState();
+  AnimatedBottomNavigationBarState createState() => AnimatedBottomNavigationBarState();
 }
 
-class _AnimatedBottomNavigationBarState extends State<AnimatedBottomNavigationBar> with TickerProviderStateMixin {
+class AnimatedBottomNavigationBarState extends State<AnimatedBottomNavigationBar> with TickerProviderStateMixin {
   late ValueListenable<ScaffoldGeometry> geometryListenable;
 
   late final AnimationController _bubbleController;
@@ -332,7 +334,7 @@ class _AnimatedBottomNavigationBarState extends State<AnimatedBottomNavigationBa
     );
 
     Tween<double>(begin: 0, end: 1).animate(bubbleCurve)
-      ..addListener(() {
+      .addListener(() {
         setState(() {
           _bubbleRadius = widget.splashRadius * bubbleCurve.value;
           if (_bubbleRadius == widget.splashRadius) {
@@ -353,7 +355,7 @@ class _AnimatedBottomNavigationBarState extends State<AnimatedBottomNavigationBa
     super.didChangeDependencies();
     geometryListenable = Scaffold.geometryOf(context);
 
-    widget.notchAndCornersAnimation?..addListener(() => setState(() {}));
+    widget.notchAndCornersAnimation?.addListener(() => setState(() {}));
   }
 
   @override
@@ -469,11 +471,11 @@ class _AnimatedBottomNavigationBarState extends State<AnimatedBottomNavigationBa
         bubbleColor: widget.splashColor,
         activeColor: widget.activeColor,
         inactiveColor: widget.inactiveColor,
-        child: widget.builder?.call(Icon(widget.icons?.elementAt(i)), i, isActive) ?? widget.tabBuilder?.call(i, isActive),
         iconData: widget.icons?.elementAt(i),
         iconScale: _iconScale,
         iconSize: widget.iconSize,
         onTap: () => widget.onTap(i),
+        child: widget.builder?.call(Icon(widget.icons?.elementAt(i)), i, isActive) ?? widget.tabBuilder?.call(i, isActive),
       );
 
       items.add(navigationBarItem);

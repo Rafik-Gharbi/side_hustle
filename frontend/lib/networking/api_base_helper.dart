@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import '../constants/colors.dart';
@@ -126,7 +125,7 @@ class ApiBaseHelper extends GetxController {
         LoggerService.logger!.w('uploadFile body is not a Map<String, dynamic>');
       }
       final streamedResponse = await imageUploadRequest.send();
-      final responseData = await streamedResponse.stream.asBroadcastStream().bytesToString();
+      final responseData = await streamedResponse.stream.bytesToString();
       response = http.Response(
         responseData,
         streamedResponse.statusCode,

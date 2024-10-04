@@ -22,7 +22,7 @@ class VerifyUserScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<VerifyUserController>(
         builder: (controller) => PopScope(
-          onPopInvoked: (didPop) => didPop ? controller.clearData() : null,
+          onPopInvokedWithResult: (didPop, result) => didPop ? controller.clearData() : null,
           child: CustomScaffoldBottomNavigation(
             appBarTitle: 'Verify User',
             onBack: controller.clearData,
