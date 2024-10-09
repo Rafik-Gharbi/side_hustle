@@ -10,8 +10,8 @@ import '../../../repositories/params_repository.dart';
 
 class AddBoostController extends GetxController {
   Boost? boost;
-  int? taskId;
-  int? serviceId;
+  String? taskId;
+  String? serviceId;
   RxDouble budgetRange = 10.0.obs;
   Governorate? _governorate;
   int? _minAge;

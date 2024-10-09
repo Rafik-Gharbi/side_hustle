@@ -12,7 +12,7 @@ import 'governorate.dart';
 import 'user.dart';
 
 class Task {
-  final int? id;
+  final String? id;
   final String title;
   final String description;
   final Category? category;

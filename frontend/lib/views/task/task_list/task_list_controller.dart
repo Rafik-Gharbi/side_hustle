@@ -16,6 +16,7 @@ class TaskListController extends GetxController {
   bool isLoading = true;
   RxBool isLoadingMore = true.obs;
   FilterModel _filterModel = FilterModel();
+  bool fetchBoostedTasks = false;
   bool isEndList = false;
   int page = 0;
 
@@ -41,14 +42,15 @@ class TaskListController extends GetxController {
     update();
   }
 
-  Future<void> fetchSearchedTasks({FilterModel? filter, String? searchQuery, int? taskId}) async {
+  Future<void> fetchSearchedTasks({FilterModel? filter, String? searchQuery, int? taskId, bool boosted = false}) async {
+    fetchBoostedTasks = boosted;
     if (searchQuery != null && searchQuery.isNotEmpty) {
       openSearchBar.value = true;
       searchTaskController.text = searchQuery;
     }
     if (filter != null) _filterModel = filter;
     if (page > 1) isLoadingMore.value = true;
-    taskList = await TaskRepository.find.filterTasks(page: ++page, searchQuery: searchTaskController.text, filter: _filterModel, taskId: taskId) ?? [];
+    taskList = await TaskRepository.find.filterTasks(page: ++page, searchQuery: searchTaskController.text, filter: _filterModel, taskId: taskId, boosted: fetchBoostedTasks) ?? [];
     if ((taskList.isEmpty) || taskList.length < kLoadMoreLimit) isEndList = true;
     if (page == 1) {
       filteredTaskList = taskList;

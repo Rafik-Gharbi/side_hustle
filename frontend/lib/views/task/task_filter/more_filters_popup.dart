@@ -70,7 +70,7 @@ class MoreFiltersPopup extends StatelessWidget {
                                   selectedItem: controller.category,
                                   hint: controller.category.name,
                                   items: [anyCategory, ...MainAppController.find.categories],
-                                  valueFrom: (p0) => p0.name,
+                                  valueFrom: (category) => '${category.name} (${category.subscribed})',
                                   onChanged: (category) => controller.category = category!,
                                 ),
                                 Buildables.lightDivider(),

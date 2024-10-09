@@ -41,7 +41,7 @@ class TaskRepository extends GetxService {
     return null;
   }
 
-  Future<List<Task>?> filterTasks({int page = 0, int limit = kLoadMoreLimit, String searchQuery = '', FilterModel? filter, int? taskId, bool withCoordinates = false}) async {
+  Future<List<Task>?> filterTasks({int page = 0, int limit = kLoadMoreLimit, String searchQuery = '', FilterModel? filter, int? taskId, bool withCoordinates = false, bool boosted = false}) async {
     try {
       List<Task>? tasks;
       if (MainAppController.find.isConnected) {
@@ -49,8 +49,8 @@ class TaskRepository extends GetxService {
           RequestType.get,
           sendToken: true,
           withCoordinates
-              ? '/task/filter?withCoordinates=$withCoordinates${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}'
-              : '/task/filter?page=$page&limit=$limit&searchQuery=$searchQuery${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}${taskId != null ? '&taskId=$taskId' : ''}',
+              ? '/task/filter?withCoordinates=$withCoordinates${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}&boosted=$boosted'
+              : '/task/filter?page=$page&limit=$limit&searchQuery=$searchQuery${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}${taskId != null ? '&taskId=$taskId' : ''}&boosted=$boosted',
         );
         tasks = (result['formattedList'] as List).map((e) => Task.fromJson(e)).toList();
       } else {

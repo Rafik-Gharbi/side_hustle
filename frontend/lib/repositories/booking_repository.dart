@@ -42,7 +42,7 @@ class BookingRepository extends GetxService {
   //   return [];
   // }
 
-  Future<List<Booking>> getBookingByServiceId(int serviceId) async {
+  Future<List<Booking>> getBookingByServiceId(String serviceId) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/booking/service-booking?serviceId=$serviceId', sendToken: true);
       final services = (result['formattedList'] as List).map((e) => Booking.fromJson(e)).toList();

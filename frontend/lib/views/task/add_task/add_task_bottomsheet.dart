@@ -164,7 +164,6 @@ class AddTaskBottomsheet extends StatelessWidget {
                             fieldController: controller.priceController,
                             outlinedBorderColor: Colors.transparent,
                             textInputType: const TextInputType.numberWithOptions(decimal: true),
-                            validator: FormValidators.notEmptyOrNullValidator,
                           ),
                           Buildables.lightDivider(),
                           CustomTextField(

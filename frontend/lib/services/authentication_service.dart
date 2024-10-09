@@ -508,8 +508,15 @@ class AuthenticationService extends GetxController {
     }
   }
 
-  Future<void> getUserCoordinates() async {
+  Future<void> getUserCoordinates({bool withSave = false}) async {
     coordinates = await Helper.getPosition();
+    if (withSave) {
+      final user = AuthenticationService.find.jwtUserData;
+      if (coordinates != null && Helper.shouldUpdateCoordinates(user!.coordinates, coordinates!)) {
+        user.coordinates = coordinates;
+        await UserRepository.find.updateUserCoordinates(user, silent: true);
+      }
+    }
     if (coordinates != null) Helper.snackBar(message: 'Location has been successfully shared');
   }
 

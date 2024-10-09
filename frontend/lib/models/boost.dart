@@ -4,7 +4,7 @@ import 'governorate.dart';
 import 'user.dart';
 
 class Boost {
-  final int? id;
+  final String? id;
   final double budget;
   final Governorate? governorate;
   final Gender? gender;
@@ -12,7 +12,7 @@ class Boost {
   final int? minAge;
   final int? maxAge;
   final bool isTask;
-  final int taskServiceId;
+  final String taskServiceId;
   bool isActive;
 
   Boost({
@@ -41,7 +41,7 @@ class Boost {
         taskServiceId: json['task_service_id'],
       );
 
-  Map<String, dynamic> toJson({required int taskServiceId, required bool isTask}) {
+  Map<String, dynamic> toJson({required String taskServiceId, required bool isTask}) {
     final Map<String, dynamic> data = {};
     if (id != null) data['id'] = id;
     data['governorate_id'] = governorate?.id;

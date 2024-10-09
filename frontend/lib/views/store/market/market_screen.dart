@@ -13,7 +13,7 @@ import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_card_effect.dart';
-import '../../../widgets/loading_request.dart';
+import '../../../widgets/loading_stores_effect.dart';
 import '../../../widgets/service_card.dart';
 import '../../../widgets/store_card.dart';
 import '../../task/task_filter/more_filters_popup.dart';
@@ -71,9 +71,8 @@ class MarketScreen extends StatelessWidget {
                     ),
                   )
                 : null,
-            body: LoadingRequest(
-              // TODO replace this loading with card loading
-              isLoading: controller.isLoading.value,
+            body: LoadingStoresEffect(
+              isLoading: controller.isLoading,
               child: controller.filteredStoreList.isEmpty
                   ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
                   : SingleChildScrollView(

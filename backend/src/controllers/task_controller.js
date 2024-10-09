@@ -14,7 +14,7 @@ const {
   getRandomHotTasks,
 } = require("../sql/sql_request");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
-const { getFileType, getTaskCondidatesNumber } = require("../helper/helpers");
+const { getFileType } = require("../helper/helpers");
 const {
   CategorySubscriptionModel,
 } = require("../models/category_subscribtion_model");
@@ -22,6 +22,7 @@ const {
   NotificationType,
   notificationService,
 } = require("../helper/notification_service");
+const { Reservation } = require("../models/reservation_model");
 
 // get boosted tasks & nearby tasks
 exports.getHomeTasks = async (req, res) => {
@@ -93,6 +94,7 @@ exports.getHomeTasks = async (req, res) => {
 exports.filterTasks = async (req, res) => {
   try {
     const withCoordinates = req.query.withCoordinates;
+    const boosted = req.query.boosted == "true";
     const searchQuery = req.query.searchQuery ?? "";
     const priceMin = req.query.priceMin;
     const priceMax = req.query.priceMax;
@@ -109,6 +111,9 @@ exports.filterTasks = async (req, res) => {
 
     if (categoryId == -1) categoryId = undefined;
     if (nearby <= 1) nearby = undefined;
+
+    let user;
+    if (currentUserId) user = await User.findByPk(currentUserId);
 
     const queryCoordinates = `SELECT task.*, 
       user.id AS user_id,
@@ -138,7 +143,12 @@ exports.filterTasks = async (req, res) => {
       user.picture,
       user.governorate_id as user_governorate_id,
       user.phone_number,
-      user.role FROM task JOIN user ON task.owner_id = user.id WHERE (task.title LIKE :searchQuery OR task.description LIKE :searchQuery)
+      user.role 
+      FROM task 
+      JOIN user ON task.owner_id = user.id 
+      WHERE (task.title LIKE :searchQuery OR task.description LIKE :searchQuery)
+      AND task.archived = false 
+      AND task.governorate_id = :userGovernorateId
       ${categoryId ? `AND task.category_id = :categoryId` : ``}
       ${taskId ? `AND task.id = :taskId` : ``}
       ${
@@ -148,21 +158,28 @@ exports.filterTasks = async (req, res) => {
       }
       LIMIT :limit OFFSET :offset
     ;`;
-    const tasks = await sequelize.query(
-      withCoordinates ? queryCoordinates : query,
-      {
-        type: sequelize.QueryTypes.SELECT,
-        replacements: {
-          searchQuery: `%${searchQuery}%`,
-          categoryId: categoryId,
-          priceMin: priceMin,
-          priceMax: priceMax,
-          taskId: taskId,
-          limit: limitQuery,
-          offset: offset,
-        },
-      }
-    );
+    let tasks;
+    if (boosted) {
+      tasks = await getRandomHotTasks(user, limitQuery, offset);
+    } else {
+      tasks = await sequelize.query(
+        withCoordinates ? queryCoordinates : query,
+        {
+          type: sequelize.QueryTypes.SELECT,
+          replacements: {
+            searchQuery: `%${searchQuery}%`,
+            categoryId: categoryId,
+            priceMin: priceMin,
+            priceMax: priceMax,
+            taskId: taskId,
+            userGovernorateId:
+              user && user.governorate_id ? user.governorate_id : 1,
+            limit: limitQuery,
+            offset: offset,
+          },
+        }
+      );
+    }
     const formattedList = await populateTasks(tasks, currentUserId);
     return res.status(200).json({ formattedList });
   } catch (error) {
@@ -191,16 +208,25 @@ exports.taskRequest = async (req, res) => {
       userFavorites = await getFavoriteTaskByUserId(currentUserId);
     }
 
-    const query = `SELECT task.*, 
-      user.id AS user_id,
-      user.name,
-      user.email,
-      user.gender,
-      user.birthdate,
-      user.picture,
-      user.governorate_id as user_governorate_id,
-      user.phone_number,
-      user.role FROM task JOIN user ON task.owner_id = user.id WHERE task.owner_id = :userId
+    const query = `
+      SELECT
+        task.*,
+        user.id AS user_id,
+        user.name,
+        user.email,
+        user.gender,
+        user.birthdate,
+        user.picture,
+        user.governorate_id AS user_governorate_id,
+        user.phone_number,
+        user.role,
+        CASE WHEN COUNT(CASE WHEN reservation.status IN('confirmed', 'finished') THEN 1 END) > 0 
+          THEN -1 ELSE COUNT(reservation.id) END AS condidates
+      FROM task JOIN user ON task.owner_id = user.id 
+      LEFT JOIN reservation ON reservation.task_id = task.id 
+      WHERE task.owner_id = :userId
+      GROUP BY task.id
+      ORDER BY condidates DESC
       LIMIT :limit OFFSET :offset
 ;`;
     const tasks = await sequelize.query(query, {
@@ -226,10 +252,8 @@ exports.taskRequest = async (req, res) => {
           where: { task_id: row.id },
         });
 
-        const condidates = await getTaskCondidatesNumber(row.id);
-
         return {
-          condidates,
+          condidates: row.condidates,
           task: {
             id: row.id,
             price: row.price,
@@ -481,11 +505,20 @@ exports.deleteTask = async (req, res) => {
       where: { task_id: ID },
     });
 
-    await Task.destroy({ where: { id: ID } });
-    // Delete the image files
-    attachments.forEach((image) => {
-      deleteImage(path.join(__dirname, "../../public/task", image.url));
+    const tasksReservation = await Reservation.findAll({
+      where: { task_id: ID },
     });
+    if (tasksReservation.length == 0) {
+      await Task.destroy({ where: { id: ID } });
+      // Delete the image files
+      attachments.forEach((image) => {
+        deleteImage(path.join(__dirname, "../../public/task", image.url));
+      });
+    } else {
+      const task = await Task.findByPk(ID);
+      task.archived = true;
+      task.save();
+    }
     return res.status(200).json({ done: true });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);

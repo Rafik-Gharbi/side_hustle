@@ -6,7 +6,11 @@ const { getOneMinuteBeforeMidnight } = require("../helper/constants");
 const Task = sequelize.define(
   "task",
   {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    id: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      primaryKey: true,
+    },
     title: { type: Sequelize.STRING, allowNull: false },
     description: { type: Sequelize.STRING, allowNull: false },
     price: { type: Sequelize.FLOAT, allowNull: false },
@@ -16,6 +20,7 @@ const Task = sequelize.define(
       type: Sequelize.DATE,
       defaultValue: getOneMinuteBeforeMidnight,
     },
+    archived: { type: Sequelize.BOOLEAN, defaultValue: false },
   },
   {
     tableName: "task",

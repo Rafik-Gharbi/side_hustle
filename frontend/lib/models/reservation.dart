@@ -1,15 +1,17 @@
 import 'package:drift/drift.dart';
 
 import '../database/database.dart';
+import '../helpers/helper.dart';
 import 'enum/request_status.dart';
 import 'task.dart';
 import 'user.dart';
 
 class Reservation {
-  final int? id;
+  final String? id;
   final Task task;
   final DateTime date;
   final double totalPrice;
+  final double? proposedPrice;
   final String? coupon;
   final String note;
   final RequestStatus status;
@@ -21,6 +23,7 @@ class Reservation {
     required this.date,
     required this.totalPrice,
     required this.user,
+    this.proposedPrice,
     this.status = RequestStatus.pending,
     this.coupon,
     this.note = '',
@@ -30,7 +33,8 @@ class Reservation {
         id: json['id'],
         task: Task.fromJson(json['task'], attachments: json['taskAttachments']),
         date: json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
-        totalPrice: json['totalPrice'] is int ? (json['totalPrice'] as int).toDouble() : json['totalPrice'],
+        totalPrice: Helper.resolveDouble(json['totalPrice']),
+        proposedPrice: Helper.resolveDouble(json['proposedPrice']),
         coupon: json['coupon'],
         note: json['note'],
         status: RequestStatus.values.singleWhere((element) => element.name == json['status']),
@@ -43,6 +47,7 @@ class Reservation {
     data['taskId'] = task.id;
     data['date'] = date.toIso8601String();
     data['totalPrice'] = totalPrice;
+    data['proposedPrice'] = proposedPrice;
     data['coupon'] = coupon;
     data['note'] = note;
     data['status'] = status.name;
@@ -54,6 +59,7 @@ class Reservation {
         task: task,
         date: reservation.date.value,
         totalPrice: reservation.totalPrice.value,
+        proposedPrice: reservation.proposedPrice.value,
         coupon: reservation.coupon.value,
         note: reservation.note.value,
         status: reservation.status.value,
@@ -65,6 +71,7 @@ class Reservation {
         task: task.id == null ? const Value.absent() : Value(task.id!),
         date: Value(date),
         totalPrice: Value(totalPrice),
+        proposedPrice: Value(proposedPrice),
         coupon: coupon == null ? const Value.absent() : Value(coupon!),
         note: Value(note),
         status: Value(statusUpdate ?? status),

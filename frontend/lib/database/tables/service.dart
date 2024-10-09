@@ -4,7 +4,7 @@ import '../database.dart';
 import 'category.dart';
 import 'store.dart';
 
-class ServiceTable extends Table with AutoIncrementingPrimaryKey {
+class ServiceTable extends Table with AutoIncrementingStringPrimaryKey {
   TextColumn get name => text().withDefault(const Constant(''))();
   TextColumn get description => text().withDefault(const Constant(''))();
   IntColumn get category => integer().references(CategoryTable, #id).nullable()();

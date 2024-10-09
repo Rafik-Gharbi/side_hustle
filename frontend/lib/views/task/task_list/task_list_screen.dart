@@ -21,8 +21,9 @@ class TaskListScreen extends StatelessWidget {
   final FilterModel? filterModel;
   final String? searchQuery;
   final int? taskId;
+  final bool boosted;
 
-  const TaskListScreen({super.key, this.filterModel, this.searchQuery, this.taskId});
+  const TaskListScreen({super.key, this.filterModel, this.searchQuery, this.taskId, this.boosted = false});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class TaskListScreen extends StatelessWidget {
       child: GetBuilder<TaskListController>(
         initState: (state) => Helper.waitAndExecute(
           () => state.controller != null,
-          () => state.controller?.fetchSearchedTasks(searchQuery: searchQuery, filter: filterModel, taskId: taskId),
+          () => state.controller?.fetchSearchedTasks(searchQuery: searchQuery, filter: filterModel, taskId: taskId, boosted: boosted),
         ),
         builder: (controller) => Obx(
           () => CustomScaffoldBottomNavigation(

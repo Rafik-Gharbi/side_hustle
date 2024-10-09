@@ -201,6 +201,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                             ? AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.verified
                                                 ? Buildables.requestBottomsheet(
                                                     noteController: controller.noteController,
+                                                    proposedPriceController: controller.proposedPriceController,
                                                     onSubmit: () => controller.submitProposal(task),
                                                     isTask: true,
                                                   ).then((value) => controller.clearFormFields())

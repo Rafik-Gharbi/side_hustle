@@ -15,7 +15,7 @@ class NavigationBarItem extends StatelessWidget {
   final VoidCallback onTap;
   final Widget? child;
 
-  NavigationBarItem({Key? key, 
+  const NavigationBarItem({Key? key, 
     required this.isActive,
     required this.bubbleRadius,
     required this.maxBubbleRadius,

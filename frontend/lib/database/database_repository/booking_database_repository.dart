@@ -23,7 +23,7 @@ class BookingDatabaseRepository extends GetxService {
     return bookings;
   }
 
-  Future<Booking?> getBookingById(int bookingId) async {
+  Future<Booking?> getBookingById(String bookingId) async {
     try {
       final BookingTableData booking = (await (database.select(database.bookingTable)..where((tbl) => tbl.id.equals(bookingId))).get()).first;
       final service = await StoreDatabaseRepository.find.getServiceById(booking.service!);
@@ -42,7 +42,7 @@ class BookingDatabaseRepository extends GetxService {
   Future<void> update(BookingTableCompanion bookingCompanion) async => await database.update(database.bookingTable).replace(bookingCompanion);
 
   Future<Booking?> insert(BookingTableCompanion bookingCompanion) async {
-    final int bookingId = await database.into(database.bookingTable).insert(bookingCompanion);
+    final String bookingId = (await database.into(database.bookingTable).insert(bookingCompanion)).toString(); // TODO fix this
     final bookingBooking = await getBookingById(bookingId);
     return bookingBooking;
   }

@@ -9,7 +9,7 @@ import '../services/logger_service.dart';
 class FavoriteRepository extends GetxService {
   static FavoriteRepository get find => Get.find<FavoriteRepository>();
 
-  Future<bool> toggleTaskFavorite({required int idTask}) async {
+  Future<bool> toggleTaskFavorite({required String idTask}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/favorite/toggle-task', body: {'idTask': idTask}, sendToken: true);
       return result['added'];

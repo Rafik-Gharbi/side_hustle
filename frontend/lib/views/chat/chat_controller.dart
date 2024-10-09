@@ -222,7 +222,7 @@ class ChatController extends GetxController {
     isLoadingMoreChat = false;
   }
 
-  Future<void> getBeforeAfterMessages(int id, bool isBefore) async {
+  Future<void> getBeforeAfterMessages(String id, bool isBefore) async {
     isLoadingMoreChat = true;
     final result = await ChatRepository.find.getMessagesBeforeAfter(idChat: id, isBefore: isBefore);
     if (result != null && result.isNotEmpty) {
@@ -244,7 +244,7 @@ class ChatController extends GetxController {
     isLoadingMoreChat = false;
   }
 
-  Future<void> goToMessageInChat(int id) async {
+  Future<void> goToMessageInChat(String id) async {
     isLoadingMoreChat = true;
     final result = await ChatRepository.find.getMessagesById(id);
     if (result != null && result.isNotEmpty) {

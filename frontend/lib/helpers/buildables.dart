@@ -160,12 +160,13 @@ class Buildables {
 
   static Future<void> requestBottomsheet({
     required TextEditingController noteController,
+    TextEditingController? proposedPriceController,
     required void Function() onSubmit,
     bool isTask = false,
   }) async =>
       await Get.bottomSheet(
         SizedBox(
-          height: 330,
+          height: proposedPriceController != null ? 390 : 330,
           child: Material(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
             child: Padding(
@@ -182,6 +183,15 @@ class Buildables {
                     outlinedBorderColor: kNeutralColor,
                     hintText: isTask ? 'Add a note for the task owner' : 'Add a note for the store owner',
                   ),
+                  if (proposedPriceController != null) ...[
+                    const SizedBox(height: Paddings.regular),
+                    CustomTextField(
+                      fieldController: proposedPriceController,
+                      outlinedBorder: true,
+                      outlinedBorderColor: kNeutralColor,
+                      hintText: 'Propose a new price',
+                    ),
+                  ],
                   const SizedBox(height: Paddings.exceptional),
                   CustomButtons.elevatePrimary(
                     title: isTask ? 'Submit proposal' : 'Submit a request',

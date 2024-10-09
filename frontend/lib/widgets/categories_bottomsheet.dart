@@ -182,7 +182,12 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                                                 child: Center(child: Icon(subCategory.icon, color: kNeutralColor100)),
                                               ),
                                               const SizedBox(height: Paddings.small),
-                                              Text(subCategory.name, style: AppFonts.x12Regular, softWrap: true, textAlign: TextAlign.center),
+                                              Text(
+                                                '${subCategory.name} (${subCategory.subscribed})',
+                                                style: AppFonts.x12Regular,
+                                                softWrap: true,
+                                                textAlign: TextAlign.center,
+                                              ),
                                             ],
                                           ),
                                         ),

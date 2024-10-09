@@ -9,12 +9,14 @@ class Category {
   final String name;
   final IconData icon;
   final int parentId;
+  final int subscribed;
 
   Category({
     required this.id,
     required this.name,
     required this.icon,
     this.parentId = 0,
+    this.subscribed = 0,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
@@ -22,6 +24,7 @@ class Category {
         parentId: json['parentId'],
         icon: (json['icon'] as String).getIconData(),
         name: json['name'],
+        subscribed: json['subscribed'] ?? 0,
       );
 
   Map<String, dynamic> toJson() {
@@ -38,6 +41,7 @@ class Category {
         name: category.name,
         icon: category.icon.toString().getIconData(),
         parentId: category.parent,
+        subscribed: category.subscribed,
       );
 
   CategoryTableCompanion toCategoryCompanion() => CategoryTableCompanion(
@@ -45,5 +49,6 @@ class Category {
         name: Value(name),
         icon: Value(icon.codePoint),
         parent: Value(parentId),
-  );
+        subscribed: Value(subscribed),
+      );
 }

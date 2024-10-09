@@ -1,5 +1,8 @@
 const { Governorate } = require("../models/governorate_model");
 const { Category } = require("../models/category_model");
+const {
+  CategorySubscriptionModel,
+} = require("../models/category_subscribtion_model");
 
 // check backend is reachable
 exports.checkConnection = async (req, res) => {
@@ -28,7 +31,22 @@ exports.getAllGovernorates = async (req, res) => {
 exports.getAllCategories = async (req, res) => {
   try {
     let categories = await Category.findAll();
-    return res.status(200).json({ categories });
+    const populatedCategories = await Promise.all(
+      categories.map(async (row) => {
+        let subscribedUsers = await CategorySubscriptionModel.findAll({
+          where: { category_id: row.id },
+        });
+
+        return {
+          id: row.id,
+          name: row.name,
+          icon: row.icon,
+          parentId: row.parentId,
+          subscribed: subscribedUsers.length,
+        };
+      })
+    );
+    return res.status(200).json({ categories: populatedCategories });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

@@ -5,7 +5,11 @@ const { Task } = require("./task_model");
 const FavoriteTask = sequelize.define(
   "favorite_task",
   {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    id: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      primaryKey: true,
+    },
   },
   {
     tableName: "favorite_task",

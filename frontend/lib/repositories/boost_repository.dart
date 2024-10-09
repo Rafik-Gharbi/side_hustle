@@ -10,7 +10,7 @@ class BoostRepository extends GetxService {
   static BoostRepository get find => Get.find<BoostRepository>();
 
   // Send a proposal for the service's owner
-  Future<bool> addBoost({required Boost boost, required int taskServiceId, required bool isTask}) async {
+  Future<bool> addBoost({required Boost boost, required String taskServiceId, required bool isTask}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/boost/add', body: boost.toJson(taskServiceId: taskServiceId, isTask: isTask), sendToken: true);
       return result['boost'] != null && result['boost'].toString().isNotEmpty;

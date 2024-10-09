@@ -181,12 +181,25 @@ class UserRepository extends GetxService {
       if (picture != null) uploadFiles = [picture];
       final result = await ApiBaseHelper().request(RequestType.put, '/user/update-profile', body: user.toUpdateJson(), files: uploadFiles, sendToken: true);
       if (withBack) Get.back();
-      if(!silent) Helper.snackBar(title: 'success'.tr, message: 'update_profile_success'.tr);
+      if (!silent) Helper.snackBar(title: 'success'.tr, message: 'update_profile_success'.tr);
       final currentUser = User.fromJson(result['updatedUser']);
       if (result['jwt'] != null) AuthenticationService.find.initiateCurrentUser(result['jwt'], user: currentUser, refresh: false);
       return currentUser;
     } catch (e) {
       LoggerService.logger?.e('Error occured in updateUser:\n$e');
+    }
+    return null;
+  }
+
+  Future<User?> updateUserCoordinates(User user, {bool silent = false}) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.put, '/user/update-coordinates', body: user.toUpdateJson(), sendToken: true);
+      if (!silent) Helper.snackBar(title: 'success'.tr, message: 'update_profile_success'.tr);
+      final currentUser = User.fromJson(result['updatedUser']);
+      if (result['jwt'] != null) AuthenticationService.find.initiateCurrentUser(result['jwt'], user: currentUser, refresh: false);
+      return currentUser;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in updateUserCoordinates:\n$e');
     }
     return null;
   }

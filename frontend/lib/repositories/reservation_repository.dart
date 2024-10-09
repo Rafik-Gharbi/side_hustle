@@ -17,7 +17,7 @@ class ReservationRepository extends GetxService {
   Future<bool> addReservation({required Reservation reservation}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/reservation/add', body: reservation.toJson(), sendToken: true);
-      if (MainAppController.find.isConnected) ReservationDatabaseRepository.find.addReservation(Reservation.fromJson(result));
+      if (MainAppController.find.isConnected) ReservationDatabaseRepository.find.addReservation(Reservation.fromJson(result['reservation']));
       return result['reservation'] != null && result['reservation'].toString().isNotEmpty;
     } catch (e) {
       if (e.toString().contains('reservation_already_exist')) {
@@ -41,7 +41,7 @@ class ReservationRepository extends GetxService {
   //   return [];
   // }
 
-  Future<List<Reservation>> getReservationByTaskId(int taskId) async {
+  Future<List<Reservation>> getReservationByTaskId(String taskId) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/reservation/task-reservation?taskId=$taskId', sendToken: true);
       final reservations = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();

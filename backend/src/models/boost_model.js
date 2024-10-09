@@ -4,7 +4,11 @@ const { Governorate } = require("./governorate_model");
 const Boost = sequelize.define(
   "boost",
   {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    id: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      primaryKey: true,
+    },
     budget: { type: Sequelize.FLOAT, allowNull: false },
     gender: { type: Sequelize.STRING },
     endDate: {

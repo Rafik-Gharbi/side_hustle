@@ -3,7 +3,11 @@ const { Task } = require("./task_model");
 const TaskAttachmentModel = sequelize.define(
   "task_attachment",
   {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    id: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      primaryKey: true,
+    },
     url: { type: Sequelize.STRING },
     type: { type: Sequelize.STRING },
   },

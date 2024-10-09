@@ -6,7 +6,7 @@ import 'category.dart';
 import 'dto/image_dto.dart';
 
 class Service {
-  final int? id;
+  final String? id;
   final String? name;
   final String? description;
   final List<ImageDTO>? gallery;

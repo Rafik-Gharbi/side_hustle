@@ -24,13 +24,13 @@ class ImageDTO {
     return data;
   }
 
-  TaskAttachmentTableCompanion toAttachmentCompanion({int? taskId}) => TaskAttachmentTableCompanion(
+  TaskAttachmentTableCompanion toAttachmentCompanion({String? taskId}) => TaskAttachmentTableCompanion(
         type: Value(type.name),
         url: Value(file.path),
         taskId: Value(taskId),
       );
 
-  ServiceGalleryTableCompanion toGalleryCompanion({int? serviceId}) => ServiceGalleryTableCompanion(
+  ServiceGalleryTableCompanion toGalleryCompanion({String? serviceId}) => ServiceGalleryTableCompanion(
         type: Value(type.name),
         url: Value(file.path),
         serviceId: Value(serviceId),

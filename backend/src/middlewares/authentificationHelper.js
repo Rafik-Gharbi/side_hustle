@@ -2,8 +2,6 @@ const jwt = require("jsonwebtoken");
 const Bcrypt = require("bcrypt");
 const { User } = require("../models/user_model");
 const { decryptData } = require("../helper/encryption");
-const { Parameters } = require("../models/paramters_model");
-const { generateJWT } = require("../helper/helpers");
 // const { loadTranslations } = require("./helpers");
 
 function tokenVerification(req, res, next) {

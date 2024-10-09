@@ -41,6 +41,11 @@ module.exports = (app) => {
     fileUpload,
     userController.updateProfile
   );
+  router.put(
+    "/update-coordinates",
+    tokenVerification,
+    userController.updateCoordinates
+  );
 
   // update password when connected with JWT
   router.put(

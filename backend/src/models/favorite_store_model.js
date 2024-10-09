@@ -5,7 +5,11 @@ const { Store } = require("./store_model");
 const FavoriteStore = sequelize.define(
   "favorite_store",
   {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    id: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      primaryKey: true,
+    },
   },
   {
     tableName: "favorite_store",

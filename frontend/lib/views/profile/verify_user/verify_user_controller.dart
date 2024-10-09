@@ -115,6 +115,7 @@ class VerifyUserController extends GetxController {
     passportPicture = null;
     frontIdentityPicture = null;
     backIdentityPicture = null;
+    _timer?.cancel();
   }
 
   Future<void> _uploadUserData() async {

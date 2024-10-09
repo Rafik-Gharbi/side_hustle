@@ -3,7 +3,11 @@ const { Service } = require("./service_model");
 const ServiceGalleryModel = sequelize.define(
   "service_gallery",
   {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    id: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      primaryKey: true,
+    },
     url: { type: Sequelize.STRING },
     type: { type: Sequelize.STRING },
   },

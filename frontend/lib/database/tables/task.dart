@@ -5,7 +5,7 @@ import 'category.dart';
 import 'governorate.dart';
 import 'user.dart';
 
-class TaskTable extends Table with AutoIncrementingPrimaryKey {
+class TaskTable extends Table with AutoIncrementingStringPrimaryKey {
   RealColumn get price => real().withDefault(const Constant(0))();
   TextColumn get title => text().withDefault(const Constant(''))();
   TextColumn get description => text().withDefault(const Constant(''))();

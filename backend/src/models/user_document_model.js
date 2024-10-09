@@ -4,7 +4,7 @@ const { User } = require("./user_model");
 const UserDocumentModel = sequelize.define(
   "user_document",
   {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    id: { type: Sequelize.BIGINT, primaryKey: true, autoIncrement: true },
     front_identity: { type: Sequelize.STRING },
     back_identity: { type: Sequelize.STRING },
     passport: { type: Sequelize.STRING },

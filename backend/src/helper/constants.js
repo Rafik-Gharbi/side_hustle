@@ -1,5 +1,7 @@
 // config.js
 
+const { UUID } = require("sequelize");
+
 const constantId = {
   Users: [
     {
@@ -23,10 +25,10 @@ const constantId = {
       gender: "male",
       birthdate: "1992-09-23",
       phone_number: "+21622222222",
-      isVerified: "verified",
+      isVerified: "none",
       isMailVerified: true,
       governorate_id: 17,
-      role: "seeker",
+      role: "user",
     },
     {
       id: 3,
@@ -36,10 +38,10 @@ const constantId = {
       gender: "male",
       birthdate: "1992-09-23",
       phone_number: "+21623232323",
-      isVerified: "none",
+      isVerified: "verified",
       isMailVerified: true,
       governorate_id: 17,
-      role: "provider",
+      role: "subscribed",
     },
   ],
   LanguageType: [
@@ -545,7 +547,6 @@ const constantId = {
   ],
   tasks: [
     {
-      id: 1,
       title: "House Cleaning",
       description: "Clean the entire house thoroughly.",
       price: 100.0,
@@ -555,7 +556,6 @@ const constantId = {
       category_id: 101,
     },
     {
-      id: 2,
       title: "Garden Maintenance",
       description: "Mow the lawn and trim the hedges.",
       price: 80.0,
@@ -565,7 +565,6 @@ const constantId = {
       category_id: 103,
     },
     {
-      id: 3,
       title: "Math Tutoring",
       description: "Help with high school math homework.",
       price: 50.0,
@@ -575,7 +574,6 @@ const constantId = {
       category_id: 302,
     },
     {
-      id: 4,
       title: "Dog Walking",
       description: "Walk my dog every morning.",
       price: 30.0,
@@ -585,7 +583,6 @@ const constantId = {
       category_id: 402,
     },
     {
-      id: 5,
       title: "Car Washing",
       description: "Wash and detail my car.",
       price: 70.0,
@@ -595,7 +592,6 @@ const constantId = {
       category_id: 501,
     },
     {
-      id: 6,
       title: "Logo Design",
       description: "Create a logo for my new business.",
       price: 200.0,
@@ -605,7 +601,6 @@ const constantId = {
       category_id: 603,
     },
     {
-      id: 7,
       title: "Event Planning",
       description: "Organize a wedding ceremony.",
       price: 5000.0,
@@ -615,7 +610,6 @@ const constantId = {
       category_id: 701,
     },
     {
-      id: 8,
       title: "IT Support",
       description: "Fix my computer issues.",
       price: 150.0,
@@ -625,7 +619,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 9,
       title: "Home Painting",
       description: "Paint the living room walls.",
       price: 300.0,
@@ -635,7 +628,6 @@ const constantId = {
       category_id: 902,
     },
     {
-      id: 10,
       title: "Music Lessons",
       description: "Teach piano to beginners.",
       price: 40.0,
@@ -645,7 +637,6 @@ const constantId = {
       category_id: 1002,
     },
     {
-      id: 11,
       title: "Fitness Training",
       description: "Personal fitness training sessions.",
       price: 60.0,
@@ -655,7 +646,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 12,
       title: "Special Needs Care",
       description: "Provide care for a child with special needs.",
       price: 100.0,
@@ -665,7 +655,6 @@ const constantId = {
       category_id: 303,
     },
     {
-      id: 13,
       title: "Administrative Support",
       description: "Help with office administration tasks.",
       price: 70.0,
@@ -675,7 +664,6 @@ const constantId = {
       category_id: 601,
     },
     {
-      id: 14,
       title: "Photography",
       description: "Photograph my event.",
       price: 500.0,
@@ -685,7 +673,6 @@ const constantId = {
       category_id: 703,
     },
     {
-      id: 15,
       title: "Veterinary Assistance",
       description: "Assist with veterinary procedures.",
       price: 120.0,
@@ -695,7 +682,6 @@ const constantId = {
       category_id: 404,
     },
     {
-      id: 16,
       title: "Errand Running",
       description: "Run various errands.",
       price: 50.0,
@@ -705,7 +691,6 @@ const constantId = {
       category_id: 201,
     },
     {
-      id: 17,
       title: "Construction Work",
       description: "Assist with home construction.",
       price: 400.0,
@@ -715,7 +700,6 @@ const constantId = {
       category_id: 901,
     },
     {
-      id: 18,
       title: "Travel Assistance",
       description: "Help plan a vacation.",
       price: 150.0,
@@ -725,7 +709,6 @@ const constantId = {
       category_id: 1003,
     },
     {
-      id: 19,
       title: "Car Repair",
       description: "Fix my car's engine issues.",
       price: 300.0,
@@ -735,7 +718,6 @@ const constantId = {
       category_id: 502,
     },
     {
-      id: 20,
       title: "Interior Design",
       description: "Design my living room interior.",
       price: 500.0,
@@ -745,7 +727,6 @@ const constantId = {
       category_id: 903,
     },
     {
-      id: 21,
       title: "Babysitting",
       description: "Babysit my 2-year-old son.",
       price: 60.0,
@@ -755,7 +736,6 @@ const constantId = {
       category_id: 301,
     },
     {
-      id: 22,
       title: "Beauty Services",
       description: "Provide a manicure and pedicure.",
       price: 70.0,
@@ -765,7 +745,6 @@ const constantId = {
       category_id: 203,
     },
     {
-      id: 23,
       title: "Moving Assistance",
       description: "Help me move to a new apartment.",
       price: 200.0,
@@ -775,7 +754,6 @@ const constantId = {
       category_id: 104,
     },
     {
-      id: 24,
       title: "Marketing Support",
       description: "Assist with marketing my product.",
       price: 150.0,
@@ -785,7 +763,6 @@ const constantId = {
       category_id: 602,
     },
     {
-      id: 25,
       title: "Pet Grooming",
       description: "Groom my dog.",
       price: 50.0,
@@ -795,7 +772,6 @@ const constantId = {
       category_id: 403,
     },
     {
-      id: 26,
       title: "Catering Services",
       description: "Cater food for a party.",
       price: 1000.0,
@@ -805,7 +781,6 @@ const constantId = {
       category_id: 702,
     },
     {
-      id: 27,
       title: "Tire Services",
       description: "Change car tires.",
       price: 100.0,
@@ -815,7 +790,6 @@ const constantId = {
       category_id: 503,
     },
     {
-      id: 28,
       title: "Arts & Crafts",
       description: "Create custom art pieces.",
       price: 200.0,
@@ -825,7 +799,6 @@ const constantId = {
       category_id: 1001,
     },
     {
-      id: 29,
       title: "Health Coaching",
       description: "Provide health coaching sessions.",
       price: 60.0,
@@ -835,7 +808,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 30,
       title: "Writing & Translation",
       description: "Translate documents to French.",
       price: 120.0,
@@ -845,7 +817,6 @@ const constantId = {
       category_id: 604,
     },
     {
-      id: 31,
       title: "Special Needs Care",
       description: "Provide care for a child with special needs.",
       price: 100.0,
@@ -855,7 +826,6 @@ const constantId = {
       category_id: 303,
     },
     {
-      id: 32,
       title: "Event Entertainment",
       description: "Provide entertainment for an event.",
       price: 500.0,
@@ -865,7 +835,6 @@ const constantId = {
       category_id: 704,
     },
     {
-      id: 33,
       title: "Pet Sitting",
       description: "Take care of pets while the owner is away.",
       price: 40.0,
@@ -875,7 +844,6 @@ const constantId = {
       category_id: 401,
     },
     {
-      id: 34,
       title: "Home Maintenance",
       description: "Fix minor home issues.",
       price: 90.0,
@@ -885,7 +853,6 @@ const constantId = {
       category_id: 102,
     },
     {
-      id: 35,
       title: "IT Support",
       description: "Fix my computer issues.",
       price: 150.0,
@@ -895,7 +862,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 36,
       title: "Dog Walking",
       description: "Walk my dog every morning.",
       price: 30.0,
@@ -905,7 +871,6 @@ const constantId = {
       category_id: 402,
     },
     {
-      id: 37,
       title: "Tutoring",
       description: "Help with high school math homework.",
       price: 50.0,
@@ -915,7 +880,6 @@ const constantId = {
       category_id: 302,
     },
     {
-      id: 38,
       title: "Marketing Support",
       description: "Assist with marketing my product.",
       price: 150.0,
@@ -925,7 +889,6 @@ const constantId = {
       category_id: 602,
     },
     {
-      id: 39,
       title: "Babysitting",
       description: "Babysit my 2-year-old son.",
       price: 60.0,
@@ -935,7 +898,6 @@ const constantId = {
       category_id: 301,
     },
     {
-      id: 40,
       title: "Travel Assistance",
       description: "Help plan a vacation.",
       price: 150.0,
@@ -945,7 +907,6 @@ const constantId = {
       category_id: 1003,
     },
     {
-      id: 41,
       title: "Car Repair",
       description: "Fix my car's engine issues.",
       price: 300.0,
@@ -955,7 +916,6 @@ const constantId = {
       category_id: 502,
     },
     {
-      id: 42,
       title: "Graphic Design",
       description: "Design a flyer for my event.",
       price: 200.0,
@@ -965,7 +925,6 @@ const constantId = {
       category_id: 603,
     },
     {
-      id: 43,
       title: "Gardening",
       description: "Mow the lawn and trim the hedges.",
       price: 80.0,
@@ -975,7 +934,6 @@ const constantId = {
       category_id: 103,
     },
     {
-      id: 44,
       title: "Fitness Training",
       description: "Personal fitness training sessions.",
       price: 60.0,
@@ -985,7 +943,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 45,
       title: "Car Washing",
       description: "Wash and detail my car.",
       price: 70.0,
@@ -995,7 +952,6 @@ const constantId = {
       category_id: 501,
     },
     {
-      id: 46,
       title: "Health Coaching",
       description: "Provide health coaching sessions.",
       price: 60.0,
@@ -1005,7 +961,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 47,
       title: "Photography",
       description: "Photograph my event.",
       price: 500.0,
@@ -1015,7 +970,6 @@ const constantId = {
       category_id: 703,
     },
     {
-      id: 48,
       title: "Veterinary Assistance",
       description: "Assist with veterinary procedures.",
       price: 120.0,
@@ -1025,7 +979,6 @@ const constantId = {
       category_id: 404,
     },
     {
-      id: 49,
       title: "Event Planning",
       description: "Organize a wedding ceremony.",
       price: 5000.0,
@@ -1035,7 +988,6 @@ const constantId = {
       category_id: 701,
     },
     {
-      id: 50,
       title: "Music Lessons",
       description: "Teach piano to beginners.",
       price: 40.0,
@@ -1045,7 +997,6 @@ const constantId = {
       category_id: 1002,
     },
     {
-      id: 51,
       title: "Interior Design",
       description: "Design my living room interior.",
       price: 500.0,
@@ -1055,7 +1006,6 @@ const constantId = {
       category_id: 903,
     },
     {
-      id: 52,
       title: "House Cleaning",
       description: "Clean the entire house thoroughly.",
       price: 100.0,
@@ -1065,7 +1015,6 @@ const constantId = {
       category_id: 101,
     },
     {
-      id: 53,
       title: "IT Support",
       description: "Fix my computer issues.",
       price: 150.0,
@@ -1075,7 +1024,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 54,
       title: "Administrative Support",
       description: "Assist with administrative tasks.",
       price: 100.0,
@@ -1085,7 +1033,6 @@ const constantId = {
       category_id: 601,
     },
     {
-      id: 55,
       title: "Event Catering",
       description: "Provide catering services for an event.",
       price: 1000.0,
@@ -1095,7 +1042,6 @@ const constantId = {
       category_id: 702,
     },
     {
-      id: 56,
       title: "Painting",
       description: "Paint the interior of a house.",
       price: 800.0,
@@ -1105,7 +1051,6 @@ const constantId = {
       category_id: 902,
     },
     {
-      id: 57,
       title: "Pet Grooming",
       description: "Groom my dog.",
       price: 50.0,
@@ -1115,7 +1060,6 @@ const constantId = {
       category_id: 403,
     },
     {
-      id: 58,
       title: "Errands",
       description: "Run errands for a busy professional.",
       price: 30.0,
@@ -1125,7 +1069,6 @@ const constantId = {
       category_id: 201,
     },
     {
-      id: 59,
       title: "Multimedia Services",
       description: "Create a promotional video.",
       price: 400.0,
@@ -1135,7 +1078,6 @@ const constantId = {
       category_id: 803,
     },
     {
-      id: 60,
       title: "Marketing & Sales",
       description: "Assist with sales strategies.",
       price: 150.0,
@@ -1145,7 +1087,6 @@ const constantId = {
       category_id: 602,
     },
     {
-      id: 61,
       title: "Moving & Relocation",
       description: "Help with moving to a new house.",
       price: 200.0,
@@ -1155,7 +1096,6 @@ const constantId = {
       category_id: 104,
     },
     {
-      id: 62,
       title: "Pet Sitting",
       description: "Take care of pets while the owner is away.",
       price: 40.0,
@@ -1165,7 +1105,6 @@ const constantId = {
       category_id: 401,
     },
     {
-      id: 63,
       title: "Tech Support",
       description: "Fix my laptop issues.",
       price: 100.0,
@@ -1175,7 +1114,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 64,
       title: "Graphic Design",
       description: "Design a logo for my business.",
       price: 250.0,
@@ -1185,7 +1123,6 @@ const constantId = {
       category_id: 603,
     },
     {
-      id: 65,
       title: "Household Maintenance",
       description: "Fix minor issues around the house.",
       price: 80.0,
@@ -1195,7 +1132,6 @@ const constantId = {
       category_id: 102,
     },
     {
-      id: 66,
       title: "Photography",
       description: "Photograph a wedding.",
       price: 1000.0,
@@ -1205,7 +1141,6 @@ const constantId = {
       category_id: 703,
     },
     {
-      id: 67,
       title: "Health & Fitness",
       description: "Provide personal training sessions.",
       price: 60.0,
@@ -1215,7 +1150,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 68,
       title: "Car Washing",
       description: "Wash and detail my car.",
       price: 70.0,
@@ -1225,7 +1159,6 @@ const constantId = {
       category_id: 501,
     },
     {
-      id: 69,
       title: "Administrative Support",
       description: "Assist with office work.",
       price: 100.0,
@@ -1235,7 +1168,6 @@ const constantId = {
       category_id: 601,
     },
     {
-      id: 70,
       title: "Painting",
       description: "Paint the exterior of a house.",
       price: 1000.0,
@@ -1245,7 +1177,6 @@ const constantId = {
       category_id: 902,
     },
     {
-      id: 71,
       title: "Event Planning",
       description: "Plan a corporate event.",
       price: 3000.0,
@@ -1255,7 +1186,6 @@ const constantId = {
       category_id: 701,
     },
     {
-      id: 72,
       title: "Dog Walking",
       description: "Walk my dog every evening.",
       price: 30.0,
@@ -1265,7 +1195,6 @@ const constantId = {
       category_id: 402,
     },
     {
-      id: 73,
       title: "Construction",
       description: "Build a garden shed.",
       price: 2000.0,
@@ -1275,7 +1204,6 @@ const constantId = {
       category_id: 901,
     },
     {
-      id: 74,
       title: "Pet Grooming",
       description: "Groom my cat.",
       price: 50.0,
@@ -1285,7 +1213,6 @@ const constantId = {
       category_id: 403,
     },
     {
-      id: 75,
       title: "Health Coaching",
       description: "Provide health coaching sessions.",
       price: 60.0,
@@ -1295,7 +1222,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 76,
       title: "Pet Sitting",
       description: "Take care of pets while the owner is away.",
       price: 40.0,
@@ -1305,7 +1231,6 @@ const constantId = {
       category_id: 401,
     },
     {
-      id: 77,
       title: "Tutoring",
       description: "Help with university-level physics.",
       price: 60.0,
@@ -1315,7 +1240,6 @@ const constantId = {
       category_id: 302,
     },
     {
-      id: 78,
       title: "Music Lessons",
       description: "Teach guitar to beginners.",
       price: 40.0,
@@ -1325,7 +1249,6 @@ const constantId = {
       category_id: 1002,
     },
     {
-      id: 79,
       title: "IT Support",
       description: "Fix my computer issues.",
       price: 150.0,
@@ -1335,7 +1258,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 80,
       title: "Event Photography",
       description: "Photograph a corporate event.",
       price: 800.0,
@@ -1345,7 +1267,6 @@ const constantId = {
       category_id: 703,
     },
     {
-      id: 81,
       title: "Dog Walking",
       description: "Walk my dog in the morning.",
       price: 20.0,
@@ -1355,7 +1276,6 @@ const constantId = {
       category_id: 402,
     },
     {
-      id: 82,
       title: "Graphic Design",
       description: "Create promotional materials.",
       price: 300.0,
@@ -1365,7 +1285,6 @@ const constantId = {
       category_id: 603,
     },
     {
-      id: 83,
       title: "Car Repair",
       description: "Fix my car's engine issues.",
       price: 500.0,
@@ -1375,7 +1294,6 @@ const constantId = {
       category_id: 502,
     },
     {
-      id: 84,
       title: "Special Needs Care",
       description: "Provide care for a special needs child.",
       price: 100.0,
@@ -1385,7 +1303,6 @@ const constantId = {
       category_id: 303,
     },
     {
-      id: 85,
       title: "Travel Assistance",
       description: "Plan a trip to Europe.",
       price: 150.0,
@@ -1395,7 +1312,6 @@ const constantId = {
       category_id: 1003,
     },
     {
-      id: 86,
       title: "Towing Services",
       description: "Tow my car to the mechanic.",
       price: 100.0,
@@ -1405,7 +1321,6 @@ const constantId = {
       category_id: 504,
     },
     {
-      id: 87,
       title: "Beauty & Wellness",
       description: "Provide a full body massage.",
       price: 70.0,
@@ -1415,7 +1330,6 @@ const constantId = {
       category_id: 203,
     },
     {
-      id: 88,
       title: "Tutoring",
       description: "Help with high school math.",
       price: 50.0,
@@ -1425,7 +1339,6 @@ const constantId = {
       category_id: 302,
     },
     {
-      id: 89,
       title: "Gardening",
       description: "Maintain my garden.",
       price: 60.0,
@@ -1435,7 +1348,6 @@ const constantId = {
       category_id: 103,
     },
     {
-      id: 90,
       title: "Veterinary Assistance",
       description: "Assist with my pet's vet visit.",
       price: 40.0,
@@ -1445,7 +1357,6 @@ const constantId = {
       category_id: 404,
     },
     {
-      id: 91,
       title: "Writing & Translation",
       description: "Translate a document to French.",
       price: 200.0,
@@ -1455,7 +1366,6 @@ const constantId = {
       category_id: 604,
     },
     {
-      id: 92,
       title: "Painting",
       description: "Paint a mural on a wall.",
       price: 500.0,
@@ -1465,7 +1375,6 @@ const constantId = {
       category_id: 902,
     },
     {
-      id: 93,
       title: "IT Support",
       description: "Set up a new computer system.",
       price: 200.0,
@@ -1475,7 +1384,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 94,
       title: "Catering",
       description: "Provide food for a small event.",
       price: 800.0,
@@ -1485,7 +1393,6 @@ const constantId = {
       category_id: 702,
     },
     {
-      id: 95,
       title: "Pet Grooming",
       description: "Groom my dog.",
       price: 50.0,
@@ -1495,7 +1402,6 @@ const constantId = {
       category_id: 403,
     },
     {
-      id: 96,
       title: "Health & Fitness",
       description: "Provide a personal training session.",
       price: 60.0,
@@ -1505,7 +1411,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 97,
       title: "Arts & Crafts",
       description: "Teach a pottery class.",
       price: 50.0,
@@ -1515,7 +1420,6 @@ const constantId = {
       category_id: 1001,
     },
     {
-      id: 98,
       title: "Car Repair",
       description: "Fix my car's brakes.",
       price: 400.0,
@@ -1525,7 +1429,6 @@ const constantId = {
       category_id: 502,
     },
     {
-      id: 99,
       title: "Babysitting",
       description: "Babysit my children for an evening.",
       price: 60.0,
@@ -1535,7 +1438,6 @@ const constantId = {
       category_id: 301,
     },
     {
-      id: 100,
       title: "Interior Design",
       description: "Redesign my living room.",
       price: 700.0,
@@ -1750,7 +1652,6 @@ const constantId = {
   ],
   services: [
     {
-      id: 1,
       name: "Laptop Repair",
       description: "Professional laptop repair services.",
       price: 100.0,
@@ -1758,7 +1659,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 2,
       name: "Phone Screen Replacement",
       description: "Fast phone screen replacement.",
       price: 50.0,
@@ -1766,7 +1666,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 3,
       name: "Facial Treatment",
       description: "Relaxing and rejuvenating facial treatments.",
       price: 70.0,
@@ -1774,7 +1673,6 @@ const constantId = {
       category_id: 203,
     },
     {
-      id: 4,
       name: "Manicure",
       description: "Professional manicure services.",
       price: 30.0,
@@ -1782,7 +1680,6 @@ const constantId = {
       category_id: 203,
     },
     {
-      id: 5,
       name: "Oil Change",
       description: "Quick and efficient oil change service.",
       price: 40.0,
@@ -1790,7 +1687,6 @@ const constantId = {
       category_id: 502,
     },
     {
-      id: 6,
       name: "Tire Rotation",
       description: "Professional tire rotation service.",
       price: 20.0,
@@ -1798,7 +1694,6 @@ const constantId = {
       category_id: 503,
     },
     {
-      id: 7,
       name: "Deep Cleaning",
       description: "Thorough and comprehensive home cleaning.",
       price: 150.0,
@@ -1806,7 +1701,6 @@ const constantId = {
       category_id: 101,
     },
     {
-      id: 8,
       name: "Window Cleaning",
       description: "Spotless window cleaning service.",
       price: 60.0,
@@ -1814,7 +1708,6 @@ const constantId = {
       category_id: 101,
     },
     {
-      id: 9,
       name: "Personal Training",
       description: "One-on-one personal training sessions.",
       price: 80.0,
@@ -1822,7 +1715,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 10,
       name: "Yoga Classes",
       description: "Group and individual yoga classes.",
       price: 50.0,
@@ -1830,7 +1722,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 11,
       name: "Gadget Setup",
       description: "Professional gadget setup and installation.",
       price: 60.0,
@@ -1838,7 +1729,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 12,
       name: "Tech Support",
       description: "24/7 tech support for all your gadgets.",
       price: 100.0,
@@ -1846,7 +1736,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 13,
       name: "Lawn Mowing",
       description: "Efficient and reliable lawn mowing service.",
       price: 50.0,
@@ -1854,7 +1743,6 @@ const constantId = {
       category_id: 103,
     },
     {
-      id: 14,
       name: "Garden Design",
       description: "Custom garden design and landscaping.",
       price: 200.0,
@@ -1862,7 +1750,6 @@ const constantId = {
       category_id: 103,
     },
     {
-      id: 15,
       name: "Cooking Classes",
       description: "Hands-on cooking classes for all skill levels.",
       price: 75.0,
@@ -1870,7 +1757,6 @@ const constantId = {
       category_id: 1001,
     },
     {
-      id: 16,
       name: "Event Catering",
       description: "Full-service catering for events.",
       price: 500.0,
@@ -1878,7 +1764,6 @@ const constantId = {
       category_id: 702,
     },
     {
-      id: 17,
       name: "Pet Grooming",
       description: "Full grooming services for pets.",
       price: 40.0,
@@ -1886,7 +1771,6 @@ const constantId = {
       category_id: 403,
     },
     {
-      id: 18,
       name: "Pet Boarding",
       description: "Safe and comfortable pet boarding.",
       price: 30.0,
@@ -1894,7 +1778,6 @@ const constantId = {
       category_id: 401,
     },
     {
-      id: 19,
       name: "Furniture Assembly",
       description: "Quick and efficient furniture assembly.",
       price: 60.0,
@@ -1902,7 +1785,6 @@ const constantId = {
       category_id: 102,
     },
     {
-      id: 20,
       name: "Home Repairs",
       description: "Professional home repair services.",
       price: 100.0,
@@ -1910,7 +1792,6 @@ const constantId = {
       category_id: 102,
     },
     {
-      id: 21,
       name: "Software Installation",
       description: "Professional software installation services.",
       price: 50.0,
@@ -1918,7 +1799,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 22,
       name: "System Optimization",
       description: "Optimize your system for better performance.",
       price: 75.0,
@@ -1926,7 +1806,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 23,
       name: "Nutritional Counseling",
       description: "Personalized nutritional counseling services.",
       price: 100.0,
@@ -1934,7 +1813,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 24,
       name: "Massage Therapy",
       description: "Relaxing and therapeutic massage services.",
       price: 80.0,
@@ -1942,7 +1820,6 @@ const constantId = {
       category_id: 203,
     },
     {
-      id: 25,
       name: "Brake Service",
       description: "Comprehensive brake inspection and repair.",
       price: 120.0,
@@ -1950,7 +1827,6 @@ const constantId = {
       category_id: 502,
     },
     {
-      id: 26,
       name: "Engine Tune-Up",
       description: "Optimize your engine performance.",
       price: 150.0,
@@ -1958,7 +1834,6 @@ const constantId = {
       category_id: 502,
     },
     {
-      id: 27,
       name: "Carpet Cleaning",
       description: "Deep cleaning for your carpets.",
       price: 80.0,
@@ -1966,7 +1841,6 @@ const constantId = {
       category_id: 101,
     },
     {
-      id: 28,
       name: "Office Cleaning",
       description: "Regular cleaning services for your office.",
       price: 100.0,
@@ -1974,7 +1848,6 @@ const constantId = {
       category_id: 101,
     },
     {
-      id: 29,
       name: "Personal Training",
       description: "Personalized fitness training sessions.",
       price: 90.0,
@@ -1982,7 +1855,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 30,
       name: "Group Fitness Classes",
       description: "Fun and engaging group fitness classes.",
       price: 40.0,
@@ -1990,7 +1862,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 31,
       name: "Phone Repair",
       description: "Quick and efficient phone repair services.",
       price: 50.0,
@@ -1998,7 +1869,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 32,
       name: "Tablet Repair",
       description: "Professional tablet repair services.",
       price: 60.0,
@@ -2006,7 +1876,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 33,
       name: "Plumbing Services",
       description: "Reliable plumbing services for your home.",
       price: 100.0,
@@ -2014,7 +1883,6 @@ const constantId = {
       category_id: 102,
     },
     {
-      id: 34,
       name: "Electrical Services",
       description: "Professional electrical services for your home.",
       price: 120.0,
@@ -2022,7 +1890,6 @@ const constantId = {
       category_id: 102,
     },
     {
-      id: 35,
       name: "Full Grooming",
       description: "Comprehensive grooming services for pets.",
       price: 50.0,
@@ -2030,7 +1897,6 @@ const constantId = {
       category_id: 403,
     },
     {
-      id: 36,
       name: "Nail Trimming",
       description: "Professional nail trimming for pets.",
       price: 20.0,
@@ -2038,7 +1904,6 @@ const constantId = {
       category_id: 403,
     },
     {
-      id: 37,
       name: "Computer Repair",
       description: "Expert computer repair services.",
       price: 70.0,
@@ -2046,7 +1911,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 38,
       name: "Network Setup",
       description: "Professional network setup and troubleshooting.",
       price: 100.0,
@@ -2054,7 +1918,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 39,
       name: "Hair Styling",
       description: "Professional hair styling services.",
       price: 60.0,
@@ -2062,7 +1925,6 @@ const constantId = {
       category_id: 203,
     },
     {
-      id: 40,
       name: "Spa Treatments",
       description: "Relaxing and rejuvenating spa treatments.",
       price: 100.0,
@@ -2070,7 +1932,6 @@ const constantId = {
       category_id: 203,
     },
     {
-      id: 41,
       name: "Transmission Repair",
       description: "Professional transmission repair services.",
       price: 200.0,
@@ -2078,7 +1939,6 @@ const constantId = {
       category_id: 502,
     },
     {
-      id: 42,
       name: "Battery Replacement",
       description: "Quick and reliable battery replacement.",
       price: 80.0,
@@ -2086,7 +1946,6 @@ const constantId = {
       category_id: 503,
     },
     {
-      id: 43,
       name: "Window Cleaning",
       description: "Expert window cleaning services for your home.",
       price: 70.0,
@@ -2094,7 +1953,6 @@ const constantId = {
       category_id: 101,
     },
     {
-      id: 44,
       name: "Pressure Washing",
       description: "Thorough pressure washing for your home exterior.",
       price: 150.0,
@@ -2102,7 +1960,6 @@ const constantId = {
       category_id: 101,
     },
     {
-      id: 45,
       name: "Yoga Instruction",
       description: "Personalized yoga instruction for all levels.",
       price: 60.0,
@@ -2110,7 +1967,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 46,
       name: "Meditation Classes",
       description: "Group and individual meditation classes.",
       price: 40.0,
@@ -2118,7 +1974,6 @@ const constantId = {
       category_id: 202,
     },
     {
-      id: 47,
       name: "Data Recovery",
       description: "Professional data recovery services.",
       price: 200.0,
@@ -2126,7 +1981,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 48,
       name: "Cybersecurity Consultation",
       description: "Expert cybersecurity consultation services.",
       price: 300.0,
@@ -2134,7 +1988,6 @@ const constantId = {
       category_id: 801,
     },
     {
-      id: 49,
       name: "Interior Design",
       description: "Custom interior design services for your home.",
       price: 500.0,
@@ -2142,7 +1995,6 @@ const constantId = {
       category_id: 102,
     },
     {
-      id: 50,
       name: "Furniture Restoration",
       description: "Professional furniture restoration services.",
       price: 200.0,

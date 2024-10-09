@@ -177,14 +177,15 @@ class MyStoreScreen extends StatelessWidget {
                             },
                           )
                         ],
-                        if (isOwner) ...[
-                          const SizedBox(height: Paddings.exceptional * 2),
-                          CustomButtons.elevatePrimary(
-                            title: 'Add service',
-                            width: Get.width,
-                            onPressed: () => controller.addService(),
+                        if (isOwner)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: Paddings.exceptional),
+                            child: CustomButtons.elevatePrimary(
+                              title: 'Add service',
+                              width: Get.width,
+                              onPressed: () => controller.addService(),
+                            ),
                           ),
-                        ],
                         const Text('Store\'s owner rating', style: AppFonts.x15Bold),
                         const SizedBox(height: Paddings.regular),
                         RatingOverview(

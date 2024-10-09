@@ -5,10 +5,10 @@ extension RoleExtension on Role {
     switch (this) {
       case Role.admin:
         return 'admin';
-      case Role.provider:
-        return 'provider';
-      case Role.seeker:
-        return 'seeker';
+      case Role.subscribed:
+        return 'subscribed';
+      case Role.user:
+        return 'user';
       default:
         throw Exception('Invalid Role');
     }
@@ -18,10 +18,10 @@ extension RoleExtension on Role {
     switch (value) {
       case 'admin':
         return Role.admin;
-      case 'provider':
-        return Role.provider;
-      case 'seeker':
-        return Role.seeker;
+      case 'subscribed':
+        return Role.subscribed;
+      case 'user':
+        return Role.user;
       default:
         return null;
     }

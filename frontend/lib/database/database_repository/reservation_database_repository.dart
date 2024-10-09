@@ -20,7 +20,7 @@ class ReservationDatabaseRepository extends GetxService {
     return reservations;
   }
 
-  Future<Reservation?> getReservationById(int reservationId) async {
+  Future<Reservation?> getReservationById(String reservationId) async {
     try {
       final ReservationTableData reservation = (await (database.select(database.reservationTable)..where((tbl) => tbl.id.equals(reservationId))).get()).first;
       final task = await TaskDatabaseRepository.find.getTaskById(reservation.task!);
@@ -38,7 +38,7 @@ class ReservationDatabaseRepository extends GetxService {
   Future<void> update(ReservationTableCompanion reservationCompanion) async => await database.update(database.reservationTable).replace(reservationCompanion);
 
   Future<Reservation?> insert(ReservationTableCompanion reservationCompanion) async {
-    final int reservationId = await database.into(database.reservationTable).insert(reservationCompanion);
+    final String reservationId = (await database.into(database.reservationTable).insert(reservationCompanion)).toString(); // TODO fix this
     final reservationReservation = await getReservationById(reservationId);
     return reservationReservation;
   }

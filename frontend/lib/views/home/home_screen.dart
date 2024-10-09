@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constants/colors.dart';
+import '../../constants/constants.dart';
 import '../../constants/sizes.dart';
 import '../../controllers/main_app_controller.dart';
 import '../../helpers/buildables.dart';
@@ -223,7 +224,10 @@ class HomeScreen extends StatelessWidget {
                             const SizedBox(height: Paddings.regular),
                           ],
                           if (controller.hotTasks.isNotEmpty) ...[
-                            Buildables.buildTitle('Hot Tasks', onSeeMore: () {}),
+                            Buildables.buildTitle(
+                              'Hot Tasks',
+                              onSeeMore: () => Get.toNamed(TaskListScreen.routeName, arguments: const TaskListScreen(boosted: true)),
+                            ),
                             LoadingCardEffect(
                               isLoading: controller.isLoading,
                               child: ListView.builder(
@@ -237,7 +241,49 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
                           ],
-                          // TODO add a button to share user coordinates if not provided for showing nearby tasks
+                          if (AuthenticationService.find.isUserLoggedIn.value && AuthenticationService.find.jwtUserData?.coordinates == null)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: Paddings.large),
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(color: kAccentColor.shade100, borderRadius: smallRadius),
+                                child: SizedBox(
+                                  height: 90,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Icon(Icons.warning_amber_outlined, color: kErrorColor),
+                                            CustomButtons.text(
+                                              child: const Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.location_searching_outlined, color: kBlackColor),
+                                                  SizedBox(width: Paddings.regular),
+                                                  Text('Share your location', style: AppFonts.x14Bold),
+                                                ],
+                                              ),
+                                              onPressed: () async {
+                                                await AuthenticationService.find.getUserCoordinates(withSave: true);
+                                                controller.update();
+                                              },
+                                            ),
+                                            const SizedBox(),
+                                          ],
+                                        ),
+                                        const Text(
+                                          'By sharing your location we can provide you with more accurate result.',
+                                          style: AppFonts.x12Regular,
+                                          textAlign: TextAlign.justify,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           if (SharedPreferencesService.find.isReady)
                             Buildables.buildTitle(
                               'New Tasks ${controller.nearbyTasks.any((element) => element.distance != null) ? 'Nearby' : 'in ${AuthenticationService.find.jwtUserData?.governorate?.name ?? 'All Tunisia'}'}',

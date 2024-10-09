@@ -42,7 +42,7 @@ class ChatRepository extends GetxService {
     return null;
   }
 
-  Future<List<ChatModel>?> getMessagesById(int? idChat) async {
+  Future<List<ChatModel>?> getMessagesById(String? idChat) async {
     final result = await ApiBaseHelper().request(RequestType.get, '/chat/chat-id?idChat=$idChat', sendToken: true);
     if (idChat == null) return null;
     try {
@@ -53,7 +53,7 @@ class ChatRepository extends GetxService {
     return null;
   }
 
-  Future<List<ChatModel>?> getMessagesBeforeAfter({required int? idChat, required bool isBefore}) async {
+  Future<List<ChatModel>?> getMessagesBeforeAfter({required String? idChat, required bool isBefore}) async {
     if (idChat == null) return null;
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/chat/chat-before-after?idChat=$idChat&isBefore=$isBefore', sendToken: true);

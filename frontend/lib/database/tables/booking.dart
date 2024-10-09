@@ -5,8 +5,8 @@ import '../database.dart';
 import 'service.dart';
 import 'user.dart';
 
-class BookingTable extends Table with AutoIncrementingPrimaryKey {
-  IntColumn get service => integer().references(ServiceTable, #id).nullable()();
+class BookingTable extends Table with AutoIncrementingStringPrimaryKey {
+  TextColumn get service => text().references(ServiceTable, #id).nullable()();
   DateTimeColumn get date => dateTime().withDefault(Constant(DateTime.now()))();
   RealColumn get totalPrice => real().withDefault(const Constant(0))();
   TextColumn get coupon => text().withDefault(const Constant(''))();

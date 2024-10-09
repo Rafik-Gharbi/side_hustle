@@ -22,7 +22,7 @@ class TaskDatabaseRepository extends GetxService {
 
   // Insert a task  in the database
   Future<Task?> insert(TaskTableCompanion task) async {
-    final int taskId = await database.into(database.taskTable).insert(task);
+    final String taskId = (await database.into(database.taskTable).insert(task)).toString(); // TODO fix this
     Task? result = await getTaskById(taskId);
     return result;
   }
@@ -77,7 +77,7 @@ class TaskDatabaseRepository extends GetxService {
     return await database.delete(database.taskAttachmentTable).delete(attachment);
   }
 
-  Future<Task?> getTaskById(int taskId) async {
+  Future<Task?> getTaskById(String taskId) async {
     final TaskTableData? task = (await (database.select(database.taskTable)..where((tbl) => tbl.id.equals(taskId))).get()).firstOrNull;
     return task != null ? await _convertTaskTo(task.toCompanion(true)) : null;
   }
@@ -175,7 +175,7 @@ class TaskDatabaseRepository extends GetxService {
     LoggerService.logger?.i('Getting task requests...');
     List<Task> result = [];
     final savedIds = SharedPreferencesService.find.get(taskRequestsKey);
-    List<int> taskRequestsId = (jsonDecode(savedIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
+    List<String> taskRequestsId = (jsonDecode(savedIds ?? '[]') as List).map((e) => e.toString()).toList();
     if (taskRequestsId.isNotEmpty) {
       for (var taskId in taskRequestsId) {
         final task = await getTaskById(taskId);
@@ -190,7 +190,7 @@ class TaskDatabaseRepository extends GetxService {
       LoggerService.logger?.i('Getting favorite tasks...');
       FavoriteDTO result = FavoriteDTO(savedTasks: [], savedStores: []);
       final savedTaskIds = SharedPreferencesService.find.get(favoriteTasksKey);
-      List<int> favoriteTasksId = (jsonDecode(savedTaskIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
+      List<String> favoriteTasksId = (jsonDecode(savedTaskIds ?? '[]') as List).map((e) => e.toString()).toList();
       final savedStoreIds = SharedPreferencesService.find.get(favoriteStoresKey);
       List<int> favoriteStoresId = (jsonDecode(savedStoreIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
       if (favoriteTasksId.isNotEmpty) {
@@ -243,7 +243,7 @@ class TaskDatabaseRepository extends GetxService {
     List<Task> hotTasks = [];
     List<Task> nearbyTasks = [];
     final savedIds = SharedPreferencesService.find.get(hotTasksKey);
-    List<int> hotTasksId = (jsonDecode(savedIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
+    List<String> hotTasksId = (jsonDecode(savedIds ?? '[]') as List).map((e) => e.toString()).toList();
     if (hotTasksId.isNotEmpty) {
       for (var taskId in hotTasksId) {
         final task = await getTaskById(taskId);
@@ -251,7 +251,7 @@ class TaskDatabaseRepository extends GetxService {
       }
     }
     final savedNearbyIds = SharedPreferencesService.find.get(nearbyTasksKey);
-    List<int> nearbyTasksId = (jsonDecode(savedNearbyIds ?? '[]') as List).map((e) => e is int ? e : int.parse(e.toString())).toList();
+    List<String> nearbyTasksId = (jsonDecode(savedNearbyIds ?? '[]') as List).map((e) => e.toString()).toList();
     if (nearbyTasksId.isNotEmpty) {
       for (var taskId in nearbyTasksId) {
         final task = await getTaskById(taskId);

@@ -39,8 +39,16 @@ class $CategoryTableTable extends CategoryTable
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES category_table (id)'),
       defaultValue: const Constant(-1));
+  static const VerificationMeta _subscribedMeta =
+      const VerificationMeta('subscribed');
   @override
-  List<GeneratedColumn> get $columns => [id, name, icon, parent];
+  late final GeneratedColumn<int> subscribed = GeneratedColumn<int>(
+      'subscribed', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  @override
+  List<GeneratedColumn> get $columns => [id, name, icon, parent, subscribed];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -68,6 +76,12 @@ class $CategoryTableTable extends CategoryTable
       context.handle(_parentMeta,
           parent.isAcceptableOrUnknown(data['parent']!, _parentMeta));
     }
+    if (data.containsKey('subscribed')) {
+      context.handle(
+          _subscribedMeta,
+          subscribed.isAcceptableOrUnknown(
+              data['subscribed']!, _subscribedMeta));
+    }
     return context;
   }
 
@@ -85,6 +99,8 @@ class $CategoryTableTable extends CategoryTable
           .read(DriftSqlType.int, data['${effectivePrefix}icon'])!,
       parent: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}parent'])!,
+      subscribed: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}subscribed'])!,
     );
   }
 
@@ -100,11 +116,13 @@ class CategoryTableData extends DataClass
   final String name;
   final int icon;
   final int parent;
+  final int subscribed;
   const CategoryTableData(
       {required this.id,
       required this.name,
       required this.icon,
-      required this.parent});
+      required this.parent,
+      required this.subscribed});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -112,6 +130,7 @@ class CategoryTableData extends DataClass
     map['name'] = Variable<String>(name);
     map['icon'] = Variable<int>(icon);
     map['parent'] = Variable<int>(parent);
+    map['subscribed'] = Variable<int>(subscribed);
     return map;
   }
 
@@ -121,6 +140,7 @@ class CategoryTableData extends DataClass
       name: Value(name),
       icon: Value(icon),
       parent: Value(parent),
+      subscribed: Value(subscribed),
     );
   }
 
@@ -132,6 +152,7 @@ class CategoryTableData extends DataClass
       name: serializer.fromJson<String>(json['name']),
       icon: serializer.fromJson<int>(json['icon']),
       parent: serializer.fromJson<int>(json['parent']),
+      subscribed: serializer.fromJson<int>(json['subscribed']),
     );
   }
   @override
@@ -142,15 +163,18 @@ class CategoryTableData extends DataClass
       'name': serializer.toJson<String>(name),
       'icon': serializer.toJson<int>(icon),
       'parent': serializer.toJson<int>(parent),
+      'subscribed': serializer.toJson<int>(subscribed),
     };
   }
 
-  CategoryTableData copyWith({int? id, String? name, int? icon, int? parent}) =>
+  CategoryTableData copyWith(
+          {int? id, String? name, int? icon, int? parent, int? subscribed}) =>
       CategoryTableData(
         id: id ?? this.id,
         name: name ?? this.name,
         icon: icon ?? this.icon,
         parent: parent ?? this.parent,
+        subscribed: subscribed ?? this.subscribed,
       );
   CategoryTableData copyWithCompanion(CategoryTableCompanion data) {
     return CategoryTableData(
@@ -158,6 +182,8 @@ class CategoryTableData extends DataClass
       name: data.name.present ? data.name.value : this.name,
       icon: data.icon.present ? data.icon.value : this.icon,
       parent: data.parent.present ? data.parent.value : this.parent,
+      subscribed:
+          data.subscribed.present ? data.subscribed.value : this.subscribed,
     );
   }
 
@@ -167,13 +193,14 @@ class CategoryTableData extends DataClass
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('icon: $icon, ')
-          ..write('parent: $parent')
+          ..write('parent: $parent, ')
+          ..write('subscribed: $subscribed')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, icon, parent);
+  int get hashCode => Object.hash(id, name, icon, parent, subscribed);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -181,7 +208,8 @@ class CategoryTableData extends DataClass
           other.id == this.id &&
           other.name == this.name &&
           other.icon == this.icon &&
-          other.parent == this.parent);
+          other.parent == this.parent &&
+          other.subscribed == this.subscribed);
 }
 
 class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
@@ -189,29 +217,34 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
   final Value<String> name;
   final Value<int> icon;
   final Value<int> parent;
+  final Value<int> subscribed;
   const CategoryTableCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.icon = const Value.absent(),
     this.parent = const Value.absent(),
+    this.subscribed = const Value.absent(),
   });
   CategoryTableCompanion.insert({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     required int icon,
     this.parent = const Value.absent(),
+    this.subscribed = const Value.absent(),
   }) : icon = Value(icon);
   static Insertable<CategoryTableData> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<int>? icon,
     Expression<int>? parent,
+    Expression<int>? subscribed,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (icon != null) 'icon': icon,
       if (parent != null) 'parent': parent,
+      if (subscribed != null) 'subscribed': subscribed,
     });
   }
 
@@ -219,12 +252,14 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
       {Value<int>? id,
       Value<String>? name,
       Value<int>? icon,
-      Value<int>? parent}) {
+      Value<int>? parent,
+      Value<int>? subscribed}) {
     return CategoryTableCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       icon: icon ?? this.icon,
       parent: parent ?? this.parent,
+      subscribed: subscribed ?? this.subscribed,
     );
   }
 
@@ -243,6 +278,9 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
     if (parent.present) {
       map['parent'] = Variable<int>(parent.value);
     }
+    if (subscribed.present) {
+      map['subscribed'] = Variable<int>(subscribed.value);
+    }
     return map;
   }
 
@@ -252,7 +290,8 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('icon: $icon, ')
-          ..write('parent: $parent')
+          ..write('parent: $parent, ')
+          ..write('subscribed: $subscribed')
           ..write(')'))
         .toString();
   }
@@ -1081,13 +1120,9 @@ class $TaskTableTable extends TaskTable
   $TaskTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _priceMeta = const VerificationMeta('price');
   @override
   late final GeneratedColumn<double> price = GeneratedColumn<double>(
@@ -1188,6 +1223,8 @@ class $TaskTableTable extends TaskTable
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('price')) {
       context.handle(
@@ -1239,13 +1276,13 @@ class $TaskTableTable extends TaskTable
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   TaskTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return TaskTableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       price: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}price'])!,
       title: attachedDatabase.typeMapping
@@ -1274,7 +1311,7 @@ class $TaskTableTable extends TaskTable
 }
 
 class TaskTableData extends DataClass implements Insertable<TaskTableData> {
-  final int id;
+  final String id;
   final double price;
   final String title;
   final String description;
@@ -1298,7 +1335,7 @@ class TaskTableData extends DataClass implements Insertable<TaskTableData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['price'] = Variable<double>(price);
     map['title'] = Variable<String>(title);
     map['description'] = Variable<String>(description);
@@ -1337,7 +1374,7 @@ class TaskTableData extends DataClass implements Insertable<TaskTableData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TaskTableData(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       price: serializer.fromJson<double>(json['price']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String>(json['description']),
@@ -1353,7 +1390,7 @@ class TaskTableData extends DataClass implements Insertable<TaskTableData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'price': serializer.toJson<double>(price),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String>(description),
@@ -1367,7 +1404,7 @@ class TaskTableData extends DataClass implements Insertable<TaskTableData> {
   }
 
   TaskTableData copyWith(
-          {int? id,
+          {String? id,
           double? price,
           String? title,
           String? description,
@@ -1445,7 +1482,7 @@ class TaskTableData extends DataClass implements Insertable<TaskTableData> {
 }
 
 class TaskTableCompanion extends UpdateCompanion<TaskTableData> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<double> price;
   final Value<String> title;
   final Value<String> description;
@@ -1455,6 +1492,7 @@ class TaskTableCompanion extends UpdateCompanion<TaskTableData> {
   final Value<DateTime> dueDate;
   final Value<String> delivrables;
   final Value<bool> isfavorite;
+  final Value<int> rowid;
   const TaskTableCompanion({
     this.id = const Value.absent(),
     this.price = const Value.absent(),
@@ -1466,9 +1504,10 @@ class TaskTableCompanion extends UpdateCompanion<TaskTableData> {
     this.dueDate = const Value.absent(),
     this.delivrables = const Value.absent(),
     this.isfavorite = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   TaskTableCompanion.insert({
-    this.id = const Value.absent(),
+    required String id,
     this.price = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
@@ -1478,9 +1517,11 @@ class TaskTableCompanion extends UpdateCompanion<TaskTableData> {
     this.dueDate = const Value.absent(),
     this.delivrables = const Value.absent(),
     this.isfavorite = const Value.absent(),
-  }) : category = Value(category);
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        category = Value(category);
   static Insertable<TaskTableData> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<double>? price,
     Expression<String>? title,
     Expression<String>? description,
@@ -1490,6 +1531,7 @@ class TaskTableCompanion extends UpdateCompanion<TaskTableData> {
     Expression<DateTime>? dueDate,
     Expression<String>? delivrables,
     Expression<bool>? isfavorite,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1502,11 +1544,12 @@ class TaskTableCompanion extends UpdateCompanion<TaskTableData> {
       if (dueDate != null) 'due_date': dueDate,
       if (delivrables != null) 'delivrables': delivrables,
       if (isfavorite != null) 'isfavorite': isfavorite,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   TaskTableCompanion copyWith(
-      {Value<int>? id,
+      {Value<String>? id,
       Value<double>? price,
       Value<String>? title,
       Value<String>? description,
@@ -1515,7 +1558,8 @@ class TaskTableCompanion extends UpdateCompanion<TaskTableData> {
       Value<int?>? owner,
       Value<DateTime>? dueDate,
       Value<String>? delivrables,
-      Value<bool>? isfavorite}) {
+      Value<bool>? isfavorite,
+      Value<int>? rowid}) {
     return TaskTableCompanion(
       id: id ?? this.id,
       price: price ?? this.price,
@@ -1527,6 +1571,7 @@ class TaskTableCompanion extends UpdateCompanion<TaskTableData> {
       dueDate: dueDate ?? this.dueDate,
       delivrables: delivrables ?? this.delivrables,
       isfavorite: isfavorite ?? this.isfavorite,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1534,7 +1579,7 @@ class TaskTableCompanion extends UpdateCompanion<TaskTableData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (price.present) {
       map['price'] = Variable<double>(price.value);
@@ -1563,6 +1608,9 @@ class TaskTableCompanion extends UpdateCompanion<TaskTableData> {
     if (isfavorite.present) {
       map['isfavorite'] = Variable<bool>(isfavorite.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -1578,7 +1626,8 @@ class TaskTableCompanion extends UpdateCompanion<TaskTableData> {
           ..write('owner: $owner, ')
           ..write('dueDate: $dueDate, ')
           ..write('delivrables: $delivrables, ')
-          ..write('isfavorite: $isfavorite')
+          ..write('isfavorite: $isfavorite, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1615,9 +1664,9 @@ class $TaskAttachmentTableTable extends TaskAttachmentTable
       defaultValue: const Constant(''));
   static const VerificationMeta _taskIdMeta = const VerificationMeta('taskId');
   @override
-  late final GeneratedColumn<int> taskId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> taskId = GeneratedColumn<String>(
       'task_id', aliasedName, true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES task_table (id)'));
@@ -1666,7 +1715,7 @@ class $TaskAttachmentTableTable extends TaskAttachmentTable
       type: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
       taskId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}task_id']),
+          .read(DriftSqlType.string, data['${effectivePrefix}task_id']),
     );
   }
 
@@ -1681,7 +1730,7 @@ class TaskAttachmentTableData extends DataClass
   final int id;
   final String url;
   final String type;
-  final int? taskId;
+  final String? taskId;
   const TaskAttachmentTableData(
       {required this.id, required this.url, required this.type, this.taskId});
   @override
@@ -1691,7 +1740,7 @@ class TaskAttachmentTableData extends DataClass
     map['url'] = Variable<String>(url);
     map['type'] = Variable<String>(type);
     if (!nullToAbsent || taskId != null) {
-      map['task_id'] = Variable<int>(taskId);
+      map['task_id'] = Variable<String>(taskId);
     }
     return map;
   }
@@ -1713,7 +1762,7 @@ class TaskAttachmentTableData extends DataClass
       id: serializer.fromJson<int>(json['id']),
       url: serializer.fromJson<String>(json['url']),
       type: serializer.fromJson<String>(json['type']),
-      taskId: serializer.fromJson<int?>(json['taskId']),
+      taskId: serializer.fromJson<String?>(json['taskId']),
     );
   }
   @override
@@ -1723,7 +1772,7 @@ class TaskAttachmentTableData extends DataClass
       'id': serializer.toJson<int>(id),
       'url': serializer.toJson<String>(url),
       'type': serializer.toJson<String>(type),
-      'taskId': serializer.toJson<int?>(taskId),
+      'taskId': serializer.toJson<String?>(taskId),
     };
   }
 
@@ -1731,7 +1780,7 @@ class TaskAttachmentTableData extends DataClass
           {int? id,
           String? url,
           String? type,
-          Value<int?> taskId = const Value.absent()}) =>
+          Value<String?> taskId = const Value.absent()}) =>
       TaskAttachmentTableData(
         id: id ?? this.id,
         url: url ?? this.url,
@@ -1775,7 +1824,7 @@ class TaskAttachmentTableCompanion
   final Value<int> id;
   final Value<String> url;
   final Value<String> type;
-  final Value<int?> taskId;
+  final Value<String?> taskId;
   const TaskAttachmentTableCompanion({
     this.id = const Value.absent(),
     this.url = const Value.absent(),
@@ -1792,7 +1841,7 @@ class TaskAttachmentTableCompanion
     Expression<int>? id,
     Expression<String>? url,
     Expression<String>? type,
-    Expression<int>? taskId,
+    Expression<String>? taskId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1806,7 +1855,7 @@ class TaskAttachmentTableCompanion
       {Value<int>? id,
       Value<String>? url,
       Value<String>? type,
-      Value<int?>? taskId}) {
+      Value<String?>? taskId}) {
     return TaskAttachmentTableCompanion(
       id: id ?? this.id,
       url: url ?? this.url,
@@ -1828,7 +1877,7 @@ class TaskAttachmentTableCompanion
       map['type'] = Variable<String>(type.value);
     }
     if (taskId.present) {
-      map['task_id'] = Variable<int>(taskId.value);
+      map['task_id'] = Variable<String>(taskId.value);
     }
     return map;
   }
@@ -2287,13 +2336,9 @@ class $ServiceTableTable extends ServiceTable
   $ServiceTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -2348,6 +2393,8 @@ class $ServiceTableTable extends ServiceTable
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -2375,13 +2422,13 @@ class $ServiceTableTable extends ServiceTable
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   ServiceTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ServiceTableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       description: attachedDatabase.typeMapping
@@ -2403,7 +2450,7 @@ class $ServiceTableTable extends ServiceTable
 
 class ServiceTableData extends DataClass
     implements Insertable<ServiceTableData> {
-  final int id;
+  final String id;
   final String name;
   final String description;
   final int? category;
@@ -2419,7 +2466,7 @@ class ServiceTableData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
     map['description'] = Variable<String>(description);
     if (!nullToAbsent || category != null) {
@@ -2450,7 +2497,7 @@ class ServiceTableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ServiceTableData(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String>(json['description']),
       category: serializer.fromJson<int?>(json['category']),
@@ -2462,7 +2509,7 @@ class ServiceTableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String>(description),
       'category': serializer.toJson<int?>(category),
@@ -2472,7 +2519,7 @@ class ServiceTableData extends DataClass
   }
 
   ServiceTableData copyWith(
-          {int? id,
+          {String? id,
           String? name,
           String? description,
           Value<int?> category = const Value.absent(),
@@ -2527,12 +2574,13 @@ class ServiceTableData extends DataClass
 }
 
 class ServiceTableCompanion extends UpdateCompanion<ServiceTableData> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> name;
   final Value<String> description;
   final Value<int?> category;
   final Value<int?> store;
   final Value<double> price;
+  final Value<int> rowid;
   const ServiceTableCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -2540,22 +2588,25 @@ class ServiceTableCompanion extends UpdateCompanion<ServiceTableData> {
     this.category = const Value.absent(),
     this.store = const Value.absent(),
     this.price = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   ServiceTableCompanion.insert({
-    this.id = const Value.absent(),
+    required String id,
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.category = const Value.absent(),
     this.store = const Value.absent(),
     this.price = const Value.absent(),
-  });
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
   static Insertable<ServiceTableData> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? name,
     Expression<String>? description,
     Expression<int>? category,
     Expression<int>? store,
     Expression<double>? price,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2564,16 +2615,18 @@ class ServiceTableCompanion extends UpdateCompanion<ServiceTableData> {
       if (category != null) 'category': category,
       if (store != null) 'store': store,
       if (price != null) 'price': price,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   ServiceTableCompanion copyWith(
-      {Value<int>? id,
+      {Value<String>? id,
       Value<String>? name,
       Value<String>? description,
       Value<int?>? category,
       Value<int?>? store,
-      Value<double>? price}) {
+      Value<double>? price,
+      Value<int>? rowid}) {
     return ServiceTableCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -2581,6 +2634,7 @@ class ServiceTableCompanion extends UpdateCompanion<ServiceTableData> {
       category: category ?? this.category,
       store: store ?? this.store,
       price: price ?? this.price,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -2588,7 +2642,7 @@ class ServiceTableCompanion extends UpdateCompanion<ServiceTableData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -2605,6 +2659,9 @@ class ServiceTableCompanion extends UpdateCompanion<ServiceTableData> {
     if (price.present) {
       map['price'] = Variable<double>(price.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -2616,7 +2673,8 @@ class ServiceTableCompanion extends UpdateCompanion<ServiceTableData> {
           ..write('description: $description, ')
           ..write('category: $category, ')
           ..write('store: $store, ')
-          ..write('price: $price')
+          ..write('price: $price, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -2654,9 +2712,9 @@ class $ServiceGalleryTableTable extends ServiceGalleryTable
   static const VerificationMeta _serviceIdMeta =
       const VerificationMeta('serviceId');
   @override
-  late final GeneratedColumn<int> serviceId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> serviceId = GeneratedColumn<String>(
       'service_id', aliasedName, true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES service_table (id)'));
@@ -2705,7 +2763,7 @@ class $ServiceGalleryTableTable extends ServiceGalleryTable
       type: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
       serviceId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}service_id']),
+          .read(DriftSqlType.string, data['${effectivePrefix}service_id']),
     );
   }
 
@@ -2720,7 +2778,7 @@ class ServiceGalleryTableData extends DataClass
   final int id;
   final String url;
   final String type;
-  final int? serviceId;
+  final String? serviceId;
   const ServiceGalleryTableData(
       {required this.id,
       required this.url,
@@ -2733,7 +2791,7 @@ class ServiceGalleryTableData extends DataClass
     map['url'] = Variable<String>(url);
     map['type'] = Variable<String>(type);
     if (!nullToAbsent || serviceId != null) {
-      map['service_id'] = Variable<int>(serviceId);
+      map['service_id'] = Variable<String>(serviceId);
     }
     return map;
   }
@@ -2756,7 +2814,7 @@ class ServiceGalleryTableData extends DataClass
       id: serializer.fromJson<int>(json['id']),
       url: serializer.fromJson<String>(json['url']),
       type: serializer.fromJson<String>(json['type']),
-      serviceId: serializer.fromJson<int?>(json['serviceId']),
+      serviceId: serializer.fromJson<String?>(json['serviceId']),
     );
   }
   @override
@@ -2766,7 +2824,7 @@ class ServiceGalleryTableData extends DataClass
       'id': serializer.toJson<int>(id),
       'url': serializer.toJson<String>(url),
       'type': serializer.toJson<String>(type),
-      'serviceId': serializer.toJson<int?>(serviceId),
+      'serviceId': serializer.toJson<String?>(serviceId),
     };
   }
 
@@ -2774,7 +2832,7 @@ class ServiceGalleryTableData extends DataClass
           {int? id,
           String? url,
           String? type,
-          Value<int?> serviceId = const Value.absent()}) =>
+          Value<String?> serviceId = const Value.absent()}) =>
       ServiceGalleryTableData(
         id: id ?? this.id,
         url: url ?? this.url,
@@ -2818,7 +2876,7 @@ class ServiceGalleryTableCompanion
   final Value<int> id;
   final Value<String> url;
   final Value<String> type;
-  final Value<int?> serviceId;
+  final Value<String?> serviceId;
   const ServiceGalleryTableCompanion({
     this.id = const Value.absent(),
     this.url = const Value.absent(),
@@ -2835,7 +2893,7 @@ class ServiceGalleryTableCompanion
     Expression<int>? id,
     Expression<String>? url,
     Expression<String>? type,
-    Expression<int>? serviceId,
+    Expression<String>? serviceId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2849,7 +2907,7 @@ class ServiceGalleryTableCompanion
       {Value<int>? id,
       Value<String>? url,
       Value<String>? type,
-      Value<int?>? serviceId}) {
+      Value<String?>? serviceId}) {
     return ServiceGalleryTableCompanion(
       id: id ?? this.id,
       url: url ?? this.url,
@@ -2871,7 +2929,7 @@ class ServiceGalleryTableCompanion
       map['type'] = Variable<String>(type.value);
     }
     if (serviceId.present) {
-      map['service_id'] = Variable<int>(serviceId.value);
+      map['service_id'] = Variable<String>(serviceId.value);
     }
     return map;
   }
@@ -2896,18 +2954,14 @@ class $ReservationTableTable extends ReservationTable
   $ReservationTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _taskMeta = const VerificationMeta('task');
   @override
-  late final GeneratedColumn<int> task = GeneratedColumn<int>(
+  late final GeneratedColumn<String> task = GeneratedColumn<String>(
       'task', aliasedName, true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES task_table (id)'));
@@ -2926,6 +2980,12 @@ class $ReservationTableTable extends ReservationTable
       type: DriftSqlType.double,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
+  static const VerificationMeta _proposedPriceMeta =
+      const VerificationMeta('proposedPrice');
+  @override
+  late final GeneratedColumn<double> proposedPrice = GeneratedColumn<double>(
+      'proposed_price', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _couponMeta = const VerificationMeta('coupon');
   @override
   late final GeneratedColumn<String> coupon = GeneratedColumn<String>(
@@ -2959,7 +3019,7 @@ class $ReservationTableTable extends ReservationTable
           GeneratedColumn.constraintIsAlways('REFERENCES user_table (id)'));
   @override
   List<GeneratedColumn> get $columns =>
-      [id, task, date, totalPrice, coupon, note, status, user];
+      [id, task, date, totalPrice, proposedPrice, coupon, note, status, user];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2973,6 +3033,8 @@ class $ReservationTableTable extends ReservationTable
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('task')) {
       context.handle(
@@ -2987,6 +3049,12 @@ class $ReservationTableTable extends ReservationTable
           _totalPriceMeta,
           totalPrice.isAcceptableOrUnknown(
               data['total_price']!, _totalPriceMeta));
+    }
+    if (data.containsKey('proposed_price')) {
+      context.handle(
+          _proposedPriceMeta,
+          proposedPrice.isAcceptableOrUnknown(
+              data['proposed_price']!, _proposedPriceMeta));
     }
     if (data.containsKey('coupon')) {
       context.handle(_couponMeta,
@@ -3005,19 +3073,21 @@ class $ReservationTableTable extends ReservationTable
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   ReservationTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ReservationTableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       task: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}task']),
+          .read(DriftSqlType.string, data['${effectivePrefix}task']),
       date: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       totalPrice: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}total_price'])!,
+      proposedPrice: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}proposed_price']),
       coupon: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}coupon'])!,
       note: attachedDatabase.typeMapping
@@ -3041,10 +3111,11 @@ class $ReservationTableTable extends ReservationTable
 
 class ReservationTableData extends DataClass
     implements Insertable<ReservationTableData> {
-  final int id;
-  final int? task;
+  final String id;
+  final String? task;
   final DateTime date;
   final double totalPrice;
+  final double? proposedPrice;
   final String coupon;
   final String note;
   final RequestStatus status;
@@ -3054,6 +3125,7 @@ class ReservationTableData extends DataClass
       this.task,
       required this.date,
       required this.totalPrice,
+      this.proposedPrice,
       required this.coupon,
       required this.note,
       required this.status,
@@ -3061,12 +3133,15 @@ class ReservationTableData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     if (!nullToAbsent || task != null) {
-      map['task'] = Variable<int>(task);
+      map['task'] = Variable<String>(task);
     }
     map['date'] = Variable<DateTime>(date);
     map['total_price'] = Variable<double>(totalPrice);
+    if (!nullToAbsent || proposedPrice != null) {
+      map['proposed_price'] = Variable<double>(proposedPrice);
+    }
     map['coupon'] = Variable<String>(coupon);
     map['note'] = Variable<String>(note);
     {
@@ -3085,6 +3160,9 @@ class ReservationTableData extends DataClass
       task: task == null && nullToAbsent ? const Value.absent() : Value(task),
       date: Value(date),
       totalPrice: Value(totalPrice),
+      proposedPrice: proposedPrice == null && nullToAbsent
+          ? const Value.absent()
+          : Value(proposedPrice),
       coupon: Value(coupon),
       note: Value(note),
       status: Value(status),
@@ -3096,10 +3174,11 @@ class ReservationTableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ReservationTableData(
-      id: serializer.fromJson<int>(json['id']),
-      task: serializer.fromJson<int?>(json['task']),
+      id: serializer.fromJson<String>(json['id']),
+      task: serializer.fromJson<String?>(json['task']),
       date: serializer.fromJson<DateTime>(json['date']),
       totalPrice: serializer.fromJson<double>(json['totalPrice']),
+      proposedPrice: serializer.fromJson<double?>(json['proposedPrice']),
       coupon: serializer.fromJson<String>(json['coupon']),
       note: serializer.fromJson<String>(json['note']),
       status: $ReservationTableTable.$converterstatus
@@ -3111,10 +3190,11 @@ class ReservationTableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'task': serializer.toJson<int?>(task),
+      'id': serializer.toJson<String>(id),
+      'task': serializer.toJson<String?>(task),
       'date': serializer.toJson<DateTime>(date),
       'totalPrice': serializer.toJson<double>(totalPrice),
+      'proposedPrice': serializer.toJson<double?>(proposedPrice),
       'coupon': serializer.toJson<String>(coupon),
       'note': serializer.toJson<String>(note),
       'status': serializer
@@ -3124,10 +3204,11 @@ class ReservationTableData extends DataClass
   }
 
   ReservationTableData copyWith(
-          {int? id,
-          Value<int?> task = const Value.absent(),
+          {String? id,
+          Value<String?> task = const Value.absent(),
           DateTime? date,
           double? totalPrice,
+          Value<double?> proposedPrice = const Value.absent(),
           String? coupon,
           String? note,
           RequestStatus? status,
@@ -3137,6 +3218,8 @@ class ReservationTableData extends DataClass
         task: task.present ? task.value : this.task,
         date: date ?? this.date,
         totalPrice: totalPrice ?? this.totalPrice,
+        proposedPrice:
+            proposedPrice.present ? proposedPrice.value : this.proposedPrice,
         coupon: coupon ?? this.coupon,
         note: note ?? this.note,
         status: status ?? this.status,
@@ -3149,6 +3232,9 @@ class ReservationTableData extends DataClass
       date: data.date.present ? data.date.value : this.date,
       totalPrice:
           data.totalPrice.present ? data.totalPrice.value : this.totalPrice,
+      proposedPrice: data.proposedPrice.present
+          ? data.proposedPrice.value
+          : this.proposedPrice,
       coupon: data.coupon.present ? data.coupon.value : this.coupon,
       note: data.note.present ? data.note.value : this.note,
       status: data.status.present ? data.status.value : this.status,
@@ -3163,6 +3249,7 @@ class ReservationTableData extends DataClass
           ..write('task: $task, ')
           ..write('date: $date, ')
           ..write('totalPrice: $totalPrice, ')
+          ..write('proposedPrice: $proposedPrice, ')
           ..write('coupon: $coupon, ')
           ..write('note: $note, ')
           ..write('status: $status, ')
@@ -3172,8 +3259,8 @@ class ReservationTableData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, task, date, totalPrice, coupon, note, status, user);
+  int get hashCode => Object.hash(
+      id, task, date, totalPrice, proposedPrice, coupon, note, status, user);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3182,6 +3269,7 @@ class ReservationTableData extends DataClass
           other.task == this.task &&
           other.date == this.date &&
           other.totalPrice == this.totalPrice &&
+          other.proposedPrice == this.proposedPrice &&
           other.coupon == this.coupon &&
           other.note == this.note &&
           other.status == this.status &&
@@ -3189,74 +3277,88 @@ class ReservationTableData extends DataClass
 }
 
 class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
-  final Value<int> id;
-  final Value<int?> task;
+  final Value<String> id;
+  final Value<String?> task;
   final Value<DateTime> date;
   final Value<double> totalPrice;
+  final Value<double?> proposedPrice;
   final Value<String> coupon;
   final Value<String> note;
   final Value<RequestStatus> status;
   final Value<int?> user;
+  final Value<int> rowid;
   const ReservationTableCompanion({
     this.id = const Value.absent(),
     this.task = const Value.absent(),
     this.date = const Value.absent(),
     this.totalPrice = const Value.absent(),
+    this.proposedPrice = const Value.absent(),
     this.coupon = const Value.absent(),
     this.note = const Value.absent(),
     this.status = const Value.absent(),
     this.user = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   ReservationTableCompanion.insert({
-    this.id = const Value.absent(),
+    required String id,
     this.task = const Value.absent(),
     this.date = const Value.absent(),
     this.totalPrice = const Value.absent(),
+    this.proposedPrice = const Value.absent(),
     this.coupon = const Value.absent(),
     this.note = const Value.absent(),
     this.status = const Value.absent(),
     this.user = const Value.absent(),
-  });
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
   static Insertable<ReservationTableData> custom({
-    Expression<int>? id,
-    Expression<int>? task,
+    Expression<String>? id,
+    Expression<String>? task,
     Expression<DateTime>? date,
     Expression<double>? totalPrice,
+    Expression<double>? proposedPrice,
     Expression<String>? coupon,
     Expression<String>? note,
     Expression<int>? status,
     Expression<int>? user,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (task != null) 'task': task,
       if (date != null) 'date': date,
       if (totalPrice != null) 'total_price': totalPrice,
+      if (proposedPrice != null) 'proposed_price': proposedPrice,
       if (coupon != null) 'coupon': coupon,
       if (note != null) 'note': note,
       if (status != null) 'status': status,
       if (user != null) 'user': user,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   ReservationTableCompanion copyWith(
-      {Value<int>? id,
-      Value<int?>? task,
+      {Value<String>? id,
+      Value<String?>? task,
       Value<DateTime>? date,
       Value<double>? totalPrice,
+      Value<double?>? proposedPrice,
       Value<String>? coupon,
       Value<String>? note,
       Value<RequestStatus>? status,
-      Value<int?>? user}) {
+      Value<int?>? user,
+      Value<int>? rowid}) {
     return ReservationTableCompanion(
       id: id ?? this.id,
       task: task ?? this.task,
       date: date ?? this.date,
       totalPrice: totalPrice ?? this.totalPrice,
+      proposedPrice: proposedPrice ?? this.proposedPrice,
       coupon: coupon ?? this.coupon,
       note: note ?? this.note,
       status: status ?? this.status,
       user: user ?? this.user,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -3264,16 +3366,19 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (task.present) {
-      map['task'] = Variable<int>(task.value);
+      map['task'] = Variable<String>(task.value);
     }
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
     }
     if (totalPrice.present) {
       map['total_price'] = Variable<double>(totalPrice.value);
+    }
+    if (proposedPrice.present) {
+      map['proposed_price'] = Variable<double>(proposedPrice.value);
     }
     if (coupon.present) {
       map['coupon'] = Variable<String>(coupon.value);
@@ -3288,6 +3393,9 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     if (user.present) {
       map['user'] = Variable<int>(user.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -3298,10 +3406,12 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
           ..write('task: $task, ')
           ..write('date: $date, ')
           ..write('totalPrice: $totalPrice, ')
+          ..write('proposedPrice: $proposedPrice, ')
           ..write('coupon: $coupon, ')
           ..write('note: $note, ')
           ..write('status: $status, ')
-          ..write('user: $user')
+          ..write('user: $user, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -3315,19 +3425,15 @@ class $BookingTableTable extends BookingTable
   $BookingTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _serviceMeta =
       const VerificationMeta('service');
   @override
-  late final GeneratedColumn<int> service = GeneratedColumn<int>(
+  late final GeneratedColumn<String> service = GeneratedColumn<String>(
       'service', aliasedName, true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES service_table (id)'));
@@ -3391,6 +3497,8 @@ class $BookingTableTable extends BookingTable
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('service')) {
       context.handle(_serviceMeta,
@@ -3423,15 +3531,15 @@ class $BookingTableTable extends BookingTable
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   BookingTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return BookingTableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       service: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}service']),
+          .read(DriftSqlType.string, data['${effectivePrefix}service']),
       date: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       totalPrice: attachedDatabase.typeMapping
@@ -3459,8 +3567,8 @@ class $BookingTableTable extends BookingTable
 
 class BookingTableData extends DataClass
     implements Insertable<BookingTableData> {
-  final int id;
-  final int? service;
+  final String id;
+  final String? service;
   final DateTime date;
   final double totalPrice;
   final String coupon;
@@ -3479,9 +3587,9 @@ class BookingTableData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     if (!nullToAbsent || service != null) {
-      map['service'] = Variable<int>(service);
+      map['service'] = Variable<String>(service);
     }
     map['date'] = Variable<DateTime>(date);
     map['total_price'] = Variable<double>(totalPrice);
@@ -3516,8 +3624,8 @@ class BookingTableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return BookingTableData(
-      id: serializer.fromJson<int>(json['id']),
-      service: serializer.fromJson<int?>(json['service']),
+      id: serializer.fromJson<String>(json['id']),
+      service: serializer.fromJson<String?>(json['service']),
       date: serializer.fromJson<DateTime>(json['date']),
       totalPrice: serializer.fromJson<double>(json['totalPrice']),
       coupon: serializer.fromJson<String>(json['coupon']),
@@ -3531,8 +3639,8 @@ class BookingTableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'service': serializer.toJson<int?>(service),
+      'id': serializer.toJson<String>(id),
+      'service': serializer.toJson<String?>(service),
       'date': serializer.toJson<DateTime>(date),
       'totalPrice': serializer.toJson<double>(totalPrice),
       'coupon': serializer.toJson<String>(coupon),
@@ -3544,8 +3652,8 @@ class BookingTableData extends DataClass
   }
 
   BookingTableData copyWith(
-          {int? id,
-          Value<int?> service = const Value.absent(),
+          {String? id,
+          Value<String?> service = const Value.absent(),
           DateTime? date,
           double? totalPrice,
           String? coupon,
@@ -3609,14 +3717,15 @@ class BookingTableData extends DataClass
 }
 
 class BookingTableCompanion extends UpdateCompanion<BookingTableData> {
-  final Value<int> id;
-  final Value<int?> service;
+  final Value<String> id;
+  final Value<String?> service;
   final Value<DateTime> date;
   final Value<double> totalPrice;
   final Value<String> coupon;
   final Value<String> note;
   final Value<RequestStatus> status;
   final Value<int?> user;
+  final Value<int> rowid;
   const BookingTableCompanion({
     this.id = const Value.absent(),
     this.service = const Value.absent(),
@@ -3626,9 +3735,10 @@ class BookingTableCompanion extends UpdateCompanion<BookingTableData> {
     this.note = const Value.absent(),
     this.status = const Value.absent(),
     this.user = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   BookingTableCompanion.insert({
-    this.id = const Value.absent(),
+    required String id,
     this.service = const Value.absent(),
     this.date = const Value.absent(),
     this.totalPrice = const Value.absent(),
@@ -3636,16 +3746,18 @@ class BookingTableCompanion extends UpdateCompanion<BookingTableData> {
     this.note = const Value.absent(),
     this.status = const Value.absent(),
     this.user = const Value.absent(),
-  });
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
   static Insertable<BookingTableData> custom({
-    Expression<int>? id,
-    Expression<int>? service,
+    Expression<String>? id,
+    Expression<String>? service,
     Expression<DateTime>? date,
     Expression<double>? totalPrice,
     Expression<String>? coupon,
     Expression<String>? note,
     Expression<int>? status,
     Expression<int>? user,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3656,18 +3768,20 @@ class BookingTableCompanion extends UpdateCompanion<BookingTableData> {
       if (note != null) 'note': note,
       if (status != null) 'status': status,
       if (user != null) 'user': user,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   BookingTableCompanion copyWith(
-      {Value<int>? id,
-      Value<int?>? service,
+      {Value<String>? id,
+      Value<String?>? service,
       Value<DateTime>? date,
       Value<double>? totalPrice,
       Value<String>? coupon,
       Value<String>? note,
       Value<RequestStatus>? status,
-      Value<int?>? user}) {
+      Value<int?>? user,
+      Value<int>? rowid}) {
     return BookingTableCompanion(
       id: id ?? this.id,
       service: service ?? this.service,
@@ -3677,6 +3791,7 @@ class BookingTableCompanion extends UpdateCompanion<BookingTableData> {
       note: note ?? this.note,
       status: status ?? this.status,
       user: user ?? this.user,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -3684,10 +3799,10 @@ class BookingTableCompanion extends UpdateCompanion<BookingTableData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (service.present) {
-      map['service'] = Variable<int>(service.value);
+      map['service'] = Variable<String>(service.value);
     }
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
@@ -3708,6 +3823,9 @@ class BookingTableCompanion extends UpdateCompanion<BookingTableData> {
     if (user.present) {
       map['user'] = Variable<int>(user.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -3721,7 +3839,8 @@ class BookingTableCompanion extends UpdateCompanion<BookingTableData> {
           ..write('coupon: $coupon, ')
           ..write('note: $note, ')
           ..write('status: $status, ')
-          ..write('user: $user')
+          ..write('user: $user, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -3768,6 +3887,7 @@ typedef $$CategoryTableTableCreateCompanionBuilder = CategoryTableCompanion
   Value<String> name,
   required int icon,
   Value<int> parent,
+  Value<int> subscribed,
 });
 typedef $$CategoryTableTableUpdateCompanionBuilder = CategoryTableCompanion
     Function({
@@ -3775,6 +3895,7 @@ typedef $$CategoryTableTableUpdateCompanionBuilder = CategoryTableCompanion
   Value<String> name,
   Value<int> icon,
   Value<int> parent,
+  Value<int> subscribed,
 });
 
 class $$CategoryTableTableTableManager extends RootTableManager<
@@ -3798,24 +3919,28 @@ class $$CategoryTableTableTableManager extends RootTableManager<
             Value<String> name = const Value.absent(),
             Value<int> icon = const Value.absent(),
             Value<int> parent = const Value.absent(),
+            Value<int> subscribed = const Value.absent(),
           }) =>
               CategoryTableCompanion(
             id: id,
             name: name,
             icon: icon,
             parent: parent,
+            subscribed: subscribed,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
             required int icon,
             Value<int> parent = const Value.absent(),
+            Value<int> subscribed = const Value.absent(),
           }) =>
               CategoryTableCompanion.insert(
             id: id,
             name: name,
             icon: icon,
             parent: parent,
+            subscribed: subscribed,
           ),
         ));
 }
@@ -3835,6 +3960,11 @@ class $$CategoryTableTableFilterComposer
 
   ColumnFilters<int> get icon => $state.composableBuilder(
       column: $state.table.icon,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get subscribed => $state.composableBuilder(
+      column: $state.table.subscribed,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -3892,6 +4022,11 @@ class $$CategoryTableTableOrderingComposer
 
   ColumnOrderings<int> get icon => $state.composableBuilder(
       column: $state.table.icon,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get subscribed => $state.composableBuilder(
+      column: $state.table.subscribed,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -4348,7 +4483,7 @@ class $$UserTableTableOrderingComposer
 }
 
 typedef $$TaskTableTableCreateCompanionBuilder = TaskTableCompanion Function({
-  Value<int> id,
+  required String id,
   Value<double> price,
   Value<String> title,
   Value<String> description,
@@ -4358,9 +4493,10 @@ typedef $$TaskTableTableCreateCompanionBuilder = TaskTableCompanion Function({
   Value<DateTime> dueDate,
   Value<String> delivrables,
   Value<bool> isfavorite,
+  Value<int> rowid,
 });
 typedef $$TaskTableTableUpdateCompanionBuilder = TaskTableCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<double> price,
   Value<String> title,
   Value<String> description,
@@ -4370,6 +4506,7 @@ typedef $$TaskTableTableUpdateCompanionBuilder = TaskTableCompanion Function({
   Value<DateTime> dueDate,
   Value<String> delivrables,
   Value<bool> isfavorite,
+  Value<int> rowid,
 });
 
 class $$TaskTableTableTableManager extends RootTableManager<
@@ -4389,7 +4526,7 @@ class $$TaskTableTableTableManager extends RootTableManager<
           orderingComposer:
               $$TaskTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<double> price = const Value.absent(),
             Value<String> title = const Value.absent(),
             Value<String> description = const Value.absent(),
@@ -4399,6 +4536,7 @@ class $$TaskTableTableTableManager extends RootTableManager<
             Value<DateTime> dueDate = const Value.absent(),
             Value<String> delivrables = const Value.absent(),
             Value<bool> isfavorite = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               TaskTableCompanion(
             id: id,
@@ -4411,9 +4549,10 @@ class $$TaskTableTableTableManager extends RootTableManager<
             dueDate: dueDate,
             delivrables: delivrables,
             isfavorite: isfavorite,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            required String id,
             Value<double> price = const Value.absent(),
             Value<String> title = const Value.absent(),
             Value<String> description = const Value.absent(),
@@ -4423,6 +4562,7 @@ class $$TaskTableTableTableManager extends RootTableManager<
             Value<DateTime> dueDate = const Value.absent(),
             Value<String> delivrables = const Value.absent(),
             Value<bool> isfavorite = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               TaskTableCompanion.insert(
             id: id,
@@ -4435,6 +4575,7 @@ class $$TaskTableTableTableManager extends RootTableManager<
             dueDate: dueDate,
             delivrables: delivrables,
             isfavorite: isfavorite,
+            rowid: rowid,
           ),
         ));
 }
@@ -4442,7 +4583,7 @@ class $$TaskTableTableTableManager extends RootTableManager<
 class $$TaskTableTableFilterComposer
     extends FilterComposer<_$Database, $TaskTableTable> {
   $$TaskTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
+  ColumnFilters<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
@@ -4549,7 +4690,7 @@ class $$TaskTableTableFilterComposer
 class $$TaskTableTableOrderingComposer
     extends OrderingComposer<_$Database, $TaskTableTable> {
   $$TaskTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
+  ColumnOrderings<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
@@ -4628,14 +4769,14 @@ typedef $$TaskAttachmentTableTableCreateCompanionBuilder
   Value<int> id,
   Value<String> url,
   Value<String> type,
-  Value<int?> taskId,
+  Value<String?> taskId,
 });
 typedef $$TaskAttachmentTableTableUpdateCompanionBuilder
     = TaskAttachmentTableCompanion Function({
   Value<int> id,
   Value<String> url,
   Value<String> type,
-  Value<int?> taskId,
+  Value<String?> taskId,
 });
 
 class $$TaskAttachmentTableTableTableManager extends RootTableManager<
@@ -4659,7 +4800,7 @@ class $$TaskAttachmentTableTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String> url = const Value.absent(),
             Value<String> type = const Value.absent(),
-            Value<int?> taskId = const Value.absent(),
+            Value<String?> taskId = const Value.absent(),
           }) =>
               TaskAttachmentTableCompanion(
             id: id,
@@ -4671,7 +4812,7 @@ class $$TaskAttachmentTableTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String> url = const Value.absent(),
             Value<String> type = const Value.absent(),
-            Value<int?> taskId = const Value.absent(),
+            Value<String?> taskId = const Value.absent(),
           }) =>
               TaskAttachmentTableCompanion.insert(
             id: id,
@@ -4957,21 +5098,23 @@ class $$StoreTableTableOrderingComposer
 
 typedef $$ServiceTableTableCreateCompanionBuilder = ServiceTableCompanion
     Function({
-  Value<int> id,
+  required String id,
   Value<String> name,
   Value<String> description,
   Value<int?> category,
   Value<int?> store,
   Value<double> price,
+  Value<int> rowid,
 });
 typedef $$ServiceTableTableUpdateCompanionBuilder = ServiceTableCompanion
     Function({
-  Value<int> id,
+  Value<String> id,
   Value<String> name,
   Value<String> description,
   Value<int?> category,
   Value<int?> store,
   Value<double> price,
+  Value<int> rowid,
 });
 
 class $$ServiceTableTableTableManager extends RootTableManager<
@@ -4991,12 +5134,13 @@ class $$ServiceTableTableTableManager extends RootTableManager<
           orderingComposer:
               $$ServiceTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<String> description = const Value.absent(),
             Value<int?> category = const Value.absent(),
             Value<int?> store = const Value.absent(),
             Value<double> price = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               ServiceTableCompanion(
             id: id,
@@ -5005,14 +5149,16 @@ class $$ServiceTableTableTableManager extends RootTableManager<
             category: category,
             store: store,
             price: price,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            required String id,
             Value<String> name = const Value.absent(),
             Value<String> description = const Value.absent(),
             Value<int?> category = const Value.absent(),
             Value<int?> store = const Value.absent(),
             Value<double> price = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               ServiceTableCompanion.insert(
             id: id,
@@ -5021,6 +5167,7 @@ class $$ServiceTableTableTableManager extends RootTableManager<
             category: category,
             store: store,
             price: price,
+            rowid: rowid,
           ),
         ));
 }
@@ -5028,7 +5175,7 @@ class $$ServiceTableTableTableManager extends RootTableManager<
 class $$ServiceTableTableFilterComposer
     extends FilterComposer<_$Database, $ServiceTableTable> {
   $$ServiceTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
+  ColumnFilters<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
@@ -5106,7 +5253,7 @@ class $$ServiceTableTableFilterComposer
 class $$ServiceTableTableOrderingComposer
     extends OrderingComposer<_$Database, $ServiceTableTable> {
   $$ServiceTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
+  ColumnOrderings<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
@@ -5157,14 +5304,14 @@ typedef $$ServiceGalleryTableTableCreateCompanionBuilder
   Value<int> id,
   Value<String> url,
   Value<String> type,
-  Value<int?> serviceId,
+  Value<String?> serviceId,
 });
 typedef $$ServiceGalleryTableTableUpdateCompanionBuilder
     = ServiceGalleryTableCompanion Function({
   Value<int> id,
   Value<String> url,
   Value<String> type,
-  Value<int?> serviceId,
+  Value<String?> serviceId,
 });
 
 class $$ServiceGalleryTableTableTableManager extends RootTableManager<
@@ -5188,7 +5335,7 @@ class $$ServiceGalleryTableTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String> url = const Value.absent(),
             Value<String> type = const Value.absent(),
-            Value<int?> serviceId = const Value.absent(),
+            Value<String?> serviceId = const Value.absent(),
           }) =>
               ServiceGalleryTableCompanion(
             id: id,
@@ -5200,7 +5347,7 @@ class $$ServiceGalleryTableTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String> url = const Value.absent(),
             Value<String> type = const Value.absent(),
-            Value<int?> serviceId = const Value.absent(),
+            Value<String?> serviceId = const Value.absent(),
           }) =>
               ServiceGalleryTableCompanion.insert(
             id: id,
@@ -5275,25 +5422,29 @@ class $$ServiceGalleryTableTableOrderingComposer
 
 typedef $$ReservationTableTableCreateCompanionBuilder
     = ReservationTableCompanion Function({
-  Value<int> id,
-  Value<int?> task,
+  required String id,
+  Value<String?> task,
   Value<DateTime> date,
   Value<double> totalPrice,
+  Value<double?> proposedPrice,
   Value<String> coupon,
   Value<String> note,
   Value<RequestStatus> status,
   Value<int?> user,
+  Value<int> rowid,
 });
 typedef $$ReservationTableTableUpdateCompanionBuilder
     = ReservationTableCompanion Function({
-  Value<int> id,
-  Value<int?> task,
+  Value<String> id,
+  Value<String?> task,
   Value<DateTime> date,
   Value<double> totalPrice,
+  Value<double?> proposedPrice,
   Value<String> coupon,
   Value<String> note,
   Value<RequestStatus> status,
   Value<int?> user,
+  Value<int> rowid,
 });
 
 class $$ReservationTableTableTableManager extends RootTableManager<
@@ -5314,44 +5465,52 @@ class $$ReservationTableTableTableManager extends RootTableManager<
           orderingComposer:
               $$ReservationTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<int?> task = const Value.absent(),
+            Value<String> id = const Value.absent(),
+            Value<String?> task = const Value.absent(),
             Value<DateTime> date = const Value.absent(),
             Value<double> totalPrice = const Value.absent(),
+            Value<double?> proposedPrice = const Value.absent(),
             Value<String> coupon = const Value.absent(),
             Value<String> note = const Value.absent(),
             Value<RequestStatus> status = const Value.absent(),
             Value<int?> user = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               ReservationTableCompanion(
             id: id,
             task: task,
             date: date,
             totalPrice: totalPrice,
+            proposedPrice: proposedPrice,
             coupon: coupon,
             note: note,
             status: status,
             user: user,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<int?> task = const Value.absent(),
+            required String id,
+            Value<String?> task = const Value.absent(),
             Value<DateTime> date = const Value.absent(),
             Value<double> totalPrice = const Value.absent(),
+            Value<double?> proposedPrice = const Value.absent(),
             Value<String> coupon = const Value.absent(),
             Value<String> note = const Value.absent(),
             Value<RequestStatus> status = const Value.absent(),
             Value<int?> user = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               ReservationTableCompanion.insert(
             id: id,
             task: task,
             date: date,
             totalPrice: totalPrice,
+            proposedPrice: proposedPrice,
             coupon: coupon,
             note: note,
             status: status,
             user: user,
+            rowid: rowid,
           ),
         ));
 }
@@ -5359,7 +5518,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
 class $$ReservationTableTableFilterComposer
     extends FilterComposer<_$Database, $ReservationTableTable> {
   $$ReservationTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
+  ColumnFilters<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
@@ -5371,6 +5530,11 @@ class $$ReservationTableTableFilterComposer
 
   ColumnFilters<double> get totalPrice => $state.composableBuilder(
       column: $state.table.totalPrice,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get proposedPrice => $state.composableBuilder(
+      column: $state.table.proposedPrice,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -5419,7 +5583,7 @@ class $$ReservationTableTableFilterComposer
 class $$ReservationTableTableOrderingComposer
     extends OrderingComposer<_$Database, $ReservationTableTable> {
   $$ReservationTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
+  ColumnOrderings<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
@@ -5431,6 +5595,11 @@ class $$ReservationTableTableOrderingComposer
 
   ColumnOrderings<double> get totalPrice => $state.composableBuilder(
       column: $state.table.totalPrice,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get proposedPrice => $state.composableBuilder(
+      column: $state.table.proposedPrice,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -5476,25 +5645,27 @@ class $$ReservationTableTableOrderingComposer
 
 typedef $$BookingTableTableCreateCompanionBuilder = BookingTableCompanion
     Function({
-  Value<int> id,
-  Value<int?> service,
+  required String id,
+  Value<String?> service,
   Value<DateTime> date,
   Value<double> totalPrice,
   Value<String> coupon,
   Value<String> note,
   Value<RequestStatus> status,
   Value<int?> user,
+  Value<int> rowid,
 });
 typedef $$BookingTableTableUpdateCompanionBuilder = BookingTableCompanion
     Function({
-  Value<int> id,
-  Value<int?> service,
+  Value<String> id,
+  Value<String?> service,
   Value<DateTime> date,
   Value<double> totalPrice,
   Value<String> coupon,
   Value<String> note,
   Value<RequestStatus> status,
   Value<int?> user,
+  Value<int> rowid,
 });
 
 class $$BookingTableTableTableManager extends RootTableManager<
@@ -5514,14 +5685,15 @@ class $$BookingTableTableTableManager extends RootTableManager<
           orderingComposer:
               $$BookingTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<int?> service = const Value.absent(),
+            Value<String> id = const Value.absent(),
+            Value<String?> service = const Value.absent(),
             Value<DateTime> date = const Value.absent(),
             Value<double> totalPrice = const Value.absent(),
             Value<String> coupon = const Value.absent(),
             Value<String> note = const Value.absent(),
             Value<RequestStatus> status = const Value.absent(),
             Value<int?> user = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               BookingTableCompanion(
             id: id,
@@ -5532,16 +5704,18 @@ class $$BookingTableTableTableManager extends RootTableManager<
             note: note,
             status: status,
             user: user,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<int?> service = const Value.absent(),
+            required String id,
+            Value<String?> service = const Value.absent(),
             Value<DateTime> date = const Value.absent(),
             Value<double> totalPrice = const Value.absent(),
             Value<String> coupon = const Value.absent(),
             Value<String> note = const Value.absent(),
             Value<RequestStatus> status = const Value.absent(),
             Value<int?> user = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               BookingTableCompanion.insert(
             id: id,
@@ -5552,6 +5726,7 @@ class $$BookingTableTableTableManager extends RootTableManager<
             note: note,
             status: status,
             user: user,
+            rowid: rowid,
           ),
         ));
 }
@@ -5559,7 +5734,7 @@ class $$BookingTableTableTableManager extends RootTableManager<
 class $$BookingTableTableFilterComposer
     extends FilterComposer<_$Database, $BookingTableTable> {
   $$BookingTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
+  ColumnFilters<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
@@ -5619,7 +5794,7 @@ class $$BookingTableTableFilterComposer
 class $$BookingTableTableOrderingComposer
     extends OrderingComposer<_$Database, $BookingTableTable> {
   $$BookingTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
+  ColumnOrderings<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));

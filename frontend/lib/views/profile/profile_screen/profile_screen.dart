@@ -192,13 +192,12 @@ class ProfileScreen extends StatelessWidget {
                                                           icon: Icons.loyalty_outlined,
                                                           onTap: controller.manageCategoriesSubscription,
                                                         ),
-                                                        if (AuthenticationService.find.jwtUserData?.role != Role.seeker)
-                                                          buildActionTile(
-                                                            actionRequired: controller.myRequestActionRequired,
-                                                            label: 'my_request'.tr,
-                                                            icon: Icons.campaign_outlined,
-                                                            onTap: () => Get.toNamed(TaskRequestScreen.routeName),
-                                                          ),
+                                                        buildActionTile(
+                                                          actionRequired: controller.myRequestActionRequired,
+                                                          label: 'my_request'.tr,
+                                                          icon: Icons.campaign_outlined,
+                                                          onTap: () => Get.toNamed(TaskRequestScreen.routeName),
+                                                        ),
                                                         buildActionTile(
                                                           actionRequired: controller.taskHistoryActionRequired,
                                                           label: 'tasks_history'.tr,

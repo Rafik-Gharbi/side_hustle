@@ -8,7 +8,7 @@ import '../helpers/helper.dart';
 import '../networking/api_base_helper.dart';
 import 'governorate.dart';
 
-enum Role { admin, seeker, provider }
+enum Role { admin, user, subscribed, trial }
 
 enum VerifyIdentityStatus {
   none,
@@ -71,7 +71,7 @@ class User {
     this.rating = 0,
   });
 
-  bool get isOwner => role != null && role != Role.seeker;
+  bool get isOwner => role != null && role != Role.user; // TODO delete this
 
   factory User.fromToken(Map<String, dynamic> payload) => User(
         id: payload['id'],

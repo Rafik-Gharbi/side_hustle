@@ -10,7 +10,7 @@ class AroundCustomPainter extends StatelessWidget {
 
   final Widget child;
 
-  AroundCustomPainter({Key? key, 
+  const AroundCustomPainter({Key? key, 
     required this.clipper,
     required this.borderWidth,
     required this.borderColor,

@@ -3,7 +3,7 @@ import 'dto/image_dto.dart';
 import 'user.dart';
 
 class Review {
-  final int? id;
+  final String? id;
   final double rating;
   final String? message;
   final ImageDTO? picture;

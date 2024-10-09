@@ -302,6 +302,7 @@ async function fetchUserOngoingReservation(userId) {
                 date: row.createdAt,
                 task: task,
                 totalPrice: row.total_price,
+                proposedPrice: row.proposed_price,
                 coupon: row.coupon,
                 note: row.note,
                 status: row.status,
@@ -342,6 +343,7 @@ async function fetchUserReservation(userId) {
         date: row.createdAt,
         task: task,
         totalPrice: row.total_price,
+        proposedPrice: row.proposed_price,
         coupon: row.coupon,
         note: row.note,
         status: row.status,
@@ -386,6 +388,7 @@ async function fetchAndSortNearbyTasks(user, limit = 10, offset = 0) {
         FROM
         task
         WHERE
+        task.archived = false AND 
         ${
           userLongitude && userLatitude
             ? `coordinates IS NOT NULL`
@@ -453,7 +456,7 @@ async function populateOneTask(task, currentUserId) {
   if (currentUserId) {
     userFavorites = await getFavoriteTaskByUserId(currentUserId);
   }
-  const owner = await User.findOne({ where: { id: task.owner_id } });
+  const owner = await User.findOne({ where: { id: task.owner_id ?? task.owner.id } });
   let taskAttachments = [];
   taskAttachments = await TaskAttachmentModel.findAll({
     where: { task_id: task.id },

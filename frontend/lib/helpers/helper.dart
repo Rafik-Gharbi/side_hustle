@@ -461,7 +461,8 @@ class Helper {
   }
 
   // Method to check if coordinates have changed by more than 10 km and update if necessary
-  static bool shouldUpdateCoordinates(LatLng initialPosition, LatLng newPostion) {
+  static bool shouldUpdateCoordinates(LatLng? initialPosition, LatLng newPostion) {
+    if (initialPosition == null) return true;
     double distance = calculateDistance(initialPosition.latitude, initialPosition.longitude, newPostion.latitude, newPostion.longitude);
     return distance > 10;
   }

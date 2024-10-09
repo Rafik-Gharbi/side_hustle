@@ -73,6 +73,10 @@ mixin AutoIncrementingPrimaryKey on Table {
   IntColumn get id => integer().autoIncrement()();
 }
 
+mixin AutoIncrementingStringPrimaryKey on Table {
+  TextColumn get id => text()();
+}
+
 class ColorConverter extends TypeConverter<Color, int> {
   const ColorConverter();
 

@@ -91,7 +91,7 @@ class AddTaskController extends GetxController {
   void _loadTaskData() {
     titleController.text = task!.title;
     descriptionController.text = task!.description;
-    priceController.text = task!.price.toString();
+    priceController.text = task!.price?.toString() ?? '';
     delivrablesController.text = task!.delivrables ?? '';
     _governorate = task!.governorate;
     _category = task!.category;
@@ -117,7 +117,7 @@ class AddTaskController extends GetxController {
         description: descriptionController.text,
         governorate: governorate,
         delivrables: delivrablesController.text,
-        price: double.parse(priceController.text),
+        price: double.tryParse(priceController.text),
         attachments: attachments?.map((e) => ImageDTO(file: e, type: isImage(e.name.toLowerCase()) ? ImageType.image : ImageType.file)).toList(),
         owner: AuthenticationService.find.jwtUserData!,
         coordinates: coordinates,

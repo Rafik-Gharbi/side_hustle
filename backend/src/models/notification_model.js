@@ -3,7 +3,11 @@ const { User } = require("./user_model");
 const Notification = sequelize.define(
   "notification",
   {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    id: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      primaryKey: true,
+    },
     title: { type: Sequelize.STRING, allowNull: true },
     body: { type: Sequelize.STRING, allowNull: true },
     type: { type: Sequelize.STRING, allowNull: true },

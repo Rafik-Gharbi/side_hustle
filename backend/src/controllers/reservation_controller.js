@@ -22,7 +22,8 @@ const {
 } = require("../helper/notification_service");
 
 exports.add = async (req, res) => {
-  const { taskId, date, totalPrice, coupon, status, note } = req.body;
+  const { taskId, date, totalPrice, coupon, status, note, proposedPrice } =
+    req.body;
   if (!taskId || !date || !totalPrice || !status) {
     return res.status(400).json({ message: "missing" });
   }
@@ -50,10 +51,16 @@ exports.add = async (req, res) => {
       task_id: taskId,
       user_id: userFound.id,
       total_price: totalPrice,
+      proposed_price: proposedPrice,
       coupon,
       note,
       status,
     });
+
+    const reservationTask = await populateOneTask(
+      await Task.findOne({ where: { id: taskId } })
+    );
+
     // const templateUser = emailReservationForCheckin(foundTask.name);
 
     // const templateLandlord = sendNotificationReservation(
@@ -105,7 +112,21 @@ exports.add = async (req, res) => {
       NotificationType.RESERVATION,
       { reservationId: reservation.id, taskId: taskId, isOwner: true }
     );
-    return res.status(200).json({ reservation });
+    return res
+      .status(200)
+      .json({
+        reservation: {
+          id: reservation.id,
+          date,
+          task: reservationTask,
+          user: userFound,
+          total_price: totalPrice,
+          proposed_price: proposedPrice,
+          coupon,
+          note,
+          status,
+        },
+      });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);
@@ -240,6 +261,7 @@ exports.userReservationsHistory = async (req, res) => {
             isFavorite: false,
           },
           totalPrice: row.total_price,
+          proposedPrice: row.proposed_price,
           coupon: row.coupon,
           note: row.note,
           status: row.status,
@@ -282,6 +304,7 @@ exports.getReservationByTask = async (req, res) => {
           date: row.createdAt,
           task: populatedTask,
           totalPrice: row.total_price,
+          proposedPrice: row.proposed_price,
           coupon: row.coupon,
           note: row.note,
           status: row.status,

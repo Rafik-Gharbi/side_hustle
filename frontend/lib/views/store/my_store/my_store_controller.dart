@@ -43,7 +43,7 @@ class MyStoreController extends GetxController {
   bool isLoading = true;
   Governorate? _governorate;
   Category? _category;
-  int? updateServiceId;
+  String? updateServiceId;
   LatLng? _coordinates;
   Service? highlightedService;
   bool _showAllReviews = false;

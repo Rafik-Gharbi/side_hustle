@@ -63,6 +63,8 @@ class TaskProposalScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text('Note: ${reservation.note.isEmpty ? 'not provided' : reservation.note}', style: AppFonts.x14Regular),
+                                  if (reservation.proposedPrice != null && reservation.proposedPrice! > 0)
+                                    Text('Proposed price: ${reservation.proposedPrice}', style: AppFonts.x14Regular),
                                   const SizedBox(height: Paddings.regular),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -4,7 +4,7 @@ const { Governorate } = require("./governorate_model.js");
 const User = sequelize.define(
   "user",
   {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    id: { type: Sequelize.BIGINT, primaryKey: true, autoIncrement: true },
     name: { type: Sequelize.STRING },
     email: {
       type: Sequelize.STRING,
@@ -30,7 +30,7 @@ const User = sequelize.define(
     isArchived: { type: Sequelize.BOOLEAN, defaultValue: false },
     isVerified: { type: Sequelize.STRING, defaultValue: "none" },
     isMailVerified: { type: Sequelize.BOOLEAN, defaultValue: false },
-    role: { type: Sequelize.STRING, defaultValue: "provider" },
+    role: { type: Sequelize.STRING, defaultValue: "user" },
     fcmToken: { type: Sequelize.STRING },
   },
   {

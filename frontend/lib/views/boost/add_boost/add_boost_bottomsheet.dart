@@ -17,8 +17,8 @@ import 'add_boost_controller.dart';
 
 class AddBoostBottomsheet extends StatelessWidget {
   final Boost? boost;
-  final int? taskId;
-  final int? serviceId;
+  final String? taskId;
+  final String? serviceId;
 
   const AddBoostBottomsheet({super.key, this.boost, this.taskId, this.serviceId});
 

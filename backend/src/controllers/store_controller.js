@@ -5,7 +5,6 @@ const { Governorate } = require("../models/governorate_model");
 const { Category } = require("../models/category_model");
 const {
   getFileType,
-  getServiceCondidatesNumber,
   checkStoreFavorite,
   shuffleArray,
 } = require("../helper/helpers");
@@ -13,12 +12,12 @@ const { Service } = require("../models/service_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
 const {
   populateServices,
-  populateOneTask,
   populateOneService,
 } = require("../sql/sql_request");
 const { Review } = require("../models/review_model");
 const { Boost } = require("../models/boost_model");
 const { Op } = require("sequelize");
+const { Booking } = require("../models/booking_model");
 
 // filter stores
 exports.filterStores = async (req, res) => {
@@ -59,6 +58,7 @@ exports.filterStores = async (req, res) => {
       JOIN user ON store.owner_id = user.id 
       JOIN service ON service.store_id = store.id 
       WHERE (store.name LIKE :searchQuery OR store.description LIKE :searchQuery)
+      AND service.archived = false
       AND store.coordinates IS NOT NULL
       ${categoryId ? `AND service.category_id = :categoryId` : ``}
       ${
@@ -83,6 +83,7 @@ exports.filterStores = async (req, res) => {
       JOIN user ON store.owner_id = user.id 
       JOIN service ON service.store_id = store.id 
       WHERE (store.name LIKE :searchQuery OR store.description LIKE :searchQuery)
+      AND service.archived = false
       ${categoryId ? `AND service.category_id = :categoryId` : ``}
       ${
         priceMin && priceMax
@@ -242,7 +243,7 @@ exports.addService = async (req, res) => {
       where: { store_id: existStore.id },
     });
     // TODO work on the user limit regarding his subscription
-    if (foundServices.length > 2) {
+    if (user.role != "subscribed" && foundServices.length > 4) {
       return res.status(400).json({ message: "service_limit_reached" });
     }
 
@@ -413,8 +414,15 @@ exports.deleteService = async (req, res) => {
     if (!foundService) {
       return res.status(404).json({ message: "service_not_found" });
     }
-
-    foundService.destroy();
+    const serviceBookings = await Booking.findAll({
+      where: { service_id: service_id },
+    });
+    if (serviceBookings.length == 0) {
+      foundService.destroy();
+    } else {
+      foundService.archived = true;
+      foundService.save();
+    }
 
     return res.status(200).json({ done: true });
   } catch (error) {
@@ -439,7 +447,7 @@ exports.getUserStore = async (req, res) => {
       return res.status(200).json({ store: null });
     }
     const foundServices = await Service.findAll({
-      where: { store_id: existStore.id },
+      where: { store_id: existStore.id, archived: false },
     });
     const services = await populateServices(foundServices);
 
@@ -514,7 +522,7 @@ exports.getStoreById = async (req, res) => {
       return res.status(404).json({ message: "user_not_found" });
     }
     const foundServices = await Service.findAll({
-      where: { store_id: existStore.id },
+      where: { store_id: existStore.id, archived: false },
     });
     const services = await populateServices(foundServices);
 

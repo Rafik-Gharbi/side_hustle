@@ -127,16 +127,17 @@ class NotificationsController extends GetxController {
     fetchNotifications().then((value) => Future.delayed(Durations.long1, () => ApiBaseHelper.find.blockRequest = false));
   }
 
-  void _refreshScreen() {
+  Future<void> _refreshScreen() async {
     page = 0;
-    fetchNotifications();
+    await fetchNotifications();
   }
 
   void _markAsRead(NotificationModel notification) {
     if (!notification.seen) {
-      NotificationRepository.find.markAsReadNotification(idNotification: notification.id).then((value) {
-        _refreshScreen();
-        MainAppController.find.getNotSeenNotifications();
+      NotificationRepository.find.markAsReadNotification(idNotification: notification.id).then((value) async {
+        await _refreshScreen();
+        await MainAppController.find.getNotSeenNotifications();
+        update();
       });
     }
   }

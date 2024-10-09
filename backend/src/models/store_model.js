@@ -4,7 +4,7 @@ const { Governorate } = require("./governorate_model");
 const Store = sequelize.define(
   "store",
   {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    id: { type: Sequelize.BIGINT, primaryKey: true, autoIncrement: true },
     name: { type: Sequelize.STRING, allowNull: false },
     picture: { type: Sequelize.STRING, allowNull: true },
     coordinates: { type: Sequelize.STRING, allowNull: true },

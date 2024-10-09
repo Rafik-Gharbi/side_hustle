@@ -26,7 +26,7 @@ class BuildNearbyRange extends StatelessWidget {
                 Expanded(
                   child: Slider(
                     min: 1,
-                    max: 1000,
+                    max: 100,
                     activeColor: kPrimaryColor,
                     value: controller.nearbyRange.value,
                     onChanged: (double value) => controller.nearbyRange.value = value,

@@ -6,7 +6,7 @@ import 'service.dart';
 import 'user.dart';
 
 class Booking {
-  final int? id;
+  final String? id;
   final Service service;
   final DateTime date;
   final double totalPrice;

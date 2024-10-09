@@ -116,7 +116,6 @@ class StoreCard extends StatelessWidget {
                     const SizedBox(height: Paddings.regular),
                     Text(store.description ?? '', softWrap: true, maxLines: 2, overflow: TextOverflow.ellipsis, style: AppFonts.x12Regular),
                     const SizedBox(height: Paddings.regular),
-                    // TODO add user review
                     if (store.services != null)
                       Align(
                         alignment: Alignment.bottomRight,

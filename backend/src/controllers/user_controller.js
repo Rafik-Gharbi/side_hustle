@@ -875,6 +875,28 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
+exports.updateCoordinates = async (req, res) => {
+  const { coordinates } = req.body;
+  try {
+    const userFound = await User.findByPk(req.decoded.id);
+    if (!userFound) {
+      return res.status(404).json({ message: "user_not_found" });
+    }
+    if (!coordinates) {
+      return res.status(400).json({ message: "missing" });
+    }
+
+    const updatedUser = await userFound.update({ coordinates });
+    const jwt = await generateJWT(updatedUser);
+    return res.status(200).json({ updatedUser, jwt });
+  } catch (error) {
+    const errorMessage = error.errors?.[0].message || error.message;
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: errorMessage });
+  }
+};
+
 exports.verifyIdentity = async (req, res) => {
   try {
     const userFound = await User.findByPk(req.decoded.id);

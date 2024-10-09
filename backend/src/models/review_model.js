@@ -3,7 +3,11 @@ const { User } = require("./user_model");
 const Review = sequelize.define(
   "review",
   {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    id: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      primaryKey: true,
+    },
     message: { type: Sequelize.TEXT },
     picture: { type: Sequelize.TEXT },
     rating: { type: Sequelize.DOUBLE, allowNull: false },

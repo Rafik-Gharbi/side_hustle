@@ -33,7 +33,7 @@ class StoreDatabaseRepository extends GetxService {
   }
 
   Future<ServiceTableCompanion?> insertService(ServiceTableCompanion service) async {
-    final int serviceId = await database.into(database.serviceTable).insert(service);
+    final String serviceId = (await database.into(database.serviceTable).insert(service)).toString(); // TODO fix this
     ServiceTableCompanion? result = await getServiceById(serviceId);
     return result;
   }
@@ -86,7 +86,7 @@ class StoreDatabaseRepository extends GetxService {
     return store != null ? await _convertStoreTo(store.toCompanion(true)) : null;
   }
 
-  Future<ServiceTableCompanion?> getServiceById(int serviceId) async {
+  Future<ServiceTableCompanion?> getServiceById(String serviceId) async {
     final ServiceTableData? service = (await (database.select(database.serviceTable)..where((tbl) => tbl.id.equals(serviceId))).get()).firstOrNull;
     return service?.toCompanion(true);
   }
@@ -101,7 +101,7 @@ class StoreDatabaseRepository extends GetxService {
     return gallery?.toCompanion(true);
   }
 
-  Future<List<ImageDTO>> getGalleryByServiceId(int serviceId) async {
+  Future<List<ImageDTO>> getGalleryByServiceId(String serviceId) async {
     final List<ServiceGalleryTableData> gallery = (await (database.select(database.serviceGalleryTable)..where((tbl) => tbl.serviceId.equals(serviceId))).get());
     List<ImageDTO> result = [];
     for (var picture in gallery) {
