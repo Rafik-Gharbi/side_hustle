@@ -16,9 +16,11 @@ import '../../../models/user.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/logger_service.dart';
 import '../../../services/theme/theme.dart';
+import '../../../widgets/custom_button_with_overlay.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
+import '../../../widgets/report_user_dialog.dart';
 import '../../boost/add_boost/add_boost_bottomsheet.dart';
 import '../../chat/components/messages_screen.dart';
 import '../task_proposal/task_proposal_screen.dart';
@@ -52,15 +54,50 @@ class TaskDetailsScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
-                            Row(
-                              children: [
-                                CustomButtons.icon(icon: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined), onPressed: () {}),
-                                if (isOwner)
-                                  CustomButtons.icon(
-                                    icon: const Icon(Icons.rocket_launch_outlined),
-                                    onPressed: () => Get.bottomSheet(AddBoostBottomsheet(taskId: task.id), isScrollControlled: true),
+                            CustomButtonWithOverlay(
+                              offset: const Offset(-170, 30),
+                              buttonWidth: 50,
+                              button: const Icon(Icons.more_vert_outlined),
+                              menu: DecoratedBox(
+                                decoration: BoxDecoration(borderRadius: smallRadius, color: kNeutralColor100),
+                                child: SizedBox(
+                                  width: 200,
+                                  height: isOwner ? 180 : 120,
+                                  child: Column(
+                                    children: [
+                                      ListTile(
+                                        shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                        title: Text('bookmark'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                        leading: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined),
+                                        onTap: () async {
+                                          Get.back();
+                                          await MainAppController.find.toggleFavoriteTask(task);
+                                          controller.update();
+                                        },
+                                      ),
+                                      if (isOwner)
+                                        ListTile(
+                                          shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                          title: Text('boost'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                          leading: const Icon(Icons.rocket_launch_outlined),
+                                          onTap: () {
+                                            Get.back();
+                                            Get.bottomSheet(AddBoostBottomsheet(taskId: task.id), isScrollControlled: true);
+                                          },
+                                        ),
+                                      ListTile(
+                                        shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                        title: Text('report'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                        leading: const Icon(Icons.report_outlined),
+                                        onTap: () async {
+                                          Get.back();
+                                          Get.bottomSheet(ReportUserDialog(user: task.owner, task: task), isScrollControlled: true);
+                                        },
+                                      ),
+                                    ],
                                   ),
-                              ],
+                                ),
+                              ),
                             ),
                           ],
                         ),

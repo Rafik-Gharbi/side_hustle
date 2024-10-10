@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants/colors.dart';
 import '../constants/sizes.dart';
+import '../helpers/helper.dart';
 import '../services/theme/theme.dart';
 import 'on_hover.dart';
 
@@ -181,7 +182,13 @@ class CustomButtons extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
                             child: Text(
                               title ?? '',
-                              style: (titleStyle ?? AppFonts.x16Bold).copyWith(color: kNeutralColor100),
+                              style: (titleStyle ?? AppFonts.x16Bold).copyWith(
+                                color: buttonColor != null
+                                    ? Helper.isColorDarkEnoughForWhiteText(buttonColor!)
+                                        ? kBlackColor
+                                        : kNeutralColor100
+                                    : kNeutralColor100,
+                              ),
                             ),
                           ),
                           if (!isIconLeft!)
@@ -197,7 +204,13 @@ class CustomButtons extends StatelessWidget {
                         fit: BoxFit.scaleDown,
                         child: Text(
                           title ?? '',
-                          style: (titleStyle ?? AppFonts.x16Bold).copyWith(color: kNeutralColor100),
+                          style: (titleStyle ?? AppFonts.x16Bold).copyWith(
+                            color: buttonColor != null
+                                ? Helper.isColorDarkEnoughForWhiteText(buttonColor!)
+                                    ? kBlackColor
+                                    : kNeutralColor100
+                                : kNeutralColor100,
+                          ),
                         ),
                       ),
         );

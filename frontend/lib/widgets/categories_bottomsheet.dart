@@ -70,13 +70,13 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
     WidgetsBinding.instance.addPostFrameCallback((_) => searchFocusNode.requestFocus());
     final canUpdate = widget.nextUpdate != null ? widget.nextUpdate!.isBefore(DateTime.now()) : true;
     return SafeArea(
-      minimum: const EdgeInsets.only(top: Paddings.exceptional * 2),
+      minimum: const EdgeInsets.only(top: Paddings.exceptional),
       child: DecoratedBox(
         decoration: const BoxDecoration(color: kNeutralColor100, borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusSize.extraLarge))),
         child: Padding(
           padding: const EdgeInsets.only(top: Paddings.regular),
           child: SizedBox(
-            height: Get.height * 0.8,
+            height: Get.height * 0.9,
             width: Get.width,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: Paddings.regular, horizontal: Paddings.large),

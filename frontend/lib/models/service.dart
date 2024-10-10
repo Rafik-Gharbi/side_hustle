@@ -35,11 +35,7 @@ class Service {
   });
 
   factory Service.fromJson(Map<String, dynamic> json, {dynamic gallery}) => Service(
-        id: json['id'] != null
-            ? json['id'] is String
-                ? int.tryParse(json['id'])
-                : json['id']
-            : null,
+        id: json['id'],
         name: json['name'],
         description: json['description'],
         gallery: json['gallery'] != null || gallery != null ? ((gallery ?? json['gallery']) as List).map((e) => ImageDTO.fromJson(e, isStoreImage: true)).toList() : null,

@@ -15,6 +15,7 @@ import '../../widgets/booking_card.dart';
 import '../../widgets/categories_bottomsheet.dart';
 import '../../widgets/catgory_card.dart';
 import '../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../widgets/draggable_bottomsheet.dart';
 import '../../widgets/loading_card_effect.dart';
 import '../../widgets/loading_request.dart';
 import '../../widgets/reservation_card.dart';
@@ -137,17 +138,18 @@ class HomeScreen extends StatelessWidget {
                       Buildables.buildTitle(
                         'Popular Categories',
                         onSeeMore: () => Get.bottomSheet(
-                          SizedBox(
-                            height: Get.height * 0.7,
-                            child: CategoriesBottomsheet(onSelectCategory: (category) {
-                              Get.back();
-                              WidgetsBinding.instance.addPostFrameCallback(
-                                (_) => Get.toNamed(
-                                  TaskListScreen.routeName,
-                                  arguments: TaskListScreen(filterModel: FilterModel(category: category.first)),
-                                ),
-                              );
-                            }),
+                          DraggableBottomsheet(
+                            child: CategoriesBottomsheet(
+                              onSelectCategory: (category) {
+                                Get.back();
+                                WidgetsBinding.instance.addPostFrameCallback(
+                                  (_) => Get.toNamed(
+                                    TaskListScreen.routeName,
+                                    arguments: TaskListScreen(filterModel: FilterModel(category: category.first)),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                           isScrollControlled: true,
                         ),

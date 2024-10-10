@@ -58,6 +58,7 @@ dependencies:
   flutter_libphonenumber: ^2.3.0
   flutter_rating_bar: ^4.0.1
   icons_launcher: ^2.1.7
+  solid_bottom_sheet: ^0.1.13
 
 dependency_overrides:
   animated_bottom_navigation_bar:

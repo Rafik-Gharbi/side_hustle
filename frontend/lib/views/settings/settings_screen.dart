@@ -10,6 +10,7 @@ import '../../helpers/helper.dart';
 import '../../services/theme/theme.dart';
 import '../../services/theme/theme_service.dart';
 import '../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../widgets/feedback_bottomsheet.dart';
 import 'components/animated_list_tile.dart';
 import 'components/animated_title.dart';
 import 'components/language_selector.dart';
@@ -70,6 +71,7 @@ class SettingsScreen extends StatelessWidget {
                       leading: const Icon(Icons.mail_outline),
                       subtitle: 'msg_share_thoughts'.tr,
                       title: 'send_feedback'.tr,
+                      onTap: () => Get.bottomSheet(const EmotionSliderBottomsheet(), isScrollControlled: true),
                     ),
                     AnimatedListTile(
                       leading: const Icon(Icons.privacy_tip_outlined),
