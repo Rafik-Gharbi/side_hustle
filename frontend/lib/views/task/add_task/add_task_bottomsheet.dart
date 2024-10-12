@@ -107,7 +107,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                 style: AppFonts.x14Regular,
                                 children: [
                                   TextSpan(
-                                    text: controller.governorate?.name ?? 'Select a governorate',
+                                    text: controller.governorate?.name ?? 'select_governorate'.tr,
                                     style: AppFonts.x15Bold.copyWith(
                                       fontWeight: controller.governorate?.name == null ? FontWeight.normal : FontWeight.bold,
                                       color: controller.governorate?.name == null ? kNeutralColor : null,

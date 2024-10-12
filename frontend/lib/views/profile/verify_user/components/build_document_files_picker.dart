@@ -29,7 +29,7 @@ class BuildDocumentFilesPicker extends StatelessWidget {
               ),
               const SizedBox(height: Paddings.exceptional),
               if (controller.documentType == DocumentType.identityCard) ...[
-                const Text('Please provide a photo of the front and back of your identity card', style: AppFonts.x14Regular),
+                Text('provide_identity_card'.tr, style: AppFonts.x14Regular),
                 const SizedBox(height: Paddings.extraLarge),
                 Row(
                   children: [
@@ -45,13 +45,13 @@ class BuildDocumentFilesPicker extends StatelessWidget {
                           )
                         else
                           CustomButtons.elevateSecondary(
-                            title: 'Open camera',
+                            title: 'open_camera'.tr,
                             width: (Get.width - 60) / 2,
                             height: (Get.width - 60) / 2,
                             onPressed: () => controller.uploadVerifUserPicture(type: VerifPicture.frontIdentity),
                           ),
                         const SizedBox(height: Paddings.regular),
-                        const Text('Front picture', style: AppFonts.x12Bold),
+                        Text('front_picture'.tr, style: AppFonts.x12Bold),
                       ],
                     ),
                     const VerticalDivider(),
@@ -67,19 +67,19 @@ class BuildDocumentFilesPicker extends StatelessWidget {
                           )
                         else
                           CustomButtons.elevateSecondary(
-                            title: 'Open camera',
+                            title: 'open_camera'.tr,
                             width: (Get.width - 60) / 2,
                             height: (Get.width - 60) / 2,
                             onPressed: () => controller.uploadVerifUserPicture(type: VerifPicture.backIdentity),
                           ),
                         const SizedBox(height: Paddings.regular),
-                        const Text('Back picture', style: AppFonts.x12Bold),
+                        Text('back_picture'.tr, style: AppFonts.x12Bold),
                       ],
                     ),
                   ],
                 ),
               ] else ...[
-                const Text('Please provide a photo of your passport main page', style: AppFonts.x14Regular),
+                Text('provide_passport_photo'.tr, style: AppFonts.x14Regular),
                 const SizedBox(height: Paddings.extraLarge),
                 Center(
                   child: controller.passportPicture != null
@@ -91,7 +91,7 @@ class BuildDocumentFilesPicker extends StatelessWidget {
                           ),
                         )
                       : CustomButtons.elevateSecondary(
-                          title: 'Open camera',
+                          title: 'open_camera'.tr,
                           width: (Get.width - 60) / 2,
                           height: (Get.width - 60) / 2,
                           onPressed: () => controller.uploadVerifUserPicture(type: VerifPicture.passport),

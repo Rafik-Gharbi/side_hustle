@@ -96,7 +96,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: Paddings.large),
-                  Text(service.name ?? 'Service', style: AppFonts.x16Bold),
+                  Text(service.name ?? 'service'.tr, style: AppFonts.x16Bold),
                   Row(
                     children: [
                       Icon(service.category?.icon, size: 14),
@@ -214,7 +214,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                       )
                     else if (bookingStatus == RequestStatus.confirmed && onMarkDone != null)
                       CustomButtons.elevatePrimary(
-                        title: 'Mark service as done',
+                        title: 'mark_service_done'.tr,
                         titleStyle: AppFonts.x14Regular,
                         icon: const Icon(Icons.done, color: kNeutralColor100),
                         width: Get.width - 40,

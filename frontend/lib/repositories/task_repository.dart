@@ -88,10 +88,10 @@ class TaskRepository extends GetxService {
       if (withBack) Get.back();
       final task = Task.fromJson(result['task']);
       if (MainAppController.find.isConnected) TaskDatabaseRepository.find.backupTask(task);
-      Helper.snackBar(message: 'Task added successfully');
+      Helper.snackBar(message: 'task_added_successfully'.tr);
       return task;
     } catch (e) {
-      Helper.snackBar(message: 'Error occurred adding your task, please try again later!');
+      Helper.snackBar(message: 'task_add_failed'.tr);
       LoggerService.logger?.e('Error occured in addTask:\n$e');
     }
     return null;
@@ -104,10 +104,10 @@ class TaskRepository extends GetxService {
       if (withBack) Get.back();
       final task = Task.fromJson(result['task']);
       if (MainAppController.find.isConnected) TaskDatabaseRepository.find.backupTask(task);
-      Helper.snackBar(message: 'Task updated successfully');
+      Helper.snackBar(message: 'task_updated_successfully'.tr);
       return task;
     } catch (e) {
-      Helper.snackBar(message: 'Error occurred updating your task, please try again later!');
+      Helper.snackBar(message: 'task_updat_failed'.tr);
       LoggerService.logger?.e('Error occured in updateTask:\n$e');
     }
     return null;
@@ -118,7 +118,7 @@ class TaskRepository extends GetxService {
       final result = await ApiBaseHelper().request(RequestType.delete, sendToken: true, '/task/${task.id}');
       final status = result?['done'] ?? false;
       if (withBack) Get.back();
-      if (status) Helper.snackBar(message: 'Task deleted successfully');
+      if (status) Helper.snackBar(message: 'task_deleted_successfully'.tr);
       return status;
     } catch (e) {
       LoggerService.logger?.e('Error occured in deleteUser:\n$e');

@@ -63,7 +63,7 @@ class VerifyUserController extends GetxController {
         timer.cancel();
         if (timerProgress.value == 0) {
           Get.back();
-          Helper.snackBar(message: 'Time is up, please try again!');
+          Helper.snackBar(message: 'time_is_up'.tr);
         }
       }
     });
@@ -126,9 +126,9 @@ class VerifyUserController extends GetxController {
     );
     uploadDocumentResult = result;
     if (result) {
-      Helper.snackBar(message: 'Document uploaded successfully');
+      Helper.snackBar(message: 'document_uploaded_successfully'.tr);
     } else {
-      Helper.snackBar(message: 'Document upload failed');
+      Helper.snackBar(message: 'document_upload_failed'.tr);
     }
     isLoadingDataUpload.value = false;
   }

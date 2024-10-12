@@ -49,7 +49,7 @@ class ProfileScreen extends StatelessWidget {
               child: CustomScaffoldBottomNavigation(
                 backgroundColor: kNeutralColor100,
                 appBarColor: kNeutralLightColor,
-                appBarTitle: 'Profile',
+                appBarTitle: 'profile'.tr,
                 body: DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -83,11 +83,11 @@ class ProfileScreen extends StatelessWidget {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Text(controller.loggedInUser!.name ?? 'Someone', style: AppFonts.x16Bold),
+                                            Text(controller.loggedInUser!.name ?? 'someone'.tr, style: AppFonts.x16Bold),
                                             if (controller.loggedInUser?.isVerified == VerifyIdentityStatus.verified)
-                                              const Padding(
-                                                padding: EdgeInsets.only(right: Paddings.small),
-                                                child: Tooltip(message: 'Verified user', child: Icon(Icons.verified_outlined, size: 18)),
+                                              Padding(
+                                                padding: const EdgeInsets.only(right: Paddings.small),
+                                                child: Tooltip(message: 'verified_user'.tr, child: const Icon(Icons.verified_outlined, size: 18)),
                                               ),
                                           ],
                                         ),
@@ -97,7 +97,7 @@ class ProfileScreen extends StatelessWidget {
                                           children: [
                                             const Icon(Icons.pin_drop_outlined, size: 14),
                                             const SizedBox(width: Paddings.regular),
-                                            Text(controller.loggedInUser!.governorate?.name ?? 'City', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                                            Text(controller.loggedInUser!.governorate?.name ?? 'city'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                                           ],
                                         ),
                                         const SizedBox(height: Paddings.exceptional),
@@ -120,7 +120,7 @@ class ProfileScreen extends StatelessWidget {
                                                           controller.loggedInUser?.birthdate != null ? Helper.formatDate(controller.loggedInUser!.birthdate!) : 'not_provided'.tr,
                                                         ),
                                                         Buildables.lightDivider(),
-                                                        Buildables.buildProfileInfoRow('gender'.tr, controller.loggedInUser?.gender?.value ?? 'not_provided'.tr),
+                                                        Buildables.buildProfileInfoRow('gender'.tr, controller.loggedInUser?.gender?.value.tr ?? 'not_provided'.tr),
                                                         Buildables.lightDivider(),
                                                         Buildables.buildProfileInfoRow(
                                                           'phone'.tr,
@@ -233,7 +233,7 @@ class ProfileScreen extends StatelessWidget {
                                                           label: 'logout'.tr,
                                                           icon: Icons.logout_outlined,
                                                           onTap: () => Helper.openConfirmationDialog(
-                                                            title: 'Are you sure you want to logout?',
+                                                            title: 'logout_msg'.tr,
                                                             onConfirm: AuthenticationService.find.logout,
                                                           ),
                                                         ),

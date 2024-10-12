@@ -16,7 +16,6 @@ import '../../../services/logger_service.dart';
 import '../../../widgets/categories_bottomsheet.dart';
 
 class ProfileController extends GetxController {
-
   /// not permanent use with caution
   static ProfileController get find => Get.find<ProfileController>();
   User? loggedInUser;
@@ -112,8 +111,7 @@ class ProfileController extends GetxController {
 
   void manageCategoriesSubscription() => subscribedCategories.isEmpty
       ? Helper.openConfirmationDialog(
-          title:
-              'Here you can subscribe up to 3 categories so that you get a notification if a new task has been created in those categories.\nFirst, you need to allow notifications in your device.',
+          title: 'subscribe_categories_msg'.tr,
           onConfirm: () async {
             NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(criticalAlert: true);
             debugPrint('User granted permission: ${settings.authorizationStatus}');

@@ -22,7 +22,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CustomScaffoldBottomNavigation(
-        appBarTitle: 'Settings',
+        appBarTitle: 'settings'.tr,
         body: GetBuilder<SettingsController>(
           builder: (controller) => Center(
             child: SingleChildScrollView(
@@ -34,7 +34,7 @@ class SettingsScreen extends StatelessWidget {
                     AnimatedTitle(title: 'general'.tr),
                     Obx(() => AnimatedListTile(
                           leading: const Icon(Icons.light_mode_outlined),
-                          subtitle: '${'current_theme'.tr}: ${ThemeService.find.currentTheme.value.name}',
+                          subtitle: '${'current_theme'.tr}: ${ThemeService.find.currentTheme.value.name.tr}',
                           title: 'theme'.tr,
                           onTap: () => ThemeService.find.toggleTheme(),
                         )),
@@ -110,7 +110,7 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ),
                     AnimatedListTile(
-                      subtitle: controller.categoryPreferences == 'Show popular categories' ? 'or my most searched categories' : 'or popular categories',
+                      subtitle: controller.categoryPreferences == 'show_popular_categories'.tr ? 'or_my_most_searched_categories'.tr : 'or_popular_categories'.tr,
                       title: controller.categoryPreferences,
                       onTap: () => controller.toggleCategorySectionPreferences(),
                     ),

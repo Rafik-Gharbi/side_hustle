@@ -59,9 +59,9 @@ class ParamsRepository extends GetxService {
       final result = await ApiBaseHelper().request(RequestType.post, '/params/report', body: reportDTO.toJson(), sendToken: true);
       if (result['done']) {
         Get.back(); // close report dialog
-        Helper.snackBar(message: 'Report submitted successfully');
+        Helper.snackBar(message: 'report_submitted_successfully'.tr);
       } else {
-        Helper.snackBar(message: 'Failed to submit report');
+        Helper.snackBar(message: 'report_failed_submit'.tr);
       }
     } catch (e) {
       LoggerService.logger?.e('Error occured in reportUser:\n$e');
@@ -75,11 +75,11 @@ class ParamsRepository extends GetxService {
         Get.back();
         Get.dialog(const ThankYouPopup());
       } else {
-        Helper.snackBar(message: 'Failed to submit feedback');
+        Helper.snackBar(message: 'feedback_failed_submit'.tr);
       }
     } catch (e) {
       LoggerService.logger?.e('Error occured in submitFeedback:\n$e');
-      Helper.snackBar(message: 'Failed to submit feedback');
+      Helper.snackBar(message: 'feedback_failed_submit'.tr);
     }
   }
 }

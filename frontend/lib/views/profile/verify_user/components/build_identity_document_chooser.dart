@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../constants/constants.dart';
@@ -16,16 +17,12 @@ class BuildIdentityDocumentChooser extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: Paddings.exceptional),
-        const Text(
-          'A 60-second timer has been started.\nYour photo from the chosen document will be compared with your selfie.',
-          style: AppFonts.x14Regular,
-          textAlign: TextAlign.justify,
-        ),
+        Text('timer_started'.tr, style: AppFonts.x14Regular, textAlign: TextAlign.justify),
         const SizedBox(height: Paddings.exceptional),
         ListTile(
           onTap: () => onIdentityCardSelected?.call(),
           shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(width: 0.4, color: kNeutralColor)),
-          title: const Text('Identity Card', style: AppFonts.x14Bold),
+          title: Text('identity_card'.tr, style: AppFonts.x14Bold),
           leading: CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: const Icon(Icons.badge_outlined)),
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
@@ -33,7 +30,7 @@ class BuildIdentityDocumentChooser extends StatelessWidget {
         ListTile(
           onTap: () => onPassportSelected?.call(),
           shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(width: 0.4, color: kNeutralColor)),
-          title: const Text('Passport', style: AppFonts.x14Bold),
+          title: Text('passport'.tr, style: AppFonts.x14Bold),
           leading: CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: const Icon(Icons.airplane_ticket_outlined)),
           trailing: const Icon(Icons.chevron_right_rounded),
         ),

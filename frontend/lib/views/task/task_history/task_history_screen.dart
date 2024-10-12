@@ -21,20 +21,20 @@ class TaskHistoryScreen extends StatelessWidget {
       child: GetBuilder<TaskHistoryController>(
         builder: (controller) => CustomScaffoldBottomNavigation(
           onBack: () => ProfileController.find.init(),
-          appBarTitle: 'Task History',
+          appBarTitle: 'task_history'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.hasNoTasksYet
-                ? const Center(child: Text('You haven\'t done any task yet!', style: AppFonts.x14Regular))
+                ? Center(child: Text('done_no_task_yet'.tr, style: AppFonts.x14Regular))
                 : SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge),
                       child: Column(
                         children: [
-                          buildStatusTaskGroup('Ongoing Tasks', controller.ongoingTasks, initiallyOpen: true),
-                          buildStatusTaskGroup('Pending Tasks', controller.pendingTasks, initiallyOpen: true),
-                          buildStatusTaskGroup('Finished Tasks', controller.finishedTasks),
-                          buildStatusTaskGroup('Rejected Tasks', controller.rejectedTasks),
+                          buildStatusTaskGroup('ongoing_tasks'.tr, controller.ongoingTasks, initiallyOpen: true),
+                          buildStatusTaskGroup('pending_tasks'.tr, controller.pendingTasks, initiallyOpen: true),
+                          buildStatusTaskGroup('finished_tasks'.tr, controller.finishedTasks),
+                          buildStatusTaskGroup('rejected_tasks'.tr, controller.rejectedTasks),
                         ],
                       ),
                     ),

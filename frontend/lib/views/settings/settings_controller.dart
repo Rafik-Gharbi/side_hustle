@@ -6,7 +6,7 @@ import '../../services/shared_preferences.dart';
 class SettingsController extends GetxController {
   static SettingsController get find => Get.find<SettingsController>();
   bool _is24Hour = true;
-  String categoryPreferences = 'Show popular categories';
+  String categoryPreferences = 'show_popular_categories'.tr;
 
   bool get is24Hour => _is24Hour;
 
@@ -30,10 +30,10 @@ class SettingsController extends GetxController {
   }
 
   void toggleCategorySectionPreferences() {
-    if (categoryPreferences == 'Show popular categories') {
-      categoryPreferences = 'Show most searched categories';
+    if (categoryPreferences == 'show_popular_categories'.tr) {
+      categoryPreferences = 'show_most_searched_categories'.tr;
     } else {
-      categoryPreferences = 'Show popular categories';
+      categoryPreferences = 'show_popular_categories'.tr;
     }
     update();
   }

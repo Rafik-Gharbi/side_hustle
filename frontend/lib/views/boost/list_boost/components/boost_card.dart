@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
+import 'package:get/get.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../constants/sizes.dart';
@@ -61,9 +62,9 @@ class BoostCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Budget ${Helper.formatAmount(boost.budget)} ${MainAppController.find.currency.value}', style: AppFonts.x14Bold),
+                        Text('${'budget'.tr} ${Helper.formatAmount(boost.budget)} ${MainAppController.find.currency.value}', style: AppFonts.x14Bold),
                         Text(
-                          boost.isTask ? 'Task: ${getTask(boost).title}' : 'Service: ${getService(boost).name}',
+                          boost.isTask ? '${'task'.tr}: ${getTask(boost).title}' : '${'service'.tr}: ${getService(boost).name}',
                           style: AppFonts.x14Regular,
                         ),
                       ],
@@ -89,13 +90,13 @@ class BoostCard extends StatelessWidget {
                         style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
                         children: [
                           WidgetSpan(child: Icon(Icons.location_city_outlined, size: 16, color: kNeutralColor)),
-                          TextSpan(text: ' ${boost.governorate != null ? boost.governorate!.name : 'All Tunisia'}'),
+                          TextSpan(text: ' ${boost.governorate != null ? boost.governorate!.name : 'all_tunisia'.tr}'),
                           const TextSpan(text: ' ⦿ '),
                           WidgetSpan(child: Icon(Icons.people_alt_outlined, size: 16, color: kNeutralColor)),
                           TextSpan(text: ' ${boost.minAge != null && boost.maxAge != null ? '${boost.minAge} - ${boost.maxAge}' : '18 - 65+'}'),
                           const TextSpan(text: ' ⦿ '),
                           WidgetSpan(child: Icon(Icons.male_outlined, size: 16, color: kNeutralColor)),
-                          TextSpan(text: ' ${boost.gender != null ? boost.gender!.name : 'All genders'}'),
+                          TextSpan(text: ' ${boost.gender != null ? boost.gender!.name : 'all_genders'.tr}'),
                         ],
                       ),
                     ),
@@ -104,7 +105,7 @@ class BoostCard extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Ends in ${Helper.formatDate(boost.endDate)}', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                          Text('${'ends_in'.tr} ${Helper.formatDate(boost.endDate)}', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                           Icon(isExpanded(boost) ? Icons.expand_less_outlined : Icons.expand_more_outlined),
                         ],
                       ),

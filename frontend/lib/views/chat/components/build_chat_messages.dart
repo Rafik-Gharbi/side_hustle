@@ -43,7 +43,7 @@ class BuildChatMessages extends StatelessWidget {
                                 Center(
                                   child: CustomButtons.text(
                                     onPressed: () => controller.getBeforeAfterMessages(snapshot.data![snapshot.data!.length - 1].id, true),
-                                    title: 'Load More',
+                                    title: 'load_more'.tr,
                                     titleStyle: AppFonts.x12Regular,
                                   ),
                                 ),
@@ -69,7 +69,7 @@ class BuildChatMessages extends StatelessWidget {
                                 Center(
                                   child: CustomButtons.text(
                                     onPressed: () => controller.getBeforeAfterMessages(snapshot.data![0].id, false),
-                                    title: 'Load More',
+                                    title: 'load_more'.tr,
                                     titleStyle: AppFonts.x12Regular,
                                   ),
                                 ),
@@ -83,10 +83,10 @@ class BuildChatMessages extends StatelessWidget {
               } else {
                 return Padding(
                   padding: EdgeInsets.symmetric(vertical: Paddings.large, horizontal: Get.width * 0.1),
-                  child: const Column(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Nothing here yet!', style: AppFonts.x14Regular),
+                      Text('nothing_here_yet'.tr, style: AppFonts.x14Regular),
                     ],
                   ),
                 );

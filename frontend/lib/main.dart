@@ -164,7 +164,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) => GetMaterialApp(
         navigatorKey: MyApp.navigatorKey,
         debugShowCheckedModeBanner: false,
-        title: 'Side Hustle',
+        title: 'Abid Concept',
         logWriterCallback: (text, {isError = false}) => isError ? LoggerService.logger?.e(text) : LoggerService.logger?.i(text),
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus},

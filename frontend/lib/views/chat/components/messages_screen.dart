@@ -34,7 +34,7 @@ class MessagesScreen extends StatelessWidget {
         ),
         builder: (controller) => Obx(
           () => CustomScaffoldBottomNavigation(
-            appBarTitle: 'Messages',
+            appBarTitle: 'messages'.tr,
             hideBottomNavigation: true,
             onBack: controller.clearMessagesScreen,
             appBarActions: [
@@ -49,7 +49,7 @@ class MessagesScreen extends StatelessWidget {
                     leading: const SizedBox(),
                     flexibleSpace: CustomTextField(
                       fieldController: controller.searchMessagesController,
-                      hintText: 'Search chat messages',
+                      hintText: 'search_chat'.tr,
                       suffixIcon: const Icon(Icons.search, color: kPrimaryColor),
                       fillColor: Colors.white,
                       onChanged: (value) => Helper.onSearchDebounce(() => controller.searchChatMessages(value)),
@@ -62,7 +62,7 @@ class MessagesScreen extends StatelessWidget {
               child: LoadingRequest(
                 isLoading: controller.isLoading,
                 child: controller.selectedChatBubble == null
-                    ? const Center(child: Text('Please select a discussion!', style: AppFonts.x14Regular))
+                    ? Center(child: Text('select_discussion'.tr, style: AppFonts.x14Regular))
                     : SharedPreferencesService.find.isReady && AuthenticationService.find.jwtUserData == null
                         ? Buildables.buildLoginRequest(onLogin: controller.update)
                         : controller.loggedInUser == null

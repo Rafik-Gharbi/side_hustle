@@ -101,7 +101,7 @@ class _CoordinatesPickerState extends State<CoordinatesPicker> {
               CustomTextField(
                 width: (Get.width - 50) / 2,
                 fieldController: longitudeController,
-                hintText: 'longitude coordinates',
+                hintText: 'longitude'.tr,
                 suffixIcon: isLoadingPosition.value
                     ? Transform.scale(scale: 0.4, child: const CircularProgressIndicator())
                     : const Icon(
@@ -116,7 +116,7 @@ class _CoordinatesPickerState extends State<CoordinatesPicker> {
               CustomTextField(
                 width: (Get.width - 50) / 2,
                 fieldController: latitudeController,
-                hintText: 'latitude coordinates',
+                hintText: 'latitude'.tr,
                 suffixIcon: isLoadingPosition.value
                     ? Transform.scale(scale: 0.4, child: const CircularProgressIndicator())
                     : const Icon(

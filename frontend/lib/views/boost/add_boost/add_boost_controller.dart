@@ -88,7 +88,7 @@ class AddBoostController extends GetxController {
     }
     if (result) {
       Get.back();
-      Helper.snackBar(message: 'Boost ${boost?.id != null ? 'updated' : 'added'} successfully');
+      Helper.snackBar(message: 'boost_status_successfully'.trParams({'status': boost?.id != null ? 'updated' : 'added'}));
     }
   }
 

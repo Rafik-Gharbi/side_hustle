@@ -35,7 +35,7 @@ class TaskListScreen extends StatelessWidget {
         ),
         builder: (controller) => Obx(
           () => CustomScaffoldBottomNavigation(
-            appBarTitle: 'Search Tasks',
+            appBarTitle: 'search_tasks'.tr,
             appBarActions: [
               CustomButtons.icon(
                 icon: Icon(controller.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
@@ -58,7 +58,7 @@ class TaskListScreen extends StatelessWidget {
                     leading: const SizedBox(),
                     flexibleSpace: CustomTextField(
                       fieldController: controller.searchTaskController,
-                      hintText: 'Search Task',
+                      hintText: 'search_tasks'.tr,
                       suffixIcon: const Icon(Icons.search, color: kPrimaryColor),
                       fillColor: Colors.white,
                       onChanged: (value) => Helper.onSearchDebounce(
@@ -70,7 +70,7 @@ class TaskListScreen extends StatelessWidget {
             body: LoadingRequest(
               isLoading: controller.isLoading,
               child: controller.filteredTaskList.isEmpty
-                  ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
+                  ? Center(child: Text('found_nothing'.tr, style: AppFonts.x14Regular))
                   : SingleChildScrollView(
                       controller: controller.scrollController,
                       child: Column(

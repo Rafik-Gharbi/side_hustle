@@ -29,11 +29,11 @@ class ListBoostScreen extends StatelessWidget {
           },
         ),
         builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'My Boosts',
+          appBarTitle: 'my_boosts'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.boostList.isEmpty
-                ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
+                ? Center(child: Text('found_nothing'.tr, style: AppFonts.x14Regular))
                 : SingleChildScrollView(
                     controller: controller.scrollController,
                     child: Column(

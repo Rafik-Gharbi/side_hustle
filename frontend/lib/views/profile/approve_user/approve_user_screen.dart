@@ -26,12 +26,12 @@ class ApproveUserScreen extends StatelessWidget {
       child: GetBuilder<ApproveUserController>(
         autoRemove: false,
         builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'Approve Users',
+          appBarTitle: 'approve_users'.tr,
           onBack: () => ProfileController.find.init(),
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.userApproveList.isEmpty
-                ? const Center(child: Text('There are no users yet!', style: AppFonts.x14Regular))
+                ? Center(child: Text('no_users_yet'.tr, style: AppFonts.x14Regular))
                 : ListView.builder(
                     itemCount: controller.userApproveList.length,
                     itemBuilder: (context, index) {
@@ -72,10 +72,10 @@ class ApproveUserScreen extends StatelessWidget {
                                   Buildables.buildProfileInfoRow('gender'.tr, userApprove.user?.gender?.value ?? 'not_provided'.tr),
                                   Buildables.lightDivider(),
                                   const SizedBox(height: Paddings.large),
-                                  const Text('User document:', style: AppFonts.x15Bold),
+                                  Text('user_document'.tr, style: AppFonts.x15Bold),
                                   const SizedBox(height: Paddings.regular),
                                   if (userApprove.userDocument == null)
-                                    Text('User document not available', style: AppFonts.x12Bold.copyWith(color: kErrorColor))
+                                    Text('document_not_available'.tr, style: AppFonts.x12Bold.copyWith(color: kErrorColor))
                                   else
                                     SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
@@ -87,7 +87,7 @@ class ApproveUserScreen extends StatelessWidget {
                                               children: [
                                                 buildImage(userApprove.userDocument!.passport!, context),
                                                 const SizedBox(height: Paddings.regular),
-                                                const Text('Passport picture', style: AppFonts.x12Bold),
+                                                Text('passport_picture'.tr, style: AppFonts.x12Bold),
                                               ],
                                             )
                                           else ...[
@@ -96,7 +96,7 @@ class ApproveUserScreen extends StatelessWidget {
                                               children: [
                                                 buildImage(userApprove.userDocument!.frontIdentity!, context),
                                                 const SizedBox(height: Paddings.regular),
-                                                const Text('Front picture', style: AppFonts.x12Bold),
+                                                Text('front_picture'.tr, style: AppFonts.x12Bold),
                                               ],
                                             ),
                                             const SizedBox(width: Paddings.regular),
@@ -104,7 +104,7 @@ class ApproveUserScreen extends StatelessWidget {
                                               children: [
                                                 buildImage(userApprove.userDocument!.backIdentity!, context),
                                                 const SizedBox(height: Paddings.regular),
-                                                const Text('Back picture', style: AppFonts.x12Bold),
+                                                Text('back_picture'.tr, style: AppFonts.x12Bold),
                                               ],
                                             ),
                                           ],
@@ -114,7 +114,7 @@ class ApproveUserScreen extends StatelessWidget {
                                             children: [
                                               buildImage(userApprove.userDocument!.selfie!, context),
                                               const SizedBox(height: Paddings.regular),
-                                              const Text('Selfie picture', style: AppFonts.x12Bold),
+                                              Text('selfie_picture'.tr, style: AppFonts.x12Bold),
                                             ],
                                           ),
                                         ],
@@ -125,7 +125,7 @@ class ApproveUserScreen extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       CustomButtons.text(
-                                        title: 'Not Approvable',
+                                        title: 'not_approvable'.tr,
                                         titleStyle: AppFonts.x14Regular,
                                         onPressed: () => controller.couldNotApprove(userApprove.user),
                                       ),
@@ -134,7 +134,7 @@ class ApproveUserScreen extends StatelessWidget {
                                         onPressed: () => controller.callUser(userApprove.user),
                                       ),
                                       CustomButtons.elevatePrimary(
-                                        title: 'Approve',
+                                        title: 'approve'.tr,
                                         width: (Get.width - 120) / 2,
                                         onPressed: () => controller.approveUser(userApprove.user),
                                       )
@@ -169,11 +169,11 @@ class ApproveUserScreen extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Buildables.userImage(providedUser: userApprove.user, size: 40),
-      title: Text(userApprove.user?.name ?? 'Not Provided', style: AppFonts.x14Bold),
+      title: Text(userApprove.user?.name ?? 'not_provided'.tr, style: AppFonts.x14Bold),
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(userApprove.user?.phone ?? 'Not Provided', style: AppFonts.x14Regular),
+          Text(userApprove.user?.phone ?? 'not_provided'.tr, style: AppFonts.x14Regular),
           Padding(
             padding: const EdgeInsets.only(right: Paddings.regular),
             child: Row(
@@ -181,7 +181,7 @@ class ApproveUserScreen extends StatelessWidget {
               children: [
                 const Icon(Icons.pin_drop_outlined, size: 14),
                 const SizedBox(width: Paddings.small),
-                Text(userApprove.user?.governorate?.name ?? 'City', style: AppFonts.x14Regular),
+                Text(userApprove.user?.governorate?.name ?? 'city'.tr, style: AppFonts.x14Regular),
               ],
             ),
           ),

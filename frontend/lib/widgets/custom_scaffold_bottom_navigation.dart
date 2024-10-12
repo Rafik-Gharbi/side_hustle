@@ -100,10 +100,10 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   !MainAppController.find.hasInternetConnection.value
-                                      ? 'You\'re offline, please check your internet connection'
+                                      ? 'offline_msg'.tr
                                       : !MainAppController.find.isBackReachable.value
-                                          ? 'Server is not reachable, we are working on it!'
-                                          : 'Error has occurred, please try again later!',
+                                          ? 'server_offline_msg'.tr
+                                          : 'error_occurred'.tr,
                                   style: AppFonts.x12Bold.copyWith(color: kNeutralColor100),
                                   softWrap: true,
                                 ),

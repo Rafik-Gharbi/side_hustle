@@ -31,7 +31,7 @@ class ThankYouPopupState extends State<ThankYouPopup> with TickerProviderStateMi
       vsync: this,
       duration: const Duration(milliseconds: 1000), // 1 second for a heartbeat cycle
     )..repeat(reverse: true); // Repeat the heartbeat
-// Color Animation for Heartbeat
+    // Color Animation for Heartbeat
     _colorAnimation = ColorTween(
       begin: Colors.red,
       end: Colors.pinkAccent,
@@ -101,14 +101,10 @@ class ThankYouPopupState extends State<ThankYouPopup> with TickerProviderStateMi
                           ),
                           const SizedBox(height: Paddings.large),
                           // Thank You Message
-                          Text('Thank You!', style: AppFonts.x24Bold.copyWith(fontSize: 28, color: kPrimaryColor)),
+                          Text('thank_you'.tr, style: AppFonts.x24Bold.copyWith(fontSize: 28, color: kPrimaryColor)),
                           const SizedBox(height: Paddings.large),
                           // Motivational Message
-                          const Text(
-                            'Your feedback is essential for our growth and improvement. Thank you for your valuable insights.',
-                            textAlign: TextAlign.center,
-                            style: AppFonts.x16Regular,
-                          ),
+                          Text('feedback_thanks_msg'.tr, textAlign: TextAlign.center, style: AppFonts.x16Regular),
                           const SizedBox(height: Paddings.exceptional),
                           // Close Button
                           ElevatedButton(
@@ -118,7 +114,7 @@ class ThankYouPopupState extends State<ThankYouPopup> with TickerProviderStateMi
                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                             ),
                             onPressed: () => Navigator.pop(context),
-                            child: Text('Close', style: AppFonts.x16Regular.copyWith(color: kNeutralColor100)),
+                            child: Text('close'.tr, style: AppFonts.x16Regular.copyWith(color: kNeutralColor100)),
                           ),
                         ],
                       ),
@@ -150,7 +146,7 @@ class ConfettiAnimationState extends State<ConfettiAnimation> with SingleTickerP
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(duration: const Duration(seconds: 4), vsync: this)..repeat();
+    _controller = AnimationController(duration: const Duration(microseconds: 1), vsync: this)..repeat();
     _controller.forward();
   }
 
@@ -179,7 +175,7 @@ class ConfettiPainter extends CustomPainter {
     final paint = Paint()
       ..color = Colors.primaries[random.nextInt(Colors.primaries.length)]
       ..style = PaintingStyle.fill;
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 10; i++) {
       final x = random.nextDouble() * size.width;
       final y = random.nextDouble() * size.height * animationValue;
       canvas.drawCircle(Offset(x, y), 4, paint);

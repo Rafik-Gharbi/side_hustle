@@ -41,7 +41,7 @@ class AddBoostBottomsheet extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
-                    Text('Add a Boost'.tr, style: AppFonts.x15Bold),
+                    Text('add_boost'.tr, style: AppFonts.x15Bold),
                     const SizedBox(width: 40),
                   ],
                 ),
@@ -89,7 +89,11 @@ class AddBoostBottomsheet extends StatelessWidget {
                                 children: [
                                   const Icon(Icons.rocket_outlined, size: 16),
                                   const SizedBox(width: Paddings.regular),
-                                  Text('estimated to reach ${controller.getEstimationReachMin()} - ${controller.getEstimationReachMax()} users'.tr, style: AppFonts.x12Regular),
+                                  Text(
+                                    'estimated_reach_min_max'
+                                        .trParams({'min': controller.getEstimationReachMin().toString(), 'max': controller.getEstimationReachMax().toString()}),
+                                    style: AppFonts.x12Regular,
+                                  ),
                                 ],
                               ),
                             ],
@@ -102,7 +106,7 @@ class AddBoostBottomsheet extends StatelessWidget {
                         ),
                         CustomDropDownMenu<Governorate>(
                           items: MainAppController.find.governorates,
-                          hint: 'Select a governorate',
+                          hint: 'select_governorate'.tr,
                           maxWidth: true,
                           selectedItem: controller.governorate ?? MainAppController.find.governorates.first,
                           buttonHeight: 45,
@@ -136,7 +140,7 @@ class AddBoostBottomsheet extends StatelessWidget {
                         ),
                         const SizedBox(height: Paddings.small),
                         Text(
-                          'Age: ${controller.minAge ?? 18} - ${controller.maxAge == 65 || controller.maxAge == null ? '65+' : controller.maxAge}'.tr,
+                          '${'age'.tr}: ${controller.minAge ?? 18} - ${controller.maxAge == 65 || controller.maxAge == null ? '65+' : controller.maxAge}'.tr,
                           style: AppFonts.x12Regular,
                         ),
                         const SizedBox(height: Paddings.regular),
@@ -145,12 +149,12 @@ class AddBoostBottomsheet extends StatelessWidget {
                           child: Text('audience_gender'.tr, style: AppFonts.x15Bold),
                         ),
                         CustomDropDownMenu<String>(
-                          items: ['All genders', ...Gender.values.map((e) => e.value)],
-                          hint: 'Select a gender',
+                          items: ['all_genders'.tr, ...Gender.values.map((e) => e.value.tr)],
+                          hint: 'select_gender'.tr,
                           maxWidth: true,
-                          selectedItem: controller.gender?.value ?? 'All genders',
+                          selectedItem: controller.gender?.value ?? 'all_genders'.tr,
                           buttonHeight: 45,
-                          onChanged: (value) => value == 'All genders' ? controller.gender = null : controller.gender = Gender.fromString(value!),
+                          onChanged: (value) => value == 'all_genders'.tr ? controller.gender = null : controller.gender = Gender.fromString(value!),
                         ),
                         const SizedBox(height: Paddings.regular),
                         ListTile(
@@ -193,7 +197,7 @@ class AddBoostBottomsheet extends StatelessWidget {
                         ),
                         const SizedBox(height: Paddings.exceptional),
                         CustomButtons.elevatePrimary(
-                          title: '${isUpdate ? 'Update' : 'Create'} Boost',
+                          title: '${isUpdate ? 'update'.tr : 'create'.tr} ${'boost'.tr}',
                           width: Get.width,
                           onPressed: controller.upsertBoost,
                         ),

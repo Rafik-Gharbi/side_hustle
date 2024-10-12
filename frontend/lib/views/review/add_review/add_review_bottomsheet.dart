@@ -43,14 +43,11 @@ class AddReviewBottomsheet extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const SizedBox(height: Paddings.regular),
-                                  Center(child: Text('Help ${user.name} improve!', style: AppFonts.x16Bold)),
+                                  Center(child: Text('help_user_improve'.trParams({'userName': user.name!}), style: AppFonts.x16Bold)),
                                   const SizedBox(height: Paddings.exceptional),
-                                  Text(
-                                    'Good or bad, doesn\'t matter. Any feedback, as long as it\'s constructive. is great and can help ${user.name} get better.',
-                                    style: AppFonts.x14Regular.copyWith(color: kNeutralColor),
-                                  ),
+                                  Text('help_user_improve_msg'.trParams({'userName': user.name!}), style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
                                   const SizedBox(height: Paddings.extraLarge),
-                                  const Text('How was the service quality ', style: AppFonts.x14Bold),
+                                  Text('service_quality_question'.tr, style: AppFonts.x14Bold),
                                   const SizedBox(height: Paddings.small),
                                   Center(
                                     child: RatingBar.builder(
@@ -64,7 +61,7 @@ class AddReviewBottomsheet extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: Paddings.large),
-                                  const Text('How was the service fees ', style: AppFonts.x14Bold),
+                                  Text('service_fees_question'.tr, style: AppFonts.x14Bold),
                                   const SizedBox(height: Paddings.small),
                                   Center(
                                     child: RatingBar.builder(
@@ -78,7 +75,7 @@ class AddReviewBottomsheet extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: Paddings.large),
-                                  const Text('How was the user punctuality ', style: AppFonts.x14Bold),
+                                  Text('user_punctuality_question'.tr, style: AppFonts.x14Bold),
                                   const SizedBox(height: Paddings.small),
                                   Center(
                                     child: RatingBar.builder(
@@ -92,7 +89,7 @@ class AddReviewBottomsheet extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: Paddings.large),
-                                  const Text('How was the user politeness ', style: AppFonts.x14Bold),
+                                  Text('user_politeness_question'.tr, style: AppFonts.x14Bold),
                                   const SizedBox(height: Paddings.small),
                                   Center(
                                     child: RatingBar.builder(
@@ -109,13 +106,13 @@ class AddReviewBottomsheet extends StatelessWidget {
                                   Row(
                                     children: [
                                       CustomButtons.elevateSecondary(
-                                        title: 'Skip details',
+                                        title: 'skip_details'.tr,
                                         width: (Get.width - 40) / 2,
                                         onPressed: () => controller.upsertReview(),
                                       ),
                                       const SizedBox(width: Paddings.regular),
                                       CustomButtons.elevatePrimary(
-                                        title: '${review != null ? 'Update' : 'Add'} review',
+                                        title: '${review != null ? 'update'.tr : 'add'.tr} ${'review'.tr}',
                                         width: (Get.width - 40) / 2,
                                         onPressed: () => controller.upsertReview(),
                                       ),
@@ -126,13 +123,15 @@ class AddReviewBottomsheet extends StatelessWidget {
                             : Column(
                                 children: [
                                   const SizedBox(height: Paddings.regular),
-                                  const Text('Add review', style: AppFonts.x16Bold),
+                                  Text('add_review'.tr, style: AppFonts.x16Bold),
                                   const SizedBox(height: Paddings.exceptional),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text('You rated ${user.name} ${Helper.formatAmount(controller.rating.value)} stars',
-                                          style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                                      Text(
+                                        'rated_user_rating'.trParams({'userName': user.name!, 'rating': Helper.formatAmount(controller.rating.value)}),
+                                        style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
+                                      ),
                                       const SizedBox(width: Paddings.regular),
                                       Helper.resolveRatingSatisfaction(controller.rating.value),
                                     ],
@@ -149,7 +148,7 @@ class AddReviewBottomsheet extends StatelessWidget {
                                   ),
                                   const SizedBox(height: Paddings.extraLarge),
                                   CustomTextField(
-                                    hintText: 'Say something about ${user.name} service',
+                                    hintText: 'note_about_user_service'.trParams({'userName': user.name!}),
                                     fieldController: controller.messageController,
                                     isTextArea: true,
                                     outlinedBorder: true,
@@ -179,7 +178,7 @@ class AddReviewBottomsheet extends StatelessWidget {
                                     ),
                                   const SizedBox(height: Paddings.exceptional),
                                   CustomButtons.elevatePrimary(
-                                    title: '${review != null ? 'Update' : 'Add'} review',
+                                    title: '${review != null ? 'update'.tr : 'add'.tr} ${'review'.tr}',
                                     width: Get.width,
                                     onPressed: () => controller.detailedRating(),
                                   ),

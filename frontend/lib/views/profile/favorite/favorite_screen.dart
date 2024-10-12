@@ -19,11 +19,11 @@ class FavoriteScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<FavoriteController>(
         builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'My bookmarks',
+          appBarTitle: 'my_bookmarks'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.savedTaskList.isEmpty && controller.savedStoreList.isEmpty
-                ? const Center(child: Text('You haven\'t bookmarked anything yet!', style: AppFonts.x14Regular))
+                ? Center(child: Text('no_bookmark_yet'.tr, style: AppFonts.x14Regular))
                 : Theme(
                     data: ThemeData(dividerColor: Colors.transparent),
                     child: SingleChildScrollView(
@@ -31,7 +31,7 @@ class FavoriteScreen extends StatelessWidget {
                         children: [
                           if (controller.savedStoreList.isNotEmpty)
                             ExpansionTile(
-                              title: const Text('Saved stores', style: AppFonts.x15Bold),
+                              title: Text('saved_stores'.tr, style: AppFonts.x15Bold),
                               initiallyExpanded: true,
                               children: List.generate(
                                 controller.savedStoreList.length,
@@ -46,7 +46,7 @@ class FavoriteScreen extends StatelessWidget {
                             ),
                           if (controller.savedTaskList.isNotEmpty)
                             ExpansionTile(
-                              title: const Text('Saved tasks', style: AppFonts.x15Bold),
+                              title: Text('saved_tasks'.tr, style: AppFonts.x15Bold),
                               initiallyExpanded: true,
                               children: List.generate(
                                 controller.savedTaskList.length,

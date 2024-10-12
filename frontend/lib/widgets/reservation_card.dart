@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../constants/colors.dart';
 import '../constants/constants.dart';
@@ -33,7 +34,7 @@ class ReservationCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: Paddings.regular),
-              Text('Note: ${reservation.note.isEmpty ? 'not provided' : reservation.note}', style: AppFonts.x14Regular),
+              Text('${'note'.tr}: ${reservation.note.isEmpty ? 'not_provided'.tr : reservation.note}', style: AppFonts.x14Regular),
               const SizedBox(height: Paddings.regular),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -44,7 +45,7 @@ class ReservationCard extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: Paddings.regular),
-                    child: Text(reservation.status.value, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
+                    child: Text(reservation.status.value.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
                   ),
                 ],
               ),

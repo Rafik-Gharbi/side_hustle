@@ -56,7 +56,7 @@ class StoreCard extends StatelessWidget {
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.error_outline, color: kNeutralColor100)),
                           )
-                        : Center(child: Text('No Image', style: AppFonts.x12Regular.copyWith(color: kNeutralColor100))),
+                        : Center(child: Text('no_image'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100))),
                   ),
                 ),
               ),
@@ -72,7 +72,7 @@ class StoreCard extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(store.name ?? 'User Store', style: AppFonts.x14Bold),
+                            Text(store.name ?? 'user_store'.tr, style: AppFonts.x14Bold),
                             if (store.governorate != null)
                               Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -122,8 +122,11 @@ class StoreCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text('Has ${store.services!.length} services', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
-                            Text('Starting from ${Helper.formatAmount(Helper.getStoreCheapestService(store))} TND', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                            Text('has_x_services'.trParams({'nb': store.services!.length.toString()}), style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                            Text(
+                              '${'starting_from'.tr} ${Helper.formatAmount(Helper.getStoreCheapestService(store))} ${MainAppController.find.currency.value}',
+                              style: AppFonts.x10Regular.copyWith(color: kNeutralColor),
+                            ),
                           ],
                         ),
                       ),

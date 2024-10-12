@@ -44,10 +44,10 @@ class StoreRepository extends GetxService {
       if (withBack) Get.back();
       final store = Store.fromJson(result['store']);
       if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupStore(store);
-      Helper.snackBar(message: 'Store added successfully');
+      Helper.snackBar(message: 'store_added_successfully'.tr);
       return store;
     } catch (e) {
-      Helper.snackBar(message: 'Error occurred adding your store, please try again later!');
+      Helper.snackBar(message: 'store_add_failed'.tr);
       LoggerService.logger?.e('Error occured in addStore:\n$e');
     }
     return null;
@@ -65,14 +65,14 @@ class StoreRepository extends GetxService {
       if (withBack) Get.back();
       final service = Service.fromJson(result['service']);
       if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupService(service, store);
-      Helper.snackBar(message: 'Service added successfully');
+      Helper.snackBar(message: 'service_added_successfully'.tr);
       return service;
     } catch (e) {
       if (e.toString().contains('service_limit_reached')) {
         Helper.snackBar(title: 'success'.tr, message: 'service_limit_reached'.tr);
         if (withBack) Get.back();
       } else {
-        Helper.snackBar(message: 'Error occurred adding your service, please try again later!');
+        Helper.snackBar(message: 'service_add_failed'.tr);
       }
       LoggerService.logger?.e('Error occured in addService:\n$e');
     }
@@ -95,10 +95,10 @@ class StoreRepository extends GetxService {
       if (withBack) Get.back();
       final store = Store.fromJson(result['store']);
       if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupStore(store);
-      Helper.snackBar(message: 'Store added successfully');
+      Helper.snackBar(message: 'store_updated_successfully'.tr);
       return store;
     } catch (e) {
-      Helper.snackBar(message: 'Error occurred adding your store, please try again later!');
+      Helper.snackBar(message: 'store_update_failed'.tr);
       LoggerService.logger?.e('Error occured in updateStore:\n$e');
     }
     return null;
@@ -116,10 +116,10 @@ class StoreRepository extends GetxService {
       if (withBack) Get.back();
       final service = Service.fromJson(result['service']);
       if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupService(service, store);
-      Helper.snackBar(message: 'Service added successfully');
+      Helper.snackBar(message: 'service_updated_successfully'.tr);
       return service;
     } catch (e) {
-      Helper.snackBar(message: 'Error occurred adding your service, please try again later!');
+      Helper.snackBar(message: 'service_update_failed'.tr);
       LoggerService.logger?.e('Error occured in updateService:\n$e');
     }
     return null;

@@ -35,7 +35,7 @@ class BuildNearbyRange extends StatelessWidget {
                 CustomTextField(
                   width: 100,
                   textFontSize: 14,
-                  fieldController: TextEditingController(text: '${controller.nearbyRange.value.toStringAsFixed(0)} KLM'),
+                  fieldController: TextEditingController(text: '${controller.nearbyRange.value.toStringAsFixed(0)} ${'km'.tr}'),
                   textInputType: const TextInputType.numberWithOptions(decimal: true),
                   onChanged: (value) => Helper.onSearchDebounce(
                     () => controller.nearbyRange.value = double.parse(value.contains(' ') ? value.substring(0, value.indexOf(' ')) : value),

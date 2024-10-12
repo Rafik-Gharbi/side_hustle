@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
@@ -407,7 +408,7 @@ class _BuildDropDownButton<T> extends StatelessWidget {
                                   decoration: InputDecoration(
                                     isDense: true,
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                                    hintText: 'Search for an item...',
+                                    hintText: 'search_item'.tr,
                                     hintStyle: AppFonts.x14Bold.copyWith(color: kNeutralColor),
                                     enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: kNeutralColor)),
                                     focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: kNeutralColor)),
@@ -447,10 +448,7 @@ class _WrapWithBorder extends StatelessWidget {
         child: DecoratedBox(
           decoration: dropDownWithDecoration!
               ? BoxDecoration(
-                  border: Border.all(
-                    color: kNeutralColor,
-                    width: 0.6,
-                  ),
+                  border: Border.all(color: kNeutralColor, width: 0.6),
                   borderRadius: const BorderRadius.all(Radius.circular(RadiusSize.regular)),
                 )
               : const BoxDecoration(),

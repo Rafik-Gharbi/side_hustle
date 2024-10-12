@@ -68,7 +68,7 @@ class BoostRepository extends GetxService {
       );
       return result['boost'] != null && result['boost'].toString().isNotEmpty;
     } catch (e) {
-      Helper.snackBar(message: 'An error has occurred');
+      Helper.snackBar(message: 'error_occurred'.tr);
       LoggerService.logger?.e('Error occured in updateBoost:\n$e');
     }
     return false;

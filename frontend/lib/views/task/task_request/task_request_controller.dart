@@ -73,7 +73,7 @@ class TaskRequestController extends GetxController {
   Future<void> editTask(Task task) async => Get.bottomSheet(AddTaskBottomsheet(task: task), isScrollControlled: true).then((value) => _init());
 
   void deleteTask(Task task) => Helper.openConfirmationDialog(
-        title: 'Are you sure you want to delete "${task.title}" task?',
+        title: 'delete_task_msg'.trParams({'taskTitle': task.title}),
         onConfirm: () => TaskRepository.find.deleteTask(task).then((value) => Future.delayed(const Duration(milliseconds: 400), () => _init())),
       );
 

@@ -42,7 +42,7 @@ class RatingOverview extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(bottom: Paddings.large),
-                        child: Text('Overall Rating: ', style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
+                        child: Text('overall_rating'.tr, style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
                       ),
                       SizedBox(
                         width: 156,
@@ -56,7 +56,10 @@ class RatingOverview extends StatelessWidget {
                               itemSize: 30.0,
                             ),
                             Center(
-                              child: Text('${Helper.formatAmount(rating)} rating - ${reviews.length} reviewers', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                              child: Text(
+                                'rating_reviewers'.trParams({'rating': Helper.formatAmount(rating), 'reviewers': reviews.length.toString()}),
+                                style: AppFonts.x10Regular.copyWith(color: kNeutralColor),
+                              ),
                             ),
                           ],
                         ),
@@ -85,7 +88,7 @@ class RatingOverview extends StatelessWidget {
                 ),
               ),
               CustomButtons.text(
-                title: 'Check all reviews',
+                title: 'check_all_reviews'.tr,
                 titleStyle: AppFonts.x14Bold,
                 onPressed: onShowAllReviews,
               ),

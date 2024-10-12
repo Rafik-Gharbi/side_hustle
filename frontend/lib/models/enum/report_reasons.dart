@@ -1,11 +1,11 @@
 enum ReportReasons {
-  sexualContent('Sexual Content'),
-  violentContent('Violent or Repulsive Content'),
-  hatefulContent('Hateful or Abusive Content'),
-  harmfulContent('Harmful or Dangerous Content'),
-  spam('Spam or Misleading'),
-  childAbuse('Child Abuse'),
-  other('Other');
+  sexualContent('sexual_content'),
+  violentContent('violent_repulsive_content'),
+  hatefulContent('hateful_abusive_content'),
+  harmfulContent('harmful_dangerous_content'),
+  spam('spam_misleading'),
+  childAbuse('child_abuse'),
+  other('other');
 
   final String value;
 

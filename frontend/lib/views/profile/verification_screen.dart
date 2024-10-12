@@ -34,7 +34,7 @@ class VerificationScreen extends StatelessWidget {
                   child: Center(child: Lottie.asset(errorHasOccured ? Assets.failed : Assets.success, height: 150, fit: BoxFit.contain)),
                 ),
                 if (errorHasOccured)
-                  Align(alignment: Alignment.center, child: Text('${'error_occured'.tr}\n${Get.arguments.toString().tr}', style: AppFonts.x18Bold, textAlign: TextAlign.center))
+                  Align(alignment: Alignment.center, child: Text('${'error_occurred'.tr}\n${Get.arguments.toString().tr}', style: AppFonts.x18Bold, textAlign: TextAlign.center))
                 else
                   Align(alignment: Alignment.center, child: Text('account_verified_success'.tr, style: AppFonts.x18Bold)),
                 const SizedBox(height: Paddings.regular),

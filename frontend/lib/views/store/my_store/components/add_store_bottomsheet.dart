@@ -53,7 +53,7 @@ class AddStoreBottomsheet extends StatelessWidget {
                           children: [
                             Icon(Icons.camera_alt_outlined, size: 24, color: kNeutralColor),
                             const SizedBox(height: Paddings.small),
-                            Text('Add store cover picture', style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
+                            Text('add_store_cover'.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
                           ],
                         ),
                       ),
@@ -79,7 +79,7 @@ class AddStoreBottomsheet extends StatelessWidget {
                           const SizedBox(height: Paddings.regular),
                           CustomDropDownMenu<Governorate>(
                             items: MainAppController.find.governorates,
-                            hint: 'Select a governorate',
+                            hint: 'select_governorate'.tr,
                             maxWidth: true,
                             selectedItem: controller.governorate,
                             buttonHeight: 45,
@@ -94,7 +94,7 @@ class AddStoreBottomsheet extends StatelessWidget {
                           ),
                           const SizedBox(height: Paddings.exceptional * 2),
                           CustomButtons.elevatePrimary(
-                            title: '${isUpdate ? 'Update' : 'Create'} store',
+                            title: '${isUpdate ? 'update'.tr : 'create'.tr} ${'store'.tr}',
                             width: Get.width,
                             onPressed: controller.upsertStore,
                           ),

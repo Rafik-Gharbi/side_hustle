@@ -35,7 +35,7 @@ class ServiceHistoryController extends GetxController {
   }
 
   void markBookingAsDone(Booking booking) => Helper.openConfirmationDialog(
-        title: 'Are you sure to mark this service done?',
+        title: 'mark_service_done_msg'.tr,
         onConfirm: () async {
           await BookingRepository.find.updateBookingStatus(booking, RequestStatus.finished);
           Get.back();

@@ -91,7 +91,7 @@ class MarketController extends GetxController {
     );
     if (result) {
       Get.back();
-      Helper.snackBar(message: 'Service has been booked successfully');
+      Helper.snackBar(message: 'service_booked_successfully'.tr);
     }
   }
 

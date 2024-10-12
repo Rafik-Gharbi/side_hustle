@@ -51,9 +51,9 @@ class ListBoostController extends GetxController {
     selected.isActive = !selected.isActive;
     final result = await BoostRepository.find.updateBoost(boost: boost);
     if (result) {
-      Helper.snackBar(message: 'Boost ${selected.isActive ? 'activated' : 'disabled'} successfully');
+      Helper.snackBar(message: 'boost_status_successfully'.trParams({'status': selected.isActive ? 'activated' : 'disabled'}));
     } else {
-      Helper.snackBar(message: 'An error has been occurred');
+      Helper.snackBar(message: 'error_occurred'.tr);
       page = 0;
       fetchUserBoosts();
     }

@@ -25,7 +25,7 @@ class BuildFinishVerificationProcess extends StatelessWidget {
                     children: [
                       SizedBox(height: Get.height * 0.2),
                       Buildables.buildLoadingWidget(height: 150),
-                      Text('Uploading your document, please wait.', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                      Text('uploading_wait'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                       SizedBox(height: Get.height * 0.2),
                     ],
                   )
@@ -38,21 +38,17 @@ class BuildFinishVerificationProcess extends StatelessWidget {
                         child: Center(child: Lottie.asset(controller.uploadDocumentResult! ? Assets.verifyIdentity : Assets.failed, height: 150, fit: BoxFit.contain)),
                       ),
                       const SizedBox(height: Paddings.exceptional),
-                      Center(child: Text('Verification ${controller.uploadDocumentResult! ? 'Complete' : 'Failed'}!', style: AppFonts.x16Bold)),
+                      Center(child: Text('${'verification'.tr} ${controller.uploadDocumentResult! ? 'complete'.tr : 'failed'.tr}!', style: AppFonts.x16Bold)),
                       const SizedBox(height: Paddings.exceptional),
-                      if (controller.uploadDocumentResult!) ...[
-                        const Text(
-                          'Thank you for completing the verification process. Our team will review your provided information and contact you via phone call shortly. Once verified, your profile will be activated.',
-                          style: AppFonts.x14Regular,
-                        ),
-                      ] else ...[
-                        const Text('An error has occurred please try again!', style: AppFonts.x14Regular),
-                      ],
+                      if (controller.uploadDocumentResult!)
+                        Text('verification_completed_msg'.tr, style: AppFonts.x14Regular)
+                      else
+                        Text('error_occurred'.tr, style: AppFonts.x14Regular),
                       const SizedBox(height: Paddings.regular),
-                      const Text('We appreciate your patience and cooperation.', style: AppFonts.x14Regular),
+                      Text('appreciate_patience_cooperation'.tr, style: AppFonts.x14Regular),
                       const SizedBox(height: Paddings.exceptional * 2),
                       CustomButtons.elevatePrimary(
-                        title: 'Back to home',
+                        title: 'back_home'.tr,
                         width: Get.width,
                         onPressed: () => MainAppController.find.bottomNavIndex.value = 0,
                       ),

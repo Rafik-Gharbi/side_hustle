@@ -54,7 +54,7 @@ class UserRepository extends GetxService {
       final result = await ApiBaseHelper().request(RequestType.post, '/user/signup', body: data);
       return result['token'];
     } catch (e) {
-      final expectedErrors = ['missing_password', 'User_already_found', 'wrong_number', 'missing_credentials'];
+      final expectedErrors = ['missing_password', 'user_already_found', 'wrong_number', 'missing_credentials'];
       if (expectedErrors.any((element) => e.toString().contains(element))) {
         Helper.snackBar(title: 'error'.tr, message: expectedErrors.singleWhere((element) => e.toString().contains(element)).tr);
       }
@@ -237,10 +237,10 @@ class UserRepository extends GetxService {
       }
     } catch (e) {
       if (e.toString().contains('same_password')) {
-        Helper.snackBar(title: 'success'.tr, message: 'provide_different_password'.tr);
+        Helper.snackBar(title: 'error'.tr, message: 'provide_different_password'.tr);
       }
       if (e.toString().contains('wrong_password')) {
-        Helper.snackBar(title: 'success'.tr, message: 'wrong_provided_password'.tr);
+        Helper.snackBar(title: 'error'.tr, message: 'wrong_provided_password'.tr);
       }
       LoggerService.logger?.e('Error occured in changePassword:\n$e');
     }

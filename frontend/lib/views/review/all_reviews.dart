@@ -160,7 +160,7 @@ class AllReviews extends StatelessWidget {
                         children: [
                           TableRow(
                             children: [
-                              const Text('Service Quality', style: AppFonts.x14Bold),
+                              Text('service_quality'.tr, style: AppFonts.x14Bold),
                               RatingBarIndicator(
                                 rating: review.quality ?? 0,
                                 itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
@@ -171,7 +171,7 @@ class AllReviews extends StatelessWidget {
                           ),
                           TableRow(
                             children: [
-                              const Text('Service Fees', style: AppFonts.x14Bold),
+                              Text('service_fees'.tr, style: AppFonts.x14Bold),
                               RatingBarIndicator(
                                 rating: review.fees ?? 0,
                                 itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
@@ -182,7 +182,7 @@ class AllReviews extends StatelessWidget {
                           ),
                           TableRow(
                             children: [
-                              const Text('Punctuality', style: AppFonts.x14Bold),
+                              Text('punctuality'.tr, style: AppFonts.x14Bold),
                               RatingBarIndicator(
                                 rating: review.punctuality ?? 0,
                                 itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
@@ -193,7 +193,7 @@ class AllReviews extends StatelessWidget {
                           ),
                           TableRow(
                             children: [
-                              const Text('Politeness', style: AppFonts.x14Bold),
+                              Text('politeness'.tr, style: AppFonts.x14Bold),
                               RatingBarIndicator(
                                 rating: review.politeness ?? 0,
                                 itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),

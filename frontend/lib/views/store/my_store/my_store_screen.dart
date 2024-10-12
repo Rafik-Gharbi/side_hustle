@@ -36,7 +36,7 @@ class MyStoreScreen extends StatelessWidget {
                     body: buildStoreContent(controller, isOwner),
                   )
                 : CustomScaffoldBottomNavigation(
-                    appBarTitle: 'My Store',
+                    appBarTitle: 'my_store'.tr,
                     onBack: () => ProfileController.find.init(),
                     appBarActions: [
                       if (isOwner && controller.currentStore != null)
@@ -68,10 +68,10 @@ class MyStoreScreen extends StatelessWidget {
                   const Spacer(),
                   CircleAvatar(radius: 40, backgroundColor: kNeutralLightColor, child: const Icon(Icons.store_outlined, size: 48)),
                   const SizedBox(height: Paddings.extraLarge),
-                  const Text('You have no store yet!', style: AppFonts.x14Regular),
+                  Text('have_no_store'.tr, style: AppFonts.x14Regular),
                   const Spacer(),
                   CustomButtons.elevatePrimary(
-                    title: 'Create my store',
+                    title: 'create_store'.tr,
                     width: Get.width,
                     onPressed: controller.createStore,
                   ),
@@ -107,7 +107,7 @@ class MyStoreScreen extends StatelessWidget {
                   else if (!isOwner)
                     DecoratedBox(
                       decoration: BoxDecoration(color: kNeutralLightOpacityColor),
-                      child: SizedBox(height: 200, child: Center(child: Text('No Image', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)))),
+                      child: SizedBox(height: 200, child: Center(child: Text('no_image'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)))),
                     )
                   else
                     InkWell(
@@ -122,7 +122,7 @@ class MyStoreScreen extends StatelessWidget {
                             children: [
                               Icon(Icons.camera_alt_outlined, size: 24, color: kNeutralColor),
                               const SizedBox(height: Paddings.small),
-                              Text('Add store cover picture', style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
+                              Text('add_store_cover'.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
                             ],
                           ),
                         ),
@@ -134,23 +134,23 @@ class MyStoreScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: Paddings.small),
-                        Text(controller.currentStore?.name ?? 'User store', style: AppFonts.x18Bold),
+                        Text(controller.currentStore?.name ?? 'user_store'.tr, style: AppFonts.x18Bold),
                         const SizedBox(height: Paddings.small),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(Icons.pin_drop_outlined, size: 14),
                             const SizedBox(width: Paddings.regular),
-                            Text(controller.currentStore?.governorate?.name ?? 'City', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                            Text(controller.currentStore?.governorate?.name ?? 'city'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                           ],
                         ),
                         const SizedBox(height: Paddings.extraLarge),
-                        const Text('Store description:', style: AppFonts.x15Bold),
+                        Text('store_description'.tr, style: AppFonts.x15Bold),
                         const SizedBox(height: Paddings.regular),
                         Text(controller.currentStore?.description ?? '', style: AppFonts.x14Regular, softWrap: true),
                         const SizedBox(height: Paddings.exceptional),
                         if (controller.currentStore?.services?.isNotEmpty ?? false) ...[
-                          const Text('Store services', style: AppFonts.x15Bold),
+                          Text('store_services'.tr, style: AppFonts.x15Bold),
                           const SizedBox(height: Paddings.large),
                           ListView.separated(
                             shrinkWrap: true,
@@ -181,12 +181,12 @@ class MyStoreScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: Paddings.exceptional),
                             child: CustomButtons.elevatePrimary(
-                              title: 'Add service',
+                              title: 'add_service'.tr,
                               width: Get.width,
                               onPressed: () => controller.addService(),
                             ),
                           ),
-                        const Text('Store\'s owner rating', style: AppFonts.x15Bold),
+                        Text('store_owner_rating'.tr, style: AppFonts.x15Bold),
                         const SizedBox(height: Paddings.regular),
                         RatingOverview(
                           onShowAllReviews: () => Get.bottomSheet(AllReviews(reviews: controller.storeOwnerReviews, isBottomsheet: true), isScrollControlled: true),

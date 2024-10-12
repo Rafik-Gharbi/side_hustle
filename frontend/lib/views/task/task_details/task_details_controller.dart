@@ -39,7 +39,7 @@ class TaskDetailsController extends GetxController {
     );
     if (result) {
       Get.back();
-      Helper.snackBar(message: 'Proposal sent successfully');
+      Helper.snackBar(message: 'proposal_sent_successfully'.tr);
       Future.delayed(const Duration(milliseconds: 600), () => init());
     }
   }
@@ -58,7 +58,7 @@ class TaskDetailsController extends GetxController {
 
   void markDoneProposals() => reservation != null
       ? Helper.openConfirmationDialog(
-          title: 'Are you sure to mark this task as done?\nThis will automatically pay the task seeker.',
+          title: 'mark_task_done_msg'.tr,
           onConfirm: () async {
             await ReservationRepository.find.updateReservationStatus(reservation!, RequestStatus.finished);
             Get.back();

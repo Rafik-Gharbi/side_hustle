@@ -86,9 +86,9 @@ class UserProfileScreen extends StatelessWidget {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text(controller.user!.name ?? 'Someone', style: AppFonts.x16Bold),
+                                          Text(controller.user!.name ?? 'someone'.tr, style: AppFonts.x16Bold),
                                           const SizedBox(width: Paddings.small),
-                                          const Tooltip(message: 'Verified user', child: Icon(Icons.verified_outlined, size: 18)),
+                                          Tooltip(message: 'verified_user'.tr, child: const Icon(Icons.verified_outlined, size: 18)),
                                         ],
                                       ),
                                       const SizedBox(height: Paddings.small),
@@ -97,7 +97,7 @@ class UserProfileScreen extends StatelessWidget {
                                         children: [
                                           const Icon(Icons.pin_drop_outlined, size: 14),
                                           const SizedBox(width: Paddings.regular),
-                                          Text(controller.user!.governorate?.name ?? 'City', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                                          Text(controller.user!.governorate?.name ?? 'city'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                                         ],
                                       ),
                                       const SizedBox(height: Paddings.exceptional),
@@ -122,13 +122,13 @@ class UserProfileScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           CustomButtons.elevateSecondary(
-                            title: 'Reject',
+                            title: 'reject'.tr,
                             width: (Get.width - 40) / 2,
                             onPressed: () => onReject!.call(),
                           ),
                           const SizedBox(width: Paddings.regular),
                           CustomButtons.elevatePrimary(
-                            title: 'Accept',
+                            title: 'accept'.tr,
                             width: (Get.width - 40) / 2,
                             onPressed: () => onAccept!.call(),
                           ),
@@ -141,7 +141,7 @@ class UserProfileScreen extends StatelessWidget {
                       children: [
                         const Icon(Icons.chat_outlined),
                         CustomButtons.text(
-                          title: 'Chat with ${user?.name ?? 'User'}',
+                          title: '${'chat_with'.tr} ${user?.name ?? 'user'.tr}',
                           titleStyle: AppFonts.x14Regular,
                           onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: user),
                         ),
@@ -152,7 +152,7 @@ class UserProfileScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CustomButtons.elevateSecondary(
-                          title: 'Chat with ${user?.name ?? 'User'}',
+                          title: '${'chat_with'.tr} ${user?.name ?? 'user'.tr}',
                           titleStyle: AppFonts.x14Regular,
                           icon: const Icon(Icons.chat_outlined),
                           width: Get.width - 40,
@@ -161,7 +161,7 @@ class UserProfileScreen extends StatelessWidget {
                         const SizedBox(height: Paddings.regular),
                         if (!isService)
                           CustomButtons.elevatePrimary(
-                            title: 'Mark task as done',
+                            title: 'mark_task_done'.tr,
                             titleStyle: AppFonts.x14Regular,
                             icon: const Icon(Icons.done, color: kNeutralColor100),
                             width: Get.width - 40,

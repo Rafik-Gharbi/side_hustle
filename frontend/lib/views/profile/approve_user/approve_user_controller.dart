@@ -18,11 +18,11 @@ class ApproveUserController extends GetxController {
     if (user == null) return;
     final result = await UserRepository.find.approveUser(user);
     if (result) {
-      Helper.snackBar(message: 'User approved successfully');
+      Helper.snackBar(message: 'user_approved_successfully'.tr);
       userApproveList.removeWhere((element) => element.user?.id == user.id);
       update();
     } else {
-      Helper.snackBar(message: 'User not approved');
+      Helper.snackBar(message: 'user_not_approved'.tr);
     }
   }
 
@@ -30,16 +30,16 @@ class ApproveUserController extends GetxController {
     if (user == null) return;
     final result = await UserRepository.find.notApprovableUser(user);
     if (result) {
-      Helper.snackBar(message: 'User rejected successfully');
+      Helper.snackBar(message: 'user_rejected_successfully'.tr);
       userApproveList.removeWhere((element) => element.user?.id == user.id);
       update();
     } else {
-      Helper.snackBar(message: 'User has not been rejected');
+      Helper.snackBar(message: 'user_not_rejected'.tr);
     }
   }
 
   void callUser(User? user) =>
-      user?.phone != null && user!.phone!.isNotEmpty ? Helper.launchUrlHelper('tel:${user.phone}') : Helper.snackBar(message: 'Could not call, phone number not available');
+      user?.phone != null && user!.phone!.isNotEmpty ? Helper.launchUrlHelper('tel:${user.phone}') : Helper.snackBar(message: 'could_not_call'.tr);
 
   Future<void> _init() async {
     userApproveList = await UserRepository.find.listUsersApprove() ?? [];

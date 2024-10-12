@@ -32,7 +32,7 @@ class NotificationScreen extends StatelessWidget {
         ),
         builder: (controller) => CustomScaffoldBottomNavigation(
           onBack: () => MainAppController.find.getNotSeenNotifications(),
-          appBarTitle: 'Notifications',
+          appBarTitle: 'notifications'.tr,
           appBarActions: [
             CustomButtons.icon(
               icon: const Icon(Icons.mark_chat_read_outlined, size: 18),
@@ -42,7 +42,7 @@ class NotificationScreen extends StatelessWidget {
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.notificationList.isEmpty
-                ? const Center(child: Text('You have no notifications yet!', style: AppFonts.x14Regular))
+                ? Center(child: Text('no_notifications_yet'.tr, style: AppFonts.x14Regular))
                 : Padding(
                     padding: const EdgeInsets.symmetric(vertical: Paddings.regular),
                     child: ListView.builder(

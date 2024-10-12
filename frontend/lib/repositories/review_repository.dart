@@ -30,10 +30,10 @@ class ReviewRepository extends GetxService {
       );
       if (withBack) Get.back();
       final review = Review.fromJson(result['review']);
-      Helper.snackBar(message: 'Review added successfully');
+      Helper.snackBar(message: 'review_added_successfully'.tr);
       return review;
     } catch (e) {
-      Helper.snackBar(message: 'Error occurred adding your review, please try again later!');
+      Helper.snackBar(message: 'review_add_failed'.tr);
       LoggerService.logger?.e('Error occured in addReview:\n$e');
     }
     return null;
@@ -50,10 +50,10 @@ class ReviewRepository extends GetxService {
       );
       if (withBack) Get.back();
       final review = Review.fromJson(result['review']);
-      Helper.snackBar(message: 'Review updated successfully');
+      Helper.snackBar(message: 'review_updated_successfully'.tr);
       return review;
     } catch (e) {
-      Helper.snackBar(message: 'Error occurred updating your review, please try again later!');
+      Helper.snackBar(message: 'review_update_failed'.tr);
       LoggerService.logger?.e('Error occured in updateReview:\n$e');
     }
     return null;
@@ -64,7 +64,7 @@ class ReviewRepository extends GetxService {
       final result = await ApiBaseHelper().request(RequestType.delete, sendToken: true, '/review/${review.id}');
       final status = result?['done'] ?? false;
       if (withBack) Get.back();
-      if (status) Helper.snackBar(message: 'Review deleted successfully');
+      if (status) Helper.snackBar(message: 'review_deleted_successfully'.tr);
       return status;
     } catch (e) {
       LoggerService.logger?.e('Error occured in deleteUser:\n$e');

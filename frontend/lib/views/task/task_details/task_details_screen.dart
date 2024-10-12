@@ -187,7 +187,7 @@ class TaskDetailsScreen extends StatelessWidget {
                             const SizedBox(width: Paddings.regular),
                             Text('${'owner'.tr}:', style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
                             CustomButtons.text(
-                              title: task.owner.name ?? 'User',
+                              title: task.owner.name ?? 'user'.tr,
                               titleStyle: AppFonts.x14Bold.copyWith(color: kNeutralColor),
                               onPressed: () => Get.bottomSheet(
                                 ClipRRect(
@@ -209,7 +209,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           CustomButtons.elevateSecondary(
-                                            title: 'Chat with ${controller.confirmedTaskUser.value?.name ?? 'User'}',
+                                            title: '${'chat_with'.tr} ${controller.confirmedTaskUser.value?.name ?? 'user'.tr}',
                                             titleStyle: AppFonts.x14Regular,
                                             icon: const Icon(Icons.chat_outlined),
                                             width: Get.width - 40,
@@ -217,7 +217,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                           ),
                                           const SizedBox(height: Paddings.regular),
                                           CustomButtons.elevatePrimary(
-                                            title: 'Mark task as done',
+                                            title: 'mark_task_done'.tr,
                                             titleStyle: AppFonts.x14Regular,
                                             icon: const Icon(Icons.done, color: kNeutralColor100),
                                             width: Get.width - 40,
@@ -262,7 +262,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                         children: [
                                           const Icon(Icons.chat_outlined),
                                           CustomButtons.text(
-                                            title: 'Chat with ${task.owner.name ?? 'User'}',
+                                            title: '${'chat_with'.tr} ${task.owner.name ?? 'user'.tr}',
                                             titleStyle: AppFonts.x14Regular,
                                             onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: task.owner),
                                           ),

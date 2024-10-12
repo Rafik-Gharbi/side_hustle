@@ -25,12 +25,12 @@ class ServiceRequestScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<ServiceRequestController>(
         builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'Service Requests',
+          appBarTitle: 'service_requests'.tr,
           onBack: NavigationHistoryObserver.instance.previousRouteHistory == MyStoreScreen.routeName ? () => MyStoreController.find.init() : null,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.bookingList.isEmpty
-                ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
+                ? Center(child: Text('found_nothing'.tr, style: AppFonts.x14Regular))
                 : ListView.builder(
                     itemCount: controller.bookingList.length,
                     itemBuilder: (context, index) {
@@ -66,7 +66,7 @@ class ServiceRequestScreen extends StatelessWidget {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Note: ${booking.note.isEmpty ? 'not provided' : booking.note}', style: AppFonts.x14Regular),
+                                  Text('${'note'.tr}: ${booking.note.isEmpty ? 'not_provided'.tr : booking.note}', style: AppFonts.x14Regular),
                                   const SizedBox(height: Paddings.regular),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,7 +77,7 @@ class ServiceRequestScreen extends StatelessWidget {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(right: Paddings.regular),
-                                        child: Text(booking.status.value, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
+                                        child: Text(booking.status.value.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
                                       ),
                                     ],
                                   ),

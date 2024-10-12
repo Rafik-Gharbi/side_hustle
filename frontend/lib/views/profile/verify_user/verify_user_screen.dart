@@ -24,7 +24,7 @@ class VerifyUserScreen extends StatelessWidget {
         builder: (controller) => PopScope(
           onPopInvokedWithResult: (didPop, result) => didPop ? controller.clearData() : null,
           child: CustomScaffoldBottomNavigation(
-            appBarTitle: 'Verify User',
+            appBarTitle: 'verify_user'.tr,
             onBack: controller.clearData,
             body: Padding(
               padding: const EdgeInsets.only(bottom: Paddings.exceptional),
@@ -54,7 +54,7 @@ class VerifyUserScreen extends StatelessWidget {
                                   Container(height: 2, width: (Get.width - 30) / 60 * controller.timerProgress.value.toDouble(), color: kNeutralColor),
                                   Center(
                                     child: Text(
-                                      '${controller.timerProgress} seconds left',
+                                      '${controller.timerProgress} ${'seconds_left'.tr}',
                                       style: AppFonts.x14Regular.copyWith(color: kNeutralColor),
                                     ),
                                   ),

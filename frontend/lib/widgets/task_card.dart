@@ -123,7 +123,7 @@ class TaskCard extends StatelessWidget {
                         padding: const EdgeInsets.only(left: Paddings.regular),
                         child: CustomButtons.icon(
                           icon: const Icon(Icons.three_p_outlined, size: 24),
-                          onPressed: () => condidates > 0 || condidates == -1 ? onOpenProposals?.call() : Helper.snackBar(message: 'No proposals have been submitted yet!'),
+                          onPressed: () => condidates > 0 || condidates == -1 ? onOpenProposals?.call() : Helper.snackBar(message: 'no_proposals_submitted'.tr),
                         ),
                       ),
                     ),
@@ -141,10 +141,10 @@ class TaskCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     if (task.distance != null && task.distance!.isNotEmpty)
-                      Text('Distance: ${task.distance} meters', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
+                      Text('${'distance'.tr}: ${task.distance} ${'meters'.tr}', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
                     else
                       const SizedBox(),
-                    Text('Price: ${Helper.formatAmount(task.price!)} TND', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                    Text('${'price'.tr}: ${Helper.formatAmount(task.price!)} ${MainAppController.find.currency.value}', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
                   ],
                 ),
             ],

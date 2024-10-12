@@ -49,9 +49,9 @@ class MoreFiltersPopup extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Header
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: Paddings.large),
-                          child: Center(child: Text('More Filters', style: AppFonts.x16Bold)),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: Paddings.large),
+                          child: Center(child: Text('more_filters'.tr, style: AppFonts.x16Bold)),
                         ),
                         // Filters
                         Expanded(

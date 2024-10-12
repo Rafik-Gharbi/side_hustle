@@ -22,11 +22,11 @@ class TaskProposalScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<TaskProposalController>(
         builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'Task Proposals',
+          appBarTitle: 'task_proposals'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.reservationList.isEmpty
-                ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
+                ? Center(child: Text('found_nothing'.tr, style: AppFonts.x14Regular))
                 : ListView.builder(
                     itemCount: controller.reservationList.length,
                     itemBuilder: (context, index) {
@@ -62,9 +62,9 @@ class TaskProposalScreen extends StatelessWidget {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Note: ${reservation.note.isEmpty ? 'not provided' : reservation.note}', style: AppFonts.x14Regular),
+                                  Text('${'note'.tr}: ${reservation.note.isEmpty ? 'not_provided'.tr : reservation.note}', style: AppFonts.x14Regular),
                                   if (reservation.proposedPrice != null && reservation.proposedPrice! > 0)
-                                    Text('Proposed price: ${reservation.proposedPrice}', style: AppFonts.x14Regular),
+                                    Text('${'proposed_price'.tr}: ${reservation.proposedPrice}', style: AppFonts.x14Regular),
                                   const SizedBox(height: Paddings.regular),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -75,7 +75,7 @@ class TaskProposalScreen extends StatelessWidget {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(right: Paddings.regular),
-                                        child: Text(reservation.status.value, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
+                                        child: Text(reservation.status.value.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
                                       ),
                                     ],
                                   ),

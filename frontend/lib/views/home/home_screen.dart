@@ -60,11 +60,11 @@ class HomeScreen extends StatelessWidget {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Hello,', style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
+                                Text('${'hello'.tr},', style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
                                 if (AuthenticationService.find.isUserLoggedIn.value)
-                                  Text(AuthenticationService.find.jwtUserData?.name ?? 'User', style: AppFonts.x16Bold)
+                                  Text(AuthenticationService.find.jwtUserData?.name ?? 'user'.tr, style: AppFonts.x16Bold)
                                 else
-                                  const Text('Guest User', style: AppFonts.x16Bold)
+                                  Text('guest_user'.tr, style: AppFonts.x16Bold)
                               ],
                             ),
                             Padding(
@@ -87,7 +87,7 @@ class HomeScreen extends StatelessWidget {
                                           ),
                                         )
                                       : CustomButtons.text(
-                                          title: 'Login',
+                                          title: 'login'.tr,
                                           titleStyle: AppFonts.x14Bold.copyWith(color: kNeutralColor),
                                           onPressed: () => Get.bottomSheet(const LoginDialog(), isScrollControlled: true).then((value) {
                                             AuthenticationService.find.currentState = LoginWidgetState.login;
@@ -114,7 +114,7 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: CustomTextField(
-                              hintText: 'Search Task',
+                              hintText: 'search_tasks'.tr,
                               fillColor: kNeutralLightOpacityColor,
                               fieldController: controller.searchController,
                               onChanged: (_) => Helper.onSearchDebounce(controller.searchTask),
@@ -136,7 +136,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: Paddings.exceptional),
                       Buildables.buildTitle(
-                        'Popular Categories',
+                        'popular_categories'.tr,
                         onSeeMore: () => Get.bottomSheet(
                           DraggableBottomsheet(
                             child: CategoriesBottomsheet(
@@ -171,7 +171,7 @@ class HomeScreen extends StatelessWidget {
                       Column(
                         children: [
                           if (controller.ongoingReservation.isNotEmpty) ...[
-                            Buildables.buildTitle('Ongoing Reservations'),
+                            Buildables.buildTitle('ongoing_reservations'.tr),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -184,7 +184,7 @@ class HomeScreen extends StatelessWidget {
                             const SizedBox(height: Paddings.regular),
                           ],
                           if (controller.ongoingBooking.isNotEmpty) ...[
-                            Buildables.buildTitle('Ongoing Bookings'),
+                            Buildables.buildTitle('ongoing_bookings'.tr),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -197,7 +197,7 @@ class HomeScreen extends StatelessWidget {
                             const SizedBox(height: Paddings.regular),
                           ],
                           if (controller.reservation.isNotEmpty) ...[
-                            Buildables.buildTitle('My Reservations'),
+                            Buildables.buildTitle('my_reservations'.tr),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -210,7 +210,7 @@ class HomeScreen extends StatelessWidget {
                             const SizedBox(height: Paddings.regular),
                           ],
                           if (controller.booking.isNotEmpty) ...[
-                            Buildables.buildTitle('My Bookings'),
+                            Buildables.buildTitle('my_bookings'.tr),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -227,7 +227,7 @@ class HomeScreen extends StatelessWidget {
                           ],
                           if (controller.hotTasks.isNotEmpty) ...[
                             Buildables.buildTitle(
-                              'Hot Tasks',
+                              'hot_tasks'.tr,
                               onSeeMore: () => Get.toNamed(TaskListScreen.routeName, arguments: const TaskListScreen(boosted: true)),
                             ),
                             LoadingCardEffect(
@@ -259,12 +259,12 @@ class HomeScreen extends StatelessWidget {
                                           children: [
                                             const Icon(Icons.warning_amber_outlined, color: kErrorColor),
                                             CustomButtons.text(
-                                              child: const Row(
+                                              child: Row(
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
-                                                  Icon(Icons.location_searching_outlined, color: kBlackColor),
-                                                  SizedBox(width: Paddings.regular),
-                                                  Text('Share your location', style: AppFonts.x14Bold),
+                                                  const Icon(Icons.location_searching_outlined, color: kBlackColor),
+                                                  const SizedBox(width: Paddings.regular),
+                                                  Text('share_your_location'.tr, style: AppFonts.x14Bold),
                                                 ],
                                               ),
                                               onPressed: () async {
@@ -275,11 +275,7 @@ class HomeScreen extends StatelessWidget {
                                             const SizedBox(),
                                           ],
                                         ),
-                                        const Text(
-                                          'By sharing your location we can provide you with more accurate result.',
-                                          style: AppFonts.x12Regular,
-                                          textAlign: TextAlign.justify,
-                                        ),
+                                        Text('share_location_msg'.tr, style: AppFonts.x12Regular, textAlign: TextAlign.justify),
                                       ],
                                     ),
                                   ),
@@ -288,7 +284,7 @@ class HomeScreen extends StatelessWidget {
                             ),
                           if (SharedPreferencesService.find.isReady)
                             Buildables.buildTitle(
-                              'New Tasks ${controller.nearbyTasks.any((element) => element.distance != null) ? 'Nearby' : 'in ${AuthenticationService.find.jwtUserData?.governorate?.name ?? 'All Tunisia'}'}',
+                              '${'new_tasks'.tr} ${controller.nearbyTasks.any((element) => element.distance != null) ? 'nearby'.tr : '${'in'.tr} ${AuthenticationService.find.jwtUserData?.governorate?.name ?? 'all_tunisia'.tr}'}',
                               onSeeMore: () => Get.toNamed(TaskListScreen.routeName),
                             ),
                           LoadingCardEffect(

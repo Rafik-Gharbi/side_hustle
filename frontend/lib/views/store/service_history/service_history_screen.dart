@@ -21,25 +21,25 @@ class ServiceHistoryScreen extends StatelessWidget {
       child: GetBuilder<ServiceHistoryController>(
         builder: (controller) => CustomScaffoldBottomNavigation(
           onBack: () => ProfileController.find.init(),
-          appBarTitle: 'Service History',
+          appBarTitle: 'service_history'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.hasNoServicesYet
-                ? const Center(child: Text('You haven\'t done any service yet!', style: AppFonts.x14Regular))
+                ? Center(child: Text('done_no_service_yet'.tr, style: AppFonts.x14Regular))
                 : SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge),
                       child: Column(
                         children: [
                           buildStatusServiceGroup(
-                            'Ongoing Services',
+                            'ongoing_services'.tr,
                             controller.ongoingServices,
                             initiallyOpen: true,
                             onMarkDone: (booking) => controller.markBookingAsDone(booking),
                           ),
-                          buildStatusServiceGroup('Pending Services', controller.pendingServices, initiallyOpen: true),
-                          buildStatusServiceGroup('Finished Services', controller.finishedServices),
-                          buildStatusServiceGroup('Rejected Services', controller.rejectedServices),
+                          buildStatusServiceGroup('pending_services'.tr, controller.pendingServices, initiallyOpen: true),
+                          buildStatusServiceGroup('finished_services'.tr, controller.finishedServices),
+                          buildStatusServiceGroup('rejected_services'.tr, controller.rejectedServices),
                         ],
                       ),
                     ),

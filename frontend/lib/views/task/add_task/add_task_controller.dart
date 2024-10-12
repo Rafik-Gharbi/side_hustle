@@ -153,7 +153,7 @@ class AddTaskController extends GetxController {
   }
 
   void deleteTask(Task task) => Helper.openConfirmationDialog(
-        title: 'Are you sure you want to delete "${task.title}" task?',
+        title: 'delete_task_msg'.trParams({'taskTitle': task.title}),
         onConfirm: () async => await TaskRepository.find.deleteTask(task, withBack: true),
       );
 

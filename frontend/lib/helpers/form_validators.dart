@@ -3,7 +3,6 @@ import 'package:validators/validators.dart';
 
 import '../constants/constants.dart';
 
-
 class FormValidators {
   static String? notNullObjectValidator(Object? value) => value == null ? 'field_not_empty'.tr : null;
 
@@ -17,7 +16,7 @@ class FormValidators {
       ? 'email_required'.tr
       : isEmail(value!)
           ? null
-          : 'email_ivalid'.tr;
+          : 'email_invalid'.tr;
 
   static String? phoneNumberValidator(String? value, {String? phonePrefix}) {
     if (phonePrefix != null && (value?.startsWith(phonePrefix) ?? false)) value = value!.substring(value.indexOf(phonePrefix) + phonePrefix.length);

@@ -8,14 +8,13 @@ import '../repositories/params_repository.dart';
 import '../services/theme/theme.dart';
 import 'custom_buttons.dart';
 import 'custom_text_field.dart';
-import 'thank_you_popup.dart';
 
 enum FeedbackEmotion {
-  disappointed(value: 'Disappointed', color: Color.fromRGBO(26, 35, 126, 1)),
-  meh(value: 'Meh', color: Colors.grey),
-  okay(value: 'Okay', color: Color.fromRGBO(253, 216, 53, 1)),
-  happy(value: 'Happy', color: Colors.orange),
-  inLove(value: 'In Love', color: Color.fromRGBO(220, 44, 41, 1));
+  disappointed(value: 'disappointed', color: Color.fromRGBO(26, 35, 126, 1)),
+  meh(value: 'meh', color: Colors.grey),
+  okay(value: 'okay', color: Color.fromRGBO(253, 216, 53, 1)),
+  happy(value: 'happy', color: Colors.orange),
+  inLove(value: 'in_love', color: Color.fromRGBO(220, 44, 41, 1));
 
   final String value;
   final Color color;
@@ -99,11 +98,7 @@ class EmotionSlider extends StatelessWidget {
             children: [
               SizedBox(
                 width: 300,
-                child: Text(
-                  'How was your experience?',
-                  style: AppFonts.x24Bold.copyWith(color: textColor),
-                  textAlign: TextAlign.center,
-                ),
+                child: Text('how_was_your_experience'.tr, style: AppFonts.x24Bold.copyWith(color: textColor), textAlign: TextAlign.center),
               ),
               const SizedBox(height: Paddings.exceptional * 1.5),
               // Emotion Face
@@ -111,7 +106,7 @@ class EmotionSlider extends StatelessWidget {
               const SizedBox(height: Paddings.exceptional),
               // Emotion Name
               Text(
-                FeedbackEmotion.values[currentLevel.round()].value,
+                FeedbackEmotion.values[currentLevel.round()].value.tr,
                 style: AppFonts.x24Bold.copyWith(color: textColor),
               ),
               const SizedBox(height: Paddings.exceptional),
@@ -137,7 +132,7 @@ class EmotionSlider extends StatelessWidget {
                           children: [
                             Icon(Icons.comment_outlined, color: textColor),
                             const SizedBox(width: Paddings.regular),
-                            Text('Add Comment', style: AppFonts.x14Regular.copyWith(color: textColor)),
+                            Text('add_comment'.tr, style: AppFonts.x14Regular.copyWith(color: textColor)),
                           ],
                         ),
                       ),
@@ -145,7 +140,7 @@ class EmotionSlider extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: Paddings.regular),
                           child: CustomTextField(
-                            hintText: 'How could we improve?',
+                            hintText: 'how_could_improve'.tr,
                             fieldController: commentController,
                             outlinedBorder: true,
                             isTextArea: true,
@@ -157,7 +152,7 @@ class EmotionSlider extends StatelessWidget {
               ),
               const SizedBox(height: Paddings.exceptional),
               CustomButtons.elevatePrimary(
-                title: 'Submit feedback',
+                title: 'submit_feedback'.tr,
                 titleStyle: AppFonts.x16Bold,
                 buttonColor: kNeutralLightColor,
                 width: double.infinity,

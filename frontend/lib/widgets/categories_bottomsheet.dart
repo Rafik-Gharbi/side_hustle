@@ -100,7 +100,13 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                     ),
                     const SizedBox(height: Paddings.large),
                     if (canUpdate) ...[
-                      Text('Please select up to ${widget.maxSelect} categories: ${selectedCategories.length} of ${widget.maxSelect} selected.', style: AppFonts.x12Regular),
+                      Text(
+                        '${'select_x_categories'.trParams({'max': widget.maxSelect.toString()})}: ${'y_of_x_selected'.trParams({
+                              'selected': selectedCategories.length.toString(),
+                              'max': widget.maxSelect.toString()
+                            })}',
+                        style: AppFonts.x12Regular,
+                      ),
                       RichText(
                         text: TextSpan(
                           text: '',
@@ -109,15 +115,15 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                             WidgetSpan(
                               child: InkWell(
                                 onTap: () => debugPrint('Subscribe tapped'),
-                                child: Text('Subscribe', style: AppFonts.x12Bold.copyWith(decoration: TextDecoration.underline)),
+                                child: Text('subscribe'.tr, style: AppFonts.x12Bold.copyWith(decoration: TextDecoration.underline)),
                               ),
                             ),
-                            const TextSpan(text: ' to premium for more categories.'),
+                            TextSpan(text: 'premium_more_categories'.tr),
                           ],
                         ),
                       ),
                     ] else if (widget.nextUpdate != null)
-                      Text('You can update your categories once each month, next update is in: ${Helper.formatDate(widget.nextUpdate!)}', style: AppFonts.x12Regular),
+                      Text('update_categories_in_date'.trParams({'date': Helper.formatDate(widget.nextUpdate!)}), style: AppFonts.x12Regular),
                   ],
                   const SizedBox(height: Paddings.regular),
                   CustomTextField(

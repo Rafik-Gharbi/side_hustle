@@ -27,7 +27,7 @@ class ServiceRequestController extends GetxController {
   }
 
   void acceptProposal(Booking booking) => Helper.openConfirmationDialog(
-        title: 'Are you sure to accept this request?',
+        title: 'accept_request_msg'.tr,
         onConfirm: () async {
           await BookingRepository.find.updateBookingStatus(booking, RequestStatus.confirmed);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
@@ -36,7 +36,7 @@ class ServiceRequestController extends GetxController {
       );
 
   void rejectProposals(Booking booking) => Helper.openConfirmationDialog(
-        title: 'Are you sure to reject this request?',
+        title: 'reject_request_msg'.tr,
         onConfirm: () async {
           await BookingRepository.find.updateBookingStatus(booking, RequestStatus.rejected);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);

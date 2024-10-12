@@ -28,7 +28,7 @@ class BuildSelfiePicturePicker extends StatelessWidget {
                 child: Center(child: Lottie.asset(Assets.selfieWithIdentityCard, height: 150, fit: BoxFit.contain)),
               ),
               const SizedBox(height: Paddings.exceptional),
-              const Text('Please provide a selfie holding your identity document below your head', style: AppFonts.x14Regular),
+              Text('provide_selfie_msg'.tr, style: AppFonts.x14Regular),
               const SizedBox(height: Paddings.extraLarge),
               Center(
                 child: controller.selfiePicture != null
@@ -40,7 +40,7 @@ class BuildSelfiePicturePicker extends StatelessWidget {
                         ),
                       )
                     : CustomButtons.elevateSecondary(
-                        title: 'Open camera',
+                        title: '',
                         width: (Get.width - 60) / 2,
                         height: (Get.width - 60) / 2,
                         onPressed: () => controller.uploadVerifUserPicture(type: VerifPicture.selfie),

@@ -19,9 +19,9 @@ enum VerifyIdentityStatus {
 }
 
 enum Gender {
-  male('Male'),
-  female('Female'),
-  other('Other');
+  male('male'),
+  female('female'),
+  other('other');
 
   final String value;
 

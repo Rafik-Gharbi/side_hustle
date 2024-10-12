@@ -21,11 +21,11 @@ class TaskRequestScreen extends StatelessWidget {
       child: GetBuilder<TaskRequestController>(
         builder: (controller) => CustomScaffoldBottomNavigation(
           onBack: () => ProfileController.find.init(),
-          appBarTitle: 'Tasks Request',
+          appBarTitle: 'tasks_request'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.filteredTaskList.isEmpty
-                ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
+                ? Center(child: Text('found_nothing'.tr, style: AppFonts.x14Regular))
                 : SingleChildScrollView(
                     controller: controller.scrollController,
                     child: Column(

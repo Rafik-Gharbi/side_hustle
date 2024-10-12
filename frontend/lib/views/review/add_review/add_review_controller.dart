@@ -83,7 +83,7 @@ class AddReviewController extends GetxController {
         update();
       }
     } catch (e) {
-      LoggerService.logger?.e('Error occured in addStorePicture:\n$e');
+      LoggerService.logger?.e('Error occured in uploadReviewPicture:\n$e');
     }
   }
 }

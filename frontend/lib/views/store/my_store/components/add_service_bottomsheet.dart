@@ -38,7 +38,7 @@ class AddServiceBottomsheet extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Center(child: Text('Add service', style: AppFonts.x16Bold)),
+                        Center(child: Text('add_service'.tr, style: AppFonts.x16Bold)),
                         const SizedBox(height: Paddings.extraLarge),
                         CustomTextField(
                           hintText: 'service_name'.tr,
@@ -73,7 +73,7 @@ class AddServiceBottomsheet extends StatelessWidget {
                         const SizedBox(height: Paddings.regular),
                         CustomDropDownMenu<Category>(
                           items: MainAppController.find.categories,
-                          hint: 'Select a category',
+                          hint: 'select_category'.tr,
                           maxWidth: true,
                           selectedItem: controller.category,
                           buttonHeight: 45,
@@ -107,7 +107,7 @@ class AddServiceBottomsheet extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: Paddings.large),
-                        const Text('Service gallery', style: AppFonts.x14Bold),
+                        Text('service_gallery'.tr, style: AppFonts.x14Bold),
                         const SizedBox(height: Paddings.regular),
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
@@ -157,7 +157,7 @@ class AddServiceBottomsheet extends StatelessWidget {
                         ),
                         const SizedBox(height: Paddings.exceptional * 2),
                         CustomButtons.elevatePrimary(
-                          title: '${isUpdate ? 'Update' : 'Create'} service',
+                          title: '${isUpdate ? 'update'.tr : 'create'.tr} ${'service'.tr}',
                           width: Get.width,
                           onPressed: () => controller.upsertService(isUpdate: isUpdate),
                         ),

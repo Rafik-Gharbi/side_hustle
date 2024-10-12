@@ -32,7 +32,7 @@ class ChatScreen extends StatelessWidget {
         ),
         builder: (controller) => Obx(
           () => CustomScaffoldBottomNavigation(
-            appBarTitle: 'Messages',
+            appBarTitle: 'messages'.tr,
             appBarActions: [
               CustomButtons.icon(
                 icon: Icon(controller.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
@@ -45,7 +45,7 @@ class ChatScreen extends StatelessWidget {
                     leading: const SizedBox(),
                     flexibleSpace: CustomTextField(
                       fieldController: controller.searchDiscussionsController,
-                      hintText: 'Search discussions',
+                      hintText: 'search_discussions'.tr,
                       suffixIcon: const Icon(Icons.search, color: kPrimaryColor),
                       fillColor: Colors.white,
                       onChanged: (value) => Helper.onSearchDebounce(() => controller.searchChatBubbles(value)),
@@ -63,7 +63,7 @@ class ChatScreen extends StatelessWidget {
                 child: LoadingRequest(
                   isLoading: controller.isLoading,
                   child: controller.userChatPropertiesFiltered.isEmpty
-                      ? const Center(child: Text('You have no discussion yet!', style: AppFonts.x14Regular))
+                      ? Center(child: Text('no_discussion_yet'.tr, style: AppFonts.x14Regular))
                       : SharedPreferencesService.find.isReady && AuthenticationService.find.jwtUserData == null
                           ? Buildables.buildLoginRequest(onLogin: controller.update)
                           : controller.loggedInUser == null
@@ -106,7 +106,7 @@ class ChatScreen extends StatelessWidget {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   OverflowedTextWithTooltip(
-                                                    title: controller.loggedInUser!.isOwner ? discussion.userName ?? 'User' : (discussion.ownerName ?? 'User'),
+                                                    title: controller.loggedInUser!.isOwner ? discussion.userName ?? 'user'.tr : (discussion.ownerName ?? 'user'.tr),
                                                     style: (isCurrentChat ? AppFonts.x14Bold : AppFonts.x14Regular).copyWith(color: kBlackColor),
                                                     expand: false,
                                                   ),

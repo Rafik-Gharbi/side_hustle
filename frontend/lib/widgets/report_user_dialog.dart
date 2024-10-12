@@ -64,17 +64,14 @@ class _ReportUserDialogState extends State<ReportUserDialog> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Report', style: AppFonts.x18Bold),
+                      Text('report'.tr, style: AppFonts.x18Bold),
                       CustomButtons.icon(icon: const Icon(Icons.close), onPressed: Get.back),
                     ],
                   ),
                   const SizedBox(height: Paddings.regular),
-                  const Text('Why are you reporting this post?', style: AppFonts.x14Bold),
+                  Text('why_reporting'.tr, style: AppFonts.x14Bold),
                   const SizedBox(height: Paddings.regular),
-                  Text(
-                    'Your report is anonymous, except if you\'re reporting an intellectual property infringement. If someone is in immediate danger, call the local emergency services.',
-                    style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
-                  ),
+                  Text('reporting_msg'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                   const SizedBox(height: Paddings.large),
                   ListView(
                     shrinkWrap: true,
@@ -82,7 +79,7 @@ class _ReportUserDialogState extends State<ReportUserDialog> {
                     children: List.generate(
                       ReportReasons.values.length,
                       (index) => RadioListTile<ReportReasons>(
-                        title: Text(ReportReasons.values[index].value, style: AppFonts.x14Regular),
+                        title: Text(ReportReasons.values[index].value.tr, style: AppFonts.x14Regular),
                         value: ReportReasons.values[index],
                         groupValue: _selectedReportReasons,
                         onChanged: (value) => setState(() => _selectedReportReasons = value),
@@ -90,12 +87,12 @@ class _ReportUserDialogState extends State<ReportUserDialog> {
                     ),
                   ),
                   const SizedBox(height: Paddings.large),
-                  const Text('Reason', style: AppFonts.x14Bold),
+                  Text('reason'.tr, style: AppFonts.x14Bold),
                   const SizedBox(height: Paddings.regular),
-                  Text('Help us understand the problem.', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                  Text('help_us_understand'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                   const SizedBox(height: Paddings.extraLarge),
                   CustomTextField(
-                    hintText: 'Write an explanation',
+                    hintText: 'write_an_explanation'.tr,
                     fieldController: explanationController,
                     isTextArea: true,
                     outlinedBorder: true,
@@ -103,7 +100,7 @@ class _ReportUserDialogState extends State<ReportUserDialog> {
                   ),
                   const SizedBox(height: Paddings.exceptional),
                   CustomButtons.elevatePrimary(
-                    title: 'Submit report',
+                    title: 'submit_report'.tr,
                     width: isMobile ? Get.width : 400,
                     disabled: _selectedReportReasons == null,
                     onPressed: () {

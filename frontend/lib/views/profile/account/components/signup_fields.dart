@@ -74,7 +74,7 @@ class SignUpFields extends StatelessWidget {
             const SizedBox(height: Paddings.regular),
             CustomDropDownMenu<Governorate>(
               items: MainAppController.find.governorates,
-              hint: 'Select a governorate',
+              hint: 'select_governorate'.tr,
               maxWidth: true,
               selectedItem: controller.governorate,
               buttonHeight: 45,
@@ -92,7 +92,7 @@ class SignUpFields extends StatelessWidget {
             const SizedBox(height: Paddings.regular),
             CustomDropDownMenu(
               items: Gender.values.map((e) => e.value).toList(),
-              hint: 'Select a gender',
+              hint: 'select_gender'.tr,
               maxWidth: true,
               selectedItem: controller.gender?.value,
               buttonHeight: 45,
@@ -100,7 +100,7 @@ class SignUpFields extends StatelessWidget {
             ),
             const SizedBox(height: Paddings.regular),
             CustomButtons.elevateSecondary(
-              title: 'Share my position',
+              title: 'share_my_position'.tr,
               titleStyle: AppFonts.x14Regular,
               icon: Icon(controller.coordinates != null ? Icons.my_location_outlined : Icons.location_searching_outlined),
               width: double.infinity,
@@ -109,7 +109,7 @@ class SignUpFields extends StatelessWidget {
             const SizedBox(height: Paddings.small),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
-              child: Text('For a better user experience and tasks suggesting.'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+              child: Text('share_my_position_msg'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
             ),
             const SizedBox(height: Paddings.exceptional),
             CustomButtons.elevatePrimary(
@@ -152,7 +152,7 @@ class SignUpFields extends StatelessWidget {
         children: [
           if (Helper.isMobile) const SizedBox(height: Paddings.exceptional) else const Spacer(),
           if (!Helper.isMobile) ...[
-            const Text('Sign up with socials', style: AppFonts.x15Bold),
+            Text('sign_with_socials'.tr, style: AppFonts.x15Bold),
             const SizedBox(height: Paddings.exceptional),
           ],
           CustomButtons.elevateSecondary(

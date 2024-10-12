@@ -502,9 +502,9 @@ class AuthenticationService extends GetxController {
   Future<void> subscribeToCategories(List<Category> category, String? fcmToken) async {
     final result = await UserRepository.find.subscribeToCategories(category, fcmToken);
     if (result) {
-      Helper.snackBar(message: 'Category subscription updated successfully');
+      Helper.snackBar(message: 'categories_subscription_updated'.tr);
     } else {
-      Helper.snackBar(message: 'Failed to update category subscription');
+      Helper.snackBar(message: 'categories_subscription_failed'.tr);
     }
   }
 
@@ -517,7 +517,7 @@ class AuthenticationService extends GetxController {
         await UserRepository.find.updateUserCoordinates(user, silent: true);
       }
     }
-    if (coordinates != null) Helper.snackBar(message: 'Location has been successfully shared');
+    if (coordinates != null) Helper.snackBar(message: 'location_successfully_shared'.tr);
   }
 
   void _initChatStandByRoom() {

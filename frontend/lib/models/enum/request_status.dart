@@ -1,9 +1,9 @@
 /// This enum is used for both booking and reservation
 enum RequestStatus {
-  pending('Pending'),
-  confirmed('Confirmed'),
-  rejected('Rejected'),
-  finished('Finished');
+  pending('pending'),
+  confirmed('confirmed'),
+  rejected('rejected'),
+  finished('finished');
 
   final String value;
 

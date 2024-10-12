@@ -211,7 +211,7 @@ class MyStoreController extends GetxController {
   }
 
   void deleteService(Service service) => Helper.openConfirmationDialog(
-        title: 'Are you sure you want to delete the service "${service.name}"!',
+        title: 'delete_service_msg'.trParams({'serviceName': service.name!}),
         onConfirm: () async {
           final result = await StoreRepository.find.deleteService(service);
           if (result) currentStore!.services!.removeWhere((element) => element.id == service.id);
@@ -232,7 +232,7 @@ class MyStoreController extends GetxController {
     );
     if (result) {
       Get.back();
-      Helper.snackBar(message: 'Service has been booked successfully');
+      Helper.snackBar(message: 'service_booked_successfully'.tr);
     }
   }
 

@@ -34,7 +34,7 @@ class MarketScreen extends StatelessWidget {
         ),
         builder: (controller) => Obx(
           () => CustomScaffoldBottomNavigation(
-            appBarTitle: 'Stores Market',
+            appBarTitle: 'stores_market'.tr,
             appBarActions: [
               CustomButtons.icon(
                 icon: Icon(controller.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
@@ -57,7 +57,7 @@ class MarketScreen extends StatelessWidget {
                     leading: const SizedBox(),
                     flexibleSpace: CustomTextField(
                       fieldController: controller.searchStoreController,
-                      hintText: 'Search Store',
+                      hintText: 'search_store'.tr,
                       suffixIcon: const Icon(Icons.search, color: kPrimaryColor),
                       fillColor: Colors.white,
                       onChanged: (value) => Helper.onSearchDebounce(
@@ -74,7 +74,7 @@ class MarketScreen extends StatelessWidget {
             body: LoadingStoresEffect(
               isLoading: controller.isLoading,
               child: controller.filteredStoreList.isEmpty
-                  ? const Center(child: Text('We found nothing!', style: AppFonts.x14Regular))
+                  ? Center(child: Text('found_nothing'.tr, style: AppFonts.x14Regular))
                   : SingleChildScrollView(
                       controller: controller.scrollController,
                       child: Padding(
@@ -82,7 +82,7 @@ class MarketScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             if (controller.hotServices.isNotEmpty) ...[
-                              Buildables.buildTitle('Hot Services'),
+                              Buildables.buildTitle('hot_services'.tr),
                               LoadingCardEffect(
                                 isLoading: controller.isLoading,
                                 child: ListView.builder(
@@ -94,7 +94,7 @@ class MarketScreen extends StatelessWidget {
                                     return Padding(
                                       padding: const EdgeInsets.only(bottom: Paddings.small),
                                       child: ServiceCard(
-                                        additionSubtitle: 'By ${controller.getServiceStore(service).name} store',
+                                        additionSubtitle: 'by_store_name'.trParams({'storeName': controller.getServiceStore(service).name!}),
                                         service: service,
                                         store: controller.getServiceStore(service),
                                         onBookService: () => controller.getServiceStore(service).owner?.id == AuthenticationService.find.jwtUserData?.id
@@ -111,7 +111,7 @@ class MarketScreen extends StatelessWidget {
                               ),
                             ],
                             const SizedBox(height: Paddings.extraLarge),
-                            Buildables.buildTitle('Stores'),
+                            Buildables.buildTitle('stores'.tr),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),

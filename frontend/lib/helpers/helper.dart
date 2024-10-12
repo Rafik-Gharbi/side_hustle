@@ -13,7 +13,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/notification.dart';
 import '../constants/colors.dart';
 import '../constants/constants.dart';
-import '../constants/icon_map.dart';
 import '../constants/shared_preferences_keys.dart';
 import '../constants/sizes.dart';
 import '../models/review.dart';
@@ -28,7 +27,6 @@ import '../views/chat/chat_screen.dart';
 import '../views/notifications/notification_controller.dart';
 import '../views/profile/verification_screen.dart';
 import '../widgets/custom_popup.dart';
-import '../widgets/custom_text_field.dart';
 import '../widgets/phone_otp_dialog.dart';
 import 'extensions/date_time_extension.dart';
 
@@ -50,7 +48,7 @@ class Helper {
         margin: isMobile ? EdgeInsets.zero : EdgeInsets.only(left: (Get.width / 3) * 2, right: 50, bottom: 10),
         backgroundColor: kNeutralColor100,
         snackPosition: SnackPosition.BOTTOM,
-        mainButton: overrideButton ?? (includeDismiss ? TextButton(onPressed: Get.back, child: Text('Dismiss'.tr)) : null),
+        mainButton: overrideButton ?? (includeDismiss ? TextButton(onPressed: Get.back, child: Text('dismiss'.tr)) : null),
       ).show();
 
   static Future<dynamic> waitAndExecute(bool Function() condition, Function callback, {Duration? duration}) async {
@@ -69,6 +67,8 @@ class Helper {
 
   static bool isMobile = Get.width <= kMobileMaxWidth || GetPlatform.isAndroid || GetPlatform.isIOS || GetPlatform.isMobile;
 
+  static bool get isArabic => Get.locale?.languageCode == 'ar';
+
   static bool isColorDarkEnoughForWhiteText(Color color, {double threshold = 0.55}) {
     assert(threshold >= 0 && threshold <= 1, 'The threshold value should be between 0.0 and 1.0');
     // Calculate the relative luminance of the color
@@ -82,9 +82,9 @@ class Helper {
       case 'en':
         return 'English';
       case 'fr':
-        return 'French';
+        return 'Français';
       case 'ar':
-        return 'Arabic';
+        return 'العربية';
       // Add more language codes and their readable names as needed
       default:
         return 'Unknown';
@@ -246,76 +246,6 @@ class Helper {
         }
       });
 
-  static void openIconsBottomsheet(void Function(IconData) onSelectIcon) {
-    final scrollController = ScrollController();
-    List<IconData> filteredIcons = materialSymbolsMap.values.toList();
-
-    List<IconData> filterIcons(String value) {
-      if (value.isEmpty) {
-        filteredIcons = materialSymbolsMap.values.toList();
-      } else {
-        filteredIcons = materialSymbolsMap.entries.where((element) => element.key.toString().toLowerCase().contains(value.toLowerCase())).map((e) => e.value).toList();
-      }
-      return filteredIcons;
-    }
-
-    Get.bottomSheet(
-      DecoratedBox(
-        decoration: const BoxDecoration(color: kNeutralColor100, borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusSize.extraLarge))),
-        child: Padding(
-          padding: const EdgeInsets.all(Paddings.large),
-          child: StatefulBuilder(
-            builder: (context, setState) => SizedBox(
-              height: Get.height / 2,
-              child: Scrollbar(
-                controller: scrollController,
-                child: Column(
-                  children: [
-                    CustomTextField(
-                      hintText: 'search_icons'.tr,
-                      // textStyle: AppFonts.x14Regular.copyWith(height: 0.1),
-                      // border: UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
-                      onChanged: (value) => Helper.onSearchDebounce(() => setState(() => filteredIcons = filterIcons(value))),
-                    ),
-                    const SizedBox(height: Paddings.regular),
-                    Expanded(
-                      child: GridView.extent(
-                        shrinkWrap: true,
-                        controller: scrollController,
-                        physics: const ScrollPhysics(),
-                        maxCrossAxisExtent: 50.0,
-                        mainAxisSpacing: Paddings.regular,
-                        crossAxisSpacing: Paddings.regular,
-                        padding: const EdgeInsets.all(Paddings.large),
-                        children: filteredIcons
-                            .map(
-                              (iconData) => InkWell(
-                                onTap: () {
-                                  onSelectIcon.call(iconData);
-                                  Get.back();
-                                },
-                                child: Center(
-                                  child: CircleAvatar(
-                                    radius: 20,
-                                    backgroundColor: kNeutralLightColor,
-                                    child: Center(child: Icon(iconData, color: kBlackColor)),
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   static Future<bool> handlePermission() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -355,28 +285,6 @@ class Helper {
     }
     return null;
   }
-
-  static void showModifyLocationAlert(void Function(LatLng?) onSubmit) => Get.dialog(
-        AlertDialog(
-          title: const Text('Modifier et partager la position actuelle'),
-          content: const Text('Voulez-vous modifier et partager votre position actuelle ?'),
-          actions: [
-            ElevatedButton(
-              child: const Text('Annuler'),
-              onPressed: () => Get.back(),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              child: const Text('Modifier et partager'),
-              onPressed: () async {
-                Get.back();
-                final coordinates = await getPosition();
-                onSubmit.call(coordinates);
-              },
-            ),
-          ],
-        ),
-      );
 
   static double degreesToMeters(double distanceInDegrees) {
     const double earthRadius = 6371000;

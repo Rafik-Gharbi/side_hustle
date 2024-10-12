@@ -72,7 +72,7 @@ class Buildables {
         children: [
           Center(child: Text(message ?? 'login_profile_msg'.tr)),
           CustomButtons.text(
-            title: 'Login',
+            title: 'login'.tr,
             titleStyle: AppFonts.x14Bold.copyWith(color: kNeutralColor),
             onPressed: () => Get.bottomSheet(const LoginDialog(), isScrollControlled: true).then((value) {
               AuthenticationService.find.currentState = LoginWidgetState.login;
@@ -140,8 +140,9 @@ class Buildables {
             Text(label, style: AppFonts.x14Bold),
             Expanded(
               child: Align(
-                alignment: Alignment.centerRight,
+                alignment: Helper.isArabic ? Alignment.centerLeft : Alignment.centerRight,
                 child: Text(
+                  textDirection: TextDirection.ltr,
                   value,
                   style: AppFonts.x14Regular,
                   overflow: TextOverflow.ellipsis,
@@ -174,14 +175,14 @@ class Buildables {
               child: Column(
                 children: [
                   const SizedBox(height: Paddings.regular),
-                  Center(child: Text(isTask ? 'Add proposal' : 'Request a service', style: AppFonts.x16Bold)),
+                  Center(child: Text(isTask ? 'add_proposal'.tr : 'request_service'.tr, style: AppFonts.x16Bold)),
                   const SizedBox(height: Paddings.exceptional),
                   CustomTextField(
                     fieldController: noteController,
                     isTextArea: true,
                     outlinedBorder: true,
                     outlinedBorderColor: kNeutralColor,
-                    hintText: isTask ? 'Add a note for the task owner' : 'Add a note for the store owner',
+                    hintText: isTask ? 'add_note_task_owner'.tr : 'add_note_store_owner'.tr,
                   ),
                   if (proposedPriceController != null) ...[
                     const SizedBox(height: Paddings.regular),
@@ -189,12 +190,12 @@ class Buildables {
                       fieldController: proposedPriceController,
                       outlinedBorder: true,
                       outlinedBorderColor: kNeutralColor,
-                      hintText: 'Propose a new price',
+                      hintText: 'propose_new_price'.tr,
                     ),
                   ],
                   const SizedBox(height: Paddings.exceptional),
                   CustomButtons.elevatePrimary(
-                    title: isTask ? 'Submit proposal' : 'Submit a request',
+                    title: isTask ? 'submit_proposal'.tr : 'submit_request'.tr,
                     width: Get.width,
                     onPressed: onSubmit,
                   )
@@ -215,7 +216,7 @@ class Buildables {
               Padding(
                 padding: const EdgeInsets.only(left: Paddings.regular),
                 child: CustomButtons.text(
-                  title: 'See more',
+                  title: 'see_more'.tr,
                   titleStyle: AppFonts.x11Bold.copyWith(color: kAccentColor),
                   onPressed: onSeeMore,
                 ),
