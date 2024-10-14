@@ -15,6 +15,7 @@ import '../../review/add_review/add_review_bottomsheet.dart';
 class TaskDetailsController extends GetxController {
   final TextEditingController noteController = TextEditingController();
   final TextEditingController proposedPriceController = TextEditingController();
+  final TextEditingController deliveryDateController = TextEditingController();
   final Task task;
   RxInt condidates = 0.obs;
   RxBool isUserConfirmedTaskSeeker = false.obs;
@@ -32,6 +33,7 @@ class TaskDetailsController extends GetxController {
         date: DateTime.now(),
         totalPrice: task.price ?? 0,
         proposedPrice: double.tryParse(proposedPriceController.text),
+        dueDate: DateTime.tryParse(deliveryDateController.text),
         note: noteController.text,
         // coupon: coupon,
         user: AuthenticationService.find.jwtUserData!,

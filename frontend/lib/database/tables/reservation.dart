@@ -7,6 +7,7 @@ import 'user.dart';
 
 class ReservationTable extends Table with AutoIncrementingStringPrimaryKey {
   TextColumn get task => text().references(TaskTable, #id).nullable()();
+  TextColumn get service => text().references(TaskTable, #id).nullable()();
   DateTimeColumn get date => dateTime().withDefault(Constant(DateTime.now()))();
   RealColumn get totalPrice => real().withDefault(const Constant(0))();
   RealColumn get proposedPrice => real().nullable()();

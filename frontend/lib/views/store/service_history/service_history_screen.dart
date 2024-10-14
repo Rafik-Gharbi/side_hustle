@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constants/sizes.dart';
-import '../../../models/booking.dart';
+import '../../../models/reservation.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/booking_card.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
@@ -35,7 +35,7 @@ class ServiceHistoryScreen extends StatelessWidget {
                             'ongoing_services'.tr,
                             controller.ongoingServices,
                             initiallyOpen: true,
-                            onMarkDone: (booking) => controller.markBookingAsDone(booking),
+                            onMarkDone: (booking) => controller.markServiceReservationAsDone(booking),
                           ),
                           buildStatusServiceGroup('pending_services'.tr, controller.pendingServices, initiallyOpen: true),
                           buildStatusServiceGroup('finished_services'.tr, controller.finishedServices),
@@ -50,21 +50,22 @@ class ServiceHistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget buildStatusServiceGroup(String title, List<Booking> bookings, {void Function(Booking)? onMarkDone, bool initiallyOpen = false}) {
+  Widget buildStatusServiceGroup(String title, List<Reservation> bookings, {void Function(Reservation)? onMarkDone, bool initiallyOpen = false}) {
     return bookings.isNotEmpty
         ? GetBuilder<ServiceHistoryController>(
-        builder: (controller) => Theme(
+            builder: (controller) => Theme(
               data: ThemeData(dividerColor: Colors.transparent),
               child: ExpansionTile(
                 initiallyExpanded: initiallyOpen,
                 title: Text(title, style: AppFonts.x15Bold),
                 children: List.generate(
                   bookings.length,
-                  (index) => BookingCard(booking: bookings[index], onMarkDone: () => onMarkDone?.call(bookings[index]), isHighlited: controller.highlightedBooking?.id == bookings[index].id),
+                  (index) => BookingCard(
+                      reservation: bookings[index], onMarkDone: () => onMarkDone?.call(bookings[index]), isHighlited: controller.highlightedReservation?.id == bookings[index].id),
                 ),
               ),
             ),
-        )
+          )
         : const SizedBox();
   }
 }

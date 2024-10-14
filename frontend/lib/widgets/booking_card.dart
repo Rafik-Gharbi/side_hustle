@@ -5,18 +5,18 @@ import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
 import '../helpers/helper.dart';
-import '../models/booking.dart';
+import '../models/reservation.dart';
 import '../models/store.dart';
 import '../services/theme/theme.dart';
 import 'service_card.dart';
 
 class BookingCard extends StatelessWidget {
-  final Booking booking;
+  final Reservation reservation;
   final Store? store;
   final void Function()? onMarkDone;
   final bool isHighlited;
 
-  const BookingCard({super.key, required this.booking, this.store, this.onMarkDone, this.isHighlited = false});
+  const BookingCard({super.key, required this.reservation, this.store, this.onMarkDone, this.isHighlited = false});
 
   @override
   Widget build(BuildContext context) {
@@ -33,23 +33,23 @@ class BookingCard extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
           tileColor: highlighted ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
           splashColor: kPrimaryOpacityColor,
-          title: ServiceCard(service: booking.service, store: store, bookingStatus: booking.status, onMarkDone: onMarkDone, dense: true),
+          title: ServiceCard(service: reservation.service!, store: store, bookingStatus: reservation.status, onMarkDone: onMarkDone, dense: true),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: Paddings.regular),
-              Text('${'note'.tr}: ${booking.note.isEmpty ? 'not_provided'.tr : booking.note}', style: AppFonts.x14Regular),
+              Text('${'note'.tr}: ${reservation.note.isEmpty ? 'not_provided'.tr : reservation.note}', style: AppFonts.x14Regular),
               const SizedBox(height: Paddings.regular),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Align(
                     alignment: Alignment.centerRight,
-                    child: Text(Helper.formatDate(booking.date), style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                    child: Text(Helper.formatDate(reservation.date), style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: Paddings.regular),
-                    child: Text(booking.status.value.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
+                    child: Text(reservation.status.value.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
                   ),
                 ],
               ),

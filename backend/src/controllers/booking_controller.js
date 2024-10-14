@@ -24,7 +24,8 @@ const { getServiceOwner, populateOneService } = require("../sql/sql_request");
 const { Op } = require("sequelize");
 
 exports.add = async (req, res) => {
-  const { serviceId, date, totalPrice, coupon, status, note } = req.body;
+  const { serviceId, date, totalPrice, coupon, status, note, dueDate } =
+    req.body;
   if (!serviceId || !date || !totalPrice || !status) {
     return res.status(400).json({ message: "missing" });
   }
@@ -62,6 +63,7 @@ exports.add = async (req, res) => {
       coupon,
       note,
       status,
+      dueDate,
     });
     // const templateUser = emailBookingForCheckin(foundService.name);
 
@@ -231,6 +233,7 @@ exports.listBooking = async (req, res) => {
           note: row.note,
           status: row.status,
           serviceGallerys,
+          dueDate: row.dueDate,
         };
       })
     );
@@ -273,6 +276,7 @@ exports.userServicesHistory = async (req, res) => {
           note: row.note,
           status: row.status,
           serviceGallerys,
+          dueDate: row.dueDate,
         };
       })
     );
@@ -336,6 +340,7 @@ exports.getBookingByService = async (req, res) => {
           note: row.note,
           status: row.status,
           serviceGallerys,
+          dueDate: row.dueDate,
         };
       })
     );

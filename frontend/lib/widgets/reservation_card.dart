@@ -29,7 +29,7 @@ class ReservationCard extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
           tileColor: highlighted ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
           splashColor: kPrimaryOpacityColor,
-          title: TaskCard(task: reservation.task, dense: true),
+          title: TaskCard(task: reservation.task!, dense: true),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

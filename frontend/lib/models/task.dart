@@ -48,7 +48,7 @@ class Task {
         description: json['description'],
         category: MainAppController.find.getCategoryById(json['category_id']),
         governorate: MainAppController.find.getGovernorateById(json['governorate_id']),
-        owner: User.fromJson(json['owner']),
+        owner: User.fromJson(json['owner'] ?? json['user']),
         price: json['price'] is int
             ? (json['price'] as int).toDouble()
             : json['price'] is String
@@ -66,7 +66,7 @@ class Task {
         isFavorite: json['isFavorite'] ?? false,
       );
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({bool includeOwner = false}) {
     final Map<String, dynamic> data = {};
     if (id != null) data['id'] = id;
     data['title'] = title;
@@ -78,6 +78,7 @@ class Task {
     data['coordinates'] = coordinates?.toCoordinatesString();
     data['dueDate'] = dueDate?.toOneMinuteBeforeMidnight().toIso8601String();
     data['owner_id'] = owner.id;
+    if (includeOwner) data['owner'] = owner.toJson();
     // data['attachments'] = attachments;
     return data;
   }

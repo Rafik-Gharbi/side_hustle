@@ -30,24 +30,13 @@ class ReservationRepository extends GetxService {
     return false;
   }
 
-  // Future<List<Reservation>> listReservation() async {
-  //   try {
-  //     final result = await ApiBaseHelper().request(RequestType.get, '/reservation/list', sendToken: true);
-  //     final reservations = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
-  //     return reservations;
-  //   } catch (e) {
-  //     LoggerService.logger?.e('Error occured in listReservation:\n$e');
-  //   }
-  //   return [];
-  // }
-
   Future<List<Reservation>> getReservationByTaskId(String taskId) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/reservation/task-reservation?taskId=$taskId', sendToken: true);
       final reservations = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
       return reservations;
     } catch (e) {
-      LoggerService.logger?.e('Error occured in listReservation:\n$e');
+      LoggerService.logger?.e('Error occured in getReservationByTaskId:\n$e');
     }
     return [];
   }
@@ -57,23 +46,25 @@ class ReservationRepository extends GetxService {
       final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/reservation/details?taskId=${task.id}');
       return TaskReservationDetailsDTO.fromJson(result);
     } catch (e) {
-      LoggerService.logger?.e('Error occured in listReservation:\n$e');
+      LoggerService.logger?.e('Error occured in getTaskReservationDetails:\n$e');
     }
     return null;
   }
 
-  Future<void> updateReservationStatus(Reservation reservation, RequestStatus status) async {
+  Future<bool> updateReservationStatus(Reservation reservation, RequestStatus status) async {
     try {
-      await ApiBaseHelper().request(
+      final result = await ApiBaseHelper().request(
         RequestType.post,
         '/reservation/update-status',
         sendToken: true,
         body: {'reservation': reservation.toJson(), 'status': status.name},
       );
       if (MainAppController.find.isConnected) ReservationDatabaseRepository.find.updateReservationStatus(reservation, status);
+      return result?['done'] == true;
     } catch (e) {
       Helper.snackBar(message: 'An error has occurred');
-      LoggerService.logger?.e('Error occured in listReservation:\n$e');
+      LoggerService.logger?.e('Error occured in updateReservationStatus:\n$e');
+      return false;
     }
   }
 
@@ -90,6 +81,89 @@ class ReservationRepository extends GetxService {
       return reservations;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getUserTasksHistory:\n$e');
+    }
+    return [];
+  }
+
+  // Send a proposal for the service's owner
+  Future<bool> addServiceReservation({required Reservation reservation}) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.post, '/booking/add', body: reservation.toJson(), sendToken: true);
+      if (MainAppController.find.isConnected) ReservationDatabaseRepository.find.addReservation(Reservation.fromJson(result));
+      return result['booking'] != null && result['booking'].toString().isNotEmpty;
+    } catch (e) {
+      if (e.toString().contains('booking_already_exist')) {
+        Helper.snackBar(message: 'booking_already_exist'.tr);
+      } else if (e.toString().contains('cannot_book_your_own_service')) {
+        Helper.snackBar(message: 'cannot_book_your_own_service'.tr);
+      } else {
+        Helper.snackBar(message: 'error_sending_request'.tr);
+      }
+      LoggerService.logger?.e('Error occured in addServiceReservation:\n$e');
+    }
+    return false;
+  }
+
+  // Future<List<Reservation>> listReservation() async {
+  //   try {
+  //     final result = await ApiBaseHelper().request(RequestType.get, '/booking/list', sendToken: true);
+  //     final services = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
+  //     return services;
+  //   } catch (e) {
+  //     LoggerService.logger?.e('Error occured in listReservation:\n$e');
+  //   }
+  //   return [];
+  // }
+
+  Future<List<Reservation>> getReservationByServiceId(String serviceId) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.get, '/booking/service-booking?serviceId=$serviceId', sendToken: true);
+      final services = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
+      return services;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getReservationByServiceId:\n$e');
+    }
+    return [];
+  }
+
+  // Future<int> getServiceCondidates(Service service) async {
+  //   try {
+  //     final result = await ApiBaseHelper().request(RequestType.get, '/booking/condidates?serviceId=${service.id}');
+  //     return result['condidates'] ?? 0;
+  //   } catch (e) {
+  //     LoggerService.logger?.e('Error occured in getServiceCondidates:\n$e');
+  //   }
+  //   return 0;
+  // }
+
+  Future<void> updateServiceReservationStatus(Reservation serviceReservation, RequestStatus status) async {
+    try {
+      await ApiBaseHelper().request(
+        RequestType.post,
+        '/booking/update-status',
+        sendToken: true,
+        body: {'booking': serviceReservation.toJson(), 'status': status.name},
+      );
+      if (MainAppController.find.isConnected) ReservationDatabaseRepository.find.updateReservationStatus(serviceReservation, status);
+    } catch (e) {
+      Helper.snackBar(message: 'An error has occurred');
+      LoggerService.logger?.e('Error occured in updateServiceReservationStatus:\n$e');
+    }
+  }
+
+  Future<List<Reservation>> getUserServicesHistory() async {
+    try {
+      List<Reservation> bookings = [];
+      if (MainAppController.find.isConnected) {
+        final result = await ApiBaseHelper().request(RequestType.get, '/booking/services-history', sendToken: true);
+        bookings = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
+      } else {
+        bookings = await ReservationDatabaseRepository.find.select();
+      }
+      if (bookings.isNotEmpty && MainAppController.find.isConnected) ReservationDatabaseRepository.find.backupReservations(bookings);
+      return bookings;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getUserServicesHistory:\n$e');
     }
     return [];
   }

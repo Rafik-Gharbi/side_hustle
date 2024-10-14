@@ -239,6 +239,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                                 ? Buildables.requestBottomsheet(
                                                     noteController: controller.noteController,
                                                     proposedPriceController: controller.proposedPriceController,
+                                                    deliveryDateController: controller.deliveryDateController,
                                                     onSubmit: () => controller.submitProposal(task),
                                                     isTask: true,
                                                   ).then((value) => controller.clearFormFields())

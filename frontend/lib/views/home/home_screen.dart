@@ -170,56 +170,56 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(height: Paddings.exceptional),
                       Column(
                         children: [
-                          if (controller.ongoingReservation.isNotEmpty) ...[
+                          if (controller.ongoingTaskReservations.isNotEmpty) ...[
                             Buildables.buildTitle('ongoing_reservations'.tr),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount: controller.ongoingReservation.length,
+                              itemCount: controller.ongoingTaskReservations.length,
                               itemBuilder: (context, index) => Padding(
                                 padding: const EdgeInsets.only(bottom: Paddings.small),
-                                child: ReservationCard(reservation: controller.ongoingReservation[index]),
+                                child: ReservationCard(reservation: controller.ongoingTaskReservations[index]),
                               ),
                             ),
                             const SizedBox(height: Paddings.regular),
                           ],
-                          if (controller.ongoingBooking.isNotEmpty) ...[
+                          if (controller.ongoingServiceReservations.isNotEmpty) ...[
                             Buildables.buildTitle('ongoing_bookings'.tr),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount: controller.ongoingBooking.length,
+                              itemCount: controller.ongoingServiceReservations.length,
                               itemBuilder: (context, index) => Padding(
                                 padding: const EdgeInsets.only(bottom: Paddings.small),
-                                child: BookingCard(booking: controller.ongoingBooking[index]),
+                                child: BookingCard(reservation: controller.ongoingServiceReservations[index]),
                               ),
                             ),
                             const SizedBox(height: Paddings.regular),
                           ],
-                          if (controller.reservation.isNotEmpty) ...[
+                          if (controller.taskReservations.isNotEmpty) ...[
                             Buildables.buildTitle('my_reservations'.tr),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount: controller.reservation.length,
+                              itemCount: controller.taskReservations.length,
                               itemBuilder: (context, index) => Padding(
                                 padding: const EdgeInsets.only(bottom: Paddings.small),
-                                child: ReservationCard(reservation: controller.reservation[index]),
+                                child: ReservationCard(reservation: controller.taskReservations[index]),
                               ),
                             ),
                             const SizedBox(height: Paddings.regular),
                           ],
-                          if (controller.booking.isNotEmpty) ...[
+                          if (controller.serviceReservations.isNotEmpty) ...[
                             Buildables.buildTitle('my_bookings'.tr),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount: controller.booking.length,
+                              itemCount: controller.serviceReservations.length,
                               itemBuilder: (context, index) => Padding(
                                 padding: const EdgeInsets.only(bottom: Paddings.small),
                                 child: BookingCard(
-                                  booking: controller.booking[index],
-                                  onMarkDone: () => controller.markBookingAsDone(controller.booking[index]),
+                                  reservation: controller.serviceReservations[index],
+                                  onMarkDone: () => controller.markServiceReservationAsDone(controller.serviceReservations[index]),
                                 ),
                               ),
                             ),

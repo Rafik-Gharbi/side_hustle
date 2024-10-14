@@ -93,7 +93,7 @@ class Helper {
 
   static String getDayFullName(int day) => DateFormat('EEEE').format(DateTime(2023, 5, day));
 
-  static DateTime parseDisplayedDate(String date) => DateFormat('MMM d, h:mm a').parse(date).copyWith(year: DateTime.now().year);
+  static DateTime parseDisplayedDate(String date) => DateFormat('yyyy-MM-dd').parse(date);
 
   static AlertDialog buildDialog({
     required Widget child,
@@ -380,5 +380,13 @@ class Helper {
     if (createdDate.isSameDate(DateTime.now().subtract(const Duration(days: 1)))) return 'yesterday'.tr;
     if (createdDate.isSameDate(DateTime.now().add(const Duration(days: 1)))) return 'tomorrow'.tr;
     return DateFormat.MMMEd().format(createdDate);
+  }
+
+  static bool isUUID(String str) {
+    final uuidRegExp = RegExp(
+      r'^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+      caseSensitive: false,
+    );
+    return uuidRegExp.hasMatch(str);
   }
 }

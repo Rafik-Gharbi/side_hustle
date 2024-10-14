@@ -2,17 +2,21 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+
 import '../constants/colors.dart';
 import '../constants/shared_preferences_keys.dart';
-
+import '../constants/sizes.dart';
 import '../helpers/helper.dart';
+import '../main.dart';
 import '../services/authentication_service.dart';
 import '../services/logger_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/theme/theme.dart';
+import '../widgets/custom_text_field.dart';
 import 'api_exceptions.dart';
 
 enum RequestType { get, post, delete, put }
@@ -37,14 +41,14 @@ extension RequestTypeExtension on RequestType {
 const String baseUrlLocalWeb = 'http://localhost:3000'; // web localhost
 const String baseUrlLocalAndroid = 'http://10.0.2.2:3000'; // android localhost
 const String baseUrlLocalIos = 'http://127.0.0.1:3000'; // ios localhost
-const String baseUrlRealDevice = 'http://172.20.10.2:3000'; // real device ip address
+const String baseUrlRealDevice = 'http://192.168.1.23:3000'; // 'http://172.20.10.2:3000'; // real device ip address
 // const String baseUrlRemote = 'https://HustleMatch.net'; // remote
 String _lastRequestedUrl = '';
 
 class ApiBaseHelper extends GetxController {
   static ApiBaseHelper get find => Get.find<ApiBaseHelper>();
   // final String baseUrl = baseUrlRemote;
-  final String baseUrl = kReleaseMode
+  String baseUrl = kReleaseMode
       ? baseUrlRealDevice //baseUrlRemote
       : kIsWeb
           ? baseUrlLocalWeb
@@ -95,7 +99,8 @@ class ApiBaseHelper extends GetxController {
       _defaultHeader.remove('Authorization');
       _defaultHeader.putIfAbsent('Authorization', () => 'Bearer $token');
     }
-
+    final savedBaseUrl = SharedPreferencesService.find.get(baseUrlKey);
+    if (savedBaseUrl != null) baseUrl = savedBaseUrl;
     final requestUrl = Uri.parse('$baseUrl$url');
 
     if (files != null && files.isNotEmpty) {
@@ -183,7 +188,11 @@ class ApiBaseHelper extends GetxController {
     switch (response.statusCode) {
       case 200:
         //LoggerService.logger!.i('API Return 200 OK, length: ${jsonDecode(response.body)['count']}');
-        return jsonDecode(response.body);
+        try {
+          return jsonDecode(response.body);
+        } catch (e) {
+          return response;
+        }
       case 201:
         return response.statusCode;
       case 400:
@@ -245,10 +254,43 @@ class ApiBaseHelper extends GetxController {
   }
 
   Future<bool> checkConnectionToBackend() async {
+    void openIPAddressChanger() {
+      Helper.waitAndExecute(
+        () => SharedPreferencesService.find.isReady,
+        () => Get.bottomSheet(
+          Material(
+            color: kNeutralColor100,
+            child: Padding(
+              padding: const EdgeInsets.all(Paddings.large),
+              child: Column(
+                children: [
+                  const Center(child: Text('Change real device IP address', style: AppFonts.x15Bold)),
+                  const SizedBox(height: Paddings.exceptional),
+                  CustomTextField(
+                    hintText: 'IP address e.g. 192.168.1.23',
+                    onSubmitted: (value) {
+                      baseUrl = 'http://$value:3000';
+                      SharedPreferencesService.find.add(baseUrlKey, baseUrl);
+                      RestartWidget.restartApp(Get.context!);
+                      Get.back();
+                    },
+                  ),
+                  const SizedBox(height: Paddings.exceptional),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     try {
       final response = await request(RequestType.get, '/params/check-connection');
-      return response?['result'] ?? false;
+      final result = response?['result'] ?? false;
+      if (!result) openIPAddressChanger();
+      return result;
     } catch (e) {
+      openIPAddressChanger();
       return false;
     }
   }

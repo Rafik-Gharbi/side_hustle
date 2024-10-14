@@ -6,6 +6,8 @@ import '../../services/logger_service.dart';
 import '../database.dart';
 import 'task_database_repository.dart';
 
+// TODO add service management
+
 class ReservationDatabaseRepository extends GetxService {
   static ReservationDatabaseRepository get find => Get.find<ReservationDatabaseRepository>();
   final Database database = Database.getInstance();

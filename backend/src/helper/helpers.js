@@ -41,6 +41,12 @@ function adjustString(inputString) {
   return sanitizedString;
 }
 
+function isUUID(str) {
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
+}
+
 function addAuthentication(body, targetProperty) {
   const targetObject = body[targetProperty];
 
@@ -448,6 +454,14 @@ function fromCoordinateToDouble(coordinates) {
   return { latitude, longitude };
 }
 
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() is zero-based, so add 1
+  const day = String(date.getDate()).padStart(2, "0"); // pad single digits with 0
+
+  return `${year}-${month}-${day}`;
+}
+
 module.exports = {
   fromCoordinateToDouble,
   checkUnitDinar,
@@ -471,4 +485,6 @@ module.exports = {
   checkStoreFavorite,
   adjustString,
   shuffleArray,
+  isUUID,
+  formatDate,
 };

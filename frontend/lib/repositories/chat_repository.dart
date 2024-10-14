@@ -1,25 +1,34 @@
-import 'package:get/get.dart';
+import 'dart:io';
 
+import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+
+import '../helpers/helper.dart';
 import '../models/chat.dart';
 import '../models/dto/discussion_dto.dart';
+import '../models/reservation.dart';
 import '../networking/api_base_helper.dart';
 import '../services/logger_service.dart';
 
 class ChatRepository extends GetxService {
   static ChatRepository get find => Get.find<ChatRepository>();
 
-  Future<List<DiscussionDTO>?> getUserDiscussions({String? search}) async {
+  Future<(List<DiscussionDTO>?, List<Reservation>?)> getUserDiscussions({String? search}) async {
     try {
       final result = await ApiBaseHelper().request(
         RequestType.get,
         '/chat/get-chat${search != null ? '?searchText=$search' : ''}',
         sendToken: true,
       );
-      return (result['result'] as List).map((e) => DiscussionDTO.fromJson(e)).toList();
+      return (
+        (result['result'] as List).map((e) => DiscussionDTO.fromJson(e)).toList(),
+        (result['reservations'] as List).map((e) => Reservation.fromJson(e)).toList(),
+      );
     } catch (e) {
       LoggerService.logger?.e('Error occured in getChat:\n$e');
     }
-    return null;
+    return (null, null);
   }
 
   Future<List<ChatModel>?> getMoreMessages({int? pageQuery = 1, int? limitQuery = 11, required int discussionId}) async {
@@ -42,7 +51,7 @@ class ChatRepository extends GetxService {
     return null;
   }
 
-  Future<List<ChatModel>?> getMessagesById(String? idChat) async {
+  Future<List<ChatModel>?> getMessagesById(int? idChat) async {
     final result = await ApiBaseHelper().request(RequestType.get, '/chat/chat-id?idChat=$idChat', sendToken: true);
     if (idChat == null) return null;
     try {
@@ -53,7 +62,7 @@ class ChatRepository extends GetxService {
     return null;
   }
 
-  Future<List<ChatModel>?> getMessagesBeforeAfter({required String? idChat, required bool isBefore}) async {
+  Future<List<ChatModel>?> getMessagesBeforeAfter({required int? idChat, required bool isBefore}) async {
     if (idChat == null) return null;
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/chat/chat-before-after?idChat=$idChat&isBefore=$isBefore', sendToken: true);
@@ -72,5 +81,22 @@ class ChatRepository extends GetxService {
       LoggerService.logger?.e('Error occured in getNotSeenMessages:\n$e');
     }
     return 0;
+  }
+
+  Future<File?> getContract(String id) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.get, '/public/contracts/$id', sendToken: true);
+      if (result != null) {
+        final bytes = result.bodyBytes;
+        final dir = await getApplicationDocumentsDirectory();
+        final file = File(path.join(dir.path, 'contract.pdf'));
+        await file.writeAsBytes(bytes);
+        return file;
+      }
+      return null;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getContract:\n$e');
+      return null;
+    }
   }
 }

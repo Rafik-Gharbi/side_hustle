@@ -3,9 +3,14 @@ const { Op } = require("sequelize");
 const { Chat } = require("./src/models/chat_model");
 const { User } = require("./src/models/user_model");
 const { Discussion } = require("./src/models/discussion_model");
-const { getChat } = require("./src/sql/sql_request");
+const { getChat, populateContract } = require("./src/sql/sql_request");
 const { sendMail } = require("./src/helper/email_service");
 const { NotificationType } = require("./src/helper/notification_service");
+const { Contract } = require("./src/models/contract_model");
+const { isUUID } = require("./src/helper/helpers");
+const { Task } = require("./src/models/task_model");
+const { Service } = require("./src/models/service_model");
+const { createContract } = require("./src/helper/pdfHelper");
 
 function initializeSocket(io) {
   // const io = socketIo(server);
@@ -29,8 +34,19 @@ function initializeSocket(io) {
         if (discussionId && discussionId != -1) {
           chatHistoryList = await getChat(discussionId, null, connected);
         }
+        // Check if there is a chat with a contract id and fetch the contract if so
+        const formattedList = await Promise.all(
+          chatHistoryList.map(async (row) => {
+            if (isUUID(row.message)) {
+              const contract = await populateContract(row.message);
+              return contract;
+            } else {
+              return row;
+            }
+          })
+        );
         socket.join(`${discussionId}`);
-        socket.emit("chatHistory", { chatHistoryList });
+        socket.emit("chatHistory", { chatHistoryList: formattedList });
       } catch (error) {
         console.error("Error fetching chat history:", error);
       }
@@ -101,6 +117,126 @@ function initializeSocket(io) {
         // );
       } catch (error) {
         console.error("Error saving message to database:", error);
+      }
+    });
+    // Create a contract
+    socket.on("createContract", async (data) => {
+      try {
+        let reciever = await User.findByPk(data.reciever);
+        let sender = await User.findByPk(data.sender);
+        let discussion =
+          data.discussionId && data.discussionId != -1
+            ? await Discussion.findByPk(data.discussionId)
+            : await Discussion.findOne({
+                where: {
+                  [Op.or]: [
+                    { user_id: sender.id, owner_id: reciever.id },
+                    { owner_id: sender.id, user_id: reciever.id },
+                  ],
+                },
+              });
+        if (!discussion) throw new Error("discussion not found");
+
+        // Create a new chat message entry in the database
+        let contract = await Contract.create({
+          finalPrice: data.contract.finalPrice,
+          dueDate: data.contract.dueDate.split("T")[0],
+          service_id: data.contract.service?.id,
+          task_id: data.contract.task?.id,
+          reservation_id: data.reservationId,
+          seeker_id: data.sender,
+          provider_id: data.reciever,
+        });
+
+        // Create the pdf contract with the given data
+        await createContract({
+          contractId: contract.id,
+          date: new Date().toLocaleDateString(),
+          seekerName: sender.name,
+          providerName: reciever.name,
+          taskDescription: data.contract.task.description,
+          deliverables: data.contract.task.delivrables,
+          deliveryDate: contract.dueDate,
+          price: contract.finalPrice,
+          language: "fr",
+        });
+
+        // Create a new chat message for contract tracking (history in discussion)
+        await Chat.create({
+          message: contract.id,
+          sender_id: data.sender,
+          reciever_id: data.reciever,
+          discussion_id: discussion.id,
+        });
+
+        // Emit to reciever if not joined a room
+        io.to(`${data.reciever}`).emit("notification", {
+          title: "You Got a New Contract",
+          body: `${sender.name}: ${data.contract}`,
+          type: NotificationType.CHAT,
+        });
+        // Populate contract's task/service
+        contract = await populateContract(contract.id);
+        // Emit the message to all users in the room
+        io.to(`${data.discussionId}`).emit("newContract", {
+          contract: contract,
+        });
+        // TODO send an email to both parties with the new created contract
+        // const template = notificationMessage(sender, msg.message, property);
+        // sendMail(
+        //   reciever.id == 1 ? process.env.AUTH_USER_EMAIL : reciever.email,
+        //   `"Nouveau message" de ${sender.name}`,
+        //   template,
+        //   false //true for localhost, false for cloud
+        // );
+      } catch (error) {
+        console.error("Error creating contract to database:", error);
+      }
+    });
+    // Sign a contract
+    socket.on("signContract", async (data) => {
+      try {
+        const ID = data.contractId;
+
+        let contract = await populateContract(ID);
+        contract.isSigned = true;
+        contract.save();
+        
+        // Emit the message to all users in the room
+        io.to(`${data.discussionId}`).emit("updateContract", {
+          contract: contract,
+        });
+        // Emit to reciever if not joined a room
+        io.to(`${contract.seeker_id}`).emit("notification", {
+          title: "Your contract has been signed",
+          body: `${contract}`,
+          type: NotificationType.CHAT,
+        });
+      } catch (error) {
+        console.error("Error signing contract:", error);
+      }
+    });
+    // Pay a contract
+    socket.on("payContract", async (data) => {
+      try {
+        const ID = data.contractId;
+
+        let contract = await populateContract(ID);
+        contract.isPayed = true;
+        contract.save();
+
+        // Emit the message to all users in the room
+        io.to(`${data.discussionId}`).emit("updateContract", {
+          contract: contract,
+        });
+        // Emit to reciever if not joined a room
+        io.to(`${contract.provider_id}`).emit("notification", {
+          title: "Your contract has been payed",
+          body: `${contract}`,
+          type: NotificationType.CHAT,
+        });
+      } catch (error) {
+        console.error("Error paying contract:", error);
       }
     });
   });

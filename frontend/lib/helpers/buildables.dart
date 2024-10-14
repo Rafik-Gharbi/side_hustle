@@ -7,6 +7,7 @@ import '../constants/assets.dart';
 import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
+import '../models/contract.dart';
 import '../models/user.dart';
 import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
@@ -14,6 +15,7 @@ import '../views/profile/account/login_dialog.dart';
 import '../views/home/home_controller.dart';
 import '../widgets/custom_buttons.dart';
 import '../widgets/custom_text_field.dart';
+import 'form_validators.dart';
 import 'helper.dart';
 
 class Buildables {
@@ -162,50 +164,164 @@ class Buildables {
   static Future<void> requestBottomsheet({
     required TextEditingController noteController,
     TextEditingController? proposedPriceController,
+    TextEditingController? deliveryDateController,
     required void Function() onSubmit,
     bool isTask = false,
-  }) async =>
-      await Get.bottomSheet(
-        SizedBox(
-          height: proposedPriceController != null ? 390 : 330,
-          child: Material(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-            child: Padding(
-              padding: const EdgeInsets.all(Paddings.large),
-              child: Column(
-                children: [
+  }) async {
+    double height = proposedPriceController != null && deliveryDateController != null
+        ? 450
+        : (proposedPriceController != null || deliveryDateController != null)
+            ? 390
+            : 330;
+    await Get.bottomSheet(
+      SizedBox(
+        height: height,
+        child: Material(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+          child: Padding(
+            padding: const EdgeInsets.all(Paddings.large),
+            child: Column(
+              children: [
+                const SizedBox(height: Paddings.regular),
+                Center(child: Text(isTask ? 'add_proposal'.tr : 'request_service'.tr, style: AppFonts.x16Bold)),
+                const SizedBox(height: Paddings.exceptional),
+                CustomTextField(
+                  fieldController: noteController,
+                  isTextArea: true,
+                  outlinedBorder: true,
+                  outlinedBorderColor: kNeutralColor,
+                  hintText: isTask ? 'add_note_task_owner'.tr : 'add_note_store_owner'.tr,
+                ),
+                if (proposedPriceController != null) ...[
                   const SizedBox(height: Paddings.regular),
-                  Center(child: Text(isTask ? 'add_proposal'.tr : 'request_service'.tr, style: AppFonts.x16Bold)),
-                  const SizedBox(height: Paddings.exceptional),
                   CustomTextField(
-                    fieldController: noteController,
-                    isTextArea: true,
+                    fieldController: proposedPriceController,
                     outlinedBorder: true,
                     outlinedBorderColor: kNeutralColor,
-                    hintText: isTask ? 'add_note_task_owner'.tr : 'add_note_store_owner'.tr,
+                    hintText: 'propose_new_price'.tr,
                   ),
-                  if (proposedPriceController != null) ...[
+                ],
+                if (proposedPriceController != null) ...[
+                  const SizedBox(height: Paddings.regular),
+                  CustomTextField(
+                    fieldController: deliveryDateController,
+                    outlinedBorder: true,
+                    outlinedBorderColor: kNeutralColor,
+                    onTap: () => Helper.openDatePicker(
+                      isFutureDate: true,
+                      onConfirm: (date) => deliveryDateController!.text = Helper.formatDate(date),
+                    ),
+                    hintText: 'delivery_date'.tr,
+                  ),
+                ],
+                const SizedBox(height: Paddings.exceptional),
+                CustomButtons.elevatePrimary(
+                  title: isTask ? 'submit_proposal'.tr : 'submit_request'.tr,
+                  width: Get.width,
+                  onPressed: onSubmit,
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+
+  static Future<void> createContractBottomsheet({
+    required Contract contract,
+    required void Function(Contract) onSubmit,
+    bool isTask = false,
+  }) async {
+    final GlobalKey<FormState> formKey = GlobalKey();
+    final TextEditingController finalPriceController = TextEditingController(text: Helper.formatAmount(contract.finalPrice));
+    final TextEditingController dueDateController = TextEditingController(text: contract.dueDate != null ? Helper.formatDate(contract.dueDate!) : '');
+    final TextEditingController descriptionController = TextEditingController(text: isTask ? contract.task!.description : contract.service!.description);
+    final TextEditingController delivrablesController = TextEditingController(text: isTask ? contract.task!.delivrables : contract.service!.included);
+    await Get.bottomSheet(
+      SizedBox(
+        height: 600,
+        child: Material(
+          color: kNeutralColor100,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+          child: Padding(
+            padding: const EdgeInsets.all(Paddings.large),
+            child: SingleChildScrollView(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
                     const SizedBox(height: Paddings.regular),
+                    Center(child: Text('create_contract'.tr, style: AppFonts.x16Bold)),
+                    const SizedBox(height: Paddings.exceptional),
                     CustomTextField(
-                      fieldController: proposedPriceController,
+                      fieldController: finalPriceController,
                       outlinedBorder: true,
                       outlinedBorderColor: kNeutralColor,
-                      hintText: 'propose_new_price'.tr,
+                      hintText: 'price'.tr,
+                      validator: FormValidators.notEmptyOrNullFloatValidator,
                     ),
+                    const SizedBox(height: Paddings.regular),
+                    CustomTextField(
+                      fieldController: dueDateController,
+                      outlinedBorder: true,
+                      outlinedBorderColor: kNeutralColor,
+                      onTap: () => Helper.openDatePicker(
+                        isFutureDate: true,
+                        onConfirm: (date) => dueDateController.text = Helper.formatDate(date),
+                      ),
+                      hintText: 'delivery_date'.tr,
+                      validator: FormValidators.notEmptyOrNullValidator,
+                    ),
+                    const SizedBox(height: Paddings.regular),
+                    CustomTextField(
+                      fieldController: descriptionController,
+                      outlinedBorder: true,
+                      isTextArea: true,
+                      outlinedBorderColor: kNeutralColor,
+                      hintText: 'description'.tr,
+                      validator: FormValidators.notEmptyOrNullValidator,
+                    ),
+                    const SizedBox(height: Paddings.regular),
+                    CustomTextField(
+                      fieldController: delivrablesController,
+                      outlinedBorder: true,
+                      isTextArea: true,
+                      outlinedBorderColor: kNeutralColor,
+                      hintText: 'expected_delivrables'.tr,
+                      validator: FormValidators.notEmptyOrNullValidator,
+                    ),
+                    const SizedBox(height: Paddings.exceptional),
+                    CustomButtons.elevatePrimary(
+                      title: isTask ? 'submit_proposal'.tr : 'submit_request'.tr,
+                      width: Get.width,
+                      onPressed: () {
+                        if (formKey.currentState?.validate() ?? false) {
+                          onSubmit(
+                            Contract(
+                              finalPrice: double.tryParse(finalPriceController.text) ?? 0,
+                              dueDate: Helper.parseDisplayedDate(dueDateController.text),
+                              task: contract.task,
+                              service: contract.service,
+                              createdAt: DateTime.now(),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(height: Paddings.exceptional),
                   ],
-                  const SizedBox(height: Paddings.exceptional),
-                  CustomButtons.elevatePrimary(
-                    title: isTask ? 'submit_proposal'.tr : 'submit_request'.tr,
-                    width: Get.width,
-                    onPressed: onSubmit,
-                  )
-                ],
+                ),
               ),
             ),
           ),
         ),
-        isScrollControlled: true,
-      );
+      ),
+      isScrollControlled: true,
+    );
+  }
+
   static Widget buildTitle(String title, {void Function()? onSeeMore}) => Padding(
         padding: const EdgeInsets.only(bottom: Paddings.regular),
         child: Row(

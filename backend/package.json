@@ -26,6 +26,8 @@
     "mysql2": "^3.9.4",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.9",
+    "path": "^0.12.7",
+    "pdfkit": "^0.15.0",
     "sequelize": "^6.28.0",
     "sharp": "^0.33.2",
     "socket.io": "^4.7.4"

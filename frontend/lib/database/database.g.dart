@@ -2965,6 +2965,15 @@ class $ReservationTableTable extends ReservationTable
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES task_table (id)'));
+  static const VerificationMeta _serviceMeta =
+      const VerificationMeta('service');
+  @override
+  late final GeneratedColumn<String> service = GeneratedColumn<String>(
+      'service', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES task_table (id)'));
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
   late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
@@ -3018,8 +3027,18 @@ class $ReservationTableTable extends ReservationTable
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES user_table (id)'));
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, task, date, totalPrice, proposedPrice, coupon, note, status, user];
+  List<GeneratedColumn> get $columns => [
+        id,
+        task,
+        service,
+        date,
+        totalPrice,
+        proposedPrice,
+        coupon,
+        note,
+        status,
+        user
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -3039,6 +3058,10 @@ class $ReservationTableTable extends ReservationTable
     if (data.containsKey('task')) {
       context.handle(
           _taskMeta, task.isAcceptableOrUnknown(data['task']!, _taskMeta));
+    }
+    if (data.containsKey('service')) {
+      context.handle(_serviceMeta,
+          service.isAcceptableOrUnknown(data['service']!, _serviceMeta));
     }
     if (data.containsKey('date')) {
       context.handle(
@@ -3082,6 +3105,8 @@ class $ReservationTableTable extends ReservationTable
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       task: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}task']),
+      service: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}service']),
       date: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       totalPrice: attachedDatabase.typeMapping
@@ -3113,6 +3138,7 @@ class ReservationTableData extends DataClass
     implements Insertable<ReservationTableData> {
   final String id;
   final String? task;
+  final String? service;
   final DateTime date;
   final double totalPrice;
   final double? proposedPrice;
@@ -3123,6 +3149,7 @@ class ReservationTableData extends DataClass
   const ReservationTableData(
       {required this.id,
       this.task,
+      this.service,
       required this.date,
       required this.totalPrice,
       this.proposedPrice,
@@ -3136,6 +3163,9 @@ class ReservationTableData extends DataClass
     map['id'] = Variable<String>(id);
     if (!nullToAbsent || task != null) {
       map['task'] = Variable<String>(task);
+    }
+    if (!nullToAbsent || service != null) {
+      map['service'] = Variable<String>(service);
     }
     map['date'] = Variable<DateTime>(date);
     map['total_price'] = Variable<double>(totalPrice);
@@ -3158,6 +3188,9 @@ class ReservationTableData extends DataClass
     return ReservationTableCompanion(
       id: Value(id),
       task: task == null && nullToAbsent ? const Value.absent() : Value(task),
+      service: service == null && nullToAbsent
+          ? const Value.absent()
+          : Value(service),
       date: Value(date),
       totalPrice: Value(totalPrice),
       proposedPrice: proposedPrice == null && nullToAbsent
@@ -3176,6 +3209,7 @@ class ReservationTableData extends DataClass
     return ReservationTableData(
       id: serializer.fromJson<String>(json['id']),
       task: serializer.fromJson<String?>(json['task']),
+      service: serializer.fromJson<String?>(json['service']),
       date: serializer.fromJson<DateTime>(json['date']),
       totalPrice: serializer.fromJson<double>(json['totalPrice']),
       proposedPrice: serializer.fromJson<double?>(json['proposedPrice']),
@@ -3192,6 +3226,7 @@ class ReservationTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'task': serializer.toJson<String?>(task),
+      'service': serializer.toJson<String?>(service),
       'date': serializer.toJson<DateTime>(date),
       'totalPrice': serializer.toJson<double>(totalPrice),
       'proposedPrice': serializer.toJson<double?>(proposedPrice),
@@ -3206,6 +3241,7 @@ class ReservationTableData extends DataClass
   ReservationTableData copyWith(
           {String? id,
           Value<String?> task = const Value.absent(),
+          Value<String?> service = const Value.absent(),
           DateTime? date,
           double? totalPrice,
           Value<double?> proposedPrice = const Value.absent(),
@@ -3216,6 +3252,7 @@ class ReservationTableData extends DataClass
       ReservationTableData(
         id: id ?? this.id,
         task: task.present ? task.value : this.task,
+        service: service.present ? service.value : this.service,
         date: date ?? this.date,
         totalPrice: totalPrice ?? this.totalPrice,
         proposedPrice:
@@ -3229,6 +3266,7 @@ class ReservationTableData extends DataClass
     return ReservationTableData(
       id: data.id.present ? data.id.value : this.id,
       task: data.task.present ? data.task.value : this.task,
+      service: data.service.present ? data.service.value : this.service,
       date: data.date.present ? data.date.value : this.date,
       totalPrice:
           data.totalPrice.present ? data.totalPrice.value : this.totalPrice,
@@ -3247,6 +3285,7 @@ class ReservationTableData extends DataClass
     return (StringBuffer('ReservationTableData(')
           ..write('id: $id, ')
           ..write('task: $task, ')
+          ..write('service: $service, ')
           ..write('date: $date, ')
           ..write('totalPrice: $totalPrice, ')
           ..write('proposedPrice: $proposedPrice, ')
@@ -3259,14 +3298,15 @@ class ReservationTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, task, date, totalPrice, proposedPrice, coupon, note, status, user);
+  int get hashCode => Object.hash(id, task, service, date, totalPrice,
+      proposedPrice, coupon, note, status, user);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ReservationTableData &&
           other.id == this.id &&
           other.task == this.task &&
+          other.service == this.service &&
           other.date == this.date &&
           other.totalPrice == this.totalPrice &&
           other.proposedPrice == this.proposedPrice &&
@@ -3279,6 +3319,7 @@ class ReservationTableData extends DataClass
 class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
   final Value<String> id;
   final Value<String?> task;
+  final Value<String?> service;
   final Value<DateTime> date;
   final Value<double> totalPrice;
   final Value<double?> proposedPrice;
@@ -3290,6 +3331,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
   const ReservationTableCompanion({
     this.id = const Value.absent(),
     this.task = const Value.absent(),
+    this.service = const Value.absent(),
     this.date = const Value.absent(),
     this.totalPrice = const Value.absent(),
     this.proposedPrice = const Value.absent(),
@@ -3302,6 +3344,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
   ReservationTableCompanion.insert({
     required String id,
     this.task = const Value.absent(),
+    this.service = const Value.absent(),
     this.date = const Value.absent(),
     this.totalPrice = const Value.absent(),
     this.proposedPrice = const Value.absent(),
@@ -3314,6 +3357,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
   static Insertable<ReservationTableData> custom({
     Expression<String>? id,
     Expression<String>? task,
+    Expression<String>? service,
     Expression<DateTime>? date,
     Expression<double>? totalPrice,
     Expression<double>? proposedPrice,
@@ -3326,6 +3370,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (task != null) 'task': task,
+      if (service != null) 'service': service,
       if (date != null) 'date': date,
       if (totalPrice != null) 'total_price': totalPrice,
       if (proposedPrice != null) 'proposed_price': proposedPrice,
@@ -3340,6 +3385,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
   ReservationTableCompanion copyWith(
       {Value<String>? id,
       Value<String?>? task,
+      Value<String?>? service,
       Value<DateTime>? date,
       Value<double>? totalPrice,
       Value<double?>? proposedPrice,
@@ -3351,6 +3397,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     return ReservationTableCompanion(
       id: id ?? this.id,
       task: task ?? this.task,
+      service: service ?? this.service,
       date: date ?? this.date,
       totalPrice: totalPrice ?? this.totalPrice,
       proposedPrice: proposedPrice ?? this.proposedPrice,
@@ -3370,6 +3417,9 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     }
     if (task.present) {
       map['task'] = Variable<String>(task.value);
+    }
+    if (service.present) {
+      map['service'] = Variable<String>(service.value);
     }
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
@@ -3404,438 +3454,10 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     return (StringBuffer('ReservationTableCompanion(')
           ..write('id: $id, ')
           ..write('task: $task, ')
+          ..write('service: $service, ')
           ..write('date: $date, ')
           ..write('totalPrice: $totalPrice, ')
           ..write('proposedPrice: $proposedPrice, ')
-          ..write('coupon: $coupon, ')
-          ..write('note: $note, ')
-          ..write('status: $status, ')
-          ..write('user: $user, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $BookingTableTable extends BookingTable
-    with TableInfo<$BookingTableTable, BookingTableData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $BookingTableTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _serviceMeta =
-      const VerificationMeta('service');
-  @override
-  late final GeneratedColumn<String> service = GeneratedColumn<String>(
-      'service', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES service_table (id)'));
-  static const VerificationMeta _dateMeta = const VerificationMeta('date');
-  @override
-  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
-      'date', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: Constant(DateTime.now()));
-  static const VerificationMeta _totalPriceMeta =
-      const VerificationMeta('totalPrice');
-  @override
-  late final GeneratedColumn<double> totalPrice = GeneratedColumn<double>(
-      'total_price', aliasedName, false,
-      type: DriftSqlType.double,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _couponMeta = const VerificationMeta('coupon');
-  @override
-  late final GeneratedColumn<String> coupon = GeneratedColumn<String>(
-      'coupon', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(''));
-  static const VerificationMeta _noteMeta = const VerificationMeta('note');
-  @override
-  late final GeneratedColumn<String> note = GeneratedColumn<String>(
-      'note', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(''));
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
-  @override
-  late final GeneratedColumnWithTypeConverter<RequestStatus, int> status =
-      GeneratedColumn<int>('status', aliasedName, false,
-              type: DriftSqlType.int,
-              requiredDuringInsert: false,
-              defaultValue: const Constant(0))
-          .withConverter<RequestStatus>($BookingTableTable.$converterstatus);
-  static const VerificationMeta _userMeta = const VerificationMeta('user');
-  @override
-  late final GeneratedColumn<int> user = GeneratedColumn<int>(
-      'user', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES user_table (id)'));
-  @override
-  List<GeneratedColumn> get $columns =>
-      [id, service, date, totalPrice, coupon, note, status, user];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'booking_table';
-  @override
-  VerificationContext validateIntegrity(Insertable<BookingTableData> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('service')) {
-      context.handle(_serviceMeta,
-          service.isAcceptableOrUnknown(data['service']!, _serviceMeta));
-    }
-    if (data.containsKey('date')) {
-      context.handle(
-          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
-    }
-    if (data.containsKey('total_price')) {
-      context.handle(
-          _totalPriceMeta,
-          totalPrice.isAcceptableOrUnknown(
-              data['total_price']!, _totalPriceMeta));
-    }
-    if (data.containsKey('coupon')) {
-      context.handle(_couponMeta,
-          coupon.isAcceptableOrUnknown(data['coupon']!, _couponMeta));
-    }
-    if (data.containsKey('note')) {
-      context.handle(
-          _noteMeta, note.isAcceptableOrUnknown(data['note']!, _noteMeta));
-    }
-    context.handle(_statusMeta, const VerificationResult.success());
-    if (data.containsKey('user')) {
-      context.handle(
-          _userMeta, user.isAcceptableOrUnknown(data['user']!, _userMeta));
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => const {};
-  @override
-  BookingTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return BookingTableData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      service: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}service']),
-      date: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
-      totalPrice: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}total_price'])!,
-      coupon: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}coupon'])!,
-      note: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}note'])!,
-      status: $BookingTableTable.$converterstatus.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}status'])!),
-      user: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}user']),
-    );
-  }
-
-  @override
-  $BookingTableTable createAlias(String alias) {
-    return $BookingTableTable(attachedDatabase, alias);
-  }
-
-  static JsonTypeConverter2<RequestStatus, int, int> $converterstatus =
-      const EnumIndexConverter<RequestStatus>(RequestStatus.values);
-}
-
-class BookingTableData extends DataClass
-    implements Insertable<BookingTableData> {
-  final String id;
-  final String? service;
-  final DateTime date;
-  final double totalPrice;
-  final String coupon;
-  final String note;
-  final RequestStatus status;
-  final int? user;
-  const BookingTableData(
-      {required this.id,
-      this.service,
-      required this.date,
-      required this.totalPrice,
-      required this.coupon,
-      required this.note,
-      required this.status,
-      this.user});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    if (!nullToAbsent || service != null) {
-      map['service'] = Variable<String>(service);
-    }
-    map['date'] = Variable<DateTime>(date);
-    map['total_price'] = Variable<double>(totalPrice);
-    map['coupon'] = Variable<String>(coupon);
-    map['note'] = Variable<String>(note);
-    {
-      map['status'] =
-          Variable<int>($BookingTableTable.$converterstatus.toSql(status));
-    }
-    if (!nullToAbsent || user != null) {
-      map['user'] = Variable<int>(user);
-    }
-    return map;
-  }
-
-  BookingTableCompanion toCompanion(bool nullToAbsent) {
-    return BookingTableCompanion(
-      id: Value(id),
-      service: service == null && nullToAbsent
-          ? const Value.absent()
-          : Value(service),
-      date: Value(date),
-      totalPrice: Value(totalPrice),
-      coupon: Value(coupon),
-      note: Value(note),
-      status: Value(status),
-      user: user == null && nullToAbsent ? const Value.absent() : Value(user),
-    );
-  }
-
-  factory BookingTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return BookingTableData(
-      id: serializer.fromJson<String>(json['id']),
-      service: serializer.fromJson<String?>(json['service']),
-      date: serializer.fromJson<DateTime>(json['date']),
-      totalPrice: serializer.fromJson<double>(json['totalPrice']),
-      coupon: serializer.fromJson<String>(json['coupon']),
-      note: serializer.fromJson<String>(json['note']),
-      status: $BookingTableTable.$converterstatus
-          .fromJson(serializer.fromJson<int>(json['status'])),
-      user: serializer.fromJson<int?>(json['user']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'service': serializer.toJson<String?>(service),
-      'date': serializer.toJson<DateTime>(date),
-      'totalPrice': serializer.toJson<double>(totalPrice),
-      'coupon': serializer.toJson<String>(coupon),
-      'note': serializer.toJson<String>(note),
-      'status': serializer
-          .toJson<int>($BookingTableTable.$converterstatus.toJson(status)),
-      'user': serializer.toJson<int?>(user),
-    };
-  }
-
-  BookingTableData copyWith(
-          {String? id,
-          Value<String?> service = const Value.absent(),
-          DateTime? date,
-          double? totalPrice,
-          String? coupon,
-          String? note,
-          RequestStatus? status,
-          Value<int?> user = const Value.absent()}) =>
-      BookingTableData(
-        id: id ?? this.id,
-        service: service.present ? service.value : this.service,
-        date: date ?? this.date,
-        totalPrice: totalPrice ?? this.totalPrice,
-        coupon: coupon ?? this.coupon,
-        note: note ?? this.note,
-        status: status ?? this.status,
-        user: user.present ? user.value : this.user,
-      );
-  BookingTableData copyWithCompanion(BookingTableCompanion data) {
-    return BookingTableData(
-      id: data.id.present ? data.id.value : this.id,
-      service: data.service.present ? data.service.value : this.service,
-      date: data.date.present ? data.date.value : this.date,
-      totalPrice:
-          data.totalPrice.present ? data.totalPrice.value : this.totalPrice,
-      coupon: data.coupon.present ? data.coupon.value : this.coupon,
-      note: data.note.present ? data.note.value : this.note,
-      status: data.status.present ? data.status.value : this.status,
-      user: data.user.present ? data.user.value : this.user,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('BookingTableData(')
-          ..write('id: $id, ')
-          ..write('service: $service, ')
-          ..write('date: $date, ')
-          ..write('totalPrice: $totalPrice, ')
-          ..write('coupon: $coupon, ')
-          ..write('note: $note, ')
-          ..write('status: $status, ')
-          ..write('user: $user')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(id, service, date, totalPrice, coupon, note, status, user);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is BookingTableData &&
-          other.id == this.id &&
-          other.service == this.service &&
-          other.date == this.date &&
-          other.totalPrice == this.totalPrice &&
-          other.coupon == this.coupon &&
-          other.note == this.note &&
-          other.status == this.status &&
-          other.user == this.user);
-}
-
-class BookingTableCompanion extends UpdateCompanion<BookingTableData> {
-  final Value<String> id;
-  final Value<String?> service;
-  final Value<DateTime> date;
-  final Value<double> totalPrice;
-  final Value<String> coupon;
-  final Value<String> note;
-  final Value<RequestStatus> status;
-  final Value<int?> user;
-  final Value<int> rowid;
-  const BookingTableCompanion({
-    this.id = const Value.absent(),
-    this.service = const Value.absent(),
-    this.date = const Value.absent(),
-    this.totalPrice = const Value.absent(),
-    this.coupon = const Value.absent(),
-    this.note = const Value.absent(),
-    this.status = const Value.absent(),
-    this.user = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  BookingTableCompanion.insert({
-    required String id,
-    this.service = const Value.absent(),
-    this.date = const Value.absent(),
-    this.totalPrice = const Value.absent(),
-    this.coupon = const Value.absent(),
-    this.note = const Value.absent(),
-    this.status = const Value.absent(),
-    this.user = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id);
-  static Insertable<BookingTableData> custom({
-    Expression<String>? id,
-    Expression<String>? service,
-    Expression<DateTime>? date,
-    Expression<double>? totalPrice,
-    Expression<String>? coupon,
-    Expression<String>? note,
-    Expression<int>? status,
-    Expression<int>? user,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (service != null) 'service': service,
-      if (date != null) 'date': date,
-      if (totalPrice != null) 'total_price': totalPrice,
-      if (coupon != null) 'coupon': coupon,
-      if (note != null) 'note': note,
-      if (status != null) 'status': status,
-      if (user != null) 'user': user,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  BookingTableCompanion copyWith(
-      {Value<String>? id,
-      Value<String?>? service,
-      Value<DateTime>? date,
-      Value<double>? totalPrice,
-      Value<String>? coupon,
-      Value<String>? note,
-      Value<RequestStatus>? status,
-      Value<int?>? user,
-      Value<int>? rowid}) {
-    return BookingTableCompanion(
-      id: id ?? this.id,
-      service: service ?? this.service,
-      date: date ?? this.date,
-      totalPrice: totalPrice ?? this.totalPrice,
-      coupon: coupon ?? this.coupon,
-      note: note ?? this.note,
-      status: status ?? this.status,
-      user: user ?? this.user,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (service.present) {
-      map['service'] = Variable<String>(service.value);
-    }
-    if (date.present) {
-      map['date'] = Variable<DateTime>(date.value);
-    }
-    if (totalPrice.present) {
-      map['total_price'] = Variable<double>(totalPrice.value);
-    }
-    if (coupon.present) {
-      map['coupon'] = Variable<String>(coupon.value);
-    }
-    if (note.present) {
-      map['note'] = Variable<String>(note.value);
-    }
-    if (status.present) {
-      map['status'] = Variable<int>(
-          $BookingTableTable.$converterstatus.toSql(status.value));
-    }
-    if (user.present) {
-      map['user'] = Variable<int>(user.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('BookingTableCompanion(')
-          ..write('id: $id, ')
-          ..write('service: $service, ')
-          ..write('date: $date, ')
-          ..write('totalPrice: $totalPrice, ')
           ..write('coupon: $coupon, ')
           ..write('note: $note, ')
           ..write('status: $status, ')
@@ -3862,7 +3484,6 @@ abstract class _$Database extends GeneratedDatabase {
       $ServiceGalleryTableTable(this);
   late final $ReservationTableTable reservationTable =
       $ReservationTableTable(this);
-  late final $BookingTableTable bookingTable = $BookingTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3876,8 +3497,7 @@ abstract class _$Database extends GeneratedDatabase {
         storeTable,
         serviceTable,
         serviceGalleryTable,
-        reservationTable,
-        bookingTable
+        reservationTable
       ];
 }
 
@@ -4390,19 +4010,6 @@ class $$UserTableTableFilterComposer
                     $state.db.reservationTable, joinBuilder, parentComposers)));
     return f(composer);
   }
-
-  ComposableFilter bookingTableRefs(
-      ComposableFilter Function($$BookingTableTableFilterComposer f) f) {
-    final $$BookingTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.bookingTable,
-        getReferencedColumn: (t) => t.user,
-        builder: (joinBuilder, parentComposers) =>
-            $$BookingTableTableFilterComposer(ComposerState($state.db,
-                $state.db.bookingTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
 }
 
 class $$UserTableTableOrderingComposer
@@ -4669,20 +4276,6 @@ class $$TaskTableTableFilterComposer
                     $state.db.taskAttachmentTable,
                     joinBuilder,
                     parentComposers)));
-    return f(composer);
-  }
-
-  ComposableFilter reservationTableRefs(
-      ComposableFilter Function($$ReservationTableTableFilterComposer f) f) {
-    final $$ReservationTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $state.db.reservationTable,
-            getReferencedColumn: (t) => t.task,
-            builder: (joinBuilder, parentComposers) =>
-                $$ReservationTableTableFilterComposer(ComposerState($state.db,
-                    $state.db.reservationTable, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
@@ -5235,19 +4828,6 @@ class $$ServiceTableTableFilterComposer
                     parentComposers)));
     return f(composer);
   }
-
-  ComposableFilter bookingTableRefs(
-      ComposableFilter Function($$BookingTableTableFilterComposer f) f) {
-    final $$BookingTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.bookingTable,
-        getReferencedColumn: (t) => t.service,
-        builder: (joinBuilder, parentComposers) =>
-            $$BookingTableTableFilterComposer(ComposerState($state.db,
-                $state.db.bookingTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
 }
 
 class $$ServiceTableTableOrderingComposer
@@ -5424,6 +5004,7 @@ typedef $$ReservationTableTableCreateCompanionBuilder
     = ReservationTableCompanion Function({
   required String id,
   Value<String?> task,
+  Value<String?> service,
   Value<DateTime> date,
   Value<double> totalPrice,
   Value<double?> proposedPrice,
@@ -5437,6 +5018,7 @@ typedef $$ReservationTableTableUpdateCompanionBuilder
     = ReservationTableCompanion Function({
   Value<String> id,
   Value<String?> task,
+  Value<String?> service,
   Value<DateTime> date,
   Value<double> totalPrice,
   Value<double?> proposedPrice,
@@ -5467,6 +5049,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
             Value<String?> task = const Value.absent(),
+            Value<String?> service = const Value.absent(),
             Value<DateTime> date = const Value.absent(),
             Value<double> totalPrice = const Value.absent(),
             Value<double?> proposedPrice = const Value.absent(),
@@ -5479,6 +5062,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
               ReservationTableCompanion(
             id: id,
             task: task,
+            service: service,
             date: date,
             totalPrice: totalPrice,
             proposedPrice: proposedPrice,
@@ -5491,6 +5075,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             required String id,
             Value<String?> task = const Value.absent(),
+            Value<String?> service = const Value.absent(),
             Value<DateTime> date = const Value.absent(),
             Value<double> totalPrice = const Value.absent(),
             Value<double?> proposedPrice = const Value.absent(),
@@ -5503,6 +5088,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
               ReservationTableCompanion.insert(
             id: id,
             task: task,
+            service: service,
             date: date,
             totalPrice: totalPrice,
             proposedPrice: proposedPrice,
@@ -5559,6 +5145,18 @@ class $$ReservationTableTableFilterComposer
     final $$TaskTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.task,
+        referencedTable: $state.db.taskTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TaskTableTableFilterComposer(ComposerState(
+                $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$TaskTableTableFilterComposer get service {
+    final $$TaskTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.service,
         referencedTable: $state.db.taskTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
@@ -5630,209 +5228,15 @@ class $$ReservationTableTableOrderingComposer
     return composer;
   }
 
-  $$UserTableTableOrderingComposer get user {
-    final $$UserTableTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.user,
-        referencedTable: $state.db.userTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$UserTableTableOrderingComposer(ComposerState(
-                $state.db, $state.db.userTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
-typedef $$BookingTableTableCreateCompanionBuilder = BookingTableCompanion
-    Function({
-  required String id,
-  Value<String?> service,
-  Value<DateTime> date,
-  Value<double> totalPrice,
-  Value<String> coupon,
-  Value<String> note,
-  Value<RequestStatus> status,
-  Value<int?> user,
-  Value<int> rowid,
-});
-typedef $$BookingTableTableUpdateCompanionBuilder = BookingTableCompanion
-    Function({
-  Value<String> id,
-  Value<String?> service,
-  Value<DateTime> date,
-  Value<double> totalPrice,
-  Value<String> coupon,
-  Value<String> note,
-  Value<RequestStatus> status,
-  Value<int?> user,
-  Value<int> rowid,
-});
-
-class $$BookingTableTableTableManager extends RootTableManager<
-    _$Database,
-    $BookingTableTable,
-    BookingTableData,
-    $$BookingTableTableFilterComposer,
-    $$BookingTableTableOrderingComposer,
-    $$BookingTableTableCreateCompanionBuilder,
-    $$BookingTableTableUpdateCompanionBuilder> {
-  $$BookingTableTableTableManager(_$Database db, $BookingTableTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$BookingTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$BookingTableTableOrderingComposer(ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<String> id = const Value.absent(),
-            Value<String?> service = const Value.absent(),
-            Value<DateTime> date = const Value.absent(),
-            Value<double> totalPrice = const Value.absent(),
-            Value<String> coupon = const Value.absent(),
-            Value<String> note = const Value.absent(),
-            Value<RequestStatus> status = const Value.absent(),
-            Value<int?> user = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              BookingTableCompanion(
-            id: id,
-            service: service,
-            date: date,
-            totalPrice: totalPrice,
-            coupon: coupon,
-            note: note,
-            status: status,
-            user: user,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String id,
-            Value<String?> service = const Value.absent(),
-            Value<DateTime> date = const Value.absent(),
-            Value<double> totalPrice = const Value.absent(),
-            Value<String> coupon = const Value.absent(),
-            Value<String> note = const Value.absent(),
-            Value<RequestStatus> status = const Value.absent(),
-            Value<int?> user = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              BookingTableCompanion.insert(
-            id: id,
-            service: service,
-            date: date,
-            totalPrice: totalPrice,
-            coupon: coupon,
-            note: note,
-            status: status,
-            user: user,
-            rowid: rowid,
-          ),
-        ));
-}
-
-class $$BookingTableTableFilterComposer
-    extends FilterComposer<_$Database, $BookingTableTable> {
-  $$BookingTableTableFilterComposer(super.$state);
-  ColumnFilters<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<DateTime> get date => $state.composableBuilder(
-      column: $state.table.date,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get totalPrice => $state.composableBuilder(
-      column: $state.table.totalPrice,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get coupon => $state.composableBuilder(
-      column: $state.table.coupon,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get note => $state.composableBuilder(
-      column: $state.table.note,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnWithTypeConverterFilters<RequestStatus, RequestStatus, int>
-      get status => $state.composableBuilder(
-          column: $state.table.status,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
-
-  $$ServiceTableTableFilterComposer get service {
-    final $$ServiceTableTableFilterComposer composer = $state.composerBuilder(
+  $$TaskTableTableOrderingComposer get service {
+    final $$TaskTableTableOrderingComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.service,
-        referencedTable: $state.db.serviceTable,
+        referencedTable: $state.db.taskTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
-            $$ServiceTableTableFilterComposer(ComposerState($state.db,
-                $state.db.serviceTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$UserTableTableFilterComposer get user {
-    final $$UserTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.user,
-        referencedTable: $state.db.userTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$UserTableTableFilterComposer(ComposerState(
-                $state.db, $state.db.userTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
-class $$BookingTableTableOrderingComposer
-    extends OrderingComposer<_$Database, $BookingTableTable> {
-  $$BookingTableTableOrderingComposer(super.$state);
-  ColumnOrderings<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<DateTime> get date => $state.composableBuilder(
-      column: $state.table.date,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get totalPrice => $state.composableBuilder(
-      column: $state.table.totalPrice,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get coupon => $state.composableBuilder(
-      column: $state.table.coupon,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get note => $state.composableBuilder(
-      column: $state.table.note,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get status => $state.composableBuilder(
-      column: $state.table.status,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  $$ServiceTableTableOrderingComposer get service {
-    final $$ServiceTableTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.service,
-        referencedTable: $state.db.serviceTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$ServiceTableTableOrderingComposer(ComposerState($state.db,
-                $state.db.serviceTable, joinBuilder, parentComposers)));
+            $$TaskTableTableOrderingComposer(ComposerState(
+                $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
     return composer;
   }
 
@@ -5870,6 +5274,4 @@ class $DatabaseManager {
       $$ServiceGalleryTableTableTableManager(_db, _db.serviceGalleryTable);
   $$ReservationTableTableTableManager get reservationTable =>
       $$ReservationTableTableTableManager(_db, _db.reservationTable);
-  $$BookingTableTableTableManager get bookingTable =>
-      $$BookingTableTableTableManager(_db, _db.bookingTable);
 }

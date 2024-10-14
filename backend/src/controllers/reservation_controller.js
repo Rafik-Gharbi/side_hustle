@@ -22,7 +22,7 @@ const {
 } = require("../helper/notification_service");
 
 exports.add = async (req, res) => {
-  const { taskId, date, totalPrice, coupon, status, note, proposedPrice } =
+  const { taskId, date, totalPrice, coupon, status, note, proposedPrice, dueDate } =
     req.body;
   if (!taskId || !date || !totalPrice || !status) {
     return res.status(400).json({ message: "missing" });
@@ -55,6 +55,7 @@ exports.add = async (req, res) => {
       coupon,
       note,
       status,
+      dueDate,
     });
 
     const reservationTask = await populateOneTask(
@@ -266,6 +267,7 @@ exports.userReservationsHistory = async (req, res) => {
           note: row.note,
           status: row.status,
           taskAttachments,
+          dueDate: row.dueDate,
         };
       })
     );
@@ -309,6 +311,7 @@ exports.getReservationByTask = async (req, res) => {
           note: row.note,
           status: row.status,
           taskAttachments: populatedTask.attachments,
+          dueDate: row.dueDate,
         };
       })
     );
@@ -452,6 +455,7 @@ exports.getReservationDetails = async (req, res) => {
         note: reservation.note,
         status: reservation.status,
         taskAttachments: populatedTask.attachments,
+        dueDate:  reservation.dueDate,
       };
     }
 

@@ -35,6 +35,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text({ type: "application/xml" }));
 app.use(express.static(path.join(__dirname, "public")));
 
+// API for getting created contract
+app.get("/public/contracts/:id", (req, res) => {
+  // TODO secure this route by checking the decoded jwt if it is one of the contract parties
+  res.sendFile(
+    path.join(__dirname, `./public/contracts/contract_${req.params.id}.pdf`)
+  );
+});
 // API for uploads file (photo, galleries)
 app.get("/public/task/:id", (req, res) => {
   res.sendFile(path.join(__dirname, `./public/task/${req.params.id}`));

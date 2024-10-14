@@ -114,7 +114,7 @@ class ChatScreen extends StatelessWidget {
                                                     children: [
                                                       Expanded(
                                                         child: Text(
-                                                          discussion.lastMessage ?? '',
+                                                          Helper.isUUID(discussion.lastMessage ?? '') ? 'new_contract'.tr : discussion.lastMessage ?? '',
                                                           style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),

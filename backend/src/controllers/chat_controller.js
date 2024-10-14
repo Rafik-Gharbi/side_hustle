@@ -1,4 +1,6 @@
+const { Op } = require("sequelize");
 const { sequelize } = require("../../db.config");
+const { Reservation } = require("../models/reservation_model");
 const { User } = require("../models/user_model");
 const {
   getChat,
@@ -6,6 +8,9 @@ const {
   getDiscussionIdByChatId,
   getNotSeenMessages,
 } = require("../sql/sql_request");
+const { Booking } = require("../models/booking_model");
+const { Task } = require("../models/task_model");
+const { Service } = require("../models/service_model");
 
 exports.getUserDiscussions = async (req, res) => {
   const searchText = req.query.searchText;
@@ -45,6 +50,7 @@ exports.getUserDiscussions = async (req, res) => {
       },
       type: sequelize.QueryTypes.SELECT,
     });
+    let userId, ownerId;
     const result = await Promise.all(
       discussionList.map(async (discussion) => {
         const ownerFound = await User.findOne({
@@ -53,6 +59,8 @@ exports.getUserDiscussions = async (req, res) => {
         const userFound = await User.findOne({
           where: { id: discussion.user_id },
         });
+        userId = discussion.user_id;
+        ownerId = discussion.owner_id;
         const notSeen = await getNotSeenMessages(discussion.id, connected);
         return {
           id: discussion.id,
@@ -68,7 +76,32 @@ exports.getUserDiscussions = async (req, res) => {
       })
     );
 
-    return res.status(200).json({ result: result });
+    const conditions = [
+      { [Op.or]: [{ status: "pending" }, { status: "confirmed" }] },
+    ];
+    // Add userId & ownerId condition if defined
+    if (userId !== undefined && ownerId !== undefined)
+      conditions.push({ [Op.or]: [{ user_id: userId }, { user_id: ownerId }] });
+    const existActiveReservation = await Reservation.findAll({
+      where: { [Op.and]: conditions },
+      include: [
+        { model: User, as: "user" },
+        { model: Task, as: "task", include: [{ model: User, as: "user" }] },
+      ],
+    });
+    const existActiveBooking = await Booking.findAll({
+      where: { [Op.and]: conditions },
+      include: [
+        { model: User, as: "user" },
+        { model: Service, as: "service" },
+      ],
+    });
+
+    return res.status(200).json({
+      result: result,
+      reservations: existActiveReservation,
+      bookings: existActiveBooking,
+    });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

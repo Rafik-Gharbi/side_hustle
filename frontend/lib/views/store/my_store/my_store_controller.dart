@@ -7,16 +7,16 @@ import 'package:latlong2/latlong.dart';
 
 import '../../../helpers/helper.dart';
 import '../../../helpers/image_picker_by_platform/image_picker_platform.dart';
-import '../../../models/booking.dart';
 import '../../../models/category.dart';
 import '../../../models/dto/image_dto.dart';
 import '../../../models/dto/store_review_dto.dart';
 import '../../../models/governorate.dart';
+import '../../../models/reservation.dart';
 import '../../../models/review.dart';
 import '../../../models/service.dart';
 import '../../../models/store.dart';
 import '../../../models/user.dart';
-import '../../../repositories/booking_repository.dart';
+import '../../../repositories/reservation_repository.dart';
 import '../../../repositories/store_repository.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/logger_service.dart';
@@ -220,8 +220,8 @@ class MyStoreController extends GetxController {
       );
 
   Future<void> bookService(Service service) async {
-    final result = await BookingRepository.find.addBooking(
-      booking: Booking(
+    final result = await ReservationRepository.find.addServiceReservation(
+      reservation: Reservation(
         service: service,
         date: DateTime.now(),
         totalPrice: service.price ?? 0,

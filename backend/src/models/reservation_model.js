@@ -14,6 +14,7 @@ const Reservation = sequelize.define(
     coupon: { type: Sequelize.STRING, allowNull: true },
     note: { type: Sequelize.STRING, allowNull: true },
     status: { type: Sequelize.STRING, allowNull: true },
+    dueDate: { type: Sequelize.DATE, allowNull: true },
   },
   {
     tableName: "reservation",

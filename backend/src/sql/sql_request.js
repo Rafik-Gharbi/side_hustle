@@ -14,6 +14,7 @@ const { Task } = require("../models/task_model");
 const { User } = require("../models/user_model");
 const { Booking } = require("../models/booking_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
+const { Contract } = require("../models/contract_model");
 
 //function to get name and id from a given ids and table
 const fetchNames = async (ids, tableName) => {
@@ -456,7 +457,9 @@ async function populateOneTask(task, currentUserId) {
   if (currentUserId) {
     userFavorites = await getFavoriteTaskByUserId(currentUserId);
   }
-  const owner = await User.findOne({ where: { id: task.owner_id ?? task.owner.id } });
+  const owner = await User.findOne({
+    where: { id: task.owner_id ?? task.owner.id },
+  });
   let taskAttachments = [];
   taskAttachments = await TaskAttachmentModel.findAll({
     where: { task_id: task.id },
@@ -721,6 +724,33 @@ async function getChat(
   return chatList.reverse();
 }
 
+function populateContract(contractId) {
+  return Contract.findOne({
+    where: { id: contractId },
+    include: [
+      {
+        model: User,
+        as: "seeker",
+        attributes: ["id", "name"],
+      },
+      {
+        model: User,
+        as: "provider",
+        attributes: ["id", "name"],
+      },
+      {
+        model: Task,
+        as: "task",
+        include: [{ model: User, as: "user" }],
+      },
+      {
+        model: Service,
+        as: "service",
+      },
+    ],
+  });
+}
+
 module.exports = {
   fetchNamesAndCount,
   getLocationById,
@@ -750,4 +780,5 @@ module.exports = {
   fetchUserOngoingBooking,
   fetchUserOngoingReservation,
   getRandomHotTasks,
+  populateContract,
 };

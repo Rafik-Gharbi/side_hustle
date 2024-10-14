@@ -13,4 +13,5 @@ class Assets {
   static const String emptyAnimation = 'assets/lottie/empty_animation.json';
   // Pictures
   static const String noImage = 'assets/images/no_image.jpg';
+  static const String signedContract = 'assets/images/signed.png';
 }

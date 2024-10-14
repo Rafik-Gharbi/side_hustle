@@ -4,7 +4,6 @@ import '../constants/constants.dart';
 import '../controllers/main_app_controller.dart';
 import '../database/database_repository/task_database_repository.dart';
 import '../helpers/helper.dart';
-import '../models/booking.dart';
 import '../models/dto/task_request_dto.dart';
 import '../models/filter_model.dart';
 import '../models/reservation.dart';
@@ -23,12 +22,8 @@ class TaskRepository extends GetxService {
         tasks.putIfAbsent('hotTasks', () => (result['hotTasks'] as List).map((e) => Task.fromJson(e)).toList());
         tasks.putIfAbsent('nearbyTasks', () => (result['nearbyTasks'] as List).map((e) => Task.fromJson(e)).toList());
         if (result['reservation'] != null) tasks.putIfAbsent('reservation', () => (result['reservation'] as List).map((e) => Reservation.fromJson(e)).toList());
-        if (result['booking'] != null) tasks.putIfAbsent('booking', () => (result['booking'] as List).map((e) => Booking.fromJson(e)).toList());
         if (result['ongoingReservation'] != null) {
           tasks.putIfAbsent('ongoingReservation', () => (result['ongoingReservation'] as List).map((e) => Reservation.fromJson(e)).toList());
-        }
-        if (result['ongoingBooking'] != null) {
-          tasks.putIfAbsent('ongoingBooking', () => (result['ongoingBooking'] as List).map((e) => Booking.fromJson(e)).toList());
         }
       } else {
         tasks = await TaskDatabaseRepository.find.getHomeTasks();

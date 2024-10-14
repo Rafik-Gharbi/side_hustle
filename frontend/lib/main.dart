@@ -9,7 +9,6 @@ import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'constants/colors.dart';
-import 'database/database_repository/booking_database_repository.dart';
 import 'database/database_repository/category_database_repository.dart';
 import 'database/database_repository/governorate_database_repository.dart';
 import 'database/database_repository/reservation_database_repository.dart';
@@ -20,7 +19,6 @@ import 'firebase_options.dart';
 import 'helpers/helper.dart';
 import 'helpers/notification_service.dart';
 import 'networking/api_base_helper.dart';
-import 'repositories/booking_repository.dart';
 import 'repositories/boost_repository.dart';
 import 'repositories/chat_repository.dart';
 import 'repositories/favorite_repository.dart';
@@ -119,7 +117,7 @@ Future<void> main() async {
           onDismissActionReceivedMethod: NotificationService.onDismissActionReceivedMethod,
         ),
       );
-  runApp(const MyApp());
+  runApp(const RestartWidget(child: MyApp()));
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -308,7 +306,6 @@ class InitialBindings implements Bindings {
     Get.put(TaskRepository(), permanent: true);
     Get.put(FavoriteRepository(), permanent: true);
     Get.put(ReservationRepository(), permanent: true);
-    Get.put(BookingRepository(), permanent: true);
     Get.put(StoreRepository(), permanent: true);
     Get.put(NotificationRepository(), permanent: true);
     Get.put(ReviewRepository(), permanent: true);
@@ -320,6 +317,24 @@ class InitialBindings implements Bindings {
     Get.put(GovernorateDatabaseRepository(), permanent: true);
     Get.put(StoreDatabaseRepository(), permanent: true);
     Get.put(ReservationDatabaseRepository(), permanent: true);
-    Get.put(BookingDatabaseRepository(), permanent: true);
   }
+}
+
+class RestartWidget extends StatefulWidget {
+  final Widget child;
+  const RestartWidget({super.key, required this.child});
+
+  static void restartApp(BuildContext context) => context.findAncestorStateOfType<RestartWidgetState>()?.restartApp();
+
+  @override
+  RestartWidgetState createState() => RestartWidgetState();
+}
+
+class RestartWidgetState extends State<RestartWidget> {
+  Key key = UniqueKey();
+
+  void restartApp() => setState(() => key = UniqueKey());
+
+  @override
+  Widget build(BuildContext context) => KeyedSubtree(key: key, child: widget.child);
 }

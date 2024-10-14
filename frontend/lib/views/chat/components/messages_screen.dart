@@ -18,6 +18,7 @@ import '../chat_controller.dart';
 import 'build_chat_header.dart';
 import 'build_chat_messages.dart';
 import 'build_chat_search_result.dart';
+import 'circular_button_with_menu.dart';
 
 class MessagesScreen extends StatelessWidget {
   static const String routeName = '/messages';
@@ -98,10 +99,12 @@ class MessagesScreen extends StatelessWidget {
                                           hintText: 'send_message'.tr,
                                           textAlign: TextAlign.start,
                                           onSubmitted: (_) => controller.sendMessage(),
-                                          prefixIcon: CustomButtons.icon(
-                                            onPressed: controller.attachToMessage,
-                                            icon: Icon(Icons.attach_file_rounded, color: kNeutralColor),
-                                            disabled: controller.selectedChatBubble == null,
+                                          prefixIcon: CircularButtonWithMenu(
+                                            menuItems: [
+                                              MenuOptionItem(icon: Icons.attach_file_rounded, label: 'attachments'.tr, onTap: controller.attachToMessage),
+                                              if (controller.hasOngoingReservation)
+                                                MenuOptionItem(icon: Icons.assignment_outlined, label: 'create_contract'.tr, onTap: controller.createContract),
+                                            ],
                                           ),
                                           suffixIcon: CustomButtons.icon(
                                             onPressed: controller.sendMessage,

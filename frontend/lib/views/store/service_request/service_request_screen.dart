@@ -29,12 +29,12 @@ class ServiceRequestScreen extends StatelessWidget {
           onBack: NavigationHistoryObserver.instance.previousRouteHistory == MyStoreScreen.routeName ? () => MyStoreController.find.init() : null,
           body: LoadingRequest(
             isLoading: controller.isLoading,
-            child: controller.bookingList.isEmpty
+            child: controller.reservationList.isEmpty
                 ? Center(child: Text('found_nothing'.tr, style: AppFonts.x14Regular))
                 : ListView.builder(
-                    itemCount: controller.bookingList.length,
+                    itemCount: controller.reservationList.length,
                     itemBuilder: (context, index) {
-                      final booking = controller.bookingList[index];
+                      final reservation = controller.reservationList[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: 2),
                         child: OpenContainer<bool>(
@@ -42,11 +42,11 @@ class ServiceRequestScreen extends StatelessWidget {
                           transitionDuration: const Duration(milliseconds: 600),
                           onClosed: (data) => data != null && data ? Future.delayed(const Duration(milliseconds: 600), () => controller.init()) : null,
                           openBuilder: (_, __) => UserProfileScreen(
-                            user: booking.user,
-                            requestStatus: booking.status,
+                            user: reservation.user,
+                            requestStatus: reservation.status,
                             isService: true,
-                            onAccept: () => controller.acceptProposal(booking),
-                            onReject: () => controller.rejectProposals(booking),
+                            onAccept: () => controller.acceptProposal(reservation),
+                            onReject: () => controller.rejectProposals(reservation),
                           ),
                           closedBuilder: (_, openContainer) => Padding(
                             padding: const EdgeInsets.only(bottom: Paddings.regular),
@@ -59,25 +59,25 @@ class ServiceRequestScreen extends StatelessWidget {
                               title: Row(
                                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(booking.user.name ?? '', style: AppFonts.x16Bold),
+                                  Text(reservation.user.name ?? '', style: AppFonts.x16Bold),
                                   // TODO Add user review score
                                 ],
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('${'note'.tr}: ${booking.note.isEmpty ? 'not_provided'.tr : booking.note}', style: AppFonts.x14Regular),
+                                  Text('${'note'.tr}: ${reservation.note.isEmpty ? 'not_provided'.tr : reservation.note}', style: AppFonts.x14Regular),
                                   const SizedBox(height: Paddings.regular),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Align(
                                         alignment: Alignment.centerRight,
-                                        child: Text(Helper.formatDate(booking.date), style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                                        child: Text(Helper.formatDate(reservation.date), style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(right: Paddings.regular),
-                                        child: Text(booking.status.value.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
+                                        child: Text(reservation.status.value.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
                                       ),
                                     ],
                                   ),

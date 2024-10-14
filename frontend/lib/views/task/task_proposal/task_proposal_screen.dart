@@ -65,6 +65,7 @@ class TaskProposalScreen extends StatelessWidget {
                                   Text('${'note'.tr}: ${reservation.note.isEmpty ? 'not_provided'.tr : reservation.note}', style: AppFonts.x14Regular),
                                   if (reservation.proposedPrice != null && reservation.proposedPrice! > 0)
                                     Text('${'proposed_price'.tr}: ${reservation.proposedPrice}', style: AppFonts.x14Regular),
+                                  if (reservation.dueDate != null) Text('${'due_date'.tr}: ${Helper.formatDate(reservation.dueDate!)}', style: AppFonts.x14Regular),
                                   const SizedBox(height: Paddings.regular),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
