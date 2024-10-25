@@ -88,7 +88,7 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
                           if (pack.bonus != null) Text('plus_bonus'.trParams({'bonus': pack.bonus.toString()}), style: AppFonts.x14Bold.copyWith(color: kAccentColor)),
                         ],
                       ),
-                      Text(pack.description, style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
+                      Text(pack.description, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                       const SizedBox(height: Paddings.small),
                       if (pack.bonusMsg != null) Text(pack.bonusMsg!, style: AppFonts.x12Bold.copyWith(color: kAccentColor)),
                       const SizedBox(height: Paddings.large),

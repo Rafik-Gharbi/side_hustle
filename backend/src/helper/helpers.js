@@ -487,40 +487,39 @@ function calculateTaskCoinsPrice(taskPrice) {
 
 async function calculateAvailablePurchasedCoins(userId) {
   let available = 0;
-  const purchaseTransactions = await Transaction.findAll({
+  const transactions = await Transaction.findAll({
     where: {
       user_id: userId,
-      createdAt: {
-        // Calculate transactions that are not yet expired
-        [Op.gte]: Sequelize.literal(
-          `DATE_SUB(NOW(), INTERVAL (SELECT validMonths FROM coin_pack WHERE id = coin_pack_purchase.coin_pack_id) MONTH)`
-        ),
-      },
     },
     include: [
       {
         model: CoinPackPurchase,
         required: true,
         include: [
-          {
-            model: CoinPack,
-            required: true,
-            where: {
-              validMonths: { [Op.ne]: null }, // Ensure CoinPack has a validMonths field
-            },
-          },
+          { model: CoinPack, where: { validMonths: { [Op.ne]: null } } },
         ],
       },
     ],
-    order: [
-      [
-        Sequelize.literal(
-          "DATE_ADD(Transaction.createdAt, INTERVAL (SELECT validMonths FROM coin_pack WHERE id = coin_pack_purchase.coin_pack_id) MONTH)"
-        ),
-        "ASC",
-      ],
-    ],
   });
+  const now = new Date();
+  const purchaseTransactions = transactions
+    .filter((transaction) => {
+      const { validMonths } = transaction.coin_pack_purchase.coin_pack;
+      const expirationDate = new Date(transaction.createdAt);
+      expirationDate.setMonth(expirationDate.getMonth() + validMonths);
+      return expirationDate >= now;
+    })
+    .sort((a, b) => {
+      const aExpirationDate = new Date(a.createdAt);
+      const bExpirationDate = new Date(b.createdAt);
+      aExpirationDate.setMonth(
+        aExpirationDate.getMonth() + a.coin_pack_purchase.coin_pack.validMonths
+      );
+      bExpirationDate.setMonth(
+        bExpirationDate.getMonth() + b.coin_pack_purchase.coin_pack.validMonths
+      );
+      return aExpirationDate - bExpirationDate;
+    });
 
   for (let index = 0; index < purchaseTransactions.length; index++) {
     const transaction = purchaseTransactions[index];
@@ -541,39 +540,38 @@ async function fetchPurchasedCoinsTransactions(userId) {
     where: {
       user_id: userId,
       type: "purchase",
-      createdAt: {
-        // Calculate transactions that are not yet expired
-        [Op.gte]: Sequelize.literal(
-          `DATE_SUB(NOW(), INTERVAL (SELECT validMonths FROM coin_pack WHERE id = coin_pack_purchase.coin_pack_id) MONTH)`
-        ),
-      },
     },
     include: [
       {
         model: CoinPackPurchase,
         required: true,
         include: [
-          {
-            model: CoinPack,
-            required: true,
-            where: {
-              validMonths: { [Op.ne]: null }, // Ensure CoinPack has a validMonths field
-            },
-          },
+          { model: CoinPack, where: { validMonths: { [Op.ne]: null } } },
         ],
       },
     ],
-    order: [
-      [
-        Sequelize.literal(
-          "DATE_ADD(Transaction.createdAt, INTERVAL (SELECT validMonths FROM coin_pack WHERE id = coin_pack_purchase.coin_pack_id) MONTH)"
-        ),
-        "ASC",
-      ],
-    ],
   });
+  const now = new Date();
+  const purchaseTransactions = transactions
+    .filter((transaction) => {
+      const { validMonths } = transaction.coin_pack_purchase.coin_pack;
+      const expirationDate = new Date(transaction.createdAt);
+      expirationDate.setMonth(expirationDate.getMonth() + validMonths);
+      return expirationDate >= now;
+    })
+    .sort((a, b) => {
+      const aExpirationDate = new Date(a.createdAt);
+      const bExpirationDate = new Date(b.createdAt);
+      aExpirationDate.setMonth(
+        aExpirationDate.getMonth() + a.coin_pack_purchase.coin_pack.validMonths
+      );
+      bExpirationDate.setMonth(
+        bExpirationDate.getMonth() + b.coin_pack_purchase.coin_pack.validMonths
+      );
+      return aExpirationDate - bExpirationDate;
+    });
   const calculateAvailable = await Promise.all(
-    transactions.map(async (row) => {
+    purchaseTransactions.map(async (row) => {
       let available = 0;
       const coinPackTransactions = await Transaction.findAll({
         where: {
