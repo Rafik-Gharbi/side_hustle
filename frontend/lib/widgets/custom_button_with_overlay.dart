@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
+import '../helpers/helper.dart';
 
 class CustomButtonWithOverlay extends StatefulWidget {
   final Widget button;
@@ -58,7 +59,7 @@ class _CustomButtonWithOverlayState extends State<CustomButtonWithOverlay> {
 
   void toggleOverlay(BuildContext context) {
     if (Get.isDialogOpen ?? false) {
-      Get.back();
+      Helper.goBack();
       widget.onCloseOverlay?.call();
     } else {
       _showDropdown(context);

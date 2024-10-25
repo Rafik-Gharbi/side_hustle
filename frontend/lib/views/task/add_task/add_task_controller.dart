@@ -124,9 +124,41 @@ class AddTaskController extends GetxController {
         dueDate: _createdDate,
       );
       if (task?.id == null) {
-        await TaskRepository.find.addTask(newtask, withBack: true);
+        if (newtask.price != null && newtask.price! > 0) {
+          Helper.openConfirmationDialog(
+            title: 'creating_task_coins_msg'.trParams({
+              'coins': (Helper.calculateTaskCoinsPrice(newtask.price!)).toString(),
+              'baseCoins': (AuthenticationService.find.jwtUserData?.totalCoins ?? 0).toString(),
+            }),
+            onConfirm: () async {
+              if (Helper.calculateTaskCoinsPrice(newtask.price!) < (AuthenticationService.find.jwtUserData?.totalCoins ?? 0)) {
+                await TaskRepository.find.addTask(newtask, withBack: true);
+              } else {
+                Helper.snackBar(message: 'insufficient_base_coins'.tr);
+              }
+            },
+          );
+        } else {
+          await TaskRepository.find.addTask(newtask, withBack: true);
+        }
       } else {
-        await TaskRepository.find.updateTask(newtask, withBack: true);
+        if (newtask.price != null && newtask.price! > 0 && newtask.price! > (task!.price ?? 0)) {
+          Helper.openConfirmationDialog(
+            title: 'update_task_coins_msg'.trParams({
+              'coins': (Helper.calculateTaskCoinsPrice(newtask.price!) - task!.deductedCoins).toString(),
+              'baseCoins': (AuthenticationService.find.jwtUserData?.totalCoins ?? 0).toString(),
+            }),
+            onConfirm: () async {
+              if ((Helper.calculateTaskCoinsPrice(newtask.price!) - task!.deductedCoins) < (AuthenticationService.find.jwtUserData?.totalCoins ?? 0)) {
+                await TaskRepository.find.updateTask(newtask, withBack: true);
+              } else {
+                Helper.snackBar(message: 'insufficient_base_coins'.tr);
+              }
+            },
+          );
+        } else {
+          await TaskRepository.find.updateTask(newtask, withBack: true);
+        }
       }
       isAdding.value = false;
     }

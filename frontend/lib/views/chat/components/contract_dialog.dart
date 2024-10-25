@@ -51,7 +51,7 @@ class ContractDialog extends StatelessWidget {
                               children: [
                                 const SizedBox(width: 40),
                                 Text('new_contract'.tr, style: AppFonts.x16Bold),
-                                CustomButtons.icon(icon: const Icon(Icons.close), onPressed: Get.back),
+                                CustomButtons.icon(icon: const Icon(Icons.close), onPressed: () => Helper.goBack()),
                               ],
                             ),
                           ),
@@ -90,7 +90,7 @@ class ContractDialog extends StatelessWidget {
                                 child: CustomButtons.elevatePrimary(
                                   title: 'done'.tr,
                                   width: 200,
-                                  onPressed: () => Get.back(),
+                                  onPressed: () => Helper.goBack(),
                                 ),
                               )
                             else
@@ -102,7 +102,7 @@ class ContractDialog extends StatelessWidget {
                                     width: 150,
                                     onPressed: () {
                                       onRejectContract();
-                                      Get.back();
+                                      Helper.goBack();
                                     },
                                   ),
                                   CustomButtons.elevatePrimary(
@@ -111,7 +111,7 @@ class ContractDialog extends StatelessWidget {
                                     onPressed: () {
                                       if (isContractAccepted) {
                                         onSignContract();
-                                        Get.back();
+                                        Helper.goBack();
                                       } else {
                                         Helper.snackBar(message: 'sign_contract_first_msg'.tr);
                                       }
@@ -126,7 +126,7 @@ class ContractDialog extends StatelessWidget {
                                 child: CustomButtons.elevatePrimary(
                                   title: 'done'.tr,
                                   width: 200,
-                                  onPressed: () => Get.back(),
+                                  onPressed: () => Helper.goBack(),
                                 ),
                               )
                             else
@@ -138,7 +138,7 @@ class ContractDialog extends StatelessWidget {
                                   onPressed: () {
                                     if (isContractAccepted) {
                                       onSignContract();
-                                      Get.back();
+                                      Helper.goBack();
                                     } else {
                                       Helper.snackBar(message: 'sign_contract_first_msg'.tr);
                                     }

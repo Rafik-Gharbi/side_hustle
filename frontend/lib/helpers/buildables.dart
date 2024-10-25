@@ -13,6 +13,7 @@ import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
 import '../views/profile/account/login_dialog.dart';
 import '../views/home/home_controller.dart';
+import '../widgets/coins_market.dart';
 import '../widgets/custom_buttons.dart';
 import '../widgets/custom_text_field.dart';
 import 'form_validators.dart';
@@ -163,16 +164,17 @@ class Buildables {
 
   static Future<void> requestBottomsheet({
     required TextEditingController noteController,
+    required void Function() onSubmit,
+    required int neededCoins,
     TextEditingController? proposedPriceController,
     TextEditingController? deliveryDateController,
-    required void Function() onSubmit,
     bool isTask = false,
   }) async {
     double height = proposedPriceController != null && deliveryDateController != null
-        ? 450
+        ? 480
         : (proposedPriceController != null || deliveryDateController != null)
-            ? 390
-            : 330;
+            ? 420
+            : 360;
     await Get.bottomSheet(
       SizedBox(
         height: height,
@@ -219,7 +221,17 @@ class Buildables {
                   title: isTask ? 'submit_proposal'.tr : 'submit_request'.tr,
                   width: Get.width,
                   onPressed: onSubmit,
-                )
+                  disabled: neededCoins <= 0 || neededCoins > (AuthenticationService.find.jwtUserData?.totalCoins ?? 0),
+                ),
+                const SizedBox(height: Paddings.small),
+                Text(
+                  '${isTask ? 'task'.tr : 'service'.tr} ${'costs_coins_msg'.trParams({
+                        'coins': neededCoins.toString(),
+                        'baseCoins': (AuthenticationService.find.jwtUserData?.totalCoins ?? 0).toString()
+                      })}',
+                  style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
+                ),
+                const SizedBox(height: Paddings.extraLarge),
               ],
             ),
           ),
@@ -338,6 +350,49 @@ class Buildables {
                 ),
               ),
           ],
+        ),
+      );
+
+  static Widget buildAvailableCoins({void Function()? onBackFromMarket, bool withBuyButton = true}) => Padding(
+        padding: const EdgeInsets.all(Paddings.large),
+        child: DecoratedBox(
+          decoration: BoxDecoration(borderRadius: smallRadius, color: kAccentColor),
+          child: SizedBox(
+            width: double.infinity,
+            height: 100,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('${'available'.tr}:', style: AppFonts.x16Bold.copyWith(color: kNeutralColor100)),
+                    const SizedBox(width: Paddings.regular),
+                    const Icon(Icons.paid_outlined, size: 22, color: kNeutralColor100),
+                    const SizedBox(width: Paddings.regular),
+                    Text(
+                      '${AuthenticationService.find.jwtUserData!.totalCoins} ${'coins'.tr}',
+                      style: AppFonts.x16Bold.copyWith(color: kNeutralColor100),
+                    ),
+                  ],
+                ),
+                Text(
+                  '(${'base_coins'.tr}: ${AuthenticationService.find.jwtUserData!.availableCoins} + ${'purchased_coins'.tr}: ${AuthenticationService.find.jwtUserData!.availablePurchasedCoins})',
+                  style: AppFonts.x12Regular.copyWith(color: kNeutralColor100),
+                ),
+                const SizedBox(height: Paddings.regular),
+                if (withBuyButton)
+                  InkWell(
+                    onTap: () => Get.toNamed(CoinsMarket.routeName)?.then((value) => onBackFromMarket?.call()),
+                    child: Text(
+                      'buy_more_coins'.tr,
+                      style: AppFonts.x12Bold
+                          .copyWith(decoration: TextDecoration.underline, decorationColor: kSelectedLightColor, color: kSelectedLightColor, decorationThickness: 0.6),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       );
 }

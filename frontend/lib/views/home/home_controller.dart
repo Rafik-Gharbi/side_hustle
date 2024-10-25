@@ -81,7 +81,7 @@ class HomeController extends GetxController {
         title: 'mark_service_done_msg'.tr,
         onConfirm: () async {
           await ReservationRepository.find.updateServiceReservationStatus(serviceReservation, RequestStatus.finished);
-          Get.back();
+          Helper.goBack();
           init();
           MainAppController.find.resolveProfileActionRequired();
         },

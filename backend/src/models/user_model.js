@@ -32,6 +32,8 @@ const User = sequelize.define(
     isMailVerified: { type: Sequelize.BOOLEAN, defaultValue: false },
     role: { type: Sequelize.STRING, defaultValue: "user" },
     fcmToken: { type: Sequelize.STRING },
+    coins: { type: Sequelize.INTEGER, defaultValue: 50 },
+    availableCoins: { type: Sequelize.INTEGER, defaultValue: 50 },
   },
   {
     tableName: "user",

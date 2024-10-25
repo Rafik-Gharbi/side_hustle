@@ -35,6 +35,7 @@ class ReservationCard extends StatelessWidget {
             children: [
               const SizedBox(height: Paddings.regular),
               Text('${'note'.tr}: ${reservation.note.isEmpty ? 'not_provided'.tr : reservation.note}', style: AppFonts.x14Regular),
+              if (reservation.dueDate != null) Text('${'due_date'.tr}: ${Helper.formatDate(reservation.dueDate!)}', style: AppFonts.x14Regular),
               const SizedBox(height: Paddings.regular),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

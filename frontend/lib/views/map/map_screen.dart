@@ -7,6 +7,7 @@ import '../../constants/colors.dart';
 import '../../constants/constants.dart';
 import '../../constants/sizes.dart';
 import '../../helpers/buildables.dart';
+import '../../helpers/helper.dart';
 import '../../models/filter_model.dart';
 import '../../services/theme/theme.dart';
 import '../../widgets/custom_buttons.dart';
@@ -36,7 +37,7 @@ class MapScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
+                          CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: () => Helper.goBack()),
                           Text('map'.tr, style: AppFonts.x15Bold),
                           Row(
                             children: [

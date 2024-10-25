@@ -141,7 +141,7 @@ class HomeScreen extends StatelessWidget {
                           DraggableBottomsheet(
                             child: CategoriesBottomsheet(
                               onSelectCategory: (category) {
-                                Get.back();
+                                Helper.goBack();
                                 WidgetsBinding.instance.addPostFrameCallback(
                                   (_) => Get.toNamed(
                                     TaskListScreen.routeName,

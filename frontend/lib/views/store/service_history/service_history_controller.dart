@@ -38,7 +38,7 @@ class ServiceHistoryController extends GetxController {
         title: 'mark_service_done_msg'.tr,
         onConfirm: () async {
           await ReservationRepository.find.updateReservationStatus(booking, RequestStatus.finished);
-          Get.back();
+          Helper.goBack();
           init();
           MainAppController.find.resolveProfileActionRequired();
         },

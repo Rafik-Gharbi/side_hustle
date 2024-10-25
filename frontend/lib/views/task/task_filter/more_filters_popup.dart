@@ -98,7 +98,7 @@ class MoreFiltersPopup extends StatelessWidget {
                               width: Get.width / 3,
                               onPressed: () {
                                 updateFilter.call(controller.getFilterModel());
-                                Get.back();
+                                Helper.goBack();
                               },
                             ),
                           ],

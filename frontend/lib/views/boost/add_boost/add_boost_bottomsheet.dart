@@ -40,7 +40,7 @@ class AddBoostBottomsheet extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
+                    CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: () => Helper.goBack()),
                     Text('add_boost'.tr, style: AppFonts.x15Bold),
                     const SizedBox(width: 40),
                   ],

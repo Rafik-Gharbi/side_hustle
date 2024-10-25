@@ -14,5 +14,6 @@ class ReservationTable extends Table with AutoIncrementingStringPrimaryKey {
   TextColumn get coupon => text().withDefault(const Constant(''))();
   TextColumn get note => text().withDefault(const Constant(''))();
   IntColumn get status => intEnum<RequestStatus>().withDefault(const Constant(0))();
+  IntColumn get coins => integer().withDefault(const Constant(0))();
   IntColumn get user => integer().references(UserTable, #id).nullable()();
 }

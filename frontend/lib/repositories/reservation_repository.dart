@@ -8,6 +8,7 @@ import '../models/enum/request_status.dart';
 import '../models/reservation.dart';
 import '../models/task.dart';
 import '../networking/api_base_helper.dart';
+import '../services/authentication_service.dart';
 import '../services/logger_service.dart';
 
 class ReservationRepository extends GetxService {
@@ -18,9 +19,12 @@ class ReservationRepository extends GetxService {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/reservation/add', body: reservation.toJson(), sendToken: true);
       if (MainAppController.find.isConnected) ReservationDatabaseRepository.find.addReservation(Reservation.fromJson(result['reservation']));
+      AuthenticationService.find.initiateCurrentUser(result['token'], silent: true);
       return result['reservation'] != null && result['reservation'].toString().isNotEmpty;
     } catch (e) {
-      if (e.toString().contains('reservation_already_exist')) {
+      if (e.toString().contains('insufficient_base_coins')) {
+        Helper.snackBar(message: 'insufficient_base_coins'.tr);
+      } else if (e.toString().contains('reservation_already_exist')) {
         Helper.snackBar(message: 'reservation_already_exist'.tr);
       } else {
         Helper.snackBar(message: 'error_sending_proposal'.tr);
@@ -88,12 +92,15 @@ class ReservationRepository extends GetxService {
   // Send a proposal for the service's owner
   Future<bool> addServiceReservation({required Reservation reservation}) async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.post, '/booking/add', body: reservation.toJson(), sendToken: true);
-      if (MainAppController.find.isConnected) ReservationDatabaseRepository.find.addReservation(Reservation.fromJson(result));
-      return result['booking'] != null && result['booking'].toString().isNotEmpty;
+      final result = await ApiBaseHelper().request(RequestType.post, '/reservation/add-service', body: reservation.toJson(), sendToken: true);
+      if (MainAppController.find.isConnected) ReservationDatabaseRepository.find.addReservation(Reservation.fromJson(result['reservation']));
+      AuthenticationService.find.initiateCurrentUser(result['token'], silent: true);
+      return result['reservation'] != null && result['reservation'].toString().isNotEmpty;
     } catch (e) {
-      if (e.toString().contains('booking_already_exist')) {
-        Helper.snackBar(message: 'booking_already_exist'.tr);
+      if (e.toString().contains('insufficient_base_coins')) {
+        Helper.snackBar(message: 'insufficient_base_coins'.tr);
+      } else if (e.toString().contains('reservation_already_exist')) {
+        Helper.snackBar(message: 'reservation_already_exist'.tr);
       } else if (e.toString().contains('cannot_book_your_own_service')) {
         Helper.snackBar(message: 'cannot_book_your_own_service'.tr);
       } else {
@@ -106,7 +113,7 @@ class ReservationRepository extends GetxService {
 
   // Future<List<Reservation>> listReservation() async {
   //   try {
-  //     final result = await ApiBaseHelper().request(RequestType.get, '/booking/list', sendToken: true);
+  //     final result = await ApiBaseHelper().request(RequestType.get, '/reservation/list', sendToken: true);
   //     final services = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
   //     return services;
   //   } catch (e) {
@@ -117,7 +124,7 @@ class ReservationRepository extends GetxService {
 
   Future<List<Reservation>> getReservationByServiceId(String serviceId) async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.get, '/booking/service-booking?serviceId=$serviceId', sendToken: true);
+      final result = await ApiBaseHelper().request(RequestType.get, '/reservation/service-booking?serviceId=$serviceId', sendToken: true);
       final services = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
       return services;
     } catch (e) {
@@ -126,23 +133,13 @@ class ReservationRepository extends GetxService {
     return [];
   }
 
-  // Future<int> getServiceCondidates(Service service) async {
-  //   try {
-  //     final result = await ApiBaseHelper().request(RequestType.get, '/booking/condidates?serviceId=${service.id}');
-  //     return result['condidates'] ?? 0;
-  //   } catch (e) {
-  //     LoggerService.logger?.e('Error occured in getServiceCondidates:\n$e');
-  //   }
-  //   return 0;
-  // }
-
   Future<void> updateServiceReservationStatus(Reservation serviceReservation, RequestStatus status) async {
     try {
       await ApiBaseHelper().request(
         RequestType.post,
-        '/booking/update-status',
+        '/reservation/update-service-status',
         sendToken: true,
-        body: {'booking': serviceReservation.toJson(), 'status': status.name},
+        body: {'reservation': serviceReservation.toJson(), 'status': status.name},
       );
       if (MainAppController.find.isConnected) ReservationDatabaseRepository.find.updateReservationStatus(serviceReservation, status);
     } catch (e) {
@@ -155,7 +152,7 @@ class ReservationRepository extends GetxService {
     try {
       List<Reservation> bookings = [];
       if (MainAppController.find.isConnected) {
-        final result = await ApiBaseHelper().request(RequestType.get, '/booking/services-history', sendToken: true);
+        final result = await ApiBaseHelper().request(RequestType.get, '/reservation/services-history', sendToken: true);
         bookings = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
       } else {
         bookings = await ReservationDatabaseRepository.find.select();

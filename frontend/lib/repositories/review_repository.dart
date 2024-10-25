@@ -28,7 +28,7 @@ class ReviewRepository extends GetxService {
         body: newReview.toJson(),
         files: newReview.picture?.file != null ? [newReview.picture?.file] : [],
       );
-      if (withBack) Get.back();
+      if (withBack) Helper.goBack();
       final review = Review.fromJson(result['review']);
       Helper.snackBar(message: 'review_added_successfully'.tr);
       return review;
@@ -48,7 +48,7 @@ class ReviewRepository extends GetxService {
         body: updateReview.toJson(),
         files: updateReview.picture?.file != null ? [updateReview.picture?.file] : [],
       );
-      if (withBack) Get.back();
+      if (withBack) Helper.goBack();
       final review = Review.fromJson(result['review']);
       Helper.snackBar(message: 'review_updated_successfully'.tr);
       return review;
@@ -63,7 +63,7 @@ class ReviewRepository extends GetxService {
     try {
       final result = await ApiBaseHelper().request(RequestType.delete, sendToken: true, '/review/${review.id}');
       final status = result?['done'] ?? false;
-      if (withBack) Get.back();
+      if (withBack) Helper.goBack();
       if (status) Helper.snackBar(message: 'review_deleted_successfully'.tr);
       return status;
     } catch (e) {

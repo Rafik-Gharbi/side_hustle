@@ -12,9 +12,14 @@ const {
   fetchUserOngoingReservation,
   fetchUserOngoingBooking,
   getRandomHotTasks,
+  populateOneTask,
 } = require("../sql/sql_request");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
-const { getFileType } = require("../helper/helpers");
+const {
+  getFileType,
+  calculateTaskCoinsPrice,
+  fetchPurchasedCoinsTransactions,
+} = require("../helper/helpers");
 const {
   CategorySubscriptionModel,
 } = require("../models/category_subscribtion_model");
@@ -23,6 +28,7 @@ const {
   notificationService,
 } = require("../helper/notification_service");
 const { Reservation } = require("../models/reservation_model");
+const { Transaction } = require("../models/transaction_model");
 
 // get boosted tasks & nearby tasks
 exports.getHomeTasks = async (req, res) => {
@@ -257,6 +263,7 @@ exports.taskRequest = async (req, res) => {
           task: {
             id: row.id,
             price: row.price,
+            deducted_coins: row.deducted_coins,
             title: row.title,
             description: row.description,
             delivrables: row.delivrables,
@@ -294,34 +301,132 @@ exports.addTask = async (req, res) => {
     coordinates,
   } = req.body;
 
+  const transaction = await sequelize.transaction();
+
   try {
     // Check if user exists
     const user = await User.findOne({ where: { id: owner_id } });
     if (!user) {
+      await transaction.rollback();
       return res.status(404).json({ message: "user_not_found" });
     }
     const category = await Category.findOne({ where: { id: category_id } });
     if (!category) {
+      await transaction.rollback();
       return res.status(404).json({ message: "category_not_found" });
     }
     const governorate = await Governorate.findOne({
       where: { id: governorate_id },
     });
     if (!governorate) {
+      await transaction.rollback();
       return res.status(404).json({ message: "governorate_not_found" });
     }
 
-    let result = await Task.create({
-      title,
-      description,
-      price,
-      category_id,
-      governorate_id,
-      delivrables,
-      due_date: dueDate,
-      owner_id,
-      coordinates,
-    });
+    let deductedCoins = 0;
+
+    let result = await Task.create(
+      {
+        title,
+        description,
+        price,
+        category_id,
+        governorate_id,
+        delivrables,
+        due_date: dueDate,
+        owner_id,
+        coordinates,
+        deducted_coins: deductedCoins,
+      },
+      { transaction }
+    );
+
+    if (price && price > 0) {
+      let remainingCoins = calculateTaskCoinsPrice(price);
+      deductedCoins = remainingCoins;
+
+      const oneMonthFromNow = new Date();
+      oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
+
+      const purchaseTransactions = await fetchPurchasedCoinsTransactions(
+        user.id
+      );
+
+      // Step 1: Prioritize purchased coins expiring within 1 month
+      for (
+        let i = 0;
+        i < purchaseTransactions.length && remainingCoins > 0;
+        i++
+      ) {
+        const purchaseTransaction = purchaseTransactions[i];
+        const expirationDate = new Date(purchaseTransaction.createdAt);
+        expirationDate.setMonth(
+          expirationDate.getMonth() +
+            purchaseTransaction.coin_pack_purchase.coin_pack.validMonths
+        );
+
+        // If the coins expire within 1 month, use them first
+        if (
+          expirationDate <= oneMonthFromNow &&
+          purchaseTransaction.available > 0
+        ) {
+          const coinsToSubtractFromPurchased = Math.min(
+            purchaseTransaction.available,
+            remainingCoins
+          );
+          remainingCoins -= coinsToSubtractFromPurchased;
+          purchaseTransaction.coin_pack_purchase.available -=
+            coinsToSubtractFromPurchased;
+          purchaseTransaction.coin_pack_purchase.save({ transaction });
+
+          // Log usage of purchased coins
+          if (coinsToSubtractFromPurchased > 0) {
+            await Transaction.create(
+              {
+                coins: coinsToSubtractFromPurchased,
+                task_id: result.id,
+                user_id: user.id,
+                type: "request",
+                status: "completed",
+                coin_pack_id: purchaseTransaction.coin_pack_purchase.id,
+              },
+              { transaction }
+            );
+          }
+        }
+      }
+
+      // Step 2: Deduct from base coins if necessary
+      if (remainingCoins > 0) {
+        if (user.availableCoins < remainingCoins) {
+          await transaction.rollback();
+          return res.status(400).json({ message: "insufficient_base_coins" });
+        }
+
+        // Subtract remaining coins from base coins
+        user.availableCoins -= remainingCoins;
+        await user.save({ transaction });
+
+        // Log usage of base coins
+        await Transaction.create(
+          {
+            coins: remainingCoins,
+            task_id: result.id,
+            type: "request",
+            status: "completed",
+            user_id: user.id,
+          },
+          { transaction }
+        );
+      }
+    }
+
+    await transaction.commit();
+
+    if (deductedCoins > 0) {
+      result.deducted_coins = deductedCoins;
+      result.save();
+    }
 
     let attachments = [];
     const files = req.files?.photo ? req.files?.photo : req.files?.gallery;
@@ -350,6 +455,7 @@ exports.addTask = async (req, res) => {
       owner: user,
       attachments,
       coordinates,
+      deducted_coins: deductedCoins,
     };
 
     // Send notification to subscribed task category
@@ -401,18 +507,106 @@ exports.updateTask = async (req, res) => {
     } = req.body;
 
     if (!id) {
+      await transaction.rollback();
       return res.status(400).json({ message: "missing_task_id" });
     }
     const task = await Task.findByPk(id);
     if (!task) {
+      await transaction.rollback();
       return res.status(404).json({ message: "task_not_found" });
     }
     const foundUser = await User.findByPk(req.decoded.id);
     if (!foundUser) {
+      await transaction.rollback();
       return res.status(404).json({ message: "owner_not_found" });
     }
     if (foundUser.id != task.owner_id) {
+      await transaction.rollback();
       return res.status(401).json({ message: "not_owner_task" });
+    }
+
+    let deductedCoins = task.deducted_coins;
+
+    if (price && price > 0 && price > task.price) {
+      let remainingCoins = calculateTaskCoinsPrice(price) - deductedCoins;
+      if (remainingCoins > 0) {
+        deductedCoins += remainingCoins;
+
+        const oneMonthFromNow = new Date();
+        oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
+
+        const purchaseTransactions = await fetchPurchasedCoinsTransactions(
+          foundUser.id
+        );
+
+        // Step 1: Prioritize purchased coins expiring within 1 month
+        for (
+          let i = 0;
+          i < purchaseTransactions.length && remainingCoins > 0;
+          i++
+        ) {
+          const purchaseTransaction = purchaseTransactions[i];
+          const expirationDate = new Date(purchaseTransaction.createdAt);
+          expirationDate.setMonth(
+            expirationDate.getMonth() +
+              purchaseTransaction.coin_pack_purchase.coin_pack.validMonths
+          );
+
+          // If the coins expire within 1 month, use them first
+          if (
+            expirationDate <= oneMonthFromNow &&
+            purchaseTransaction.available > 0
+          ) {
+            const coinsToSubtractFromPurchased = Math.min(
+              purchaseTransaction.available,
+              remainingCoins
+            );
+            remainingCoins -= coinsToSubtractFromPurchased;
+            purchaseTransaction.coin_pack_purchase.available -=
+              coinsToSubtractFromPurchased;
+            purchaseTransaction.coin_pack_purchase.save({ transaction });
+
+            // Log usage of purchased coins
+            if (coinsToSubtractFromPurchased > 0) {
+              await Transaction.create(
+                {
+                  coins: coinsToSubtractFromPurchased,
+                  task_id: task.id,
+                  user_id: foundUser.id,
+                  type: "request",
+                  status: "completed",
+                  coin_pack_id: purchaseTransaction.coin_pack_purchase.id,
+                },
+                { transaction }
+              );
+            }
+          }
+        }
+
+        // Step 2: Deduct from base coins if necessary
+        if (remainingCoins > 0) {
+          if (foundUser.availableCoins < remainingCoins) {
+            await transaction.rollback();
+            return res.status(400).json({ message: "insufficient_base_coins" });
+          }
+
+          // Subtract remaining coins from base coins
+          foundUser.availableCoins -= remainingCoins;
+          await foundUser.save({ transaction });
+
+          // Log usage of base coins
+          await Transaction.create(
+            {
+              coins: remainingCoins,
+              task_id: task.id,
+              type: "request",
+              status: "completed",
+              user_id: foundUser.id,
+            },
+            { transaction }
+          );
+        }
+      }
     }
 
     // Update task
@@ -426,6 +620,7 @@ exports.updateTask = async (req, res) => {
         delivrables,
         dueDate,
         coordinates,
+        deducted_coins: deductedCoins,
       },
       { transaction }
     );
@@ -485,6 +680,7 @@ exports.updateTask = async (req, res) => {
         category_id: updatedTask.category_id,
         coordinates: updatedTask.coordinates,
         owner: foundUser,
+        deducted_coins: deductedCoins,
       },
     });
   } catch (error) {
@@ -520,6 +716,23 @@ exports.deleteTask = async (req, res) => {
       task.save();
     }
     return res.status(200).json({ done: true });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json(error);
+  }
+};
+
+exports.getTaskById = async (req, res) => {
+  try {
+    const ID = req.params.id;
+    const foundTask = await Task.findByPk(ID);
+    const task = await populateOneTask(foundTask);
+
+    if (task.owner.id !== req.decoded.id) {
+      return res.status(400).json({ message: "not_allowed" });
+    }
+    return res.status(200).json({ task });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

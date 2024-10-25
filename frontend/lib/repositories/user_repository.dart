@@ -136,6 +136,7 @@ class UserRepository extends GetxService {
       if (MainAppController.find.isConnected) {
         final result = await ApiBaseHelper().request(RequestType.get, '/user/profile', sendToken: true);
         profileDTO = ProfileDTO.fromJson(result);
+        AuthenticationService.find.initiateCurrentUser(result['token'], silent: true);
       } else {
         final user = AuthenticationService.find.jwtUserData?.id != null ? await UserDatabaseRepository.find.getUserById(AuthenticationService.find.jwtUserData!.id!) : null;
         if (user != null) {
@@ -180,10 +181,10 @@ class UserRepository extends GetxService {
       List<XFile?>? uploadFiles;
       if (picture != null) uploadFiles = [picture];
       final result = await ApiBaseHelper().request(RequestType.put, '/user/update-profile', body: user.toUpdateJson(), files: uploadFiles, sendToken: true);
-      if (withBack) Get.back();
+      if (withBack) Helper.goBack();
       if (!silent) Helper.snackBar(title: 'success'.tr, message: 'update_profile_success'.tr);
       final currentUser = User.fromJson(result['updatedUser']);
-      if (result['jwt'] != null) AuthenticationService.find.initiateCurrentUser(result['jwt'], user: currentUser, refresh: false);
+      if (result['jwt'] != null) AuthenticationService.find.initiateCurrentUser(result['jwt'], user: currentUser, silent: true);
       return currentUser;
     } catch (e) {
       LoggerService.logger?.e('Error occured in updateUser:\n$e');
@@ -196,7 +197,7 @@ class UserRepository extends GetxService {
       final result = await ApiBaseHelper().request(RequestType.put, '/user/update-coordinates', body: user.toUpdateJson(), sendToken: true);
       if (!silent) Helper.snackBar(title: 'success'.tr, message: 'update_profile_success'.tr);
       final currentUser = User.fromJson(result['updatedUser']);
-      if (result['jwt'] != null) AuthenticationService.find.initiateCurrentUser(result['jwt'], user: currentUser, refresh: false);
+      if (result['jwt'] != null) AuthenticationService.find.initiateCurrentUser(result['jwt'], user: currentUser, silent: true);
       return currentUser;
     } catch (e) {
       LoggerService.logger?.e('Error occured in updateUserCoordinates:\n$e');
@@ -208,7 +209,7 @@ class UserRepository extends GetxService {
     try {
       final result = await ApiBaseHelper().request(RequestType.put, '/user/forgot-password', body: {'newPassword': newPassword, 'code': code}, sendToken: true);
       if (result['message'] == 'done') {
-        Get.back(); // Close change password dialog
+        Helper.goBack(); // Close change password dialog
         Helper.snackBar(title: 'success'.tr, message: 'password_change_success'.tr);
         return true;
       }
@@ -231,7 +232,7 @@ class UserRepository extends GetxService {
         sendToken: true,
       );
       if (result['message'] == 'done') {
-        Get.back(); // Close change password bottomsheet
+        Helper.goBack(); // Close change password bottomsheet
         Helper.snackBar(title: 'success'.tr, message: 'password_change_success'.tr);
         return true;
       }
@@ -276,7 +277,7 @@ class UserRepository extends GetxService {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, sendToken: true, '/user/verification-data', files: [...identity, selfie]);
       if (result['message'] == 'done') {
-        AuthenticationService.find.initiateCurrentUser(result['jwt']);
+        AuthenticationService.find.initiateCurrentUser(result['jwt'], silent: true);
         return true;
       }
     } catch (e) {

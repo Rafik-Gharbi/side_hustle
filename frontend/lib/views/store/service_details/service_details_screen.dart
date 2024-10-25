@@ -57,7 +57,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
+                      CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: () => Helper.goBack()),
                       CustomButtonWithOverlay(
                         offset: const Offset(-170, 30),
                         buttonWidth: 50,
@@ -75,7 +75,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                                     title: Text('boost'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
                                     leading: const Icon(Icons.rocket_launch_outlined),
                                     onTap: () {
-                                      Get.back();
+                                      Helper.goBack();
                                       Get.bottomSheet(AddBoostBottomsheet(serviceId: service.id), isScrollControlled: true);
                                     },
                                   ),
@@ -84,7 +84,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                                   title: Text('report'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
                                   leading: const Icon(Icons.report_outlined),
                                   onTap: () async {
-                                    Get.back();
+                                    Helper.goBack();
                                     Get.bottomSheet(ReportUserDialog(user: store!.owner!, service: service), isScrollControlled: true);
                                   },
                                 ),
@@ -207,8 +207,11 @@ class ServiceDetailsScreen extends StatelessWidget {
                       CustomButtons.elevatePrimary(
                         title: 'book_service'.tr,
                         onPressed: () => AuthenticationService.find.isUserLoggedIn.value
-                            ? Buildables.requestBottomsheet(noteController: controller.noteController, onSubmit: () => controller.bookService(service))
-                                .then((value) => controller.clearFormFields())
+                            ? Buildables.requestBottomsheet(
+                                noteController: controller.noteController,
+                                onSubmit: () => controller.bookService(service),
+                                neededCoins: service.coins,
+                              ).then((value) => controller.clearFormFields())
                             : Helper.snackBar(message: 'login_express_interest_msg'.tr),
                         width: Get.width,
                       )

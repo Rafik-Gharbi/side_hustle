@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import '../constants/assets.dart';
 import '../constants/colors.dart';
 import '../constants/sizes.dart';
+import '../helpers/helper.dart';
 import '../services/theme/theme.dart';
 import 'custom_buttons.dart';
 
@@ -28,7 +29,7 @@ class VerifyEmailDialog extends StatelessWidget {
               Center(child: Text('email_verify_msg'.tr, style: AppFonts.x14Regular)),
               const SizedBox(height: Paddings.exceptional),
               CustomButtons.elevatePrimary(
-                onPressed: Get.back,
+                onPressed: () => Helper.goBack(),
                 width: 150,
                 title: 'ok'.tr,
               ),

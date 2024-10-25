@@ -2,6 +2,10 @@ const {
   getDate,
   checkUnitDinar,
   getTaskCondidatesNumber,
+  calculateTaskCoinsPrice,
+  generateJWT,
+  getServiceCondidatesNumber,
+  fetchPurchasedCoinsTransactions,
 } = require("../helper/helpers");
 const { User } = require("../models/user_model");
 const axios = require("axios");
@@ -11,7 +15,12 @@ const {
   emailReservationForCheckin,
   sendNotificationReservation,
 } = require("../views/template_email");
-const { fetchUserReservation, populateOneTask } = require("../sql/sql_request");
+const {
+  fetchUserReservation,
+  populateOneTask,
+  populateOneService,
+  getServiceOwner,
+} = require("../sql/sql_request");
 const { sendMail } = require("../helper/email_service");
 const { Task } = require("../models/task_model");
 const { Reservation } = require("../models/reservation_model");
@@ -20,92 +29,160 @@ const {
   NotificationType,
   notificationService,
 } = require("../helper/notification_service");
+const { Transaction } = require("../models/transaction_model");
+const { Service } = require("../models/service_model");
+const { Op } = require("sequelize");
+const { Store } = require("../models/store_model");
+const { ServiceGalleryModel } = require("../models/service_gallery_model");
+const { sequelize } = require("../../db.config");
 
-exports.add = async (req, res) => {
-  const { taskId, date, totalPrice, coupon, status, note, proposedPrice, dueDate } =
-    req.body;
+exports.addTaskReservation = async (req, res) => {
+  const {
+    taskId,
+    date,
+    totalPrice,
+    coupon,
+    status,
+    note,
+    proposedPrice,
+    dueDate,
+    coins,
+  } = req.body;
+
   if (!taskId || !date || !totalPrice || !status) {
     return res.status(400).json({ message: "missing" });
   }
+
+  // Start a database transaction
+  const transaction = await sequelize.transaction();
+
   try {
     let userFound = await User.findByPk(req.decoded.id);
     let foundTask = await Task.findByPk(taskId);
+
     if (!userFound) {
+      await transaction.rollback();
       return res.status(404).json({ message: "user_not_found" });
     }
+
     if (!foundTask) {
+      await transaction.rollback();
       return res.status(404).json({ message: "task_not_found" });
     }
+
     let existReservation = await Reservation.findOne({
       where: {
         user_id: userFound.id,
         task_id: taskId,
       },
     });
+
     if (existReservation) {
+      await transaction.rollback();
       return res.status(400).json({ message: "reservation_already_exist" });
     }
-
-    const reservation = await Reservation.create({
-      date,
-      task_id: taskId,
-      user_id: userFound.id,
-      total_price: totalPrice,
-      proposed_price: proposedPrice,
-      coupon,
-      note,
-      status,
-      dueDate,
-    });
 
     const reservationTask = await populateOneTask(
       await Task.findOne({ where: { id: taskId } })
     );
 
-    // const templateUser = emailReservationForCheckin(foundTask.name);
+    if (coins != calculateTaskCoinsPrice(reservationTask.price)) {
+      await transaction.rollback();
+      return res.status(400).json({ message: "coins_not_valid" });
+    }
 
-    // const templateLandlord = sendNotificationReservation(
-    //   reservation.date_from,
-    //   reservation.date_to,
-    //   foundTask.name,
-    //   reservation.task_id,
-    //   reservation.user_price,
-    //   reservation.id,
-    //   userFound.name ? userFound.name : null,
-    //   userFound.phone_number ? userFound.phone_number : null,
-    //   userFound.email
-    // );
-    // if (coupon) {
-    //   const couponFound = await Coupon.findOne({
-    //     where: {
-    //       name: coupon,
-    //     },
-    //   });
-    //   if (couponFound) {
-    //     await CouponReservation.create({
-    //       reservation_id: reservation.id,
-    //       coupon_id: couponFound.id,
-    //     });
-    //   }
-    // }
-    // try {
-    //   sendMail(
-    //     userFound.email,
-    //     "Réservation confirmé",
-    //     templateUser,
-    //     req.host
-    //   );
-    //   sendMail(
-    //     process.env.AUTH_USER_EMAIL,
-    //     "Réservation confirmé",
-    //     templateLandlord,
-    //     req.host
-    //   );
-    // } catch (error) {
-    //   console.error("\x1b[31m%s\x1b[0m", error);
-    // }
+    const oneMonthFromNow = new Date();
+    oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
 
-    // Send a notification for the task owner
+    const purchaseTransactions = await fetchPurchasedCoinsTransactions(
+      userFound.id
+    );
+    let remainingCoins = coins;
+
+    // Step 1: Prioritize purchased coins expiring within 1 month
+    for (
+      let i = 0;
+      i < purchaseTransactions.length && remainingCoins > 0;
+      i++
+    ) {
+      const purchaseTransaction = purchaseTransactions[i];
+      const expirationDate = new Date(purchaseTransaction.createdAt);
+      expirationDate.setMonth(
+        expirationDate.getMonth() +
+          purchaseTransaction.coin_pack_purchase.coin_pack.validMonths
+      );
+
+      // If the coins expire within 1 month, use them first
+      if (
+        expirationDate <= oneMonthFromNow &&
+        purchaseTransaction.available > 0
+      ) {
+        const coinsToSubtractFromPurchased = Math.min(
+          purchaseTransaction.available,
+          remainingCoins
+        );
+        remainingCoins -= coinsToSubtractFromPurchased;
+        purchaseTransaction.coin_pack_purchase.available -=
+          coinsToSubtractFromPurchased;
+        purchaseTransaction.coin_pack_purchase.save({ transaction });
+
+        // Log usage of purchased coins
+        if (coinsToSubtractFromPurchased > 0) {
+          await Transaction.create(
+            {
+              coins: coinsToSubtractFromPurchased,
+              task_id: taskId,
+              user_id: userFound.id,
+              coin_pack_id: purchaseTransaction.coin_pack_purchase.id,
+            },
+            { transaction }
+          );
+        }
+      }
+    }
+
+    // Step 2: Deduct from base coins if necessary
+    if (remainingCoins > 0) {
+      if (userFound.availableCoins < remainingCoins) {
+        await transaction.rollback();
+        return res.status(400).json({ message: "insufficient_base_coins" });
+      }
+
+      // Subtract remaining coins from base coins
+      userFound.availableCoins -= remainingCoins;
+      await userFound.save({ transaction });
+
+      // Log usage of base coins
+      await Transaction.create(
+        {
+          coins: remainingCoins,
+          task_id: taskId,
+          user_id: userFound.id,
+        },
+        { transaction }
+      );
+    }
+
+    // Step 3: Create the reservation
+    const reservation = await Reservation.create(
+      {
+        date,
+        task_id: taskId,
+        user_id: userFound.id,
+        total_price: totalPrice,
+        proposed_price: proposedPrice,
+        coupon,
+        note,
+        status,
+        dueDate,
+      },
+      { transaction }
+    );
+
+    // Commit the transaction if everything succeeds
+    await transaction.commit();
+
+    // Step 4: Send notification to the task owner
     notificationService.sendNotification(
       foundTask.owner_id,
       "You Have a New Proposal",
@@ -113,22 +190,28 @@ exports.add = async (req, res) => {
       NotificationType.RESERVATION,
       { reservationId: reservation.id, taskId: taskId, isOwner: true }
     );
-    return res
-      .status(200)
-      .json({
-        reservation: {
-          id: reservation.id,
-          date,
-          task: reservationTask,
-          user: userFound,
-          total_price: totalPrice,
-          proposed_price: proposedPrice,
-          coupon,
-          note,
-          status,
-        },
-      });
+
+    // Generate JWT for the user
+    const token = await generateJWT(userFound);
+
+    return res.status(200).json({
+      reservation: {
+        id: reservation.id,
+        date,
+        task: reservationTask,
+        user: userFound,
+        total_price: totalPrice,
+        proposed_price: proposedPrice,
+        coins: coins,
+        coupon,
+        note,
+        status,
+      },
+      token: token,
+    });
   } catch (error) {
+    // Rollback the transaction in case of any failure
+    await transaction.rollback();
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);
     return res.status(500).json({ message: error.message });
@@ -213,7 +296,7 @@ exports.initPaiement = async (req, res) => {
   }
 };
 
-exports.listReservation = async (req, res) => {
+exports.listTaskReservation = async (req, res) => {
   try {
     const formattedList = await fetchUserReservation(req.decoded.id);
 
@@ -225,7 +308,7 @@ exports.listReservation = async (req, res) => {
   }
 };
 
-exports.userReservationsHistory = async (req, res) => {
+exports.userTaskReservationsHistory = async (req, res) => {
   try {
     let userFound = await User.findByPk(req.decoded.id);
     if (!userFound) {
@@ -252,6 +335,7 @@ exports.userReservationsHistory = async (req, res) => {
           task: {
             id: foundTask.id,
             price: foundTask.price,
+            deducted_coins: foundTask.deducted_coins,
             title: foundTask.title,
             description: foundTask.description,
             delivrables: foundTask.delivrables,
@@ -324,7 +408,7 @@ exports.getReservationByTask = async (req, res) => {
   }
 };
 
-exports.updateStatus = async (req, res) => {
+exports.updateTaskReservationStatus = async (req, res) => {
   try {
     let reservationFound = await Reservation.findByPk(req.body.reservation.id);
     if (!reservationFound) {
@@ -361,9 +445,20 @@ exports.updateStatus = async (req, res) => {
     reservationFound.status = req.body.status;
     reservationFound.save();
 
+    const transactions = await Transaction.findAll({
+      where: {
+        user_id: reservationFound.user_id,
+        task_id: reservationFound.task_id,
+      },
+    });
     // Send a notification to the seeker regarding the new status
     switch (req.body.status) {
       case "confirmed":
+        for (let index = 0; index < transactions.length; index++) {
+          const element = transactions[index];
+          transactions.status = "completed";
+          element.save();
+        }
         notificationService.sendNotification(
           reservationFound.user_id,
           "Your Proposal Has Been Confirmed",
@@ -376,6 +471,16 @@ exports.updateStatus = async (req, res) => {
         );
         break;
       case "rejected":
+        for (let index = 0; index < transactions.length; index++) {
+          const element = transactions[index];
+          element.status = "refunded";
+          element.save();
+          if (!element.coin_pack_id) {
+            const userFound = await User.findByPk(reservationFound.user_id);
+            userFound.availableCoins += element.coins;
+            userFound.save();
+          }
+        }
         notificationService.sendNotification(
           reservationFound.user_id,
           "Your Proposal Has Been Rejected",
@@ -410,7 +515,7 @@ exports.updateStatus = async (req, res) => {
   }
 };
 
-exports.getReservationDetails = async (req, res) => {
+exports.getServiceReservationDetails = async (req, res) => {
   try {
     const condidates = await getTaskCondidatesNumber(req.query.taskId);
     const confirmedReservation = await Reservation.findOne({
@@ -455,13 +560,367 @@ exports.getReservationDetails = async (req, res) => {
         note: reservation.note,
         status: reservation.status,
         taskAttachments: populatedTask.attachments,
-        dueDate:  reservation.dueDate,
+        dueDate: reservation.dueDate,
       };
     }
 
     return res
       .status(200)
       .json({ condidates, isUserTaskSeeker, confirmedTaskUser, reservation });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.addServiceReservation = async (req, res) => {
+  const { serviceId, date, totalPrice, coupon, status, note, dueDate, coins } =
+    req.body;
+  if (!serviceId || !date || !totalPrice || !status) {
+    return res.status(400).json({ message: "missing" });
+  }
+  const transaction = await sequelize.transaction();
+
+  try {
+    let userFound = await User.findByPk(req.decoded.id);
+    let foundService = await Service.findByPk(serviceId);
+    if (!userFound) {
+      await transaction.rollback();
+      return res.status(404).json({ message: "user_not_found" });
+    }
+    if (!foundService) {
+      await transaction.rollback();
+      return res.status(404).json({ message: "service_not_found" });
+    }
+    let existReservation = await Reservation.findOne({
+      where: {
+        user_id: userFound.id,
+        service_id: serviceId,
+        [Op.or]: [{ status: "pending" }, { status: "confirmed" }],
+      },
+    });
+    if (existReservation) {
+      await transaction.rollback();
+      return res.status(400).json({ message: "reservation_already_exist" });
+    }
+    const serviceStore = await Store.findOne({
+      where: { id: foundService.store_id },
+    });
+    if (serviceStore.owner_id == userFound.id) {
+      await transaction.rollback();
+      return res.status(400).json({ message: "cannot_book_your_own_service" });
+    }
+
+    const reservationService = await populateOneService(
+      await Service.findOne({ where: { id: serviceId } })
+    );
+
+    if (coins != calculateTaskCoinsPrice(reservationService.price)) {
+      await transaction.rollback();
+      return res.status(400).json({ message: "coins_not_valid" });
+    }
+
+    const oneMonthFromNow = new Date();
+    oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
+
+    const purchaseTransactions = await fetchPurchasedCoinsTransactions(
+      userFound.id
+    );
+    let remainingCoins = coins;
+
+    // Step 1: Prioritize purchased coins expiring within 1 month
+    for (
+      let i = 0;
+      i < purchaseTransactions.length && remainingCoins > 0;
+      i++
+    ) {
+      const purchaseTransaction = purchaseTransactions[i];
+      const expirationDate = new Date(purchaseTransaction.createdAt);
+      expirationDate.setMonth(
+        expirationDate.getMonth() +
+          purchaseTransaction.coin_pack_purchase.coin_pack.validMonths
+      );
+
+      // If the coins expire within 1 month, use them first
+      if (
+        expirationDate <= oneMonthFromNow &&
+        purchaseTransaction.available > 0
+      ) {
+        const coinsToSubtractFromPurchased = Math.min(
+          purchaseTransaction.available,
+          remainingCoins
+        );
+        remainingCoins -= coinsToSubtractFromPurchased;
+        purchaseTransaction.coin_pack_purchase.available -=
+          coinsToSubtractFromPurchased;
+        purchaseTransaction.coin_pack_purchase.save({ transaction });
+        // Log usage of purchased coins
+        if (coinsToSubtractFromPurchased > 0) {
+          await Transaction.create(
+            {
+              coins: coinsToSubtractFromPurchased,
+              service_id: serviceId,
+              user_id: userFound.id,
+              coin_pack_id: purchaseTransaction.coin_pack_purchase.id,
+            },
+            { transaction }
+          );
+        }
+      }
+    }
+
+    // Step 2: Deduct from base coins if necessary
+    if (remainingCoins > 0) {
+      if (userFound.availableCoins < remainingCoins) {
+        await transaction.rollback();
+        return res.status(400).json({ message: "insufficient_base_coins" });
+      }
+
+      // Subtract remaining coins from base coins
+      userFound.availableCoins -= remainingCoins;
+      await userFound.save({ transaction });
+
+      // Log usage of base coins
+      await Transaction.create(
+        {
+          coins: remainingCoins,
+          service_id: serviceId,
+          user_id: userFound.id,
+        },
+        { transaction }
+      );
+    }
+
+    // Step 3: Create the reservation
+    const newReservation = await Reservation.create(
+      {
+        date,
+        service_id: serviceId,
+        user_id: userFound.id,
+        total_price: totalPrice,
+        coupon,
+        note,
+        status,
+        dueDate,
+      },
+      { transaction }
+    );
+
+    // Commit the transaction if everything succeeds
+    await transaction.commit();
+
+    const reservation = await Reservation.findOne({
+      where: { id: newReservation.id },
+      include: [
+        { model: User, as: "user" },
+        { model: Service, as: "service" },
+      ],
+    });
+
+    // Step 4: Send notification to the task owner
+    notificationService.sendNotification(
+      serviceStore.owner_id,
+      "You Have a New Reservation",
+      "Someone has booked a service in your store, check it out!",
+      NotificationType.BOOKING,
+      { storeId: serviceStore.id, serviceId: foundService.id, isOwner: true }
+    );
+    const token = await generateJWT(userFound);
+
+    return res.status(200).json({ reservation, token });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+exports.userServicesHistory = async (req, res) => {
+  try {
+    let userFound = await User.findByPk(req.decoded.id);
+    if (!userFound) {
+      return res.status(404).json({ message: "user_not_found" });
+    }
+
+    let reservationList = await Reservation.findAll({
+      where: {
+        user_id: userFound.id,
+      },
+    });
+    const formattedList = await Promise.all(
+      reservationList.map(async (row) => {
+        const foundService = await Service.findByPk(row.service_id);
+        const populatedService = await populateOneService(foundService);
+        const serviceGallerys = await ServiceGalleryModel.findAll({
+          where: { service_id: row.service_id },
+        });
+
+        return {
+          id: row.id,
+          user: userFound,
+          date: row.createdAt,
+          service: populatedService,
+          totalPrice: row.total_price,
+          coupon: row.coupon,
+          note: row.note,
+          status: row.status,
+          serviceGallerys,
+          dueDate: row.dueDate,
+        };
+      })
+    );
+
+    return res.status(200).json({ formattedList });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.getReservationByService = async (req, res) => {
+  try {
+    let serviceFound = await Service.findByPk(req.query.serviceId);
+    if (!serviceFound) {
+      return res.status(404).json({ message: "service_not_found" });
+    }
+
+    let foundStore = await Store.findOne({
+      where: {
+        id: serviceFound.store_id,
+      },
+    });
+    let reservationList = await Reservation.findAll({
+      where: {
+        service_id: serviceFound.id,
+      },
+    });
+    let serviceGallerys = await ServiceGalleryModel.findAll({
+      where: { service_id: serviceFound.id },
+    });
+
+    const formattedList = await Promise.all(
+      reservationList.map(async (row) => {
+        let userFound = await User.findOne({
+          where: { id: row.user_id },
+        });
+        const requests =
+          req.decoded.id == foundStore.owner_id
+            ? await getServiceCondidatesNumber(row.id)
+            : -1;
+
+        return {
+          id: row.id,
+          user: userFound,
+          date: row.createdAt,
+          service: {
+            id: serviceFound.id,
+            price: serviceFound.price,
+            name: serviceFound.name,
+            description: serviceFound.description,
+            store_id: serviceFound.store_id,
+            category_id: serviceFound.category_id,
+            gallerys: serviceGallerys.length == 0 ? [] : serviceGallerys,
+            isFavorite: false,
+            requests,
+          },
+          totalPrice: row.total_price,
+          coupon: row.coupon,
+          note: row.note,
+          status: row.status,
+          serviceGallerys,
+          dueDate: row.dueDate,
+        };
+      })
+    );
+
+    return res.status(200).json({ formattedList });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.updateServiceStatus = async (req, res) => {
+  try {
+    let reservationFound = await Reservation.findByPk(req.body.reservation.id);
+    if (!reservationFound) {
+      return res.status(404).json({ message: "reservation_not_found" });
+    }
+    if (!req.body.status) {
+      return res.status(400).json({ message: "missing" });
+    }
+
+    reservationFound.status = req.body.status;
+    reservationFound.save();
+
+    const transactions = await Transaction.findAll({
+      where: {
+        user_id: reservationFound.user_id,
+        service_id: reservationFound.service_id,
+      },
+    });
+    // Send a notification to the seeker regarding the new status
+    switch (req.body.status) {
+      case "confirmed":
+        for (let index = 0; index < transactions.length; index++) {
+          const element = transactions[index];
+          transactions.status = "completed";
+          element.save();
+        }
+        notificationService.sendNotification(
+          reservationFound.user_id,
+          "Your Reservation Has Been Confirmed",
+          "The service owner has confirmed your reservation.",
+          NotificationType.BOOKING,
+          {
+            reservationId: reservationFound.id,
+            serviceId: reservationFound.service_id,
+          }
+        );
+        break;
+      case "rejected":
+        for (let index = 0; index < transactions.length; index++) {
+          const element = transactions[index];
+          element.status = "refunded";
+          element.save();
+          if (!element.coin_pack_id) {
+            const userFound = await User.findByPk(reservationFound.user_id);
+            userFound.availableCoins += element.coins;
+            userFound.save();
+          }
+        }
+        notificationService.sendNotification(
+          reservationFound.user_id,
+          "Your Reservation Has Been Rejected",
+          "The service owner has rejected your reservation.",
+          NotificationType.BOOKING,
+          {
+            reservationId: reservationFound.id,
+            serviceId: reservationFound.service_id,
+          }
+        );
+        break;
+      case "finished":
+        const serviceOwner = await getServiceOwner(reservationFound.service_id);
+        notificationService.sendNotification(
+          serviceOwner.id,
+          "Your Service Has Been Finished",
+          "The service seeker has finished the reservation. Good job!",
+          NotificationType.BOOKING,
+          {
+            reservationId: reservationFound.id,
+            serviceId: reservationFound.service_id,
+            isOwner: true,
+          }
+        );
+        break;
+      default:
+    }
+
+    return res.status(200).json({ done: true });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

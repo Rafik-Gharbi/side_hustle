@@ -48,7 +48,7 @@ class Helper {
         margin: isMobile ? EdgeInsets.zero : EdgeInsets.only(left: (Get.width / 3) * 2, right: 50, bottom: 10),
         backgroundColor: kNeutralColor100,
         snackPosition: SnackPosition.BOTTOM,
-        mainButton: overrideButton ?? (includeDismiss ? TextButton(onPressed: Get.back, child: Text('dismiss'.tr)) : null),
+        mainButton: overrideButton ?? (includeDismiss ? TextButton(onPressed: () => Helper.goBack(), child: Text('dismiss'.tr)) : null),
       ).show();
 
   static Future<dynamic> waitAndExecute(bool Function() condition, Function callback, {Duration? duration}) async {
@@ -388,5 +388,16 @@ class Helper {
       caseSensitive: false,
     );
     return uuidRegExp.hasMatch(str);
+  }
+
+  /// Ignores snackbar if there are any, go to previous screen and snackbar dismisses by itself.
+  static void goBack() => Get.isSnackbarOpen ? Navigator.of(Get.context!).pop() : Get.back();
+
+  static int calculateTaskCoinsPrice(double taskPrice) {
+    const baseCoins = 3;
+    const basePriceThreshold = 50;
+    if (taskPrice <= basePriceThreshold) return baseCoins;
+    final additionalCoins = (max(0, taskPrice - basePriceThreshold) / basePriceThreshold).ceil();
+    return baseCoins + additionalCoins;
   }
 }

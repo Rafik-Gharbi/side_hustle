@@ -1,6 +1,7 @@
 const { sequelize, Sequelize } = require("../../db.config");
 const { User } = require("./user_model");
 const { Task } = require("./task_model");
+const { Service } = require("./service_model");
 const Reservation = sequelize.define(
   "reservation",
   {
@@ -22,7 +23,8 @@ const Reservation = sequelize.define(
   }
 );
 
-Reservation.belongsTo(Task, { foreignKey: "task_id", allowNull: false });
+Reservation.belongsTo(Service, { foreignKey: "service_id", allowNull: true });
+Reservation.belongsTo(Task, { foreignKey: "task_id", allowNull: true });
 Reservation.belongsTo(User, { foreignKey: "user_id", allowNull: false });
 
 module.exports = {

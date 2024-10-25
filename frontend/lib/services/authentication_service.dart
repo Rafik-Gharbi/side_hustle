@@ -59,6 +59,7 @@ class AuthenticationService extends GetxController {
   bool stayLoggedIn = false;
   bool _firstMailSent = false;
   bool _isLoggingIn = false;
+  bool _chatRoomInitiated = false;
   bool isReady = false;
   String? phoneNumber;
   Gender? _gender;
@@ -245,6 +246,7 @@ class AuthenticationService extends GetxController {
     SharedPreferencesService.find.removeKey(jwtKey);
     SharedPreferencesService.find.removeKey(refreshTokenKey);
     _jwtUserData = null;
+    _chatRoomInitiated = false;
     update();
   }
 
@@ -277,7 +279,7 @@ class AuthenticationService extends GetxController {
       final jwt = await UserRepository.find.signup(user: user);
       isLoggingIn = false;
       if (jwt != null) {
-        Get.back();
+        Helper.goBack();
         // if (!Helper.isNullOrEmpty(phoneNumber)) {
         // Phone number OTP process
         // await Helper.otpProcess(phoneNumber, user.email);
@@ -287,7 +289,7 @@ class AuthenticationService extends GetxController {
         //   if (GetPlatform.isMobile) {
         //     Helper.mobileEmailVerification(user?.email);
         //   } else {
-        //     Get.back();
+        //     Helper.goBack();;
         //   }
         // });
         // } else {
@@ -297,7 +299,7 @@ class AuthenticationService extends GetxController {
         if (GetPlatform.isMobile) {
           await Helper.mobileEmailVerification(user.email);
         } else {
-          Get.back();
+          Helper.goBack();
         }
       }
     }
@@ -391,7 +393,7 @@ class AuthenticationService extends GetxController {
     }
   }
 
-  void initiateCurrentUser(String? jwt, {User? user, bool refresh = true}) {
+  void initiateCurrentUser(String? jwt, {User? user, bool silent = false}) {
     if (jwt != null) {
       final jwtPayload = JwtDecoder.decode(jwt);
       final isTokenExpired = JwtDecoder.isExpired(jwt);
@@ -405,6 +407,9 @@ class AuthenticationService extends GetxController {
         jwtUserData?.role = userFromToken.role;
         jwtUserData?.governorate = userFromToken.governorate;
         jwtUserData?.name = userFromToken.name;
+        jwtUserData?.baseCoins = userFromToken.baseCoins;
+        jwtUserData?.availableCoins = userFromToken.availableCoins;
+        jwtUserData?.availablePurchasedCoins = userFromToken.availablePurchasedCoins;
         jwtUserData?.picture = userFromToken.picture;
         jwtUserData?.isVerified = userFromToken.isVerified;
         jwtUserData?.isMailVerified = userFromToken.isMailVerified;
@@ -412,9 +417,11 @@ class AuthenticationService extends GetxController {
         jwtUserData?.password = null;
       }
       // init chat messages standBy room
-      _initChatStandByRoom();
-      if (Get.currentRoute == ProfileScreen.routeName) ProfileController.find.init();
-      if ((Get.isDialogOpen ?? false) || (Get.isBottomSheetOpen ?? false)) Get.back();
+      if (!silent) {
+        _initChatStandByRoom();
+        if (Get.currentRoute == ProfileScreen.routeName) ProfileController.find.init();
+        if ((Get.isDialogOpen ?? false) || (Get.isBottomSheetOpen ?? false)) Helper.goBack();
+      }
       update();
     }
   }
@@ -522,6 +529,8 @@ class AuthenticationService extends GetxController {
 
   void _initChatStandByRoom() {
     // init chat messages standBy room
+    if (_chatRoomInitiated) return;
+    _chatRoomInitiated = true;
     if (_jwtUserData == null) return;
     if (MainAppController.find.socket == null) MainAppController.find.initSocket();
     MainAppController.find.socket!.emit('standBy', {'userId': _jwtUserData!.id});

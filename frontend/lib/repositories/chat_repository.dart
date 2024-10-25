@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
-import '../helpers/helper.dart';
 import '../models/chat.dart';
 import '../models/dto/discussion_dto.dart';
 import '../models/reservation.dart';

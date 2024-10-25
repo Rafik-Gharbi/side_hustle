@@ -17,3 +17,4 @@ const Color kBlackColor = Colors.black;
 const Color kNeutralColor100 = Colors.white;
 const Color kConfirmedColor = Color(0xFF34A853);
 const Color kSelectedColor = Color(0xff008BF9);
+const Color kSelectedLightColor = Color.fromARGB(255, 49, 162, 255);

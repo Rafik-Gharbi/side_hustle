@@ -5,10 +5,12 @@ const jwt = require("jsonwebtoken");
 const { Task } = require("../models/task_model");
 const { Reservation } = require("../models/reservation_model");
 const { Service } = require("../models/service_model");
-const { Booking } = require("../models/booking_model");
 const { User } = require("../models/user_model");
 const { sequelize } = require("../../db.config");
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
+const { Transaction } = require("../models/transaction_model");
+const { CoinPack } = require("../models/coin_pack_model");
+const { CoinPackPurchase } = require("../models/coin_pack_purchase_model");
 
 function adjustString(inputString) {
   const ext = path.extname(inputString).toLowerCase();
@@ -82,6 +84,7 @@ async function getTaskCondidatesNumber(taskId) {
     let reservationList = await Reservation.findAll({
       where: {
         task_id: taskFound.id,
+        status: "pending",
       },
     });
 
@@ -94,7 +97,7 @@ async function getServiceCondidatesNumber(serviceId) {
   if (!serviceFound) {
     return res.status(404).json({ message: "service_not_found" });
   }
-  let bookingList = await Booking.findAll({
+  let bookingList = await Reservation.findAll({
     where: {
       service_id: serviceFound.id,
       [Op.or]: [{ status: "pending" }, { status: "confirmed" }],
@@ -361,12 +364,18 @@ function shuffleArray(array) {
 }
 
 async function generateJWT(response, isRefresh) {
+  const availablePurchasedCoins = await calculateAvailablePurchasedCoins(
+    response.id
+  );
   return (token = jwt.sign(
     {
       id: response.id,
       picture: response.picture,
       name: response.name,
       role: response.role,
+      coins: response.coins,
+      availableCoins: response.availableCoins,
+      availablePurchasedCoins: availablePurchasedCoins,
       governorate_id: response.governorate_id,
       isVerified: response.isVerified,
       isMailVerified: response.isMailVerified,
@@ -462,6 +471,162 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 
+function calculateTaskCoinsPrice(taskPrice) {
+  const baseCoins = 3;
+  const basePriceThreshold = 50;
+
+  if (taskPrice <= basePriceThreshold) {
+    return baseCoins;
+  }
+
+  const additionalCoins = Math.ceil(
+    Math.max(0, taskPrice - basePriceThreshold) / basePriceThreshold
+  );
+  return baseCoins + additionalCoins;
+}
+
+async function calculateAvailablePurchasedCoins(userId) {
+  let available = 0;
+  const purchaseTransactions = await Transaction.findAll({
+    where: {
+      user_id: userId,
+      createdAt: {
+        // Calculate transactions that are not yet expired
+        [Op.gte]: Sequelize.literal(
+          `DATE_SUB(NOW(), INTERVAL (SELECT validMonths FROM coin_pack WHERE id = coin_pack_purchase.coin_pack_id) MONTH)`
+        ),
+      },
+    },
+    include: [
+      {
+        model: CoinPackPurchase,
+        required: true,
+        include: [
+          {
+            model: CoinPack,
+            required: true,
+            where: {
+              validMonths: { [Op.ne]: null }, // Ensure CoinPack has a validMonths field
+            },
+          },
+        ],
+      },
+    ],
+    order: [
+      [
+        Sequelize.literal(
+          "DATE_ADD(Transaction.createdAt, INTERVAL (SELECT validMonths FROM coin_pack WHERE id = coin_pack_purchase.coin_pack_id) MONTH)"
+        ),
+        "ASC",
+      ],
+    ],
+  });
+
+  for (let index = 0; index < purchaseTransactions.length; index++) {
+    const transaction = purchaseTransactions[index];
+    if (transaction.type === "purchase") {
+      available += transaction.coins;
+    } else if (
+      (transaction.type === "proposal" && transaction.status !== "refunded") ||
+      transaction.type === "request"
+    ) {
+      available -= transaction.coins;
+    }
+  }
+  return available;
+}
+
+async function fetchPurchasedCoinsTransactions(userId) {
+  const transactions = await Transaction.findAll({
+    where: {
+      user_id: userId,
+      type: "purchase",
+      createdAt: {
+        // Calculate transactions that are not yet expired
+        [Op.gte]: Sequelize.literal(
+          `DATE_SUB(NOW(), INTERVAL (SELECT validMonths FROM coin_pack WHERE id = coin_pack_purchase.coin_pack_id) MONTH)`
+        ),
+      },
+    },
+    include: [
+      {
+        model: CoinPackPurchase,
+        required: true,
+        include: [
+          {
+            model: CoinPack,
+            required: true,
+            where: {
+              validMonths: { [Op.ne]: null }, // Ensure CoinPack has a validMonths field
+            },
+          },
+        ],
+      },
+    ],
+    order: [
+      [
+        Sequelize.literal(
+          "DATE_ADD(Transaction.createdAt, INTERVAL (SELECT validMonths FROM coin_pack WHERE id = coin_pack_purchase.coin_pack_id) MONTH)"
+        ),
+        "ASC",
+      ],
+    ],
+  });
+  const calculateAvailable = await Promise.all(
+    transactions.map(async (row) => {
+      let available = 0;
+      const coinPackTransactions = await Transaction.findAll({
+        where: {
+          user_id: userId,
+          coin_pack_id: row.coin_pack_id,
+        },
+        include: [
+          {
+            model: CoinPackPurchase,
+            required: true,
+            include: [
+              {
+                model: CoinPack,
+                required: true,
+                where: {
+                  validMonths: { [Op.ne]: null }, // Ensure CoinPack has a validMonths field
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+      for (let index = 0; index < coinPackTransactions.length; index++) {
+        const transaction = coinPackTransactions[index];
+        if (transaction.type === "purchase") {
+          available += transaction.coins;
+        } else if (
+          (transaction.type === "proposal" &&
+            transaction.status !== "refunded") ||
+          transaction.type === "request"
+        ) {
+          available -= transaction.coins;
+        }
+      }
+      return {
+        id: row.id,
+        coins: row.coins,
+        type: row.type,
+        status: row.status,
+        coin_pack_id: row.coin_pack_id,
+        coin_pack_purchase: row.coin_pack_purchase,
+        service_id: row.service_id,
+        task_id: row.task_id,
+        createdAt: row.createdAt,
+        available: available,
+      };
+    })
+  );
+
+  return calculateAvailable;
+}
+
 module.exports = {
   fromCoordinateToDouble,
   checkUnitDinar,
@@ -487,4 +652,7 @@ module.exports = {
   shuffleArray,
   isUUID,
   formatDate,
+  calculateTaskCoinsPrice,
+  calculateAvailablePurchasedCoins,
+  fetchPurchasedCoinsTransactions,
 };

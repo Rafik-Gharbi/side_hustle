@@ -8,6 +8,7 @@ import '../../../models/reservation.dart';
 import '../../../models/task.dart';
 import '../../../models/user.dart';
 import '../../../repositories/reservation_repository.dart';
+import '../../../repositories/task_repository.dart';
 import '../../../services/authentication_service.dart';
 import '../../home/home_controller.dart';
 import '../../review/add_review/add_review_bottomsheet.dart';
@@ -35,12 +36,13 @@ class TaskDetailsController extends GetxController {
         proposedPrice: double.tryParse(proposedPriceController.text),
         dueDate: DateTime.tryParse(deliveryDateController.text),
         note: noteController.text,
+        coins: task.coins,
         // coupon: coupon,
         user: AuthenticationService.find.jwtUserData!,
       ),
     );
     if (result) {
-      Get.back();
+      Helper.goBack();
       Helper.snackBar(message: 'proposal_sent_successfully'.tr);
       Future.delayed(const Duration(milliseconds: 600), () => init());
     }
@@ -63,11 +65,20 @@ class TaskDetailsController extends GetxController {
           title: 'mark_task_done_msg'.tr,
           onConfirm: () async {
             await ReservationRepository.find.updateReservationStatus(reservation!, RequestStatus.finished);
-            Get.back();
+            Helper.goBack();
             HomeController.find.init();
             MainAppController.find.resolveProfileActionRequired();
             Get.bottomSheet(AddReviewBottomsheet(user: reservation!.user), isScrollControlled: true);
           },
         )
       : null;
+
+  Future<void> getTaskUpdate() async {
+    if (task.id == null) return;
+    final result = await TaskRepository.find.getTaskById(task.id!);
+    if (result != null) {
+      task.updateFields(result);
+      update();
+    }
+  }
 }

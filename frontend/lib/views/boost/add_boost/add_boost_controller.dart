@@ -87,7 +87,7 @@ class AddBoostController extends GetxController {
       result = await BoostRepository.find.addBoost(boost: newBoost, taskServiceId: taskId ?? serviceId!, isTask: taskId != null);
     }
     if (result) {
-      Get.back();
+      Helper.goBack();
       Helper.snackBar(message: 'boost_status_successfully'.trParams({'status': boost?.id != null ? 'updated' : 'added'}));
     }
   }

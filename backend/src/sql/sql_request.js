@@ -4,6 +4,7 @@ const {
   getTaskCondidatesNumber,
   getServiceCondidatesNumber,
   shuffleArray,
+  calculateTaskCoinsPrice,
 } = require("../helper/helpers");
 const { Reservation } = require("../models/reservation_model");
 const { Boost } = require("../models/boost_model");
@@ -12,7 +13,6 @@ const { Store } = require("../models/store_model");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
 const { Task } = require("../models/task_model");
 const { User } = require("../models/user_model");
-const { Booking } = require("../models/booking_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
 const { Contract } = require("../models/contract_model");
 
@@ -120,9 +120,10 @@ const getMyRequestRequiredActionsCount = async (userId) => {
 };
 
 const getServiceHistoryRequiredActionsCount = async (userId) => {
-  let bookingList = await Booking.findAll({
+  let bookingList = await Reservation.findAll({
     where: {
       user_id: userId,
+      service_id: { [Op.ne]: null },
     },
   });
 
@@ -139,6 +140,7 @@ const getTaskHistoryRequiredActionsCount = async (userId) => {
   let reservationList = await Reservation.findAll({
     where: {
       user_id: userId,
+      task_id: { [Op.ne]: null },
     },
   });
 
@@ -187,9 +189,10 @@ async function fetchUserBooking(userId) {
   }
 
   // Check user service bookings
-  let bookingList = await Booking.findAll({
+  let bookingList = await Reservation.findAll({
     where: {
       user_id: userFound.id,
+      service_id: { [Op.ne]: null },
     },
   });
   let formattedList = await Promise.all(
@@ -233,7 +236,7 @@ async function fetchUserOngoingBooking(userId) {
     if (storeServices.length > 0) {
       await Promise.all(
         storeServices.map(async (service) => {
-          let bookingList = await Booking.findAll({
+          let bookingList = await Reservation.findAll({
             where: {
               [Op.or]: [{ status: "pending" }, { status: "confirmed" }],
               service_id: service.id,
@@ -328,21 +331,32 @@ async function fetchUserReservation(userId) {
   let reservationList = await Reservation.findAll({
     where: {
       user_id: userFound.id,
+      task_id: { [Op.ne]: null },
     },
   });
   const formattedList = await Promise.all(
     reservationList.map(async (row) => {
-      let foundTask = await Task.findByPk(row.task_id);
-      let task = await populateOneTask(foundTask, userFound.id);
-      let taskAttachments = await TaskAttachmentModel.findAll({
-        where: { task_id: row.task_id },
-      });
+      let taskAttachments;
+      let task;
+      // let service;
+      if (row.task_id) {
+        const foundTask = await Task.findByPk(row.task_id);
+        taskAttachments = await TaskAttachmentModel.findAll({
+          where: { task_id: row.task_id },
+        });
+        task = await populateOneTask(foundTask, userFound.id);
+      }
+      // if (row.service_id) {
+      //   const foundService = await Service.findByPk(row.service_id);
+      //   service = await populateOneService(foundService, userFound.id);
+      // }
 
       return {
         id: row.id,
         user: userFound,
         date: row.createdAt,
         task: task,
+        // service: service,
         totalPrice: row.total_price,
         proposedPrice: row.proposed_price,
         coupon: row.coupon,
@@ -468,6 +482,7 @@ async function populateOneTask(task, currentUserId) {
   return {
     id: task.id,
     price: task.price,
+    deducted_coins: task.deducted_coins,
     title: task.title,
     description: task.description,
     delivrables: task.delivrables,
@@ -481,6 +496,7 @@ async function populateOneTask(task, currentUserId) {
         ? userFavorites.some((e) => e.task_id == task.id)
         : false,
     distance: task.distance,
+    coins: calculateTaskCoinsPrice(task.price),
   };
 }
 
@@ -514,6 +530,7 @@ async function populateOneService(service) {
     notes: service.notes,
     timeEstimationFrom: service.timeEstimationFrom,
     timeEstimationTo: service.timeEstimationTo,
+    coins: calculateTaskCoinsPrice(service.price),
   };
 }
 

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/sizes.dart';
 import '../../../helpers/buildables.dart';
+import '../../../helpers/helper.dart';
 import '../../../models/enum/request_status.dart';
 import '../../../models/user.dart';
 import '../../../services/theme/theme.dart';
@@ -62,7 +63,7 @@ class UserProfileScreen extends StatelessWidget {
                         if (controller.showAllReviews)
                           CustomButtons.icon(icon: const Icon(Icons.chevron_left_outlined), onPressed: () => controller.showAllReviews = false)
                         else
-                          CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
+                          CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: () => Helper.goBack()),
                         Text(controller.showAllReviews ? 'all_reviews'.tr : 'profile'.tr, style: AppFonts.x15Bold),
                         const SizedBox(width: 40),
                       ],

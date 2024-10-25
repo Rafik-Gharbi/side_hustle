@@ -7,17 +7,15 @@ const {
   getFileType,
   checkStoreFavorite,
   shuffleArray,
+  calculateTaskCoinsPrice,
 } = require("../helper/helpers");
 const { Service } = require("../models/service_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
-const {
-  populateServices,
-  populateOneService,
-} = require("../sql/sql_request");
+const { populateServices, populateOneService } = require("../sql/sql_request");
 const { Review } = require("../models/review_model");
 const { Boost } = require("../models/boost_model");
 const { Op } = require("sequelize");
-const { Booking } = require("../models/booking_model");
+const { Reservation } = require("../models/reservation_model");
 
 // filter stores
 exports.filterStores = async (req, res) => {
@@ -289,6 +287,7 @@ exports.addService = async (req, res) => {
         notes: service.notes,
         timeEstimationFrom: service.timeEstimationFrom,
         timeEstimationTo: service.timeEstimationTo,
+        coins: calculateTaskCoinsPrice(service.price),
       },
     });
   } catch (error) {
@@ -386,6 +385,7 @@ exports.updateService = async (req, res) => {
         notes: notes,
         timeEstimationFrom: timeEstimationFrom,
         timeEstimationTo: timeEstimationTo,
+        coins: calculateTaskCoinsPrice(service.price),
       },
     });
   } catch (error) {
@@ -414,7 +414,7 @@ exports.deleteService = async (req, res) => {
     if (!foundService) {
       return res.status(404).json({ message: "service_not_found" });
     }
-    const serviceBookings = await Booking.findAll({
+    const serviceBookings = await Reservation.findAll({
       where: { service_id: service_id },
     });
     if (serviceBookings.length == 0) {

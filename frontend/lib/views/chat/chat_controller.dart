@@ -372,7 +372,7 @@ class ChatController extends GetxController {
       } else if (currentTasks.isNotEmpty) {
         if (currentTasks.length == 1) contractTask = currentTasks.first;
       }
-      Get.back();
+      Helper.goBack();
       Buildables.createContractBottomsheet(
         isTask: contractTask != null,
         contract: Contract(
@@ -383,7 +383,7 @@ class ChatController extends GetxController {
           createdAt: DateTime.now(),
         ),
         onSubmit: (contract) {
-          Get.back();
+          Helper.goBack();
           final sender = AuthenticationService.find.jwtUserData?.id;
           final reciever = selectedChatBubble!.userId == sender ? selectedChatBubble!.ownerId : selectedChatBubble!.userId;
           MainAppController.find.socket!.emit('createContract', {

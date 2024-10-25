@@ -41,7 +41,7 @@ class StoreRepository extends GetxService {
   Future<Store?> addStore(Store newstore, {required bool withBack}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, sendToken: true, '/store/', body: newstore.toJson(), files: [newstore.picture?.file]);
-      if (withBack) Get.back();
+      if (withBack) Helper.goBack();
       final store = Store.fromJson(result['store']);
       if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupStore(store);
       Helper.snackBar(message: 'store_added_successfully'.tr);
@@ -62,7 +62,7 @@ class StoreRepository extends GetxService {
         body: newService.toJson(),
         files: newService.gallery?.map((e) => e.file).toList(),
       );
-      if (withBack) Get.back();
+      if (withBack) Helper.goBack();
       final service = Service.fromJson(result['service']);
       if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupService(service, store);
       Helper.snackBar(message: 'service_added_successfully'.tr);
@@ -70,7 +70,7 @@ class StoreRepository extends GetxService {
     } catch (e) {
       if (e.toString().contains('service_limit_reached')) {
         Helper.snackBar(title: 'success'.tr, message: 'service_limit_reached'.tr);
-        if (withBack) Get.back();
+        if (withBack) Helper.goBack();
       } else {
         Helper.snackBar(message: 'service_add_failed'.tr);
       }
@@ -92,7 +92,7 @@ class StoreRepository extends GetxService {
   Future<Store?> updateStore(Store updateStore, {required bool withBack}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, sendToken: true, '/store/update', body: updateStore.toJson(), files: [updateStore.picture?.file]);
-      if (withBack) Get.back();
+      if (withBack) Helper.goBack();
       final store = Store.fromJson(result['store']);
       if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupStore(store);
       Helper.snackBar(message: 'store_updated_successfully'.tr);
@@ -113,7 +113,7 @@ class StoreRepository extends GetxService {
         body: updateService.toJson(),
         files: updateService.gallery?.map((e) => e.file).toList(),
       );
-      if (withBack) Get.back();
+      if (withBack) Helper.goBack();
       final service = Service.fromJson(result['service']);
       if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupService(service, store);
       Helper.snackBar(message: 'service_updated_successfully'.tr);

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
 import '../controllers/main_app_controller.dart';
+import '../helpers/helper.dart';
 import '../models/governorate.dart';
 import '../services/theme/theme.dart';
 import 'on_hover.dart';
@@ -30,8 +30,8 @@ class GovernorateBottomsheet extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: Paddings.small),
               child: InkWell(
                 onTap: () {
-                  onSelect.call( governorate);
-                  Get.back();
+                  onSelect.call(governorate);
+                  Helper.goBack();
                 },
                 child: OnHover(
                   builder: (isHovered) => DecoratedBox(

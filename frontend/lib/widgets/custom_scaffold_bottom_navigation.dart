@@ -18,6 +18,7 @@ import '../views/home/home_screen.dart';
 import '../views/store/market/market_screen.dart';
 import '../views/profile/profile_screen/profile_screen.dart';
 import '../views/task/task_proposal/task_proposal_screen.dart';
+import 'coins_market.dart';
 import 'custom_buttons.dart';
 
 class CustomScaffoldBottomNavigation extends StatelessWidget {
@@ -69,8 +70,9 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                         onBack?.call();
                         if (Get.currentRoute == TaskProposalScreen.routeName ||
                             Get.currentRoute == MessagesScreen.routeName ||
+                            Get.currentRoute == CoinsMarket.routeName ||
                             Get.currentRoute == ServiceRequestScreen.routeName) {
-                          Get.back();
+                          Helper.goBack();
                         } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && Get.currentRoute != ProfileScreen.routeName) {
                           NavigationHistoryObserver.instance.goToPreviousRoute(popToProfile: true);
                         } else {

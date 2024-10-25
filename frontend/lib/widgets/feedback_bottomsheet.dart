@@ -53,7 +53,7 @@ class EmotionSliderBottomsheetState extends State<EmotionSliderBottomsheet> {
           Positioned(
             top: 30,
             right: 20,
-            child: CustomButtons.icon(icon: const Icon(Icons.close, color: kNeutralColor100), onPressed: Get.back),
+            child: CustomButtons.icon(icon: const Icon(Icons.close, color: kNeutralColor100), onPressed: () => Helper.goBack()),
           )
         ],
       ),

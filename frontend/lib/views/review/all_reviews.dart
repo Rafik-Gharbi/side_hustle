@@ -38,7 +38,7 @@ class AllReviews extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
+                            CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: () => Helper.goBack()),
                             Text('all_reviews'.tr, style: AppFonts.x15Bold),
                             const SizedBox(width: 40),
                           ],

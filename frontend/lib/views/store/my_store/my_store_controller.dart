@@ -227,11 +227,12 @@ class MyStoreController extends GetxController {
         totalPrice: service.price ?? 0,
         user: AuthenticationService.find.jwtUserData!,
         note: noteController.text,
+        coins: service.coins,
         // coupon: coupon,
       ),
     );
     if (result) {
-      Get.back();
+      Helper.goBack();
       Helper.snackBar(message: 'service_booked_successfully'.tr);
     }
   }

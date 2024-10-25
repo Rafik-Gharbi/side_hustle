@@ -4,6 +4,7 @@ import 'dart:math';
 
 import '../constants/colors.dart';
 import '../constants/sizes.dart';
+import '../helpers/helper.dart';
 import '../services/theme/theme.dart';
 
 class ThankYouPopup extends StatefulWidget {
@@ -52,7 +53,7 @@ class ThankYouPopupState extends State<ThankYouPopup> with TickerProviderStateMi
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: Get.back,
+        onTap: () => Helper.goBack(),
         child: Center(
           child: Stack(
             children: [

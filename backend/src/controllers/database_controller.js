@@ -8,8 +8,10 @@ const { Store } = require("../models/store_model");
 const { Service } = require("../models/service_model");
 const { Review } = require("../models/review_model");
 const { deleteDatabase } = require("../../db.config");
-const Bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { removeSpacesFromPhoneNumber } = require("../helper/helpers");
+const { Transaction } = require("../models/transaction_model");
+const { CoinPack } = require("../models/coin_pack_model");
 
 // insert elements in the database
 exports.insert = async (req, res) => {
@@ -22,9 +24,10 @@ exports.insert = async (req, res) => {
     const stores = constantId.stores;
     const services = constantId.services;
     const reviews = constantId.reviews;
+    const coinsPack = constantId.coinsPack;
 
     for (const user of users) {
-      const hashedPassword = await Bcrypt.hash(user.password, 10);
+      const hashedPassword = await bcrypt.hash(user.password, 10);
       user.phone_number = removeSpacesFromPhoneNumber(user.phone_number);
       user.password = hashedPassword;
     }
@@ -37,6 +40,16 @@ exports.insert = async (req, res) => {
     const createdStores = await Store.bulkCreate(stores);
     const createdServices = await Service.bulkCreate(services);
     const createdReviews = await Review.bulkCreate(reviews);
+    const createdCoinPacks = await CoinPack.bulkCreate(coinsPack);
+
+    for (const user of createdUsers) {
+      await Transaction.create({
+        coins: 50,
+        user_id: user.id,
+        status: "completed",
+        type: "initialCoins",
+      });
+    }
 
     const result = {
       createdUsers,
@@ -47,6 +60,7 @@ exports.insert = async (req, res) => {
       createdStores,
       createdServices,
       createdReviews,
+      createdCoinPacks,
     };
 
     return res.status(200).json(result);

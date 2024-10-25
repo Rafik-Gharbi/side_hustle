@@ -53,10 +53,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                CustomButtons.icon(
-                                  icon: const Icon(Icons.close),
-                                  onPressed: Get.back,
-                                ),
+                                CustomButtons.icon(icon: const Icon(Icons.close), onPressed: () => Helper.goBack()),
                                 Text('${task != null ? 'edit'.tr : 'new'.tr} ${'task'.tr}', style: AppFonts.x16Bold),
                                 const SizedBox(width: 40),
                               ],

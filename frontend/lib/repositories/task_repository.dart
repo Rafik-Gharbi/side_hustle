@@ -36,7 +36,8 @@ class TaskRepository extends GetxService {
     return null;
   }
 
-  Future<List<Task>?> filterTasks({int page = 0, int limit = kLoadMoreLimit, String searchQuery = '', FilterModel? filter, int? taskId, bool withCoordinates = false, bool boosted = false}) async {
+  Future<List<Task>?> filterTasks(
+      {int page = 0, int limit = kLoadMoreLimit, String searchQuery = '', FilterModel? filter, int? taskId, bool withCoordinates = false, bool boosted = false}) async {
     try {
       List<Task>? tasks;
       if (MainAppController.find.isConnected) {
@@ -80,7 +81,7 @@ class TaskRepository extends GetxService {
   Future<Task?> addTask(Task newtask, {required bool withBack}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, sendToken: true, '/task/', body: newtask.toJson(), files: newtask.attachments?.map((e) => e.file).toList());
-      if (withBack) Get.back();
+      if (withBack) Helper.goBack();
       final task = Task.fromJson(result['task']);
       if (MainAppController.find.isConnected) TaskDatabaseRepository.find.backupTask(task);
       Helper.snackBar(message: 'task_added_successfully'.tr);
@@ -96,7 +97,7 @@ class TaskRepository extends GetxService {
     try {
       final result = await ApiBaseHelper()
           .request(RequestType.put, sendToken: true, '/task/${updateTask.id}', body: updateTask.toJson(), files: updateTask.attachments?.map((e) => e.file).toList());
-      if (withBack) Get.back();
+      if (withBack) Helper.goBack();
       final task = Task.fromJson(result['task']);
       if (MainAppController.find.isConnected) TaskDatabaseRepository.find.backupTask(task);
       Helper.snackBar(message: 'task_updated_successfully'.tr);
@@ -112,12 +113,23 @@ class TaskRepository extends GetxService {
     try {
       final result = await ApiBaseHelper().request(RequestType.delete, sendToken: true, '/task/${task.id}');
       final status = result?['done'] ?? false;
-      if (withBack) Get.back();
+      if (withBack) Helper.goBack();
       if (status) Helper.snackBar(message: 'task_deleted_successfully'.tr);
       return status;
     } catch (e) {
       LoggerService.logger?.e('Error occured in deleteUser:\n$e');
     }
     return false;
+  }
+
+  Future<Task?> getTaskById(String id) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/task/$id');
+      final task = result['task'] != null ? Task.fromJson(result['task']) : null;
+      return task;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getTaskById:\n$e');
+      return null;
+    }
   }
 }

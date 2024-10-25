@@ -5,6 +5,7 @@ import '../database/database_repository/category_database_repository.dart';
 import '../database/database_repository/governorate_database_repository.dart';
 import '../helpers/helper.dart';
 import '../models/category.dart';
+import '../models/coin_pack.dart';
 import '../models/dto/report_dto.dart';
 import '../models/governorate.dart';
 import '../networking/api_base_helper.dart';
@@ -58,7 +59,7 @@ class ParamsRepository extends GetxService {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/params/report', body: reportDTO.toJson(), sendToken: true);
       if (result['done']) {
-        Get.back(); // close report dialog
+        Helper.goBack(); // close report dialog
         Helper.snackBar(message: 'report_submitted_successfully'.tr);
       } else {
         Helper.snackBar(message: 'report_failed_submit'.tr);
@@ -72,7 +73,7 @@ class ParamsRepository extends GetxService {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/params/feedback', body: {'feedback': feedback.name, 'comment': comment}, sendToken: true);
       if (result['done']) {
-        Get.back();
+        Helper.goBack();
         Get.dialog(const ThankYouPopup());
       } else {
         Helper.snackBar(message: 'feedback_failed_submit'.tr);
@@ -81,5 +82,16 @@ class ParamsRepository extends GetxService {
       LoggerService.logger?.e('Error occured in submitFeedback:\n$e');
       Helper.snackBar(message: 'feedback_failed_submit'.tr);
     }
+  }
+
+  Future<List<CoinPack>?> getCoinsPack() async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.get, '/params/coin-packs');
+      final coins = (result['coins'] as List).map((e) => CoinPack.fromJson(e)).toList();
+      return coins;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getCoinsPack:\n$e');
+    }
+    return null;
   }
 }

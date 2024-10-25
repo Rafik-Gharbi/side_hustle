@@ -17,4 +17,7 @@ class UserTable extends Table with AutoIncrementingPrimaryKey {
   TextColumn get bio => text().withDefault(const Constant(''))();
   TextColumn get coordinates => text().nullable()();
   IntColumn get governorate => integer().references(GovernorateTable, #id).withDefault(const Constant(0))();
+  IntColumn get coins => integer().withDefault(const Constant(0))();
+  IntColumn get availableCoins => integer().withDefault(const Constant(0))();
+  IntColumn get availablePurchasedCoins => integer().withDefault(const Constant(0))();
 }

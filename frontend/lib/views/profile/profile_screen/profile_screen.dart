@@ -24,6 +24,7 @@ import '../../home/home_controller.dart';
 import '../../store/my_store/my_store_screen.dart';
 import '../../task/task_history/task_history_screen.dart';
 import '../../task/task_request/task_request_screen.dart';
+import '../transactions/transactions_screen.dart';
 import '../verify_user/verify_user_screen.dart';
 import 'components/change_password.dart';
 import 'profile_controller.dart';
@@ -84,6 +85,7 @@ class ProfileScreen extends StatelessWidget {
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
                                             Text(controller.loggedInUser!.name ?? 'someone'.tr, style: AppFonts.x16Bold),
+                                            const SizedBox(width: Paddings.small),
                                             if (controller.loggedInUser?.isVerified == VerifyIdentityStatus.verified)
                                               Padding(
                                                 padding: const EdgeInsets.only(right: Paddings.small),
@@ -99,6 +101,29 @@ class ProfileScreen extends StatelessWidget {
                                             const SizedBox(width: Paddings.regular),
                                             Text(controller.loggedInUser!.governorate?.name ?? 'city'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                                           ],
+                                        ),
+                                        const SizedBox(height: Paddings.small),
+                                        InkWell(
+                                          onTap: () => Get.toNamed(TransactionsScreen.routeName)?.then((value) => controller.update()),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: Paddings.regular, vertical: Paddings.small),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    const Icon(Icons.paid_outlined, size: 18, color: kAccentColor),
+                                                    const SizedBox(width: Paddings.regular),
+                                                    Text(
+                                                      '${AuthenticationService.find.jwtUserData!.totalCoins} ${'coins'.tr}',
+                                                      style: AppFonts.x14Regular.copyWith(color: kAccentColor),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const DecoratedBox(decoration: BoxDecoration(color: kAccentColor), child: SizedBox(width: 90, height: 1)),
+                                              ],
+                                            ),
+                                          ),
                                         ),
                                         const SizedBox(height: Paddings.exceptional),
                                         DecoratedBox(

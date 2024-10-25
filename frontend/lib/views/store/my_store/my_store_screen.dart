@@ -90,7 +90,7 @@ class MyStoreScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
+                          CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: () => Helper.goBack()),
                           Text('store'.tr, style: AppFonts.x15Bold),
                           if (controller.currentStore?.coordinates != null)
                             CustomButtons.icon(
@@ -166,8 +166,11 @@ class MyStoreScreen extends StatelessWidget {
                                 onBookService: () => isOwner
                                     ? Get.toNamed(ServiceRequestScreen.routeName, arguments: service)
                                     : AuthenticationService.find.isUserLoggedIn.value
-                                        ? Buildables.requestBottomsheet(noteController: controller.noteController, onSubmit: () => controller.bookService(service))
-                                            .then((value) => controller.clearRequestFormFields())
+                                        ? Buildables.requestBottomsheet(
+                                            noteController: controller.noteController,
+                                            onSubmit: () => controller.bookService(service),
+                                            neededCoins: service.coins,
+                                          ).then((value) => controller.clearRequestFormFields())
                                         : Helper.snackBar(message: 'login_express_interest_msg'.tr),
                                 isOwner: AuthenticationService.find.jwtUserData?.id == controller.currentStore?.owner?.id,
                                 onDeleteService: () => controller.deleteService(service),

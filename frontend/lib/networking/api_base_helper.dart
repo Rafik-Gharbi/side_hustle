@@ -16,6 +16,7 @@ import '../services/authentication_service.dart';
 import '../services/logger_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/theme/theme.dart';
+import '../widgets/custom_buttons.dart';
 import '../widgets/custom_text_field.dart';
 import 'api_exceptions.dart';
 
@@ -42,14 +43,14 @@ const String baseUrlLocalWeb = 'http://localhost:3000'; // web localhost
 const String baseUrlLocalAndroid = 'http://10.0.2.2:3000'; // android localhost
 const String baseUrlLocalIos = 'http://127.0.0.1:3000'; // ios localhost
 const String baseUrlRealDevice = 'http://192.168.1.23:3000'; // 'http://172.20.10.2:3000'; // real device ip address
-// const String baseUrlRemote = 'https://HustleMatch.net'; // remote
+const String baseUrlRemote = 'https://test.abidconcept.tn'; // remote
 String _lastRequestedUrl = '';
 
 class ApiBaseHelper extends GetxController {
   static ApiBaseHelper get find => Get.find<ApiBaseHelper>();
-  // final String baseUrl = baseUrlRemote;
+  // String baseUrl = baseUrlRemote;
   String baseUrl = kReleaseMode
-      ? baseUrlRealDevice //baseUrlRemote
+      ? baseUrlRemote
       : kIsWeb
           ? baseUrlLocalWeb
           : GetPlatform.isAndroid
@@ -153,7 +154,7 @@ class ApiBaseHelper extends GetxController {
           LoggerService.logger!.i('API Post, url $url');
           response = await http.post(
             requestUrl,
-            body: jsonEncode(body),
+            body: body != null ? jsonEncode(body) : null,
             headers: headers ?? _defaultHeader,
           );
           break;
@@ -254,6 +255,8 @@ class ApiBaseHelper extends GetxController {
   }
 
   Future<bool> checkConnectionToBackend() async {
+    // ignore: avoid_print
+    print('baseUrl: $baseUrl');
     void openIPAddressChanger() {
       Helper.waitAndExecute(
         () => SharedPreferencesService.find.isReady,
@@ -272,7 +275,26 @@ class ApiBaseHelper extends GetxController {
                       baseUrl = 'http://$value:3000';
                       SharedPreferencesService.find.add(baseUrlKey, baseUrl);
                       RestartWidget.restartApp(Get.context!);
-                      Get.back();
+                      Helper.goBack();
+                    },
+                  ),
+                  const SizedBox(height: Paddings.regular),
+                  CustomTextField(
+                    hintText: 'Or full address e.g. http://192.168.1.23:3000',
+                    onSubmitted: (value) {
+                      baseUrl = value;
+                      SharedPreferencesService.find.add(baseUrlKey, baseUrl);
+                      RestartWidget.restartApp(Get.context!);
+                      Helper.goBack();
+                    },
+                  ),
+                  const SizedBox(height: Paddings.exceptional),
+                  CustomButtons.elevatePrimary(
+                    title: 'Cancel & Restart',
+                    width: 200,
+                    onPressed: () {
+                      RestartWidget.restartApp(Get.context!);
+                      Helper.goBack();
                     },
                   ),
                   const SizedBox(height: Paddings.exceptional),

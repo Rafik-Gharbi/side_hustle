@@ -6,6 +6,7 @@ const {
 const { User } = require("../models/user_model");
 const { Report } = require("../models/report_model");
 const { Feedback } = require("../models/feedback_model");
+const { CoinPack } = require("../models/coin_pack_model");
 
 // check backend is reachable
 exports.checkConnection = async (req, res) => {
@@ -50,6 +51,17 @@ exports.getAllCategories = async (req, res) => {
       })
     );
     return res.status(200).json({ categories: populatedCategories });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.getCoinPacks = async (req, res) => {
+  try {
+    const coins = await CoinPack.findAll();
+    return res.status(200).json({ coins });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

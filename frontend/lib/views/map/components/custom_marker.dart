@@ -46,7 +46,7 @@ class _BuildCustomMarkerState extends State<BuildCustomMarker> {
         isScrollControlled: true,
       );
     } else if (Get.isBottomSheetOpen ?? false) {
-      Get.back();
+      Helper.goBack();
     }
     return bool;
   }

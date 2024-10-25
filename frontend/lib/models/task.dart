@@ -12,17 +12,19 @@ import 'governorate.dart';
 import 'user.dart';
 
 class Task {
-  final String? id;
-  final String title;
-  final String description;
-  final Category? category;
-  final Governorate? governorate;
-  final double? price;
-  final String? delivrables;
-  final User owner;
-  final DateTime? dueDate;
-  final LatLng? coordinates;
-  final String? distance;
+  String? id;
+  String title;
+  String description;
+  Category? category;
+  Governorate? governorate;
+  double? price;
+  String? delivrables;
+  User owner;
+  DateTime? dueDate;
+  LatLng? coordinates;
+  String? distance;
+  int coins;
+  int deductedCoins;
   List<ImageDTO>? attachments;
   bool isFavorite;
 
@@ -40,6 +42,8 @@ class Task {
     this.coordinates,
     this.distance,
     this.isFavorite = false,
+    this.coins = 0,
+    this.deductedCoins = 0,
   });
 
   factory Task.fromJson(Map<String, dynamic> json, {dynamic attachments}) => Task(
@@ -64,6 +68,8 @@ class Task {
                 : null,
         dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate']) : DateTime.now().toOneMinuteBeforeMidnight(),
         isFavorite: json['isFavorite'] ?? false,
+        coins: json['coins'] ?? 0,
+        deductedCoins: json['deducted_coins'] ?? 0,
       );
 
   Map<String, dynamic> toJson({bool includeOwner = false}) {
@@ -109,4 +115,21 @@ class Task {
         attachments: attachments,
         owner: owner,
       );
+
+  void updateFields(Task task) {
+    title = task.title;
+    description = task.description;
+    category = task.category;
+    governorate = task.governorate;
+    price = task.price;
+    delivrables = task.delivrables;
+    owner = task.owner;
+    dueDate = task.dueDate;
+    coordinates = task.coordinates;
+    distance = task.distance;
+    coins = task.coins;
+    deductedCoins = task.deductedCoins;
+    attachments = task.attachments;
+    isFavorite = task.isFavorite;
+  }
 }

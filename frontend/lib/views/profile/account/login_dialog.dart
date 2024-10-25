@@ -53,7 +53,7 @@ class LoginDialog extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomButtons.icon(onPressed: Get.back, icon: const Icon(Icons.close)),
+                          CustomButtons.icon(onPressed: () => Helper.goBack(), icon: const Icon(Icons.close)),
                           Text(
                             controller.currentState.isSignUp
                                 ? 'signup'.tr

@@ -101,7 +101,7 @@ final Map<String, String> arTN = <String, String>{
   'task_price': 'سعر المهمة',
   'governorate': 'المحافظة',
   'select_governorate': 'اختر محافظة',
-  'due_date': 'تاريخ الاستحقاق',
+  'due_date': 'الموعد النهائي',
   'attach_files_pictures': 'إرفاق ملفات/صور',
   'expected_delivrables': 'النتائج المتوقعة',
   'add': 'إضافة',

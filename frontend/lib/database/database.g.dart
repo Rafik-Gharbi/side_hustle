@@ -588,6 +588,29 @@ class $UserTableTable extends UserTable
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES governorate_table (id)'),
       defaultValue: const Constant(0));
+  static const VerificationMeta _coinsMeta = const VerificationMeta('coins');
+  @override
+  late final GeneratedColumn<int> coins = GeneratedColumn<int>(
+      'coins', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _availableCoinsMeta =
+      const VerificationMeta('availableCoins');
+  @override
+  late final GeneratedColumn<int> availableCoins = GeneratedColumn<int>(
+      'available_coins', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _availablePurchasedCoinsMeta =
+      const VerificationMeta('availablePurchasedCoins');
+  @override
+  late final GeneratedColumn<int> availablePurchasedCoins =
+      GeneratedColumn<int>('available_purchased_coins', aliasedName, false,
+          type: DriftSqlType.int,
+          requiredDuringInsert: false,
+          defaultValue: const Constant(0));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -602,7 +625,10 @@ class $UserTableTable extends UserTable
         birthdate,
         bio,
         coordinates,
-        governorate
+        governorate,
+        coins,
+        availableCoins,
+        availablePurchasedCoins
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -662,6 +688,23 @@ class $UserTableTable extends UserTable
           governorate.isAcceptableOrUnknown(
               data['governorate']!, _governorateMeta));
     }
+    if (data.containsKey('coins')) {
+      context.handle(
+          _coinsMeta, coins.isAcceptableOrUnknown(data['coins']!, _coinsMeta));
+    }
+    if (data.containsKey('available_coins')) {
+      context.handle(
+          _availableCoinsMeta,
+          availableCoins.isAcceptableOrUnknown(
+              data['available_coins']!, _availableCoinsMeta));
+    }
+    if (data.containsKey('available_purchased_coins')) {
+      context.handle(
+          _availablePurchasedCoinsMeta,
+          availablePurchasedCoins.isAcceptableOrUnknown(
+              data['available_purchased_coins']!,
+              _availablePurchasedCoinsMeta));
+    }
     return context;
   }
 
@@ -699,6 +742,13 @@ class $UserTableTable extends UserTable
           .read(DriftSqlType.string, data['${effectivePrefix}coordinates']),
       governorate: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}governorate'])!,
+      coins: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}coins'])!,
+      availableCoins: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}available_coins'])!,
+      availablePurchasedCoins: attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}available_purchased_coins'])!,
     );
   }
 
@@ -730,6 +780,9 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
   final String bio;
   final String? coordinates;
   final int governorate;
+  final int coins;
+  final int availableCoins;
+  final int availablePurchasedCoins;
   const UserTableData(
       {required this.id,
       required this.name,
@@ -743,7 +796,10 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       this.birthdate,
       required this.bio,
       this.coordinates,
-      required this.governorate});
+      required this.governorate,
+      required this.coins,
+      required this.availableCoins,
+      required this.availablePurchasedCoins});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -772,6 +828,9 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       map['coordinates'] = Variable<String>(coordinates);
     }
     map['governorate'] = Variable<int>(governorate);
+    map['coins'] = Variable<int>(coins);
+    map['available_coins'] = Variable<int>(availableCoins);
+    map['available_purchased_coins'] = Variable<int>(availablePurchasedCoins);
     return map;
   }
 
@@ -794,6 +853,9 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           ? const Value.absent()
           : Value(coordinates),
       governorate: Value(governorate),
+      coins: Value(coins),
+      availableCoins: Value(availableCoins),
+      availablePurchasedCoins: Value(availablePurchasedCoins),
     );
   }
 
@@ -817,6 +879,10 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       bio: serializer.fromJson<String>(json['bio']),
       coordinates: serializer.fromJson<String?>(json['coordinates']),
       governorate: serializer.fromJson<int>(json['governorate']),
+      coins: serializer.fromJson<int>(json['coins']),
+      availableCoins: serializer.fromJson<int>(json['availableCoins']),
+      availablePurchasedCoins:
+          serializer.fromJson<int>(json['availablePurchasedCoins']),
     );
   }
   @override
@@ -839,6 +905,10 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       'bio': serializer.toJson<String>(bio),
       'coordinates': serializer.toJson<String?>(coordinates),
       'governorate': serializer.toJson<int>(governorate),
+      'coins': serializer.toJson<int>(coins),
+      'availableCoins': serializer.toJson<int>(availableCoins),
+      'availablePurchasedCoins':
+          serializer.toJson<int>(availablePurchasedCoins),
     };
   }
 
@@ -855,7 +925,10 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           Value<DateTime?> birthdate = const Value.absent(),
           String? bio,
           Value<String?> coordinates = const Value.absent(),
-          int? governorate}) =>
+          int? governorate,
+          int? coins,
+          int? availableCoins,
+          int? availablePurchasedCoins}) =>
       UserTableData(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -870,6 +943,10 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
         bio: bio ?? this.bio,
         coordinates: coordinates.present ? coordinates.value : this.coordinates,
         governorate: governorate ?? this.governorate,
+        coins: coins ?? this.coins,
+        availableCoins: availableCoins ?? this.availableCoins,
+        availablePurchasedCoins:
+            availablePurchasedCoins ?? this.availablePurchasedCoins,
       );
   UserTableData copyWithCompanion(UserTableCompanion data) {
     return UserTableData(
@@ -891,6 +968,13 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           data.coordinates.present ? data.coordinates.value : this.coordinates,
       governorate:
           data.governorate.present ? data.governorate.value : this.governorate,
+      coins: data.coins.present ? data.coins.value : this.coins,
+      availableCoins: data.availableCoins.present
+          ? data.availableCoins.value
+          : this.availableCoins,
+      availablePurchasedCoins: data.availablePurchasedCoins.present
+          ? data.availablePurchasedCoins.value
+          : this.availablePurchasedCoins,
     );
   }
 
@@ -909,14 +993,32 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           ..write('birthdate: $birthdate, ')
           ..write('bio: $bio, ')
           ..write('coordinates: $coordinates, ')
-          ..write('governorate: $governorate')
+          ..write('governorate: $governorate, ')
+          ..write('coins: $coins, ')
+          ..write('availableCoins: $availableCoins, ')
+          ..write('availablePurchasedCoins: $availablePurchasedCoins')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, email, phone, picture, role, gender,
-      isVerified, isMailVerified, birthdate, bio, coordinates, governorate);
+  int get hashCode => Object.hash(
+      id,
+      name,
+      email,
+      phone,
+      picture,
+      role,
+      gender,
+      isVerified,
+      isMailVerified,
+      birthdate,
+      bio,
+      coordinates,
+      governorate,
+      coins,
+      availableCoins,
+      availablePurchasedCoins);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -933,7 +1035,10 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           other.birthdate == this.birthdate &&
           other.bio == this.bio &&
           other.coordinates == this.coordinates &&
-          other.governorate == this.governorate);
+          other.governorate == this.governorate &&
+          other.coins == this.coins &&
+          other.availableCoins == this.availableCoins &&
+          other.availablePurchasedCoins == this.availablePurchasedCoins);
 }
 
 class UserTableCompanion extends UpdateCompanion<UserTableData> {
@@ -950,6 +1055,9 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
   final Value<String> bio;
   final Value<String?> coordinates;
   final Value<int> governorate;
+  final Value<int> coins;
+  final Value<int> availableCoins;
+  final Value<int> availablePurchasedCoins;
   const UserTableCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -964,6 +1072,9 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
     this.bio = const Value.absent(),
     this.coordinates = const Value.absent(),
     this.governorate = const Value.absent(),
+    this.coins = const Value.absent(),
+    this.availableCoins = const Value.absent(),
+    this.availablePurchasedCoins = const Value.absent(),
   });
   UserTableCompanion.insert({
     this.id = const Value.absent(),
@@ -979,6 +1090,9 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
     this.bio = const Value.absent(),
     this.coordinates = const Value.absent(),
     this.governorate = const Value.absent(),
+    this.coins = const Value.absent(),
+    this.availableCoins = const Value.absent(),
+    this.availablePurchasedCoins = const Value.absent(),
   });
   static Insertable<UserTableData> custom({
     Expression<int>? id,
@@ -994,6 +1108,9 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
     Expression<String>? bio,
     Expression<String>? coordinates,
     Expression<int>? governorate,
+    Expression<int>? coins,
+    Expression<int>? availableCoins,
+    Expression<int>? availablePurchasedCoins,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1009,6 +1126,10 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
       if (bio != null) 'bio': bio,
       if (coordinates != null) 'coordinates': coordinates,
       if (governorate != null) 'governorate': governorate,
+      if (coins != null) 'coins': coins,
+      if (availableCoins != null) 'available_coins': availableCoins,
+      if (availablePurchasedCoins != null)
+        'available_purchased_coins': availablePurchasedCoins,
     });
   }
 
@@ -1025,7 +1146,10 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
       Value<DateTime?>? birthdate,
       Value<String>? bio,
       Value<String?>? coordinates,
-      Value<int>? governorate}) {
+      Value<int>? governorate,
+      Value<int>? coins,
+      Value<int>? availableCoins,
+      Value<int>? availablePurchasedCoins}) {
     return UserTableCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -1040,6 +1164,10 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
       bio: bio ?? this.bio,
       coordinates: coordinates ?? this.coordinates,
       governorate: governorate ?? this.governorate,
+      coins: coins ?? this.coins,
+      availableCoins: availableCoins ?? this.availableCoins,
+      availablePurchasedCoins:
+          availablePurchasedCoins ?? this.availablePurchasedCoins,
     );
   }
 
@@ -1088,6 +1216,16 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
     if (governorate.present) {
       map['governorate'] = Variable<int>(governorate.value);
     }
+    if (coins.present) {
+      map['coins'] = Variable<int>(coins.value);
+    }
+    if (availableCoins.present) {
+      map['available_coins'] = Variable<int>(availableCoins.value);
+    }
+    if (availablePurchasedCoins.present) {
+      map['available_purchased_coins'] =
+          Variable<int>(availablePurchasedCoins.value);
+    }
     return map;
   }
 
@@ -1106,7 +1244,10 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
           ..write('birthdate: $birthdate, ')
           ..write('bio: $bio, ')
           ..write('coordinates: $coordinates, ')
-          ..write('governorate: $governorate')
+          ..write('governorate: $governorate, ')
+          ..write('coins: $coins, ')
+          ..write('availableCoins: $availableCoins, ')
+          ..write('availablePurchasedCoins: $availablePurchasedCoins')
           ..write(')'))
         .toString();
   }
@@ -3018,6 +3159,13 @@ class $ReservationTableTable extends ReservationTable
               defaultValue: const Constant(0))
           .withConverter<RequestStatus>(
               $ReservationTableTable.$converterstatus);
+  static const VerificationMeta _coinsMeta = const VerificationMeta('coins');
+  @override
+  late final GeneratedColumn<int> coins = GeneratedColumn<int>(
+      'coins', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
   static const VerificationMeta _userMeta = const VerificationMeta('user');
   @override
   late final GeneratedColumn<int> user = GeneratedColumn<int>(
@@ -3037,6 +3185,7 @@ class $ReservationTableTable extends ReservationTable
         coupon,
         note,
         status,
+        coins,
         user
       ];
   @override
@@ -3088,6 +3237,10 @@ class $ReservationTableTable extends ReservationTable
           _noteMeta, note.isAcceptableOrUnknown(data['note']!, _noteMeta));
     }
     context.handle(_statusMeta, const VerificationResult.success());
+    if (data.containsKey('coins')) {
+      context.handle(
+          _coinsMeta, coins.isAcceptableOrUnknown(data['coins']!, _coinsMeta));
+    }
     if (data.containsKey('user')) {
       context.handle(
           _userMeta, user.isAcceptableOrUnknown(data['user']!, _userMeta));
@@ -3120,6 +3273,8 @@ class $ReservationTableTable extends ReservationTable
       status: $ReservationTableTable.$converterstatus.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}status'])!),
+      coins: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}coins'])!,
       user: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}user']),
     );
@@ -3145,6 +3300,7 @@ class ReservationTableData extends DataClass
   final String coupon;
   final String note;
   final RequestStatus status;
+  final int coins;
   final int? user;
   const ReservationTableData(
       {required this.id,
@@ -3156,6 +3312,7 @@ class ReservationTableData extends DataClass
       required this.coupon,
       required this.note,
       required this.status,
+      required this.coins,
       this.user});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3178,6 +3335,7 @@ class ReservationTableData extends DataClass
       map['status'] =
           Variable<int>($ReservationTableTable.$converterstatus.toSql(status));
     }
+    map['coins'] = Variable<int>(coins);
     if (!nullToAbsent || user != null) {
       map['user'] = Variable<int>(user);
     }
@@ -3199,6 +3357,7 @@ class ReservationTableData extends DataClass
       coupon: Value(coupon),
       note: Value(note),
       status: Value(status),
+      coins: Value(coins),
       user: user == null && nullToAbsent ? const Value.absent() : Value(user),
     );
   }
@@ -3217,6 +3376,7 @@ class ReservationTableData extends DataClass
       note: serializer.fromJson<String>(json['note']),
       status: $ReservationTableTable.$converterstatus
           .fromJson(serializer.fromJson<int>(json['status'])),
+      coins: serializer.fromJson<int>(json['coins']),
       user: serializer.fromJson<int?>(json['user']),
     );
   }
@@ -3234,6 +3394,7 @@ class ReservationTableData extends DataClass
       'note': serializer.toJson<String>(note),
       'status': serializer
           .toJson<int>($ReservationTableTable.$converterstatus.toJson(status)),
+      'coins': serializer.toJson<int>(coins),
       'user': serializer.toJson<int?>(user),
     };
   }
@@ -3248,6 +3409,7 @@ class ReservationTableData extends DataClass
           String? coupon,
           String? note,
           RequestStatus? status,
+          int? coins,
           Value<int?> user = const Value.absent()}) =>
       ReservationTableData(
         id: id ?? this.id,
@@ -3260,6 +3422,7 @@ class ReservationTableData extends DataClass
         coupon: coupon ?? this.coupon,
         note: note ?? this.note,
         status: status ?? this.status,
+        coins: coins ?? this.coins,
         user: user.present ? user.value : this.user,
       );
   ReservationTableData copyWithCompanion(ReservationTableCompanion data) {
@@ -3276,6 +3439,7 @@ class ReservationTableData extends DataClass
       coupon: data.coupon.present ? data.coupon.value : this.coupon,
       note: data.note.present ? data.note.value : this.note,
       status: data.status.present ? data.status.value : this.status,
+      coins: data.coins.present ? data.coins.value : this.coins,
       user: data.user.present ? data.user.value : this.user,
     );
   }
@@ -3292,6 +3456,7 @@ class ReservationTableData extends DataClass
           ..write('coupon: $coupon, ')
           ..write('note: $note, ')
           ..write('status: $status, ')
+          ..write('coins: $coins, ')
           ..write('user: $user')
           ..write(')'))
         .toString();
@@ -3299,7 +3464,7 @@ class ReservationTableData extends DataClass
 
   @override
   int get hashCode => Object.hash(id, task, service, date, totalPrice,
-      proposedPrice, coupon, note, status, user);
+      proposedPrice, coupon, note, status, coins, user);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3313,6 +3478,7 @@ class ReservationTableData extends DataClass
           other.coupon == this.coupon &&
           other.note == this.note &&
           other.status == this.status &&
+          other.coins == this.coins &&
           other.user == this.user);
 }
 
@@ -3326,6 +3492,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
   final Value<String> coupon;
   final Value<String> note;
   final Value<RequestStatus> status;
+  final Value<int> coins;
   final Value<int?> user;
   final Value<int> rowid;
   const ReservationTableCompanion({
@@ -3338,6 +3505,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     this.coupon = const Value.absent(),
     this.note = const Value.absent(),
     this.status = const Value.absent(),
+    this.coins = const Value.absent(),
     this.user = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -3351,6 +3519,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     this.coupon = const Value.absent(),
     this.note = const Value.absent(),
     this.status = const Value.absent(),
+    this.coins = const Value.absent(),
     this.user = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id);
@@ -3364,6 +3533,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     Expression<String>? coupon,
     Expression<String>? note,
     Expression<int>? status,
+    Expression<int>? coins,
     Expression<int>? user,
     Expression<int>? rowid,
   }) {
@@ -3377,6 +3547,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
       if (coupon != null) 'coupon': coupon,
       if (note != null) 'note': note,
       if (status != null) 'status': status,
+      if (coins != null) 'coins': coins,
       if (user != null) 'user': user,
       if (rowid != null) 'rowid': rowid,
     });
@@ -3392,6 +3563,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
       Value<String>? coupon,
       Value<String>? note,
       Value<RequestStatus>? status,
+      Value<int>? coins,
       Value<int?>? user,
       Value<int>? rowid}) {
     return ReservationTableCompanion(
@@ -3404,6 +3576,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
       coupon: coupon ?? this.coupon,
       note: note ?? this.note,
       status: status ?? this.status,
+      coins: coins ?? this.coins,
       user: user ?? this.user,
       rowid: rowid ?? this.rowid,
     );
@@ -3440,6 +3613,9 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
       map['status'] = Variable<int>(
           $ReservationTableTable.$converterstatus.toSql(status.value));
     }
+    if (coins.present) {
+      map['coins'] = Variable<int>(coins.value);
+    }
     if (user.present) {
       map['user'] = Variable<int>(user.value);
     }
@@ -3461,6 +3637,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
           ..write('coupon: $coupon, ')
           ..write('note: $note, ')
           ..write('status: $status, ')
+          ..write('coins: $coins, ')
           ..write('user: $user, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -3792,6 +3969,9 @@ typedef $$UserTableTableCreateCompanionBuilder = UserTableCompanion Function({
   Value<String> bio,
   Value<String?> coordinates,
   Value<int> governorate,
+  Value<int> coins,
+  Value<int> availableCoins,
+  Value<int> availablePurchasedCoins,
 });
 typedef $$UserTableTableUpdateCompanionBuilder = UserTableCompanion Function({
   Value<int> id,
@@ -3807,6 +3987,9 @@ typedef $$UserTableTableUpdateCompanionBuilder = UserTableCompanion Function({
   Value<String> bio,
   Value<String?> coordinates,
   Value<int> governorate,
+  Value<int> coins,
+  Value<int> availableCoins,
+  Value<int> availablePurchasedCoins,
 });
 
 class $$UserTableTableTableManager extends RootTableManager<
@@ -3839,6 +4022,9 @@ class $$UserTableTableTableManager extends RootTableManager<
             Value<String> bio = const Value.absent(),
             Value<String?> coordinates = const Value.absent(),
             Value<int> governorate = const Value.absent(),
+            Value<int> coins = const Value.absent(),
+            Value<int> availableCoins = const Value.absent(),
+            Value<int> availablePurchasedCoins = const Value.absent(),
           }) =>
               UserTableCompanion(
             id: id,
@@ -3854,6 +4040,9 @@ class $$UserTableTableTableManager extends RootTableManager<
             bio: bio,
             coordinates: coordinates,
             governorate: governorate,
+            coins: coins,
+            availableCoins: availableCoins,
+            availablePurchasedCoins: availablePurchasedCoins,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -3869,6 +4058,9 @@ class $$UserTableTableTableManager extends RootTableManager<
             Value<String> bio = const Value.absent(),
             Value<String?> coordinates = const Value.absent(),
             Value<int> governorate = const Value.absent(),
+            Value<int> coins = const Value.absent(),
+            Value<int> availableCoins = const Value.absent(),
+            Value<int> availablePurchasedCoins = const Value.absent(),
           }) =>
               UserTableCompanion.insert(
             id: id,
@@ -3884,6 +4076,9 @@ class $$UserTableTableTableManager extends RootTableManager<
             bio: bio,
             coordinates: coordinates,
             governorate: governorate,
+            coins: coins,
+            availableCoins: availableCoins,
+            availablePurchasedCoins: availablePurchasedCoins,
           ),
         ));
 }
@@ -3955,6 +4150,21 @@ class $$UserTableTableFilterComposer
 
   ColumnFilters<String> get coordinates => $state.composableBuilder(
       column: $state.table.coordinates,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get coins => $state.composableBuilder(
+      column: $state.table.coins,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get availableCoins => $state.composableBuilder(
+      column: $state.table.availableCoins,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get availablePurchasedCoins => $state.composableBuilder(
+      column: $state.table.availablePurchasedCoins,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -4072,6 +4282,21 @@ class $$UserTableTableOrderingComposer
 
   ColumnOrderings<String> get coordinates => $state.composableBuilder(
       column: $state.table.coordinates,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get coins => $state.composableBuilder(
+      column: $state.table.coins,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get availableCoins => $state.composableBuilder(
+      column: $state.table.availableCoins,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get availablePurchasedCoins => $state.composableBuilder(
+      column: $state.table.availablePurchasedCoins,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -5011,6 +5236,7 @@ typedef $$ReservationTableTableCreateCompanionBuilder
   Value<String> coupon,
   Value<String> note,
   Value<RequestStatus> status,
+  Value<int> coins,
   Value<int?> user,
   Value<int> rowid,
 });
@@ -5025,6 +5251,7 @@ typedef $$ReservationTableTableUpdateCompanionBuilder
   Value<String> coupon,
   Value<String> note,
   Value<RequestStatus> status,
+  Value<int> coins,
   Value<int?> user,
   Value<int> rowid,
 });
@@ -5056,6 +5283,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
             Value<String> coupon = const Value.absent(),
             Value<String> note = const Value.absent(),
             Value<RequestStatus> status = const Value.absent(),
+            Value<int> coins = const Value.absent(),
             Value<int?> user = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
@@ -5069,6 +5297,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
             coupon: coupon,
             note: note,
             status: status,
+            coins: coins,
             user: user,
             rowid: rowid,
           ),
@@ -5082,6 +5311,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
             Value<String> coupon = const Value.absent(),
             Value<String> note = const Value.absent(),
             Value<RequestStatus> status = const Value.absent(),
+            Value<int> coins = const Value.absent(),
             Value<int?> user = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
@@ -5095,6 +5325,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
             coupon: coupon,
             note: note,
             status: status,
+            coins: coins,
             user: user,
             rowid: rowid,
           ),
@@ -5140,6 +5371,11 @@ class $$ReservationTableTableFilterComposer
           builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
               column,
               joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get coins => $state.composableBuilder(
+      column: $state.table.coins,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 
   $$TaskTableTableFilterComposer get task {
     final $$TaskTableTableFilterComposer composer = $state.composerBuilder(
@@ -5213,6 +5449,11 @@ class $$ReservationTableTableOrderingComposer
 
   ColumnOrderings<int> get status => $state.composableBuilder(
       column: $state.table.status,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get coins => $state.composableBuilder(
+      column: $state.table.coins,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

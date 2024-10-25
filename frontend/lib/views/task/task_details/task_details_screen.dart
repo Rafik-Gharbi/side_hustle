@@ -23,6 +23,7 @@ import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/report_user_dialog.dart';
 import '../../boost/add_boost/add_boost_bottomsheet.dart';
 import '../../chat/components/messages_screen.dart';
+import '../add_task/add_task_bottomsheet.dart';
 import '../task_proposal/task_proposal_screen.dart';
 import '../../profile/user_profile/user_profile_screen.dart';
 import 'task_details_controller.dart';
@@ -53,7 +54,7 @@ class TaskDetailsScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: Get.back),
+                            CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: () => Helper.goBack()),
                             CustomButtonWithOverlay(
                               offset: const Offset(-170, 30),
                               buttonWidth: 50,
@@ -70,7 +71,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                         title: Text('bookmark'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
                                         leading: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined),
                                         onTap: () async {
-                                          Get.back();
+                                          Helper.goBack();
                                           await MainAppController.find.toggleFavoriteTask(task);
                                           controller.update();
                                         },
@@ -81,19 +82,30 @@ class TaskDetailsScreen extends StatelessWidget {
                                           title: Text('boost'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
                                           leading: const Icon(Icons.rocket_launch_outlined),
                                           onTap: () {
-                                            Get.back();
+                                            Helper.goBack();
                                             Get.bottomSheet(AddBoostBottomsheet(taskId: task.id), isScrollControlled: true);
                                           },
                                         ),
-                                      ListTile(
-                                        shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                        title: Text('report'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
-                                        leading: const Icon(Icons.report_outlined),
-                                        onTap: () async {
-                                          Get.back();
-                                          Get.bottomSheet(ReportUserDialog(user: task.owner, task: task), isScrollControlled: true);
-                                        },
-                                      ),
+                                      if (task.owner.id != AuthenticationService.find.jwtUserData?.id)
+                                        ListTile(
+                                          shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                          title: Text('report'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                          leading: const Icon(Icons.report_outlined),
+                                          onTap: () async {
+                                            Helper.goBack();
+                                            Get.bottomSheet(ReportUserDialog(user: task.owner, task: task), isScrollControlled: true);
+                                          },
+                                        )
+                                      else
+                                        ListTile(
+                                          shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                          title: Text('edit'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                          leading: const Icon(Icons.edit_outlined),
+                                          onTap: () async {
+                                            Helper.goBack();
+                                            Get.bottomSheet(AddTaskBottomsheet(task: task), isScrollControlled: true).then((value) => controller.getTaskUpdate());
+                                          },
+                                        )
                                     ],
                                   ),
                                 ),
@@ -242,6 +254,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                                     deliveryDateController: controller.deliveryDateController,
                                                     onSubmit: () => controller.submitProposal(task),
                                                     isTask: true,
+                                                    neededCoins: task.coins,
                                                   ).then((value) => controller.clearFormFields())
                                                 : Helper.snackBar(message: 'verify_profile_msg'.tr)
                                             : Helper.snackBar(message: 'login_express_interest_msg'.tr),

@@ -93,7 +93,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                           icon: const Icon(Icons.check_circle_outlined),
                           onPressed: () {
                             if (canUpdate) widget.onSelectCategory.call(selectedCategories);
-                            Get.back();
+                            Helper.goBack();
                           },
                         ),
                       ],
@@ -175,7 +175,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                                             setState(() {});
                                             if (canUpdate && widget.maxSelect == 1 && selectedCategories.length == widget.maxSelect) {
                                               widget.onSelectCategory.call(selectedCategories);
-                                              Get.back();
+                                              Helper.goBack();
                                             }
                                           }
                                         },

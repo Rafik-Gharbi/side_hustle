@@ -8,7 +8,6 @@ const {
   getDiscussionIdByChatId,
   getNotSeenMessages,
 } = require("../sql/sql_request");
-const { Booking } = require("../models/booking_model");
 const { Task } = require("../models/task_model");
 const { Service } = require("../models/service_model");
 
@@ -89,7 +88,7 @@ exports.getUserDiscussions = async (req, res) => {
         { model: Task, as: "task", include: [{ model: User, as: "user" }] },
       ],
     });
-    const existActiveBooking = await Booking.findAll({
+    const existActiveBooking = await Reservation.findAll({
       where: { [Op.and]: conditions },
       include: [
         { model: User, as: "user" },

@@ -13,6 +13,8 @@ module.exports = (app) => {
 
   router.get("/categories", paramsController.getAllCategories);
 
+  router.get("/coin-packs", paramsController.getCoinPacks);
+
   router.post("/report", tokenVerification, paramsController.reportUser);
 
   router.post("/feedback", tokenVerification, paramsController.feedback);

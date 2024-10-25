@@ -18,6 +18,7 @@ class Service {
   final String? notIncluded;
   final String? notes;
   final int requests;
+  final int coins;
 
   Service({
     this.id,
@@ -32,6 +33,7 @@ class Service {
     this.included,
     this.notIncluded,
     this.notes,
+    this.coins = 0,
   });
 
   factory Service.fromJson(Map<String, dynamic> json, {dynamic gallery}) => Service(
@@ -50,6 +52,7 @@ class Service {
         included: json['included'],
         notIncluded: json['notIncluded'],
         notes: json['notes'],
+        coins: json['coins'] ?? 0,
       );
 
   Map<String, dynamic> toJson() {

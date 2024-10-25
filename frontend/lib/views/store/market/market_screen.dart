@@ -90,7 +90,7 @@ class MarketScreen extends StatelessWidget {
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: controller.hotServices.length,
                                   itemBuilder: (context, index) {
-                                    var service = controller.hotServices[index];
+                                    final service = controller.hotServices[index];
                                     return Padding(
                                       padding: const EdgeInsets.only(bottom: Paddings.small),
                                       child: ServiceCard(
@@ -100,8 +100,11 @@ class MarketScreen extends StatelessWidget {
                                         onBookService: () => controller.getServiceStore(service).owner?.id == AuthenticationService.find.jwtUserData?.id
                                             ? Get.toNamed(ServiceRequestScreen.routeName, arguments: service)
                                             : AuthenticationService.find.isUserLoggedIn.value
-                                                ? Buildables.requestBottomsheet(noteController: controller.noteController, onSubmit: () => controller.bookService(service))
-                                                    .then((value) => controller.clearRequestFormFields())
+                                                ? Buildables.requestBottomsheet(
+                                                    noteController: controller.noteController,
+                                                    onSubmit: () => controller.bookService(service),
+                                                    neededCoins: service.coins,
+                                                  ).then((value) => controller.clearRequestFormFields())
                                                 : Helper.snackBar(message: 'login_express_interest_msg'.tr),
                                         isOwner: AuthenticationService.find.jwtUserData?.id == controller.getServiceStore(service).owner?.id,
                                       ),

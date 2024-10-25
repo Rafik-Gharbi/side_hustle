@@ -28,6 +28,7 @@ import 'repositories/reservation_repository.dart';
 import 'repositories/review_repository.dart';
 import 'repositories/store_repository.dart';
 import 'repositories/task_repository.dart';
+import 'repositories/transaction_repository.dart';
 import 'repositories/user_repository.dart';
 import 'services/authentication_service.dart';
 import 'services/theme/theme_service.dart';
@@ -35,6 +36,8 @@ import 'views/boost/list_boost/list_boost_controller.dart';
 import 'views/boost/list_boost/list_boost_screen.dart';
 import 'views/notifications/notification_controller.dart';
 import 'views/notifications/notification_screen.dart';
+import 'views/profile/transactions/transactions_controller.dart';
+import 'views/profile/transactions/transactions_screen.dart';
 import 'views/store/service_history/service_history_controller.dart';
 import 'views/store/service_history/service_history_screen.dart';
 import 'views/task/add_task/add_task_bottomsheet.dart';
@@ -77,6 +80,7 @@ import 'views/profile/user_profile/user_profile_screen.dart';
 import 'views/profile/verification_screen.dart';
 import 'views/profile/verify_user/verify_user_controller.dart';
 import 'views/profile/verify_user/verify_user_screen.dart';
+import 'widgets/coins_market.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -269,6 +273,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             binding: BindingsBuilder.put(() => ListBoostController()),
           ),
           GetPage(
+            name: TransactionsScreen.routeName,
+            page: () => const TransactionsScreen(),
+            binding: BindingsBuilder.put(() => TransactionsController()),
+          ),
+          GetPage(
             name: NotificationScreen.routeName,
             page: () => const NotificationScreen(),
           ),
@@ -283,6 +292,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           GetPage(
             name: VerificationScreen.routeName,
             page: () => const VerificationScreen(),
+          ),
+          GetPage(
+            name: CoinsMarket.routeName,
+            page: () => const CoinsMarket(),
+            binding: BindingsBuilder.put(() => CoinsMarketController()),
           ),
         ],
       );
@@ -310,6 +324,7 @@ class InitialBindings implements Bindings {
     Get.put(NotificationRepository(), permanent: true);
     Get.put(ReviewRepository(), permanent: true);
     Get.put(BoostRepository(), permanent: true);
+    Get.put(TransactionRepository(), permanent: true);
     // Database repositories
     Get.put(UserDatabaseRepository(), permanent: true);
     Get.put(TaskDatabaseRepository(), permanent: true);

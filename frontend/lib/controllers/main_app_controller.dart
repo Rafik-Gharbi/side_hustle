@@ -125,10 +125,10 @@ class MainAppController extends GetxController {
         onConfirm: () {
           isAuthenticationRequired.value = false;
           SharedPreferencesService.find.removeKey(userSecretKey);
-          Get.back();
-          Get.back();
+          Helper.goBack();
+          Helper.goBack();
         },
-        onCancel: () => Get.back(),
+        onCancel: () => Helper.goBack(),
       ),
       keyPadConfig: const KeyPadConfig(buttonConfig: KeyPadButtonConfig(buttonStyle: ButtonStyle(foregroundColor: WidgetStatePropertyAll(kNeutralColor100)))),
       config: ScreenLockConfig(backgroundColor: kNeutralColor100.withOpacity(0.4)),
@@ -136,7 +136,7 @@ class MainAppController extends GetxController {
         SharedPreferencesService.find.add(userSecretKey, value);
         isAuthenticationRequired.value = true;
         debugPrint(value);
-        Get.back();
+        Helper.goBack();
       },
     );
   }
@@ -154,10 +154,10 @@ class MainAppController extends GetxController {
           if (replaceNavigation) {
             Get.offAllNamed(route ?? HomeScreen.routeName);
           } else {
-            Get.back();
+            Helper.goBack();
           }
         },
-        // onCancelled: () => Get.back(),
+        // onCancelled: () => Helper.goBack();,
         onOpened: () async => await _localAuth(route, replaceNavigation),
       );
 
@@ -227,7 +227,7 @@ class MainAppController extends GetxController {
         if (replaceNavigation) {
           Get.offAllNamed(route ?? HomeScreen.routeName);
         } else {
-          Get.back();
+          Helper.goBack();
         }
       }
     } else {

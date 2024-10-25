@@ -19,12 +19,14 @@ class Reservation {
   final RequestStatus status;
   final User user;
   final DateTime? dueDate;
+  final int coins;
 
   Reservation({
     this.id,
     required this.date,
     required this.totalPrice,
     required this.user,
+    required this.coins,
     this.task,
     this.service,
     this.proposedPrice,
@@ -43,7 +45,8 @@ class Reservation {
         totalPrice: Helper.resolveDouble(json['totalPrice']),
         proposedPrice: Helper.resolveDouble(json['proposedPrice']),
         coupon: json['coupon'],
-        note: json['note'],
+        coins: json['coins'] ?? 0,
+        note: json['note'] ?? '',
         status: RequestStatus.values.singleWhere((element) => element.name == json['status']),
         user: User.fromJson(json['user']),
       );
@@ -56,6 +59,7 @@ class Reservation {
     data['date'] = date.toIso8601String();
     data['totalPrice'] = totalPrice;
     data['proposedPrice'] = proposedPrice;
+    data['coins'] = coins;
     data['coupon'] = coupon;
     data['note'] = note;
     data['status'] = status.name;
@@ -70,6 +74,7 @@ class Reservation {
         date: reservation.date.value,
         totalPrice: reservation.totalPrice.value,
         proposedPrice: reservation.proposedPrice.value,
+        coins: reservation.coins.value,
         coupon: reservation.coupon.value,
         note: reservation.note.value,
         status: reservation.status.value,
@@ -83,6 +88,7 @@ class Reservation {
         date: Value(date),
         totalPrice: Value(totalPrice),
         proposedPrice: Value(proposedPrice),
+        coins: Value(coins),
         coupon: coupon == null ? const Value.absent() : Value(coupon!),
         note: Value(note),
         status: Value(statusUpdate ?? status),

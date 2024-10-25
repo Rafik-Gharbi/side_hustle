@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../constants/colors.dart';
 import '../constants/sizes.dart';
+import '../helpers/helper.dart';
 import '../services/theme/theme.dart';
 import 'custom_buttons.dart';
 import 'custom_dialog.dart';
@@ -60,7 +61,7 @@ class CustomPopup extends CustomDialog {
                 CustomButtons.elevateSecondary(
                   onPressed: () {
                     onPressed.call();
-                    Get.back();
+                    Helper.goBack();
                   },
                   title: 'yes'.tr,
                   titleStyle: AppFonts.x12Regular.copyWith(color: kPrimaryColor),

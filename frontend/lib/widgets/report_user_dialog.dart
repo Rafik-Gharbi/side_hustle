@@ -5,6 +5,7 @@ import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
 import '../helpers/form_validators.dart';
+import '../helpers/helper.dart';
 import '../models/dto/report_dto.dart';
 import '../models/enum/report_reasons.dart';
 import '../models/service.dart';
@@ -65,7 +66,7 @@ class _ReportUserDialogState extends State<ReportUserDialog> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('report'.tr, style: AppFonts.x18Bold),
-                      CustomButtons.icon(icon: const Icon(Icons.close), onPressed: Get.back),
+                      CustomButtons.icon(icon: const Icon(Icons.close), onPressed: () => Helper.goBack()),
                     ],
                   ),
                   const SizedBox(height: Paddings.regular),

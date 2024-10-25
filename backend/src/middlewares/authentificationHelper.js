@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const Bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { User } = require("../models/user_model");
 const { decryptData } = require("../helper/encryption");
 // const { loadTranslations } = require("./helpers");
@@ -136,7 +136,7 @@ function roleAuth(roles) {
       return res.status(404).json({ message: "client_not_found" });
     }
     const isPasswordValid = user.password
-      ? await Bcrypt.compare(password, user.password)
+      ? await bcrypt.compare(password, user.password)
       : undefined;
     if (!isPasswordValid) {
       return res.status(401).json({ message: "invalid_credentials" });

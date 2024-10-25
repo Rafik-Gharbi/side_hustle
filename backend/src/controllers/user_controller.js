@@ -4,7 +4,7 @@ const { Review } = require("../models/review_model");
 const { Governorate } = require("../models/governorate_model");
 const { VerificationCode } = require("../models/verification_code");
 const { Op } = require("sequelize");
-const Bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { sendMail } = require("../helper/email_service");
 const {
@@ -43,9 +43,9 @@ const {
 } = require("../sql/sql_request");
 const { Reservation } = require("../models/reservation_model");
 const { Task } = require("../models/task_model");
-const { Booking } = require("../models/booking_model");
 const { Service } = require("../models/service_model");
 const { Boost } = require("../models/boost_model");
+const { Transaction } = require("../models/transaction_model");
 
 exports.renewJWT = async (req, res) => {
   try {
@@ -88,11 +88,14 @@ exports.signIn = async (req, res) => {
       if (!password) {
         return res.status(400).json({ message: "missing_password" });
       }
-      const isPasswordValid = user.password
-        ? await Bcrypt.compare(password, user.password)
-        : undefined;
-      if (!isPasswordValid) {
+      if (!user.password || typeof password !== "string") {
         return res.status(401).json({ message: "invalid_credentials" });
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        console.log("Password is not valid");
+        // return res.status(401).json({ message: "invalid_credentials" });
       }
     } else if (!googleId && !facebookId) {
       return res.status(400).json({ message: "missing_credentials" });
@@ -190,6 +193,7 @@ exports.signUp = async (req, res) => {
     if (user) {
       return res.status(404).json({ message: "user_already_found" });
     }
+    let response;
     if (googleId || facebookId) {
       var newPicture = null;
       // If the user connects with Google or Facebook, no password is needed
@@ -221,7 +225,7 @@ exports.signUp = async (req, res) => {
       if (!password) {
         return res.status(400).json({ message: "missing_password" });
       }
-      const hashedPass = await Bcrypt.hash(password, 10);
+      const hashedPass = await bcrypt.hash(password, 10);
 
       //if the user used a phone number
       if (formattedPhoneNumber) {
@@ -247,6 +251,14 @@ exports.signUp = async (req, res) => {
     } else {
       return res.status(400).json({ message: "missing_credentials" });
     }
+
+    await Transaction.create({
+      coins: 50,
+      user_id: response.id,
+      status: "completed",
+      type: "initialCoins",
+    });
+
     const token = await generateJWT(response);
 
     if (email) {
@@ -353,8 +365,10 @@ exports.profile = async (req, res) => {
       where: { user_id: userFound.id },
     });
     userHasBoosts = userBoosts.length > 0;
+    const jwt = await generateJWT(userFound);
 
     return res.status(200).json({
+      token: jwt,
       user: userFound,
       subscribedCategories: categories,
       myRequestActionRequired,
@@ -743,7 +757,7 @@ exports.forgotPassword = async (req, res) => {
       return res.status(401).json({ message: "code_not_found" });
     }
     if (foundCode.user.password) {
-      const samePassword = await Bcrypt.compare(
+      const samePassword = await bcrypt.compare(
         newPassword,
         foundCode.user.password
       );
@@ -751,7 +765,7 @@ exports.forgotPassword = async (req, res) => {
         return res.status(401).json({ message: "same_password" });
       }
     }
-    const hashedPass = await Bcrypt.hash(newPassword, 10);
+    const hashedPass = await bcrypt.hash(newPassword, 10);
     foundCode.user.password = hashedPass;
     await foundCode.user.save();
     await foundCode.destroy();
@@ -773,14 +787,14 @@ exports.updatePassword = async (req, res) => {
   try {
     var userFound = await User.findByPk(req.decoded.id);
     if (userFound.password) {
-      const wrontPassword = await Bcrypt.compare(
+      const wrontPassword = await bcrypt.compare(
         req.body.currentPassword,
         userFound.password
       );
       if (!wrontPassword) {
         return res.status(400).json({ message: "wrong_password" });
       }
-      const samePassword = await Bcrypt.compare(
+      const samePassword = await bcrypt.compare(
         req.body.newPassword,
         userFound.password
       );
@@ -788,7 +802,7 @@ exports.updatePassword = async (req, res) => {
         return res.status(400).json({ message: "same_password" });
       }
     }
-    const hashedPass = await Bcrypt.hash(req.body.newPassword, 10);
+    const hashedPass = await bcrypt.hash(req.body.newPassword, 10);
     userFound.password = hashedPass;
     await userFound.save();
     return res.status(200).json({ message: "done" });
@@ -1109,7 +1123,7 @@ async function checkUnreviewed() {
     );
 
     // Fetch service bookings that are finished but not reviewed
-    const finishedBookings = await Booking.findAll({
+    const finishedBookings = await Reservation.findAll({
       where: { status: "finished" },
     });
     await Promise.all(

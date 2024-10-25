@@ -74,7 +74,7 @@ class _CoordinatesPickerState extends State<CoordinatesPicker> {
               longitudeController.text = pickedData.latLong.longitude.toString();
               latitudeController.text = pickedData.latLong.latitude.toString();
               widget.onSubmit?.call(LatLng(pickedData.latLong.latitude, pickedData.latLong.longitude));
-              Get.back();
+              Helper.goBack();
             },
           ),
         ),

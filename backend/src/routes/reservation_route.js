@@ -15,24 +15,28 @@ module.exports = (app) => {
     "/add",
     tokenVerification,
     clientIsVerified,
-    reservationController.add
+    reservationController.addTaskReservation
   );
 
   // update reservation
   router.post(
     "/update-status",
     tokenVerification,
-    reservationController.updateStatus
+    reservationController.updateTaskReservationStatus
   );
 
   // list own reservation via JWT
-  router.get("/list", tokenVerification, reservationController.listReservation);
+  router.get(
+    "/list",
+    tokenVerification,
+    reservationController.listTaskReservation
+  );
 
   // list own reservation via JWT
   router.get(
     "/reservations-history",
     tokenVerification,
-    reservationController.userReservationsHistory
+    reservationController.userTaskReservationsHistory
   );
 
   // list reservation by task
@@ -46,7 +50,7 @@ module.exports = (app) => {
   router.get(
     "/details",
     tokenVerificationOptional,
-    reservationController.getReservationDetails
+    reservationController.getServiceReservationDetails
   );
 
   // // list all reservation for admin
@@ -62,6 +66,35 @@ module.exports = (app) => {
     tokenVerification,
     clientIsVerified,
     reservationController.initPaiement
+  );
+
+  // create booking
+  router.post(
+    "/add-service",
+    tokenVerification,
+    clientIsVerified,
+    reservationController.addServiceReservation
+  );
+
+  // update booking
+  router.post(
+    "/update-service-status",
+    tokenVerification,
+    reservationController.updateServiceStatus
+  );
+
+  // list own booking via JWT
+  router.get(
+    "/services-history",
+    tokenVerification,
+    reservationController.userServicesHistory
+  );
+
+  // list booking by service
+  router.get(
+    "/service-booking",
+    tokenVerification,
+    reservationController.getReservationByService
   );
 
   app.use("/reservation", router);

@@ -49,6 +49,9 @@ class User {
   VerifyIdentityStatus isVerified;
   bool? isMailVerified;
   double rating;
+  int baseCoins;
+  int availableCoins;
+  int availablePurchasedCoins;
 
   User({
     this.id,
@@ -69,13 +72,21 @@ class User {
     this.hasSharedPosition = false,
     this.isVerified = VerifyIdentityStatus.none,
     this.rating = 0,
+    this.baseCoins = 0,
+    this.availableCoins = 0,
+    this.availablePurchasedCoins = 0,
   });
 
   bool get isOwner => role != null && role != Role.user; // TODO delete this
+  
+  int get totalCoins => availableCoins + availablePurchasedCoins;
 
   factory User.fromToken(Map<String, dynamic> payload) => User(
         id: payload['id'],
         name: payload['name'],
+        baseCoins: payload['coins'],
+        availableCoins: payload['availableCoins'],
+        availablePurchasedCoins: payload['availablePurchasedCoins'],
         isMailVerified: payload['isMailVerified'],
         isVerified: VerifyIdentityStatus.fromString(payload['isVerified']),
         role: Role.values.singleWhere((element) => element.name == payload['role']), // Parse roles from string
@@ -99,6 +110,9 @@ class User {
         googleId: json['googleId'],
         governorate: json['governorate_id'] != null ? MainAppController.find.getGovernorateById(json['governorate_id']) : null,
         bio: json['bio'],
+        baseCoins: json['coins'] ?? 0,
+        availableCoins: json['availableCoins'] ?? 0,
+        availablePurchasedCoins: json['availablePurchasedCoins'] ?? 0,
         isMailVerified: json['isMailVerified'],
         isVerified: json['isVerified'] != null ? VerifyIdentityStatus.fromString(json['isVerified']) : VerifyIdentityStatus.none,
         rating: Helper.resolveDouble(json['rating']),
@@ -171,6 +185,9 @@ class User {
         isVerified: user.isVerified,
         isMailVerified: user.isMailVerified,
         role: user.role,
+        baseCoins: user.coins,
+        availableCoins: user.availableCoins,
+        availablePurchasedCoins: user.availablePurchasedCoins,
         coordinates: user.coordinates != null ? (user.coordinates as String).fromString() : null,
         governorate: MainAppController.find.getGovernorateById(user.governorate),
       );
@@ -186,6 +203,9 @@ class User {
         picture: picture == null ? const Value.absent() : Value(picture!),
         gender: gender == null ? const Value.absent() : Value(gender!),
         isVerified: Value(isVerified),
+        coins: Value(baseCoins),
+        availableCoins: Value(availableCoins),
+        availablePurchasedCoins: Value(availablePurchasedCoins),
         isMailVerified: isMailVerified == null ? const Value.absent() : Value(isMailVerified!),
         role: role == null ? const Value.absent() : Value(role!),
         coordinates: coordinates == null ? const Value.absent() : Value(coordinates!.toCoordinatesString()),

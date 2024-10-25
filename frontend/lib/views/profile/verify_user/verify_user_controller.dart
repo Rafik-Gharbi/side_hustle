@@ -62,7 +62,7 @@ class VerifyUserController extends GetxController {
       } else {
         timer.cancel();
         if (timerProgress.value == 0) {
-          Get.back();
+          Helper.goBack();
           Helper.snackBar(message: 'time_is_up'.tr);
         }
       }

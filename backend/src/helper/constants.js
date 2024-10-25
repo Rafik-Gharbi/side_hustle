@@ -19,8 +19,8 @@ const constantId = {
     },
     {
       id: 2,
-      name: "Rafik Seeker",
-      email: "rafik.seeker@gmail.com",
+      name: "Rafik User",
+      email: "rafik.user@gmail.com",
       password: "123",
       gender: "male",
       birthdate: "1992-09-23",
@@ -32,8 +32,8 @@ const constantId = {
     },
     {
       id: 3,
-      name: "Rafik Provider",
-      email: "rafik.provider@gmail.com",
+      name: "Rafik Subscribed",
+      email: "rafik.subscribed@gmail.com",
       password: "123",
       gender: "male",
       birthdate: "1992-09-23",
@@ -548,6 +548,7 @@ const constantId = {
   tasks: [
     {
       title: "House Cleaning",
+      deducted_coins: 0,
       description: "Clean the entire house thoroughly.",
       price: 100.0,
       delivrables: "Clean and tidy house",
@@ -557,6 +558,7 @@ const constantId = {
     },
     {
       title: "Garden Maintenance",
+      deducted_coins: 0,
       description: "Mow the lawn and trim the hedges.",
       price: 80.0,
       delivrables: "Well-maintained garden",
@@ -566,6 +568,7 @@ const constantId = {
     },
     {
       title: "Math Tutoring",
+      deducted_coins: 0,
       description: "Help with high school math homework.",
       price: 50.0,
       delivrables: "Improved math skills",
@@ -575,6 +578,7 @@ const constantId = {
     },
     {
       title: "Dog Walking",
+      deducted_coins: 0,
       description: "Walk my dog every morning.",
       price: 30.0,
       delivrables: "Walked and happy dog",
@@ -584,6 +588,7 @@ const constantId = {
     },
     {
       title: "Car Washing",
+      deducted_coins: 0,
       description: "Wash and detail my car.",
       price: 70.0,
       delivrables: "Clean and shiny car",
@@ -593,6 +598,7 @@ const constantId = {
     },
     {
       title: "Logo Design",
+      deducted_coins: 0,
       description: "Create a logo for my new business.",
       price: 200.0,
       delivrables: "Logo in various formats",
@@ -602,6 +608,7 @@ const constantId = {
     },
     {
       title: "Event Planning",
+      deducted_coins: 0,
       description: "Organize a wedding ceremony.",
       price: 5000.0,
       delivrables: "Well-organized wedding",
@@ -611,6 +618,7 @@ const constantId = {
     },
     {
       title: "IT Support",
+      deducted_coins: 0,
       description: "Fix my computer issues.",
       price: 150.0,
       delivrables: "Functioning computer",
@@ -620,6 +628,7 @@ const constantId = {
     },
     {
       title: "Home Painting",
+      deducted_coins: 0,
       description: "Paint the living room walls.",
       price: 300.0,
       delivrables: "Freshly painted living room",
@@ -629,6 +638,7 @@ const constantId = {
     },
     {
       title: "Music Lessons",
+      deducted_coins: 0,
       description: "Teach piano to beginners.",
       price: 40.0,
       delivrables: "Basic piano skills",
@@ -638,6 +648,7 @@ const constantId = {
     },
     {
       title: "Fitness Training",
+      deducted_coins: 0,
       description: "Personal fitness training sessions.",
       price: 60.0,
       delivrables: "Improved fitness",
@@ -647,6 +658,7 @@ const constantId = {
     },
     {
       title: "Special Needs Care",
+      deducted_coins: 0,
       description: "Provide care for a child with special needs.",
       price: 100.0,
       delivrables: "Proper care and assistance",
@@ -656,6 +668,7 @@ const constantId = {
     },
     {
       title: "Administrative Support",
+      deducted_coins: 0,
       description: "Help with office administration tasks.",
       price: 70.0,
       delivrables: "Completed administrative tasks",
@@ -665,6 +678,7 @@ const constantId = {
     },
     {
       title: "Photography",
+      deducted_coins: 0,
       description: "Photograph my event.",
       price: 500.0,
       delivrables: "High-quality event photos",
@@ -674,6 +688,7 @@ const constantId = {
     },
     {
       title: "Veterinary Assistance",
+      deducted_coins: 0,
       description: "Assist with veterinary procedures.",
       price: 120.0,
       delivrables: "Proper veterinary care",
@@ -683,6 +698,7 @@ const constantId = {
     },
     {
       title: "Errand Running",
+      deducted_coins: 0,
       description: "Run various errands.",
       price: 50.0,
       delivrables: "Completed errands",
@@ -692,6 +708,7 @@ const constantId = {
     },
     {
       title: "Construction Work",
+      deducted_coins: 0,
       description: "Assist with home construction.",
       price: 400.0,
       delivrables: "Constructed home section",
@@ -701,6 +718,7 @@ const constantId = {
     },
     {
       title: "Travel Assistance",
+      deducted_coins: 0,
       description: "Help plan a vacation.",
       price: 150.0,
       delivrables: "Well-planned trip",
@@ -710,6 +728,7 @@ const constantId = {
     },
     {
       title: "Car Repair",
+      deducted_coins: 0,
       description: "Fix my car's engine issues.",
       price: 300.0,
       delivrables: "Fixed car engine",
@@ -719,6 +738,7 @@ const constantId = {
     },
     {
       title: "Interior Design",
+      deducted_coins: 0,
       description: "Design my living room interior.",
       price: 500.0,
       delivrables: "Stylish living room",
@@ -728,6 +748,7 @@ const constantId = {
     },
     {
       title: "Babysitting",
+      deducted_coins: 0,
       description: "Babysit my 2-year-old son.",
       price: 60.0,
       delivrables: "Safe and entertained child",
@@ -737,6 +758,7 @@ const constantId = {
     },
     {
       title: "Beauty Services",
+      deducted_coins: 0,
       description: "Provide a manicure and pedicure.",
       price: 70.0,
       delivrables: "Well-groomed nails",
@@ -746,6 +768,7 @@ const constantId = {
     },
     {
       title: "Moving Assistance",
+      deducted_coins: 0,
       description: "Help me move to a new apartment.",
       price: 200.0,
       delivrables: "Moved belongings",
@@ -755,6 +778,7 @@ const constantId = {
     },
     {
       title: "Marketing Support",
+      deducted_coins: 0,
       description: "Assist with marketing my product.",
       price: 150.0,
       delivrables: "Effective marketing campaign",
@@ -764,6 +788,7 @@ const constantId = {
     },
     {
       title: "Pet Grooming",
+      deducted_coins: 0,
       description: "Groom my dog.",
       price: 50.0,
       delivrables: "Well-groomed dog",
@@ -773,6 +798,7 @@ const constantId = {
     },
     {
       title: "Catering Services",
+      deducted_coins: 0,
       description: "Cater food for a party.",
       price: 1000.0,
       delivrables: "Delicious and timely food",
@@ -782,6 +808,7 @@ const constantId = {
     },
     {
       title: "Tire Services",
+      deducted_coins: 0,
       description: "Change car tires.",
       price: 100.0,
       delivrables: "Newly installed tires",
@@ -791,6 +818,7 @@ const constantId = {
     },
     {
       title: "Arts & Crafts",
+      deducted_coins: 0,
       description: "Create custom art pieces.",
       price: 200.0,
       delivrables: "Unique art pieces",
@@ -800,6 +828,7 @@ const constantId = {
     },
     {
       title: "Health Coaching",
+      deducted_coins: 0,
       description: "Provide health coaching sessions.",
       price: 60.0,
       delivrables: "Improved health and fitness",
@@ -809,6 +838,7 @@ const constantId = {
     },
     {
       title: "Writing & Translation",
+      deducted_coins: 0,
       description: "Translate documents to French.",
       price: 120.0,
       delivrables: "Translated documents",
@@ -818,6 +848,7 @@ const constantId = {
     },
     {
       title: "Special Needs Care",
+      deducted_coins: 0,
       description: "Provide care for a child with special needs.",
       price: 100.0,
       delivrables: "Proper care and assistance",
@@ -827,6 +858,7 @@ const constantId = {
     },
     {
       title: "Event Entertainment",
+      deducted_coins: 0,
       description: "Provide entertainment for an event.",
       price: 500.0,
       delivrables: "Entertained guests",
@@ -836,6 +868,7 @@ const constantId = {
     },
     {
       title: "Pet Sitting",
+      deducted_coins: 0,
       description: "Take care of pets while the owner is away.",
       price: 40.0,
       delivrables: "Safe and happy pets",
@@ -845,6 +878,7 @@ const constantId = {
     },
     {
       title: "Home Maintenance",
+      deducted_coins: 0,
       description: "Fix minor home issues.",
       price: 90.0,
       delivrables: "Repaired home",
@@ -854,6 +888,7 @@ const constantId = {
     },
     {
       title: "IT Support",
+      deducted_coins: 0,
       description: "Fix my computer issues.",
       price: 150.0,
       delivrables: "Functioning computer",
@@ -863,6 +898,7 @@ const constantId = {
     },
     {
       title: "Dog Walking",
+      deducted_coins: 0,
       description: "Walk my dog every morning.",
       price: 30.0,
       delivrables: "Walked and happy dog",
@@ -872,6 +908,7 @@ const constantId = {
     },
     {
       title: "Tutoring",
+      deducted_coins: 0,
       description: "Help with high school math homework.",
       price: 50.0,
       delivrables: "Improved math skills",
@@ -881,6 +918,7 @@ const constantId = {
     },
     {
       title: "Marketing Support",
+      deducted_coins: 0,
       description: "Assist with marketing my product.",
       price: 150.0,
       delivrables: "Effective marketing campaign",
@@ -890,6 +928,7 @@ const constantId = {
     },
     {
       title: "Babysitting",
+      deducted_coins: 0,
       description: "Babysit my 2-year-old son.",
       price: 60.0,
       delivrables: "Safe and entertained child",
@@ -899,6 +938,7 @@ const constantId = {
     },
     {
       title: "Travel Assistance",
+      deducted_coins: 0,
       description: "Help plan a vacation.",
       price: 150.0,
       delivrables: "Well-planned trip",
@@ -908,6 +948,7 @@ const constantId = {
     },
     {
       title: "Car Repair",
+      deducted_coins: 0,
       description: "Fix my car's engine issues.",
       price: 300.0,
       delivrables: "Fixed car engine",
@@ -917,6 +958,7 @@ const constantId = {
     },
     {
       title: "Graphic Design",
+      deducted_coins: 0,
       description: "Design a flyer for my event.",
       price: 200.0,
       delivrables: "Event flyer",
@@ -926,6 +968,7 @@ const constantId = {
     },
     {
       title: "Gardening",
+      deducted_coins: 0,
       description: "Mow the lawn and trim the hedges.",
       price: 80.0,
       delivrables: "Well-maintained garden",
@@ -935,6 +978,7 @@ const constantId = {
     },
     {
       title: "Fitness Training",
+      deducted_coins: 0,
       description: "Personal fitness training sessions.",
       price: 60.0,
       delivrables: "Improved fitness",
@@ -944,6 +988,7 @@ const constantId = {
     },
     {
       title: "Car Washing",
+      deducted_coins: 0,
       description: "Wash and detail my car.",
       price: 70.0,
       delivrables: "Clean and shiny car",
@@ -953,6 +998,7 @@ const constantId = {
     },
     {
       title: "Health Coaching",
+      deducted_coins: 0,
       description: "Provide health coaching sessions.",
       price: 60.0,
       delivrables: "Improved health and fitness",
@@ -962,6 +1008,7 @@ const constantId = {
     },
     {
       title: "Photography",
+      deducted_coins: 0,
       description: "Photograph my event.",
       price: 500.0,
       delivrables: "High-quality event photos",
@@ -971,6 +1018,7 @@ const constantId = {
     },
     {
       title: "Veterinary Assistance",
+      deducted_coins: 0,
       description: "Assist with veterinary procedures.",
       price: 120.0,
       delivrables: "Proper veterinary care",
@@ -980,6 +1028,7 @@ const constantId = {
     },
     {
       title: "Event Planning",
+      deducted_coins: 0,
       description: "Organize a wedding ceremony.",
       price: 5000.0,
       delivrables: "Well-organized wedding",
@@ -989,6 +1038,7 @@ const constantId = {
     },
     {
       title: "Music Lessons",
+      deducted_coins: 0,
       description: "Teach piano to beginners.",
       price: 40.0,
       delivrables: "Basic piano skills",
@@ -998,6 +1048,7 @@ const constantId = {
     },
     {
       title: "Interior Design",
+      deducted_coins: 0,
       description: "Design my living room interior.",
       price: 500.0,
       delivrables: "Stylish living room",
@@ -1007,6 +1058,7 @@ const constantId = {
     },
     {
       title: "House Cleaning",
+      deducted_coins: 0,
       description: "Clean the entire house thoroughly.",
       price: 100.0,
       delivrables: "Clean and tidy house",
@@ -1016,6 +1068,7 @@ const constantId = {
     },
     {
       title: "IT Support",
+      deducted_coins: 0,
       description: "Fix my computer issues.",
       price: 150.0,
       delivrables: "Functioning computer",
@@ -1025,6 +1078,7 @@ const constantId = {
     },
     {
       title: "Administrative Support",
+      deducted_coins: 0,
       description: "Assist with administrative tasks.",
       price: 100.0,
       delivrables: "Completed administrative tasks",
@@ -1034,6 +1088,7 @@ const constantId = {
     },
     {
       title: "Event Catering",
+      deducted_coins: 0,
       description: "Provide catering services for an event.",
       price: 1000.0,
       delivrables: "Delicious food for the event",
@@ -1043,6 +1098,7 @@ const constantId = {
     },
     {
       title: "Painting",
+      deducted_coins: 0,
       description: "Paint the interior of a house.",
       price: 800.0,
       delivrables: "Freshly painted rooms",
@@ -1052,6 +1108,7 @@ const constantId = {
     },
     {
       title: "Pet Grooming",
+      deducted_coins: 0,
       description: "Groom my dog.",
       price: 50.0,
       delivrables: "Well-groomed dog",
@@ -1061,6 +1118,7 @@ const constantId = {
     },
     {
       title: "Errands",
+      deducted_coins: 0,
       description: "Run errands for a busy professional.",
       price: 30.0,
       delivrables: "Completed errands",
@@ -1070,6 +1128,7 @@ const constantId = {
     },
     {
       title: "Multimedia Services",
+      deducted_coins: 0,
       description: "Create a promotional video.",
       price: 400.0,
       delivrables: "High-quality promotional video",
@@ -1079,6 +1138,7 @@ const constantId = {
     },
     {
       title: "Marketing & Sales",
+      deducted_coins: 0,
       description: "Assist with sales strategies.",
       price: 150.0,
       delivrables: "Effective sales strategies",
@@ -1088,6 +1148,7 @@ const constantId = {
     },
     {
       title: "Moving & Relocation",
+      deducted_coins: 0,
       description: "Help with moving to a new house.",
       price: 200.0,
       delivrables: "Assistance with moving",
@@ -1097,6 +1158,7 @@ const constantId = {
     },
     {
       title: "Pet Sitting",
+      deducted_coins: 0,
       description: "Take care of pets while the owner is away.",
       price: 40.0,
       delivrables: "Safe and happy pets",
@@ -1106,6 +1168,7 @@ const constantId = {
     },
     {
       title: "Tech Support",
+      deducted_coins: 0,
       description: "Fix my laptop issues.",
       price: 100.0,
       delivrables: "Fixed laptop",
@@ -1115,6 +1178,7 @@ const constantId = {
     },
     {
       title: "Graphic Design",
+      deducted_coins: 0,
       description: "Design a logo for my business.",
       price: 250.0,
       delivrables: "Business logo",
@@ -1124,6 +1188,7 @@ const constantId = {
     },
     {
       title: "Household Maintenance",
+      deducted_coins: 0,
       description: "Fix minor issues around the house.",
       price: 80.0,
       delivrables: "Repaired household items",
@@ -1133,6 +1198,7 @@ const constantId = {
     },
     {
       title: "Photography",
+      deducted_coins: 0,
       description: "Photograph a wedding.",
       price: 1000.0,
       delivrables: "High-quality wedding photos",
@@ -1142,6 +1208,7 @@ const constantId = {
     },
     {
       title: "Health & Fitness",
+      deducted_coins: 0,
       description: "Provide personal training sessions.",
       price: 60.0,
       delivrables: "Improved fitness",
@@ -1151,6 +1218,7 @@ const constantId = {
     },
     {
       title: "Car Washing",
+      deducted_coins: 0,
       description: "Wash and detail my car.",
       price: 70.0,
       delivrables: "Clean and shiny car",
@@ -1160,6 +1228,7 @@ const constantId = {
     },
     {
       title: "Administrative Support",
+      deducted_coins: 0,
       description: "Assist with office work.",
       price: 100.0,
       delivrables: "Completed office tasks",
@@ -1169,6 +1238,7 @@ const constantId = {
     },
     {
       title: "Painting",
+      deducted_coins: 0,
       description: "Paint the exterior of a house.",
       price: 1000.0,
       delivrables: "Freshly painted exterior",
@@ -1178,6 +1248,7 @@ const constantId = {
     },
     {
       title: "Event Planning",
+      deducted_coins: 0,
       description: "Plan a corporate event.",
       price: 3000.0,
       delivrables: "Well-organized event",
@@ -1187,6 +1258,7 @@ const constantId = {
     },
     {
       title: "Dog Walking",
+      deducted_coins: 0,
       description: "Walk my dog every evening.",
       price: 30.0,
       delivrables: "Walked and happy dog",
@@ -1196,6 +1268,7 @@ const constantId = {
     },
     {
       title: "Construction",
+      deducted_coins: 0,
       description: "Build a garden shed.",
       price: 2000.0,
       delivrables: "New garden shed",
@@ -1205,6 +1278,7 @@ const constantId = {
     },
     {
       title: "Pet Grooming",
+      deducted_coins: 0,
       description: "Groom my cat.",
       price: 50.0,
       delivrables: "Well-groomed cat",
@@ -1214,6 +1288,7 @@ const constantId = {
     },
     {
       title: "Health Coaching",
+      deducted_coins: 0,
       description: "Provide health coaching sessions.",
       price: 60.0,
       delivrables: "Improved health and fitness",
@@ -1223,6 +1298,7 @@ const constantId = {
     },
     {
       title: "Pet Sitting",
+      deducted_coins: 0,
       description: "Take care of pets while the owner is away.",
       price: 40.0,
       delivrables: "Safe and happy pets",
@@ -1232,6 +1308,7 @@ const constantId = {
     },
     {
       title: "Tutoring",
+      deducted_coins: 0,
       description: "Help with university-level physics.",
       price: 60.0,
       delivrables: "Improved physics understanding",
@@ -1241,6 +1318,7 @@ const constantId = {
     },
     {
       title: "Music Lessons",
+      deducted_coins: 0,
       description: "Teach guitar to beginners.",
       price: 40.0,
       delivrables: "Basic guitar skills",
@@ -1250,6 +1328,7 @@ const constantId = {
     },
     {
       title: "IT Support",
+      deducted_coins: 0,
       description: "Fix my computer issues.",
       price: 150.0,
       delivrables: "Functioning computer",
@@ -1259,6 +1338,7 @@ const constantId = {
     },
     {
       title: "Event Photography",
+      deducted_coins: 0,
       description: "Photograph a corporate event.",
       price: 800.0,
       delivrables: "High-quality event photos",
@@ -1268,6 +1348,7 @@ const constantId = {
     },
     {
       title: "Dog Walking",
+      deducted_coins: 0,
       description: "Walk my dog in the morning.",
       price: 20.0,
       delivrables: "Walked and happy dog",
@@ -1277,6 +1358,7 @@ const constantId = {
     },
     {
       title: "Graphic Design",
+      deducted_coins: 0,
       description: "Create promotional materials.",
       price: 300.0,
       delivrables: "Promotional materials",
@@ -1286,6 +1368,7 @@ const constantId = {
     },
     {
       title: "Car Repair",
+      deducted_coins: 0,
       description: "Fix my car's engine issues.",
       price: 500.0,
       delivrables: "Repaired car engine",
@@ -1295,6 +1378,7 @@ const constantId = {
     },
     {
       title: "Special Needs Care",
+      deducted_coins: 0,
       description: "Provide care for a special needs child.",
       price: 100.0,
       delivrables: "Cared for child",
@@ -1304,6 +1388,7 @@ const constantId = {
     },
     {
       title: "Travel Assistance",
+      deducted_coins: 0,
       description: "Plan a trip to Europe.",
       price: 150.0,
       delivrables: "Well-planned trip itinerary",
@@ -1313,6 +1398,7 @@ const constantId = {
     },
     {
       title: "Towing Services",
+      deducted_coins: 0,
       description: "Tow my car to the mechanic.",
       price: 100.0,
       delivrables: "Car towed to mechanic",
@@ -1322,6 +1408,7 @@ const constantId = {
     },
     {
       title: "Beauty & Wellness",
+      deducted_coins: 0,
       description: "Provide a full body massage.",
       price: 70.0,
       delivrables: "Relaxed client",
@@ -1331,6 +1418,7 @@ const constantId = {
     },
     {
       title: "Tutoring",
+      deducted_coins: 0,
       description: "Help with high school math.",
       price: 50.0,
       delivrables: "Improved math skills",
@@ -1340,6 +1428,7 @@ const constantId = {
     },
     {
       title: "Gardening",
+      deducted_coins: 0,
       description: "Maintain my garden.",
       price: 60.0,
       delivrables: "Well-maintained garden",
@@ -1349,6 +1438,7 @@ const constantId = {
     },
     {
       title: "Veterinary Assistance",
+      deducted_coins: 0,
       description: "Assist with my pet's vet visit.",
       price: 40.0,
       delivrables: "Pet cared for at vet",
@@ -1358,6 +1448,7 @@ const constantId = {
     },
     {
       title: "Writing & Translation",
+      deducted_coins: 0,
       description: "Translate a document to French.",
       price: 200.0,
       delivrables: "Translated document",
@@ -1367,6 +1458,7 @@ const constantId = {
     },
     {
       title: "Painting",
+      deducted_coins: 0,
       description: "Paint a mural on a wall.",
       price: 500.0,
       delivrables: "Finished mural",
@@ -1376,6 +1468,7 @@ const constantId = {
     },
     {
       title: "IT Support",
+      deducted_coins: 0,
       description: "Set up a new computer system.",
       price: 200.0,
       delivrables: "Set up computer system",
@@ -1385,6 +1478,7 @@ const constantId = {
     },
     {
       title: "Catering",
+      deducted_coins: 0,
       description: "Provide food for a small event.",
       price: 800.0,
       delivrables: "Event catering",
@@ -1394,6 +1488,7 @@ const constantId = {
     },
     {
       title: "Pet Grooming",
+      deducted_coins: 0,
       description: "Groom my dog.",
       price: 50.0,
       delivrables: "Well-groomed dog",
@@ -1403,6 +1498,7 @@ const constantId = {
     },
     {
       title: "Health & Fitness",
+      deducted_coins: 0,
       description: "Provide a personal training session.",
       price: 60.0,
       delivrables: "Improved fitness",
@@ -1412,6 +1508,7 @@ const constantId = {
     },
     {
       title: "Arts & Crafts",
+      deducted_coins: 0,
       description: "Teach a pottery class.",
       price: 50.0,
       delivrables: "Basic pottery skills",
@@ -1421,6 +1518,7 @@ const constantId = {
     },
     {
       title: "Car Repair",
+      deducted_coins: 0,
       description: "Fix my car's brakes.",
       price: 400.0,
       delivrables: "Repaired brakes",
@@ -1430,6 +1528,7 @@ const constantId = {
     },
     {
       title: "Babysitting",
+      deducted_coins: 0,
       description: "Babysit my children for an evening.",
       price: 60.0,
       delivrables: "Cared for children",
@@ -1439,6 +1538,7 @@ const constantId = {
     },
     {
       title: "Interior Design",
+      deducted_coins: 0,
       description: "Redesign my living room.",
       price: 700.0,
       delivrables: "New living room design",
@@ -2629,6 +2729,63 @@ const constantId = {
       politeness: 4.8,
       user_id: 3,
       reviewee_id: 2,
+    },
+  ],
+  coinsPack: [
+    {
+      title: "Starter Pack - 5 Coins",
+      price: 3,
+      save: null,
+      description: "Perfect for a quick task!",
+      bonus: null,
+      bonusMsg: null,
+      totalCoins: 5,
+      availableCoins: 5,
+      validMonths: 1,
+    },
+    {
+      title: "Basic Pack - 20 Coins",
+      price: 11,
+      save: 10,
+      description: "Get more for less — best for multiple small tasks.",
+      bonus: 1,
+      bonusMsg: "Get 1 extra coin free, for a total of 21 coins.",
+      totalCoins: 21,
+      availableCoins: 21,
+      validMonths: 1,
+    },
+    {
+      title: "Standard Pack - 50 Coins",
+      price: 24,
+      save: 20,
+      description: "Great value for regular users.",
+      bonus: 5,
+      bonusMsg: "Get 5 extra coins free, for a total of 55 coins.",
+      totalCoins: 55,
+      availableCoins: 55,
+      validMonths: 2,
+    },
+    {
+      title: "Pro Pack - 100 Coins",
+      price: 45,
+      save: 25,
+      description: "Maximize your value and get more tasks done!",
+      bonus: 10,
+      bonusMsg: "Get 10 extra coins free, for a total of 110 coins.",
+      totalCoins: 110,
+      availableCoins: 110,
+      validMonths: 3,
+    },
+    {
+      title: "Premium Pack - 200 Coins",
+      price: 84,
+      save: 30,
+      description: "The best deal — get more for your money!",
+      bonus: 25,
+      bonusMsg: "Get 25 extra coins free, for a total of 225 coins.",
+      totalCoins: 225,
+      availableCoins: 225,
+      validMonths: 3,
     },
   ],
 };
