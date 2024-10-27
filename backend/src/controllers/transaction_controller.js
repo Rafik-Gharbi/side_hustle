@@ -8,32 +8,8 @@ const { User } = require("../models/user_model");
 const { CoinPack } = require("../models/coin_pack_model");
 const {
   generateJWT,
-  fetchPurchasedCoinsTransactions,
 } = require("../helper/helpers");
 const { CoinPackPurchase } = require("../models/coin_pack_purchase_model");
-
-exports.listTransaction = async (req, res) => {
-  try {
-    let userFound = await User.findByPk(req.decoded.id);
-    if (!userFound) {
-      return res.status(404).json({ message: "user_not_found" });
-    }
-
-    const transactions = await Transaction.findAll({
-      where: { user_id: userFound.id },
-      include: [
-        { model: Task, as: "task" },
-        { model: Service, as: "service" },
-      ],
-    });
-
-    return res.status(200).json({ transactions });
-  } catch (error) {
-    console.log(`Error at ${req.route.path}`);
-    console.error("\x1b[31m%s\x1b[0m", error);
-    return res.status(500).json({ message: error });
-  }
-};
 
 exports.listTransaction = async (req, res) => {
   try {

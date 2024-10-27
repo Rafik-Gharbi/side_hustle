@@ -43,6 +43,7 @@ class User {
   String? picture;
   Governorate? governorate;
   String? bio;
+  String? referralCode;
   LatLng? coordinates;
   bool hasSharedPosition;
   Gender? gender;
@@ -65,6 +66,7 @@ class User {
     this.facebookId,
     this.googleId,
     this.bio,
+    this.referralCode,
     this.coordinates,
     this.role,
     this.picture,
@@ -78,7 +80,7 @@ class User {
   });
 
   bool get isOwner => role != null && role != Role.user; // TODO delete this
-  
+
   int get totalCoins => availableCoins + availablePurchasedCoins;
 
   factory User.fromToken(Map<String, dynamic> payload) => User(
@@ -87,6 +89,7 @@ class User {
         baseCoins: payload['coins'],
         availableCoins: payload['availableCoins'],
         availablePurchasedCoins: payload['availablePurchasedCoins'],
+        referralCode: payload['referral_code'],
         isMailVerified: payload['isMailVerified'],
         isVerified: VerifyIdentityStatus.fromString(payload['isVerified']),
         role: Role.values.singleWhere((element) => element.name == payload['role']), // Parse roles from string
@@ -110,6 +113,7 @@ class User {
         googleId: json['googleId'],
         governorate: json['governorate_id'] != null ? MainAppController.find.getGovernorateById(json['governorate_id']) : null,
         bio: json['bio'],
+        referralCode: json['referral_code'],
         baseCoins: json['coins'] ?? 0,
         availableCoins: json['availableCoins'] ?? 0,
         availablePurchasedCoins: json['availablePurchasedCoins'] ?? 0,
@@ -120,21 +124,23 @@ class User {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['id'] = id;
-    data['email'] = email?.toLowerCase();
-    data['name'] = name;
-    data['phoneNumber'] = phone;
-    data['coordinates'] = coordinates?.toCoordinatesString();
+    if (id != null) data['id'] = id;
+    if (email != null) data['email'] = email?.toLowerCase();
+    if (name != null) data['name'] = name;
+    if (password != null) data['password'] = password;
+    if (phone != null) data['phoneNumber'] = phone;
+    if (coordinates != null) data['coordinates'] = coordinates?.toCoordinatesString();
+    if (birthdate != null) data['birthdate'] = birthdate?.toIso8601String();
+    if (gender != null) data['gender'] = gender?.value.toLowerCase();
+    if (role != null) data['role'] = role?.name;
+    if (picture != null) data['picture'] = picture;
+    if (facebookId != null) data['facebookId'] = facebookId;
+    if (googleId != null) data['googleId'] = googleId;
+    if (governorate != null) data['governorate'] = governorate?.id;
+    if (bio != null) data['bio'] = bio;
+    if (isMailVerified != null) data['isMailVerified'] = isMailVerified;
+    if (referralCode != null) data['referralCode'] = referralCode;
     data['hasSharedPosition'] = hasSharedPosition;
-    data['birthdate'] = birthdate?.toIso8601String();
-    data['gender'] = gender?.value.toLowerCase();
-    data['role'] = role?.name;
-    data['picture'] = picture;
-    data['facebookId'] = facebookId;
-    data['googleId'] = googleId;
-    data['governorate'] = governorate?.id;
-    data['bio'] = bio;
-    data['isMailVerified'] = isMailVerified;
     data['isVerified'] = isVerified.name;
     return data;
   }
@@ -181,6 +187,7 @@ class User {
         birthdate: user.birthdate,
         gender: user.gender,
         bio: user.bio,
+        referralCode: user.referralCode,
         picture: user.picture,
         isVerified: user.isVerified,
         isMailVerified: user.isMailVerified,
@@ -203,6 +210,7 @@ class User {
         picture: picture == null ? const Value.absent() : Value(picture!),
         gender: gender == null ? const Value.absent() : Value(gender!),
         isVerified: Value(isVerified),
+        referralCode: Value(referralCode ?? ''),
         coins: Value(baseCoins),
         availableCoins: Value(availableCoins),
         availablePurchasedCoins: Value(availablePurchasedCoins),

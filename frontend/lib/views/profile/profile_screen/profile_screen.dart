@@ -24,6 +24,7 @@ import '../../home/home_controller.dart';
 import '../../store/my_store/my_store_screen.dart';
 import '../../task/task_history/task_history_screen.dart';
 import '../../task/task_request/task_request_screen.dart';
+import '../referral/referral_screen.dart';
 import '../transactions/transactions_screen.dart';
 import '../verify_user/verify_user_screen.dart';
 import 'components/change_password.dart';
@@ -254,6 +255,11 @@ class ProfileScreen extends StatelessWidget {
                                                             icon: Icons.rocket_launch_outlined,
                                                             onTap: () => Get.toNamed(ListBoostScreen.routeName),
                                                           ),
+                                                        buildActionTile(
+                                                          label: 'refer_friend'.tr,
+                                                          icon: Icons.group_add_outlined,
+                                                          onTap: () => Get.toNamed(ReferralScreen.routeName),
+                                                        ),
                                                         buildActionTile(
                                                           label: 'logout'.tr,
                                                           icon: Icons.logout_outlined,

@@ -24,6 +24,7 @@ import 'repositories/chat_repository.dart';
 import 'repositories/favorite_repository.dart';
 import 'repositories/notification_repository.dart';
 import 'repositories/params_repository.dart';
+import 'repositories/referral_repository.dart';
 import 'repositories/reservation_repository.dart';
 import 'repositories/review_repository.dart';
 import 'repositories/store_repository.dart';
@@ -36,6 +37,9 @@ import 'views/boost/list_boost/list_boost_controller.dart';
 import 'views/boost/list_boost/list_boost_screen.dart';
 import 'views/notifications/notification_controller.dart';
 import 'views/notifications/notification_screen.dart';
+import 'views/profile/referral/components/referees_screen.dart';
+import 'views/profile/referral/referral_controller.dart';
+import 'views/profile/referral/referral_screen.dart';
 import 'views/profile/transactions/transactions_controller.dart';
 import 'views/profile/transactions/transactions_screen.dart';
 import 'views/store/service_history/service_history_controller.dart';
@@ -298,6 +302,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             page: () => const CoinsMarket(),
             binding: BindingsBuilder.put(() => CoinsMarketController()),
           ),
+          GetPage(
+            name: ReferralScreen.routeName,
+            page: () => const ReferralScreen(),
+            binding: BindingsBuilder.put(() => ReferralController()),
+          ),
+          GetPage(
+            name: RefereesScreen.routeName,
+            page: () => const RefereesScreen(),
+            binding: BindingsBuilder.put(() => ReferralController()),
+          ),
         ],
       );
 }
@@ -325,6 +339,7 @@ class InitialBindings implements Bindings {
     Get.put(ReviewRepository(), permanent: true);
     Get.put(BoostRepository(), permanent: true);
     Get.put(TransactionRepository(), permanent: true);
+    Get.put(ReferralRepository(), permanent: true);
     // Database repositories
     Get.put(UserDatabaseRepository(), permanent: true);
     Get.put(TaskDatabaseRepository(), permanent: true);

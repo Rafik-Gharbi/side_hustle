@@ -6,6 +6,7 @@ const {
   generateJWT,
   getServiceCondidatesNumber,
   fetchPurchasedCoinsTransactions,
+  checkReferralActiveUserRewards,
 } = require("../helper/helpers");
 const { User } = require("../models/user_model");
 const axios = require("axios");
@@ -456,7 +457,7 @@ exports.updateTaskReservationStatus = async (req, res) => {
       case "confirmed":
         for (let index = 0; index < transactions.length; index++) {
           const element = transactions[index];
-          transactions.status = "completed";
+          element.status = "completed";
           element.save();
         }
         notificationService.sendNotification(
@@ -469,6 +470,7 @@ exports.updateTaskReservationStatus = async (req, res) => {
             taskId: reservationFound.task_id,
           }
         );
+        checkReferralActiveUserRewards(reservationFound.user_id);
         break;
       case "rejected":
         for (let index = 0; index < transactions.length; index++) {
@@ -867,7 +869,7 @@ exports.updateServiceStatus = async (req, res) => {
       case "confirmed":
         for (let index = 0; index < transactions.length; index++) {
           const element = transactions[index];
-          transactions.status = "completed";
+          element.status = "completed";
           element.save();
         }
         notificationService.sendNotification(
@@ -880,6 +882,7 @@ exports.updateServiceStatus = async (req, res) => {
             serviceId: reservationFound.service_id,
           }
         );
+        checkReferralActiveUserRewards(reservationFound.user_id);
         break;
       case "rejected":
         for (let index = 0; index < transactions.length; index++) {

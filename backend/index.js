@@ -21,6 +21,7 @@ require("./src/routes/review_route")(app);
 require("./src/routes/notification_route")(app);
 require("./src/routes/boost_route")(app);
 require("./src/routes/transaction_route")(app);
+require("./src/routes/referral_route")(app);
 
 // Create HTTP server
 

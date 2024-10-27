@@ -9,7 +9,10 @@ const { Service } = require("../models/service_model");
 const { Review } = require("../models/review_model");
 const { deleteDatabase } = require("../../db.config");
 const bcrypt = require("bcryptjs");
-const { removeSpacesFromPhoneNumber } = require("../helper/helpers");
+const {
+  removeSpacesFromPhoneNumber,
+  generateUniqueReferralCode,
+} = require("../helper/helpers");
 const { Transaction } = require("../models/transaction_model");
 const { CoinPack } = require("../models/coin_pack_model");
 
@@ -43,6 +46,8 @@ exports.insert = async (req, res) => {
     const createdCoinPacks = await CoinPack.bulkCreate(coinsPack);
 
     for (const user of createdUsers) {
+      user.referral_code = await generateUniqueReferralCode();
+      user.save();
       await Transaction.create({
         coins: 50,
         user_id: user.id,

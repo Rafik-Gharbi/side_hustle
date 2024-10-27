@@ -43,7 +43,7 @@ class LoggerService extends GetxService {
       output: MultiOutput(<LogOutput?>[ConsoleOutput(), _logOutput]),
       printer: PrettyPrinter(
         printEmojis: false,
-        printTime: true,
+        dateTimeFormat: DateTimeFormat.dateAndTime,
         noBoxingByDefault: true,
         methodCount: 1,
         lineLength: 50,

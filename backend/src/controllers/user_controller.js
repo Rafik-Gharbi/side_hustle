@@ -19,6 +19,7 @@ const {
   removeSpacesFromPhoneNumber,
   generateJWT,
   adjustString,
+  generateUniqueReferralCode,
 } = require("../helper/helpers");
 const {
   downloadImage,
@@ -46,6 +47,9 @@ const { Task } = require("../models/task_model");
 const { Service } = require("../models/service_model");
 const { Boost } = require("../models/boost_model");
 const { Transaction } = require("../models/transaction_model");
+const { Referral } = require("../models/referral_model");
+const { CoinPackPurchase } = require("../models/coin_pack_purchase_model");
+const { CoinPack } = require("../models/coin_pack_model");
 
 exports.renewJWT = async (req, res) => {
   try {
@@ -179,6 +183,7 @@ exports.signUp = async (req, res) => {
     isMobile,
     coordinates,
     keepPrivacy,
+    referralCode,
   } = req.body;
 
   let formattedPhoneNumber = removeSpacesFromPhoneNumber(phoneNumber);
@@ -194,6 +199,7 @@ exports.signUp = async (req, res) => {
       return res.status(404).json({ message: "user_already_found" });
     }
     let response;
+    const newUserReferralCode = await generateUniqueReferralCode();
     if (googleId || facebookId) {
       var newPicture = null;
       // If the user connects with Google or Facebook, no password is needed
@@ -219,6 +225,7 @@ exports.signUp = async (req, res) => {
         governorate_id: governorate,
         coordinates,
         keepPrivacy,
+        referral_code: newUserReferralCode,
       });
     } else if (email || formattedPhoneNumber) {
       // If email or phone_number is provided, password must be set
@@ -247,9 +254,22 @@ exports.signUp = async (req, res) => {
         governorate_id: governorate,
         coordinates,
         keepPrivacy,
+        referral_code: newUserReferralCode,
       });
     } else {
       return res.status(400).json({ message: "missing_credentials" });
+    }
+
+    if (referralCode) {
+      const referrer = await User.findOne({
+        where: { referral_code: referralCode },
+      });
+      if (referrer) {
+        await Referral.create({
+          referrer_id: referrer.id,
+          referred_user_id: response.id,
+        });
+      }
     }
 
     await Transaction.create({
@@ -531,6 +551,45 @@ exports.approveUser = async (req, res) => {
     userApprove.isVerified = "verified";
     await userApprove.save();
 
+    const referral = await Referral.findOne({
+      where: { referred_user_id: userApprove.id },
+      include: [{ model: User, as: "referred_user" }],
+    });
+    let coinPurchase;
+    let coinPack;
+    let referrer;
+    let isReferrerRewarded = false;
+    if (referral) {
+      await referral.update({
+        status: "registered",
+        reward_coins: 5,
+        registration_date: new Date(),
+      });
+
+      coinPack = await CoinPack.findOne({ where: { totalCoins: 5 } });
+
+      coinPurchase = await CoinPackPurchase.create({
+        user_id: userApprove.id,
+        coin_pack_id: coinPack.id,
+        available: coinPack.totalCoins,
+      });
+      await Transaction.create({
+        coins: coinPack.totalCoins,
+        coin_pack_id: coinPurchase.id,
+        user_id: userApprove.id,
+        status: "completed",
+        type: "purchase",
+      });
+
+      referrer = await User.findByPk(referral.referrer_id);
+      if (referrer.coins + 5 < 100) {
+        isReferrerRewarded = true;
+        referrer.coins += 5;
+        referrer.availableCoins += 5;
+        referrer.save();
+      }
+    }
+
     notificationService.sendNotification(
       userApprove.id,
       "Successfully Approved",
@@ -538,6 +597,25 @@ exports.approveUser = async (req, res) => {
       NotificationType.VERIFICATION,
       { userId: userApprove.id, Approved: true }
     );
+    if (coinPurchase) {
+      // For referrer
+      if (isReferrerRewarded)
+        notificationService.sendNotification(
+          referral.referrer_id,
+          "🎉 You Earned a Referral Reward!",
+          "Your friend joined Ekhdemli! You've earned more base coins. Thanks for helping grow our community!",
+          NotificationType.REWARDS,
+          { baseCoins: referrer.coins }
+        );
+      // For referee
+      notificationService.sendNotification(
+        userApprove.id,
+        "🎉 You Earned a Referral Reward!",
+        "Your referral reward has been credited to your account. Keep referring and keep earning!",
+        NotificationType.REWARDS,
+        { coinPack: coinPack.title }
+      );
+    }
 
     return res.status(200).json({ done: true });
   } catch (error) {

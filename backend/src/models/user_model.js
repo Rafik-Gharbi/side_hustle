@@ -34,6 +34,7 @@ const User = sequelize.define(
     fcmToken: { type: Sequelize.STRING },
     coins: { type: Sequelize.INTEGER, defaultValue: 50 },
     availableCoins: { type: Sequelize.INTEGER, defaultValue: 50 },
+    referral_code: { type: Sequelize.STRING, unique: true },
   },
   {
     tableName: "user",

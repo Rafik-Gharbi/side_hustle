@@ -4,6 +4,7 @@ const { User } = require("../models/user_model");
 
 const NotificationType = Object.freeze({
   VERIFICATION: "verification",
+  REWARDS: "rewards",
   CHAT: "chat",
   RESERVATION: "reservation",
   BOOKING: "booking",

@@ -19,6 +19,7 @@ const {
   getFileType,
   calculateTaskCoinsPrice,
   fetchPurchasedCoinsTransactions,
+  checkReferralActiveUserRewards,
 } = require("../helper/helpers");
 const {
   CategorySubscriptionModel,
@@ -480,7 +481,7 @@ exports.addTask = async (req, res) => {
       NotificationType.NEWTASK,
       { taskId: task.id }
     );
-
+    checkReferralActiveUserRewards(user.id);
     // Return created task
     return res.status(200).json({ task });
   } catch (error) {

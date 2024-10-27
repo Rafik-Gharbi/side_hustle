@@ -51,6 +51,7 @@ class AuthenticationService extends GetxController {
   final TextEditingController validationKeyController = TextEditingController();
   final TextEditingController currentPasswordController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController referralCodeController = TextEditingController();
   late GoogleSignIn _googleSignIn;
   ForgotPasswordStep _screenState = ForgotPasswordStep.sendEmail;
   LoginWidgetState _currentState = LoginWidgetState.login;
@@ -269,12 +270,13 @@ class AuthenticationService extends GetxController {
         name: nameController.text.isEmpty ? null : nameController.text,
         email: emailController.text.isEmpty ? null : emailController.text,
         password: passwordController.text,
-        birthdate: DateFormat('yyyy-MM-dd').parse(birthdateController.text),
+        birthdate: birthdateController.text.isNotEmpty ? DateFormat('yyyy-MM-dd').parse(birthdateController.text) : null,
         gender: gender,
         governorate: governorate,
         phone: Helper.isNullOrEmpty(phoneNumber) ? null : phoneNumber,
         coordinates: coordinates,
         hasSharedPosition: coordinates != null,
+        referralCode: referralCodeController.text,
       );
       final jwt = await UserRepository.find.signup(user: user);
       isLoggingIn = false;
@@ -410,6 +412,7 @@ class AuthenticationService extends GetxController {
         jwtUserData?.baseCoins = userFromToken.baseCoins;
         jwtUserData?.availableCoins = userFromToken.availableCoins;
         jwtUserData?.availablePurchasedCoins = userFromToken.availablePurchasedCoins;
+        jwtUserData?.referralCode = userFromToken.referralCode;
         jwtUserData?.picture = userFromToken.picture;
         jwtUserData?.isVerified = userFromToken.isVerified;
         jwtUserData?.isMailVerified = userFromToken.isMailVerified;

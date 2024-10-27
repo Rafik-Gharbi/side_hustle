@@ -36,22 +36,23 @@ class SignUpFields extends StatelessWidget {
             CustomTextField(
               hintText: 'full_name'.tr,
               fieldController: controller.nameController,
+              outlinedBorder: true,
               validator: FormValidators.notEmptyOrNullValidator,
-              isOptional: false,
             ),
             const SizedBox(height: Paddings.regular),
             CustomTextField(
               hintText: 'email'.tr,
               fieldController: controller.emailController,
+              outlinedBorder: true,
               textCapitalization: TextCapitalization.none,
               validator: FormValidators.emailValidator,
-              isOptional: false,
             ),
             const SizedBox(height: Paddings.regular),
             if (!isEditProfile) ...[
               CustomTextField(
                 hintText: 'password'.tr,
                 fieldController: controller.passwordController,
+                outlinedBorder: true,
                 textCapitalization: TextCapitalization.none,
                 isPassword: true,
                 validator: FormValidators.notEmptyOrNullValidator,
@@ -60,6 +61,7 @@ class SignUpFields extends StatelessWidget {
               CustomTextField(
                 hintText: 'confirm_password'.tr,
                 fieldController: controller.confirmPasswordController,
+                outlinedBorder: true,
                 textCapitalization: TextCapitalization.none,
                 isPassword: true,
                 validator: (value) => FormValidators.confirmPasswordValidator(value, controller.passwordController.text),
@@ -69,6 +71,7 @@ class SignUpFields extends StatelessWidget {
             Buildables.buildPhoneInput(
               initialNumber: controller.phoneNumber,
               onChanged: (number) => controller.phoneNumber = number?.international,
+              // outlinedBorder: true, // TODO
               isRequired: controller.phoneNumber?.isNotEmpty ?? false,
             ),
             const SizedBox(height: Paddings.regular),
@@ -77,6 +80,7 @@ class SignUpFields extends StatelessWidget {
               hint: 'select_governorate'.tr,
               maxWidth: true,
               selectedItem: controller.governorate,
+              // outlinedBorder: true, // TODO
               buttonHeight: 45,
               valueFrom: (governorate) => governorate.name,
               onChanged: (value) => controller.governorate = value,
@@ -85,18 +89,21 @@ class SignUpFields extends StatelessWidget {
             const SizedBox(height: Paddings.regular),
             CustomTextField(
               hintText: 'birthdate'.tr,
+              outlinedBorder: true,
               fieldController: controller.birthdateController,
               onTap: () => Helper.openDatePicker(currentTime: DateTime.now(), onConfirm: (p0) => controller.birthdateController.text = Helper.formatDate(p0)),
               readOnly: true,
             ),
             const SizedBox(height: Paddings.regular),
-            CustomDropDownMenu(
-              items: Gender.values.map((e) => e.value).toList(),
+            CustomDropDownMenu<Gender>(
+              items: Gender.values,
               hint: 'select_gender'.tr,
+              // outlinedBorder: true, // TODO
               maxWidth: true,
-              selectedItem: controller.gender?.value,
+              selectedItem: controller.gender,
+              valueFrom: (gender) => gender.value.tr,
               buttonHeight: 45,
-              onChanged: (value) => controller.gender = Gender.fromString(value!),
+              onChanged: (selected) => controller.gender = selected!,
             ),
             const SizedBox(height: Paddings.regular),
             CustomButtons.elevateSecondary(
@@ -110,6 +117,18 @@ class SignUpFields extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
               child: Text('share_my_position_msg'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+            ),
+            const SizedBox(height: Paddings.regular),
+            CustomTextField(
+              hintText: 'referral_code'.tr,
+              fieldController: controller.referralCodeController,
+              isOptional: true,
+              outlinedBorder: true,
+            ),
+            const SizedBox(height: Paddings.small),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
+              child: Text('provide_referral_code_msg'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
             ),
             const SizedBox(height: Paddings.exceptional),
             CustomButtons.elevatePrimary(

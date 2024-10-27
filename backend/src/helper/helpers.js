@@ -11,6 +11,8 @@ const { Op, Sequelize } = require("sequelize");
 const { Transaction } = require("../models/transaction_model");
 const { CoinPack } = require("../models/coin_pack_model");
 const { CoinPackPurchase } = require("../models/coin_pack_purchase_model");
+const { Referral } = require("../models/referral_model");
+const { notificationService, NotificationType } = require("./notification_service");
 
 function adjustString(inputString) {
   const ext = path.extname(inputString).toLowerCase();
@@ -375,6 +377,7 @@ async function generateJWT(response, isRefresh) {
       role: response.role,
       coins: response.coins,
       availableCoins: response.availableCoins,
+      referral_code: response.referral_code,
       availablePurchasedCoins: availablePurchasedCoins,
       governorate_id: response.governorate_id,
       isVerified: response.isVerified,
@@ -625,6 +628,61 @@ async function fetchPurchasedCoinsTransactions(userId) {
   return calculateAvailable;
 }
 
+async function generateUniqueReferralCode() {
+  const codeLength = 14;
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let referralCode = "";
+  let unique = false;
+
+  while (!unique) {
+    for (let i = 0; i < codeLength; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      referralCode += characters[randomIndex];
+    }
+    const user = await User.findOne({ where: { referral_code: referralCode } });
+    if (!user) unique = true;
+  }
+
+  return referralCode;
+}
+
+async function checkReferralActiveUserRewards(userId) {
+  const referee = await User.findByPk(userId);
+  if (referee) {
+    const completedTransactions = await Transaction.findAll({
+      where: {
+        [Op.or]: [{ type: "proposal" }, { type: "request" }],
+        status: "completed",
+        user_id: referee.id,
+      },
+    });
+    if (completedTransactions.length > 0) {
+      const referral = await Referral.findOne({
+        where: { referred_user_id: referee.id },
+      });
+      if (referral && referral.reward_coins != 10) {
+        const referrer = await User.findByPk(referral.referrer_id);
+        referral.update({
+          reward_coins: 10,
+          transaction_date: new Date(),
+          status: "activated",
+        });
+        referrer.coins += 5;
+        referrer.availableCoins += 5;
+        referrer.save();
+        notificationService.sendNotification(
+          referrer.id,
+          "🎉 You Earned a Referral Reward!",
+          "Your friend completed their first transaction! You've earned more base coins. Keep referring and keep earning!",
+          NotificationType.REWARDS,
+          { baseCoins: referrer.coins }
+        );
+      }
+    }
+  }
+}
+
 module.exports = {
   fromCoordinateToDouble,
   checkUnitDinar,
@@ -653,4 +711,6 @@ module.exports = {
   calculateTaskCoinsPrice,
   calculateAvailablePurchasedCoins,
   fetchPurchasedCoinsTransactions,
+  generateUniqueReferralCode,
+  checkReferralActiveUserRewards,
 };

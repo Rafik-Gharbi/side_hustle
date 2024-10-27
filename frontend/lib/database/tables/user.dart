@@ -15,6 +15,7 @@ class UserTable extends Table with AutoIncrementingPrimaryKey {
   BoolColumn get isMailVerified => boolean().withDefault(const Constant(false))();
   DateTimeColumn get birthdate => dateTime().nullable()();
   TextColumn get bio => text().withDefault(const Constant(''))();
+  TextColumn get referralCode => text().withDefault(const Constant(''))();
   TextColumn get coordinates => text().nullable()();
   IntColumn get governorate => integer().references(GovernorateTable, #id).withDefault(const Constant(0))();
   IntColumn get coins => integer().withDefault(const Constant(0))();

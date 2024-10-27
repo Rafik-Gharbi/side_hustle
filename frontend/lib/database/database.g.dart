@@ -1,5 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+// ignore_for_file: unnecessary_null_comparison
+
 part of 'database.dart';
 
 // ignore_for_file: type=lint
@@ -572,6 +574,14 @@ class $UserTableTable extends UserTable
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant(''));
+  static const VerificationMeta _referralCodeMeta =
+      const VerificationMeta('referralCode');
+  @override
+  late final GeneratedColumn<String> referralCode = GeneratedColumn<String>(
+      'referral_code', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
   static const VerificationMeta _coordinatesMeta =
       const VerificationMeta('coordinates');
   @override
@@ -624,6 +634,7 @@ class $UserTableTable extends UserTable
         isMailVerified,
         birthdate,
         bio,
+        referralCode,
         coordinates,
         governorate,
         coins,
@@ -675,6 +686,12 @@ class $UserTableTable extends UserTable
     if (data.containsKey('bio')) {
       context.handle(
           _bioMeta, bio.isAcceptableOrUnknown(data['bio']!, _bioMeta));
+    }
+    if (data.containsKey('referral_code')) {
+      context.handle(
+          _referralCodeMeta,
+          referralCode.isAcceptableOrUnknown(
+              data['referral_code']!, _referralCodeMeta));
     }
     if (data.containsKey('coordinates')) {
       context.handle(
@@ -738,6 +755,8 @@ class $UserTableTable extends UserTable
           .read(DriftSqlType.dateTime, data['${effectivePrefix}birthdate']),
       bio: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}bio'])!,
+      referralCode: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}referral_code'])!,
       coordinates: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}coordinates']),
       governorate: attachedDatabase.typeMapping
@@ -778,6 +797,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
   final bool isMailVerified;
   final DateTime? birthdate;
   final String bio;
+  final String referralCode;
   final String? coordinates;
   final int governorate;
   final int coins;
@@ -795,6 +815,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       required this.isMailVerified,
       this.birthdate,
       required this.bio,
+      required this.referralCode,
       this.coordinates,
       required this.governorate,
       required this.coins,
@@ -824,6 +845,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       map['birthdate'] = Variable<DateTime>(birthdate);
     }
     map['bio'] = Variable<String>(bio);
+    map['referral_code'] = Variable<String>(referralCode);
     if (!nullToAbsent || coordinates != null) {
       map['coordinates'] = Variable<String>(coordinates);
     }
@@ -849,6 +871,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           ? const Value.absent()
           : Value(birthdate),
       bio: Value(bio),
+      referralCode: Value(referralCode),
       coordinates: coordinates == null && nullToAbsent
           ? const Value.absent()
           : Value(coordinates),
@@ -877,6 +900,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       isMailVerified: serializer.fromJson<bool>(json['isMailVerified']),
       birthdate: serializer.fromJson<DateTime?>(json['birthdate']),
       bio: serializer.fromJson<String>(json['bio']),
+      referralCode: serializer.fromJson<String>(json['referralCode']),
       coordinates: serializer.fromJson<String?>(json['coordinates']),
       governorate: serializer.fromJson<int>(json['governorate']),
       coins: serializer.fromJson<int>(json['coins']),
@@ -903,6 +927,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       'isMailVerified': serializer.toJson<bool>(isMailVerified),
       'birthdate': serializer.toJson<DateTime?>(birthdate),
       'bio': serializer.toJson<String>(bio),
+      'referralCode': serializer.toJson<String>(referralCode),
       'coordinates': serializer.toJson<String?>(coordinates),
       'governorate': serializer.toJson<int>(governorate),
       'coins': serializer.toJson<int>(coins),
@@ -924,6 +949,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           bool? isMailVerified,
           Value<DateTime?> birthdate = const Value.absent(),
           String? bio,
+          String? referralCode,
           Value<String?> coordinates = const Value.absent(),
           int? governorate,
           int? coins,
@@ -941,6 +967,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
         isMailVerified: isMailVerified ?? this.isMailVerified,
         birthdate: birthdate.present ? birthdate.value : this.birthdate,
         bio: bio ?? this.bio,
+        referralCode: referralCode ?? this.referralCode,
         coordinates: coordinates.present ? coordinates.value : this.coordinates,
         governorate: governorate ?? this.governorate,
         coins: coins ?? this.coins,
@@ -964,6 +991,9 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           : this.isMailVerified,
       birthdate: data.birthdate.present ? data.birthdate.value : this.birthdate,
       bio: data.bio.present ? data.bio.value : this.bio,
+      referralCode: data.referralCode.present
+          ? data.referralCode.value
+          : this.referralCode,
       coordinates:
           data.coordinates.present ? data.coordinates.value : this.coordinates,
       governorate:
@@ -992,6 +1022,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           ..write('isMailVerified: $isMailVerified, ')
           ..write('birthdate: $birthdate, ')
           ..write('bio: $bio, ')
+          ..write('referralCode: $referralCode, ')
           ..write('coordinates: $coordinates, ')
           ..write('governorate: $governorate, ')
           ..write('coins: $coins, ')
@@ -1014,6 +1045,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       isMailVerified,
       birthdate,
       bio,
+      referralCode,
       coordinates,
       governorate,
       coins,
@@ -1034,6 +1066,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           other.isMailVerified == this.isMailVerified &&
           other.birthdate == this.birthdate &&
           other.bio == this.bio &&
+          other.referralCode == this.referralCode &&
           other.coordinates == this.coordinates &&
           other.governorate == this.governorate &&
           other.coins == this.coins &&
@@ -1053,6 +1086,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
   final Value<bool> isMailVerified;
   final Value<DateTime?> birthdate;
   final Value<String> bio;
+  final Value<String> referralCode;
   final Value<String?> coordinates;
   final Value<int> governorate;
   final Value<int> coins;
@@ -1070,6 +1104,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
     this.isMailVerified = const Value.absent(),
     this.birthdate = const Value.absent(),
     this.bio = const Value.absent(),
+    this.referralCode = const Value.absent(),
     this.coordinates = const Value.absent(),
     this.governorate = const Value.absent(),
     this.coins = const Value.absent(),
@@ -1088,6 +1123,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
     this.isMailVerified = const Value.absent(),
     this.birthdate = const Value.absent(),
     this.bio = const Value.absent(),
+    this.referralCode = const Value.absent(),
     this.coordinates = const Value.absent(),
     this.governorate = const Value.absent(),
     this.coins = const Value.absent(),
@@ -1106,6 +1142,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
     Expression<bool>? isMailVerified,
     Expression<DateTime>? birthdate,
     Expression<String>? bio,
+    Expression<String>? referralCode,
     Expression<String>? coordinates,
     Expression<int>? governorate,
     Expression<int>? coins,
@@ -1124,6 +1161,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
       if (isMailVerified != null) 'is_mail_verified': isMailVerified,
       if (birthdate != null) 'birthdate': birthdate,
       if (bio != null) 'bio': bio,
+      if (referralCode != null) 'referral_code': referralCode,
       if (coordinates != null) 'coordinates': coordinates,
       if (governorate != null) 'governorate': governorate,
       if (coins != null) 'coins': coins,
@@ -1145,6 +1183,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
       Value<bool>? isMailVerified,
       Value<DateTime?>? birthdate,
       Value<String>? bio,
+      Value<String>? referralCode,
       Value<String?>? coordinates,
       Value<int>? governorate,
       Value<int>? coins,
@@ -1162,6 +1201,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
       isMailVerified: isMailVerified ?? this.isMailVerified,
       birthdate: birthdate ?? this.birthdate,
       bio: bio ?? this.bio,
+      referralCode: referralCode ?? this.referralCode,
       coordinates: coordinates ?? this.coordinates,
       governorate: governorate ?? this.governorate,
       coins: coins ?? this.coins,
@@ -1210,6 +1250,9 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
     if (bio.present) {
       map['bio'] = Variable<String>(bio.value);
     }
+    if (referralCode.present) {
+      map['referral_code'] = Variable<String>(referralCode.value);
+    }
     if (coordinates.present) {
       map['coordinates'] = Variable<String>(coordinates.value);
     }
@@ -1243,6 +1286,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
           ..write('isMailVerified: $isMailVerified, ')
           ..write('birthdate: $birthdate, ')
           ..write('bio: $bio, ')
+          ..write('referralCode: $referralCode, ')
           ..write('coordinates: $coordinates, ')
           ..write('governorate: $governorate, ')
           ..write('coins: $coins, ')
@@ -3695,22 +3739,289 @@ typedef $$CategoryTableTableUpdateCompanionBuilder = CategoryTableCompanion
   Value<int> subscribed,
 });
 
+final class $$CategoryTableTableReferences
+    extends BaseReferences<_$Database, $CategoryTableTable, CategoryTableData> {
+  $$CategoryTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $CategoryTableTable _parentTable(_$Database db) =>
+      db.categoryTable.createAlias(
+          $_aliasNameGenerator(db.categoryTable.parent, db.categoryTable.id));
+
+  $$CategoryTableTableProcessedTableManager? get parent {
+    if ($_item.parent == null) return null;
+    final manager = $$CategoryTableTableTableManager($_db, $_db.categoryTable)
+        .filter((f) => f.id($_item.parent));
+    final item = $_typedResult.readTableOrNull(_parentTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static MultiTypedResultKey<$TaskTableTable, List<TaskTableData>>
+      _taskTableRefsTable(_$Database db) => MultiTypedResultKey.fromTable(
+          db.taskTable,
+          aliasName:
+              $_aliasNameGenerator(db.categoryTable.id, db.taskTable.category));
+
+  $$TaskTableTableProcessedTableManager get taskTableRefs {
+    final manager = $$TaskTableTableTableManager($_db, $_db.taskTable)
+        .filter((f) => f.category.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_taskTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$ServiceTableTable, List<ServiceTableData>>
+      _serviceTableRefsTable(_$Database db) =>
+          MultiTypedResultKey.fromTable(db.serviceTable,
+              aliasName: $_aliasNameGenerator(
+                  db.categoryTable.id, db.serviceTable.category));
+
+  $$ServiceTableTableProcessedTableManager get serviceTableRefs {
+    final manager = $$ServiceTableTableTableManager($_db, $_db.serviceTable)
+        .filter((f) => f.category.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_serviceTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$CategoryTableTableFilterComposer
+    extends Composer<_$Database, $CategoryTableTable> {
+  $$CategoryTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get icon => $composableBuilder(
+      column: $table.icon, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get subscribed => $composableBuilder(
+      column: $table.subscribed, builder: (column) => ColumnFilters(column));
+
+  $$CategoryTableTableFilterComposer get parent {
+    final $$CategoryTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.parent,
+        referencedTable: $db.categoryTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CategoryTableTableFilterComposer(
+              $db: $db,
+              $table: $db.categoryTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<bool> taskTableRefs(
+      Expression<bool> Function($$TaskTableTableFilterComposer f) f) {
+    final $$TaskTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.category,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableFilterComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> serviceTableRefs(
+      Expression<bool> Function($$ServiceTableTableFilterComposer f) f) {
+    final $$ServiceTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.serviceTable,
+        getReferencedColumn: (t) => t.category,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ServiceTableTableFilterComposer(
+              $db: $db,
+              $table: $db.serviceTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$CategoryTableTableOrderingComposer
+    extends Composer<_$Database, $CategoryTableTable> {
+  $$CategoryTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get icon => $composableBuilder(
+      column: $table.icon, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get subscribed => $composableBuilder(
+      column: $table.subscribed, builder: (column) => ColumnOrderings(column));
+
+  $$CategoryTableTableOrderingComposer get parent {
+    final $$CategoryTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.parent,
+        referencedTable: $db.categoryTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CategoryTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.categoryTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$CategoryTableTableAnnotationComposer
+    extends Composer<_$Database, $CategoryTableTable> {
+  $$CategoryTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<int> get icon =>
+      $composableBuilder(column: $table.icon, builder: (column) => column);
+
+  GeneratedColumn<int> get subscribed => $composableBuilder(
+      column: $table.subscribed, builder: (column) => column);
+
+  $$CategoryTableTableAnnotationComposer get parent {
+    final $$CategoryTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.parent,
+        referencedTable: $db.categoryTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CategoryTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.categoryTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<T> taskTableRefs<T extends Object>(
+      Expression<T> Function($$TaskTableTableAnnotationComposer a) f) {
+    final $$TaskTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.category,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<T> serviceTableRefs<T extends Object>(
+      Expression<T> Function($$ServiceTableTableAnnotationComposer a) f) {
+    final $$ServiceTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.serviceTable,
+        getReferencedColumn: (t) => t.category,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ServiceTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.serviceTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
 class $$CategoryTableTableTableManager extends RootTableManager<
     _$Database,
     $CategoryTableTable,
     CategoryTableData,
     $$CategoryTableTableFilterComposer,
     $$CategoryTableTableOrderingComposer,
+    $$CategoryTableTableAnnotationComposer,
     $$CategoryTableTableCreateCompanionBuilder,
-    $$CategoryTableTableUpdateCompanionBuilder> {
+    $$CategoryTableTableUpdateCompanionBuilder,
+    (CategoryTableData, $$CategoryTableTableReferences),
+    CategoryTableData,
+    PrefetchHooks Function(
+        {bool parent, bool taskTableRefs, bool serviceTableRefs})> {
   $$CategoryTableTableTableManager(_$Database db, $CategoryTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$CategoryTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$CategoryTableTableOrderingComposer(ComposerState(db, table)),
+          createFilteringComposer: () =>
+              $$CategoryTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CategoryTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CategoryTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
@@ -3739,108 +4050,94 @@ class $$CategoryTableTableTableManager extends RootTableManager<
             parent: parent,
             subscribed: subscribed,
           ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$CategoryTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {parent = false,
+              taskTableRefs = false,
+              serviceTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (taskTableRefs) db.taskTable,
+                if (serviceTableRefs) db.serviceTable
+              ],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (parent) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.parent,
+                    referencedTable:
+                        $$CategoryTableTableReferences._parentTable(db),
+                    referencedColumn:
+                        $$CategoryTableTableReferences._parentTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (taskTableRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable: $$CategoryTableTableReferences
+                            ._taskTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$CategoryTableTableReferences(db, table, p0)
+                                .taskTableRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.category == item.id),
+                        typedResults: items),
+                  if (serviceTableRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable: $$CategoryTableTableReferences
+                            ._serviceTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$CategoryTableTableReferences(db, table, p0)
+                                .serviceTableRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.category == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
         ));
 }
 
-class $$CategoryTableTableFilterComposer
-    extends FilterComposer<_$Database, $CategoryTableTable> {
-  $$CategoryTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<int> get icon => $state.composableBuilder(
-      column: $state.table.icon,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<int> get subscribed => $state.composableBuilder(
-      column: $state.table.subscribed,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  $$CategoryTableTableFilterComposer get parent {
-    final $$CategoryTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.parent,
-        referencedTable: $state.db.categoryTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$CategoryTableTableFilterComposer(ComposerState($state.db,
-                $state.db.categoryTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  ComposableFilter taskTableRefs(
-      ComposableFilter Function($$TaskTableTableFilterComposer f) f) {
-    final $$TaskTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.taskTable,
-        getReferencedColumn: (t) => t.category,
-        builder: (joinBuilder, parentComposers) =>
-            $$TaskTableTableFilterComposer(ComposerState(
-                $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
-
-  ComposableFilter serviceTableRefs(
-      ComposableFilter Function($$ServiceTableTableFilterComposer f) f) {
-    final $$ServiceTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.serviceTable,
-        getReferencedColumn: (t) => t.category,
-        builder: (joinBuilder, parentComposers) =>
-            $$ServiceTableTableFilterComposer(ComposerState($state.db,
-                $state.db.serviceTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
-}
-
-class $$CategoryTableTableOrderingComposer
-    extends OrderingComposer<_$Database, $CategoryTableTable> {
-  $$CategoryTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get icon => $state.composableBuilder(
-      column: $state.table.icon,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get subscribed => $state.composableBuilder(
-      column: $state.table.subscribed,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  $$CategoryTableTableOrderingComposer get parent {
-    final $$CategoryTableTableOrderingComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.parent,
-            referencedTable: $state.db.categoryTable,
-            getReferencedColumn: (t) => t.id,
-            builder: (joinBuilder, parentComposers) =>
-                $$CategoryTableTableOrderingComposer(ComposerState($state.db,
-                    $state.db.categoryTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
+typedef $$CategoryTableTableProcessedTableManager = ProcessedTableManager<
+    _$Database,
+    $CategoryTableTable,
+    CategoryTableData,
+    $$CategoryTableTableFilterComposer,
+    $$CategoryTableTableOrderingComposer,
+    $$CategoryTableTableAnnotationComposer,
+    $$CategoryTableTableCreateCompanionBuilder,
+    $$CategoryTableTableUpdateCompanionBuilder,
+    (CategoryTableData, $$CategoryTableTableReferences),
+    CategoryTableData,
+    PrefetchHooks Function(
+        {bool parent, bool taskTableRefs, bool serviceTableRefs})>;
 typedef $$GovernorateTableTableCreateCompanionBuilder
     = GovernorateTableCompanion Function({
   Value<int> id,
@@ -3852,23 +4149,255 @@ typedef $$GovernorateTableTableUpdateCompanionBuilder
   Value<String> name,
 });
 
+final class $$GovernorateTableTableReferences extends BaseReferences<_$Database,
+    $GovernorateTableTable, GovernorateTableData> {
+  $$GovernorateTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$UserTableTable, List<UserTableData>>
+      _userTableRefsTable(_$Database db) =>
+          MultiTypedResultKey.fromTable(db.userTable,
+              aliasName: $_aliasNameGenerator(
+                  db.governorateTable.id, db.userTable.governorate));
+
+  $$UserTableTableProcessedTableManager get userTableRefs {
+    final manager = $$UserTableTableTableManager($_db, $_db.userTable)
+        .filter((f) => f.governorate.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_userTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$TaskTableTable, List<TaskTableData>>
+      _taskTableRefsTable(_$Database db) =>
+          MultiTypedResultKey.fromTable(db.taskTable,
+              aliasName: $_aliasNameGenerator(
+                  db.governorateTable.id, db.taskTable.governorate));
+
+  $$TaskTableTableProcessedTableManager get taskTableRefs {
+    final manager = $$TaskTableTableTableManager($_db, $_db.taskTable)
+        .filter((f) => f.governorate.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_taskTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$StoreTableTable, List<StoreTableData>>
+      _storeTableRefsTable(_$Database db) =>
+          MultiTypedResultKey.fromTable(db.storeTable,
+              aliasName: $_aliasNameGenerator(
+                  db.governorateTable.id, db.storeTable.governorate));
+
+  $$StoreTableTableProcessedTableManager get storeTableRefs {
+    final manager = $$StoreTableTableTableManager($_db, $_db.storeTable)
+        .filter((f) => f.governorate.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_storeTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$GovernorateTableTableFilterComposer
+    extends Composer<_$Database, $GovernorateTableTable> {
+  $$GovernorateTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  Expression<bool> userTableRefs(
+      Expression<bool> Function($$UserTableTableFilterComposer f) f) {
+    final $$UserTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.governorate,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$UserTableTableFilterComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> taskTableRefs(
+      Expression<bool> Function($$TaskTableTableFilterComposer f) f) {
+    final $$TaskTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.governorate,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableFilterComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> storeTableRefs(
+      Expression<bool> Function($$StoreTableTableFilterComposer f) f) {
+    final $$StoreTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.storeTable,
+        getReferencedColumn: (t) => t.governorate,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoreTableTableFilterComposer(
+              $db: $db,
+              $table: $db.storeTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$GovernorateTableTableOrderingComposer
+    extends Composer<_$Database, $GovernorateTableTable> {
+  $$GovernorateTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+}
+
+class $$GovernorateTableTableAnnotationComposer
+    extends Composer<_$Database, $GovernorateTableTable> {
+  $$GovernorateTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  Expression<T> userTableRefs<T extends Object>(
+      Expression<T> Function($$UserTableTableAnnotationComposer a) f) {
+    final $$UserTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.governorate,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$UserTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<T> taskTableRefs<T extends Object>(
+      Expression<T> Function($$TaskTableTableAnnotationComposer a) f) {
+    final $$TaskTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.governorate,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<T> storeTableRefs<T extends Object>(
+      Expression<T> Function($$StoreTableTableAnnotationComposer a) f) {
+    final $$StoreTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.storeTable,
+        getReferencedColumn: (t) => t.governorate,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoreTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.storeTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
 class $$GovernorateTableTableTableManager extends RootTableManager<
     _$Database,
     $GovernorateTableTable,
     GovernorateTableData,
     $$GovernorateTableTableFilterComposer,
     $$GovernorateTableTableOrderingComposer,
+    $$GovernorateTableTableAnnotationComposer,
     $$GovernorateTableTableCreateCompanionBuilder,
-    $$GovernorateTableTableUpdateCompanionBuilder> {
+    $$GovernorateTableTableUpdateCompanionBuilder,
+    (GovernorateTableData, $$GovernorateTableTableReferences),
+    GovernorateTableData,
+    PrefetchHooks Function(
+        {bool userTableRefs, bool taskTableRefs, bool storeTableRefs})> {
   $$GovernorateTableTableTableManager(
       _$Database db, $GovernorateTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$GovernorateTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$GovernorateTableTableOrderingComposer(ComposerState(db, table)),
+          createFilteringComposer: () =>
+              $$GovernorateTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GovernorateTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GovernorateTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
@@ -3885,76 +4414,82 @@ class $$GovernorateTableTableTableManager extends RootTableManager<
             id: id,
             name: name,
           ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$GovernorateTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {userTableRefs = false,
+              taskTableRefs = false,
+              storeTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (userTableRefs) db.userTable,
+                if (taskTableRefs) db.taskTable,
+                if (storeTableRefs) db.storeTable
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (userTableRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable: $$GovernorateTableTableReferences
+                            ._userTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$GovernorateTableTableReferences(db, table, p0)
+                                .userTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems
+                                .where((e) => e.governorate == item.id),
+                        typedResults: items),
+                  if (taskTableRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable: $$GovernorateTableTableReferences
+                            ._taskTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$GovernorateTableTableReferences(db, table, p0)
+                                .taskTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems
+                                .where((e) => e.governorate == item.id),
+                        typedResults: items),
+                  if (storeTableRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable: $$GovernorateTableTableReferences
+                            ._storeTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$GovernorateTableTableReferences(db, table, p0)
+                                .storeTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems
+                                .where((e) => e.governorate == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
         ));
 }
 
-class $$GovernorateTableTableFilterComposer
-    extends FilterComposer<_$Database, $GovernorateTableTable> {
-  $$GovernorateTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ComposableFilter userTableRefs(
-      ComposableFilter Function($$UserTableTableFilterComposer f) f) {
-    final $$UserTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.userTable,
-        getReferencedColumn: (t) => t.governorate,
-        builder: (joinBuilder, parentComposers) =>
-            $$UserTableTableFilterComposer(ComposerState(
-                $state.db, $state.db.userTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
-
-  ComposableFilter taskTableRefs(
-      ComposableFilter Function($$TaskTableTableFilterComposer f) f) {
-    final $$TaskTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.taskTable,
-        getReferencedColumn: (t) => t.governorate,
-        builder: (joinBuilder, parentComposers) =>
-            $$TaskTableTableFilterComposer(ComposerState(
-                $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
-
-  ComposableFilter storeTableRefs(
-      ComposableFilter Function($$StoreTableTableFilterComposer f) f) {
-    final $$StoreTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.storeTable,
-        getReferencedColumn: (t) => t.governorate,
-        builder: (joinBuilder, parentComposers) =>
-            $$StoreTableTableFilterComposer(ComposerState($state.db,
-                $state.db.storeTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
-}
-
-class $$GovernorateTableTableOrderingComposer
-    extends OrderingComposer<_$Database, $GovernorateTableTable> {
-  $$GovernorateTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-}
-
+typedef $$GovernorateTableTableProcessedTableManager = ProcessedTableManager<
+    _$Database,
+    $GovernorateTableTable,
+    GovernorateTableData,
+    $$GovernorateTableTableFilterComposer,
+    $$GovernorateTableTableOrderingComposer,
+    $$GovernorateTableTableAnnotationComposer,
+    $$GovernorateTableTableCreateCompanionBuilder,
+    $$GovernorateTableTableUpdateCompanionBuilder,
+    (GovernorateTableData, $$GovernorateTableTableReferences),
+    GovernorateTableData,
+    PrefetchHooks Function(
+        {bool userTableRefs, bool taskTableRefs, bool storeTableRefs})>;
 typedef $$UserTableTableCreateCompanionBuilder = UserTableCompanion Function({
   Value<int> id,
   Value<String> name,
@@ -3967,6 +4502,7 @@ typedef $$UserTableTableCreateCompanionBuilder = UserTableCompanion Function({
   Value<bool> isMailVerified,
   Value<DateTime?> birthdate,
   Value<String> bio,
+  Value<String> referralCode,
   Value<String?> coordinates,
   Value<int> governorate,
   Value<int> coins,
@@ -3985,6 +4521,7 @@ typedef $$UserTableTableUpdateCompanionBuilder = UserTableCompanion Function({
   Value<bool> isMailVerified,
   Value<DateTime?> birthdate,
   Value<String> bio,
+  Value<String> referralCode,
   Value<String?> coordinates,
   Value<int> governorate,
   Value<int> coins,
@@ -3992,22 +4529,473 @@ typedef $$UserTableTableUpdateCompanionBuilder = UserTableCompanion Function({
   Value<int> availablePurchasedCoins,
 });
 
+final class $$UserTableTableReferences
+    extends BaseReferences<_$Database, $UserTableTable, UserTableData> {
+  $$UserTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $GovernorateTableTable _governorateTable(_$Database db) =>
+      db.governorateTable.createAlias($_aliasNameGenerator(
+          db.userTable.governorate, db.governorateTable.id));
+
+  $$GovernorateTableTableProcessedTableManager? get governorate {
+    if ($_item.governorate == null) return null;
+    final manager =
+        $$GovernorateTableTableTableManager($_db, $_db.governorateTable)
+            .filter((f) => f.id($_item.governorate));
+    final item = $_typedResult.readTableOrNull(_governorateTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static MultiTypedResultKey<$TaskTableTable, List<TaskTableData>>
+      _taskTableRefsTable(_$Database db) => MultiTypedResultKey.fromTable(
+          db.taskTable,
+          aliasName: $_aliasNameGenerator(db.userTable.id, db.taskTable.owner));
+
+  $$TaskTableTableProcessedTableManager get taskTableRefs {
+    final manager = $$TaskTableTableTableManager($_db, $_db.taskTable)
+        .filter((f) => f.owner.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_taskTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$StoreTableTable, List<StoreTableData>>
+      _storeTableRefsTable(_$Database db) =>
+          MultiTypedResultKey.fromTable(db.storeTable,
+              aliasName:
+                  $_aliasNameGenerator(db.userTable.id, db.storeTable.owner));
+
+  $$StoreTableTableProcessedTableManager get storeTableRefs {
+    final manager = $$StoreTableTableTableManager($_db, $_db.storeTable)
+        .filter((f) => f.owner.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_storeTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$ReservationTableTable, List<ReservationTableData>>
+      _reservationTableRefsTable(_$Database db) =>
+          MultiTypedResultKey.fromTable(db.reservationTable,
+              aliasName: $_aliasNameGenerator(
+                  db.userTable.id, db.reservationTable.user));
+
+  $$ReservationTableTableProcessedTableManager get reservationTableRefs {
+    final manager =
+        $$ReservationTableTableTableManager($_db, $_db.reservationTable)
+            .filter((f) => f.user.id($_item.id));
+
+    final cache =
+        $_typedResult.readTableOrNull(_reservationTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$UserTableTableFilterComposer
+    extends Composer<_$Database, $UserTableTable> {
+  $$UserTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get email => $composableBuilder(
+      column: $table.email, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get phone => $composableBuilder(
+      column: $table.phone, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get picture => $composableBuilder(
+      column: $table.picture, builder: (column) => ColumnFilters(column));
+
+  ColumnWithTypeConverterFilters<Role, Role, int> get role =>
+      $composableBuilder(
+          column: $table.role,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnWithTypeConverterFilters<Gender, Gender, int> get gender =>
+      $composableBuilder(
+          column: $table.gender,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnWithTypeConverterFilters<VerifyIdentityStatus, VerifyIdentityStatus,
+          int>
+      get isVerified => $composableBuilder(
+          column: $table.isVerified,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnFilters<bool> get isMailVerified => $composableBuilder(
+      column: $table.isMailVerified,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get birthdate => $composableBuilder(
+      column: $table.birthdate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get bio => $composableBuilder(
+      column: $table.bio, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get referralCode => $composableBuilder(
+      column: $table.referralCode, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get coordinates => $composableBuilder(
+      column: $table.coordinates, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get coins => $composableBuilder(
+      column: $table.coins, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get availableCoins => $composableBuilder(
+      column: $table.availableCoins,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get availablePurchasedCoins => $composableBuilder(
+      column: $table.availablePurchasedCoins,
+      builder: (column) => ColumnFilters(column));
+
+  $$GovernorateTableTableFilterComposer get governorate {
+    final $$GovernorateTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.governorate,
+        referencedTable: $db.governorateTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GovernorateTableTableFilterComposer(
+              $db: $db,
+              $table: $db.governorateTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<bool> taskTableRefs(
+      Expression<bool> Function($$TaskTableTableFilterComposer f) f) {
+    final $$TaskTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.owner,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableFilterComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> storeTableRefs(
+      Expression<bool> Function($$StoreTableTableFilterComposer f) f) {
+    final $$StoreTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.storeTable,
+        getReferencedColumn: (t) => t.owner,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoreTableTableFilterComposer(
+              $db: $db,
+              $table: $db.storeTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> reservationTableRefs(
+      Expression<bool> Function($$ReservationTableTableFilterComposer f) f) {
+    final $$ReservationTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.reservationTable,
+        getReferencedColumn: (t) => t.user,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ReservationTableTableFilterComposer(
+              $db: $db,
+              $table: $db.reservationTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$UserTableTableOrderingComposer
+    extends Composer<_$Database, $UserTableTable> {
+  $$UserTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get email => $composableBuilder(
+      column: $table.email, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get phone => $composableBuilder(
+      column: $table.phone, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get picture => $composableBuilder(
+      column: $table.picture, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get role => $composableBuilder(
+      column: $table.role, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get gender => $composableBuilder(
+      column: $table.gender, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get isVerified => $composableBuilder(
+      column: $table.isVerified, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isMailVerified => $composableBuilder(
+      column: $table.isMailVerified,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get birthdate => $composableBuilder(
+      column: $table.birthdate, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get bio => $composableBuilder(
+      column: $table.bio, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get referralCode => $composableBuilder(
+      column: $table.referralCode,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get coordinates => $composableBuilder(
+      column: $table.coordinates, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get coins => $composableBuilder(
+      column: $table.coins, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get availableCoins => $composableBuilder(
+      column: $table.availableCoins,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get availablePurchasedCoins => $composableBuilder(
+      column: $table.availablePurchasedCoins,
+      builder: (column) => ColumnOrderings(column));
+
+  $$GovernorateTableTableOrderingComposer get governorate {
+    final $$GovernorateTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.governorate,
+        referencedTable: $db.governorateTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GovernorateTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.governorateTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$UserTableTableAnnotationComposer
+    extends Composer<_$Database, $UserTableTable> {
+  $$UserTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get phone =>
+      $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<String> get picture =>
+      $composableBuilder(column: $table.picture, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Role, int> get role =>
+      $composableBuilder(column: $table.role, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Gender, int> get gender =>
+      $composableBuilder(column: $table.gender, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<VerifyIdentityStatus, int> get isVerified =>
+      $composableBuilder(
+          column: $table.isVerified, builder: (column) => column);
+
+  GeneratedColumn<bool> get isMailVerified => $composableBuilder(
+      column: $table.isMailVerified, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get birthdate =>
+      $composableBuilder(column: $table.birthdate, builder: (column) => column);
+
+  GeneratedColumn<String> get bio =>
+      $composableBuilder(column: $table.bio, builder: (column) => column);
+
+  GeneratedColumn<String> get referralCode => $composableBuilder(
+      column: $table.referralCode, builder: (column) => column);
+
+  GeneratedColumn<String> get coordinates => $composableBuilder(
+      column: $table.coordinates, builder: (column) => column);
+
+  GeneratedColumn<int> get coins =>
+      $composableBuilder(column: $table.coins, builder: (column) => column);
+
+  GeneratedColumn<int> get availableCoins => $composableBuilder(
+      column: $table.availableCoins, builder: (column) => column);
+
+  GeneratedColumn<int> get availablePurchasedCoins => $composableBuilder(
+      column: $table.availablePurchasedCoins, builder: (column) => column);
+
+  $$GovernorateTableTableAnnotationComposer get governorate {
+    final $$GovernorateTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.governorate,
+        referencedTable: $db.governorateTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GovernorateTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.governorateTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<T> taskTableRefs<T extends Object>(
+      Expression<T> Function($$TaskTableTableAnnotationComposer a) f) {
+    final $$TaskTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.owner,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<T> storeTableRefs<T extends Object>(
+      Expression<T> Function($$StoreTableTableAnnotationComposer a) f) {
+    final $$StoreTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.storeTable,
+        getReferencedColumn: (t) => t.owner,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoreTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.storeTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<T> reservationTableRefs<T extends Object>(
+      Expression<T> Function($$ReservationTableTableAnnotationComposer a) f) {
+    final $$ReservationTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.reservationTable,
+        getReferencedColumn: (t) => t.user,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ReservationTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.reservationTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
 class $$UserTableTableTableManager extends RootTableManager<
     _$Database,
     $UserTableTable,
     UserTableData,
     $$UserTableTableFilterComposer,
     $$UserTableTableOrderingComposer,
+    $$UserTableTableAnnotationComposer,
     $$UserTableTableCreateCompanionBuilder,
-    $$UserTableTableUpdateCompanionBuilder> {
+    $$UserTableTableUpdateCompanionBuilder,
+    (UserTableData, $$UserTableTableReferences),
+    UserTableData,
+    PrefetchHooks Function(
+        {bool governorate,
+        bool taskTableRefs,
+        bool storeTableRefs,
+        bool reservationTableRefs})> {
   $$UserTableTableTableManager(_$Database db, $UserTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$UserTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$UserTableTableOrderingComposer(ComposerState(db, table)),
+          createFilteringComposer: () =>
+              $$UserTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$UserTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$UserTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
@@ -4020,6 +5008,7 @@ class $$UserTableTableTableManager extends RootTableManager<
             Value<bool> isMailVerified = const Value.absent(),
             Value<DateTime?> birthdate = const Value.absent(),
             Value<String> bio = const Value.absent(),
+            Value<String> referralCode = const Value.absent(),
             Value<String?> coordinates = const Value.absent(),
             Value<int> governorate = const Value.absent(),
             Value<int> coins = const Value.absent(),
@@ -4038,6 +5027,7 @@ class $$UserTableTableTableManager extends RootTableManager<
             isMailVerified: isMailVerified,
             birthdate: birthdate,
             bio: bio,
+            referralCode: referralCode,
             coordinates: coordinates,
             governorate: governorate,
             coins: coins,
@@ -4056,6 +5046,7 @@ class $$UserTableTableTableManager extends RootTableManager<
             Value<bool> isMailVerified = const Value.absent(),
             Value<DateTime?> birthdate = const Value.absent(),
             Value<String> bio = const Value.absent(),
+            Value<String> referralCode = const Value.absent(),
             Value<String?> coordinates = const Value.absent(),
             Value<int> governorate = const Value.absent(),
             Value<int> coins = const Value.absent(),
@@ -4074,246 +5065,118 @@ class $$UserTableTableTableManager extends RootTableManager<
             isMailVerified: isMailVerified,
             birthdate: birthdate,
             bio: bio,
+            referralCode: referralCode,
             coordinates: coordinates,
             governorate: governorate,
             coins: coins,
             availableCoins: availableCoins,
             availablePurchasedCoins: availablePurchasedCoins,
           ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$UserTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {governorate = false,
+              taskTableRefs = false,
+              storeTableRefs = false,
+              reservationTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (taskTableRefs) db.taskTable,
+                if (storeTableRefs) db.storeTable,
+                if (reservationTableRefs) db.reservationTable
+              ],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (governorate) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.governorate,
+                    referencedTable:
+                        $$UserTableTableReferences._governorateTable(db),
+                    referencedColumn:
+                        $$UserTableTableReferences._governorateTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (taskTableRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable:
+                            $$UserTableTableReferences._taskTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$UserTableTableReferences(db, table, p0)
+                                .taskTableRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.owner == item.id),
+                        typedResults: items),
+                  if (storeTableRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable:
+                            $$UserTableTableReferences._storeTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$UserTableTableReferences(db, table, p0)
+                                .storeTableRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.owner == item.id),
+                        typedResults: items),
+                  if (reservationTableRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable: $$UserTableTableReferences
+                            ._reservationTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$UserTableTableReferences(db, table, p0)
+                                .reservationTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) =>
+                                referencedItems.where((e) => e.user == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
         ));
 }
 
-class $$UserTableTableFilterComposer
-    extends FilterComposer<_$Database, $UserTableTable> {
-  $$UserTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get email => $state.composableBuilder(
-      column: $state.table.email,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get phone => $state.composableBuilder(
-      column: $state.table.phone,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get picture => $state.composableBuilder(
-      column: $state.table.picture,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnWithTypeConverterFilters<Role, Role, int> get role =>
-      $state.composableBuilder(
-          column: $state.table.role,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
-
-  ColumnWithTypeConverterFilters<Gender, Gender, int> get gender =>
-      $state.composableBuilder(
-          column: $state.table.gender,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
-
-  ColumnWithTypeConverterFilters<VerifyIdentityStatus, VerifyIdentityStatus,
-          int>
-      get isVerified => $state.composableBuilder(
-          column: $state.table.isVerified,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
-
-  ColumnFilters<bool> get isMailVerified => $state.composableBuilder(
-      column: $state.table.isMailVerified,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<DateTime> get birthdate => $state.composableBuilder(
-      column: $state.table.birthdate,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get bio => $state.composableBuilder(
-      column: $state.table.bio,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get coordinates => $state.composableBuilder(
-      column: $state.table.coordinates,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<int> get coins => $state.composableBuilder(
-      column: $state.table.coins,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<int> get availableCoins => $state.composableBuilder(
-      column: $state.table.availableCoins,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<int> get availablePurchasedCoins => $state.composableBuilder(
-      column: $state.table.availablePurchasedCoins,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  $$GovernorateTableTableFilterComposer get governorate {
-    final $$GovernorateTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.governorate,
-            referencedTable: $state.db.governorateTable,
-            getReferencedColumn: (t) => t.id,
-            builder: (joinBuilder, parentComposers) =>
-                $$GovernorateTableTableFilterComposer(ComposerState($state.db,
-                    $state.db.governorateTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  ComposableFilter taskTableRefs(
-      ComposableFilter Function($$TaskTableTableFilterComposer f) f) {
-    final $$TaskTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.taskTable,
-        getReferencedColumn: (t) => t.owner,
-        builder: (joinBuilder, parentComposers) =>
-            $$TaskTableTableFilterComposer(ComposerState(
-                $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
-
-  ComposableFilter storeTableRefs(
-      ComposableFilter Function($$StoreTableTableFilterComposer f) f) {
-    final $$StoreTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.storeTable,
-        getReferencedColumn: (t) => t.owner,
-        builder: (joinBuilder, parentComposers) =>
-            $$StoreTableTableFilterComposer(ComposerState($state.db,
-                $state.db.storeTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
-
-  ComposableFilter reservationTableRefs(
-      ComposableFilter Function($$ReservationTableTableFilterComposer f) f) {
-    final $$ReservationTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $state.db.reservationTable,
-            getReferencedColumn: (t) => t.user,
-            builder: (joinBuilder, parentComposers) =>
-                $$ReservationTableTableFilterComposer(ComposerState($state.db,
-                    $state.db.reservationTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
-}
-
-class $$UserTableTableOrderingComposer
-    extends OrderingComposer<_$Database, $UserTableTable> {
-  $$UserTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get email => $state.composableBuilder(
-      column: $state.table.email,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get phone => $state.composableBuilder(
-      column: $state.table.phone,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get picture => $state.composableBuilder(
-      column: $state.table.picture,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get role => $state.composableBuilder(
-      column: $state.table.role,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get gender => $state.composableBuilder(
-      column: $state.table.gender,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get isVerified => $state.composableBuilder(
-      column: $state.table.isVerified,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<bool> get isMailVerified => $state.composableBuilder(
-      column: $state.table.isMailVerified,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<DateTime> get birthdate => $state.composableBuilder(
-      column: $state.table.birthdate,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get bio => $state.composableBuilder(
-      column: $state.table.bio,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get coordinates => $state.composableBuilder(
-      column: $state.table.coordinates,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get coins => $state.composableBuilder(
-      column: $state.table.coins,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get availableCoins => $state.composableBuilder(
-      column: $state.table.availableCoins,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get availablePurchasedCoins => $state.composableBuilder(
-      column: $state.table.availablePurchasedCoins,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  $$GovernorateTableTableOrderingComposer get governorate {
-    final $$GovernorateTableTableOrderingComposer composer = $state
-        .composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.governorate,
-            referencedTable: $state.db.governorateTable,
-            getReferencedColumn: (t) => t.id,
-            builder: (joinBuilder, parentComposers) =>
-                $$GovernorateTableTableOrderingComposer(ComposerState($state.db,
-                    $state.db.governorateTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
+typedef $$UserTableTableProcessedTableManager = ProcessedTableManager<
+    _$Database,
+    $UserTableTable,
+    UserTableData,
+    $$UserTableTableFilterComposer,
+    $$UserTableTableOrderingComposer,
+    $$UserTableTableAnnotationComposer,
+    $$UserTableTableCreateCompanionBuilder,
+    $$UserTableTableUpdateCompanionBuilder,
+    (UserTableData, $$UserTableTableReferences),
+    UserTableData,
+    PrefetchHooks Function(
+        {bool governorate,
+        bool taskTableRefs,
+        bool storeTableRefs,
+        bool reservationTableRefs})>;
 typedef $$TaskTableTableCreateCompanionBuilder = TaskTableCompanion Function({
   required String id,
   Value<double> price,
@@ -4341,22 +5204,414 @@ typedef $$TaskTableTableUpdateCompanionBuilder = TaskTableCompanion Function({
   Value<int> rowid,
 });
 
+final class $$TaskTableTableReferences
+    extends BaseReferences<_$Database, $TaskTableTable, TaskTableData> {
+  $$TaskTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $CategoryTableTable _categoryTable(_$Database db) =>
+      db.categoryTable.createAlias(
+          $_aliasNameGenerator(db.taskTable.category, db.categoryTable.id));
+
+  $$CategoryTableTableProcessedTableManager? get category {
+    if ($_item.category == null) return null;
+    final manager = $$CategoryTableTableTableManager($_db, $_db.categoryTable)
+        .filter((f) => f.id($_item.category));
+    final item = $_typedResult.readTableOrNull(_categoryTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $GovernorateTableTable _governorateTable(_$Database db) =>
+      db.governorateTable.createAlias($_aliasNameGenerator(
+          db.taskTable.governorate, db.governorateTable.id));
+
+  $$GovernorateTableTableProcessedTableManager? get governorate {
+    if ($_item.governorate == null) return null;
+    final manager =
+        $$GovernorateTableTableTableManager($_db, $_db.governorateTable)
+            .filter((f) => f.id($_item.governorate!));
+    final item = $_typedResult.readTableOrNull(_governorateTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $UserTableTable _ownerTable(_$Database db) => db.userTable
+      .createAlias($_aliasNameGenerator(db.taskTable.owner, db.userTable.id));
+
+  $$UserTableTableProcessedTableManager? get owner {
+    if ($_item.owner == null) return null;
+    final manager = $$UserTableTableTableManager($_db, $_db.userTable)
+        .filter((f) => f.id($_item.owner!));
+    final item = $_typedResult.readTableOrNull(_ownerTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static MultiTypedResultKey<$TaskAttachmentTableTable,
+      List<TaskAttachmentTableData>> _taskAttachmentTableRefsTable(
+          _$Database db) =>
+      MultiTypedResultKey.fromTable(db.taskAttachmentTable,
+          aliasName: $_aliasNameGenerator(
+              db.taskTable.id, db.taskAttachmentTable.taskId));
+
+  $$TaskAttachmentTableTableProcessedTableManager get taskAttachmentTableRefs {
+    final manager =
+        $$TaskAttachmentTableTableTableManager($_db, $_db.taskAttachmentTable)
+            .filter((f) => f.taskId.id($_item.id));
+
+    final cache =
+        $_typedResult.readTableOrNull(_taskAttachmentTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$TaskTableTableFilterComposer
+    extends Composer<_$Database, $TaskTableTable> {
+  $$TaskTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get price => $composableBuilder(
+      column: $table.price, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get dueDate => $composableBuilder(
+      column: $table.dueDate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get delivrables => $composableBuilder(
+      column: $table.delivrables, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isfavorite => $composableBuilder(
+      column: $table.isfavorite, builder: (column) => ColumnFilters(column));
+
+  $$CategoryTableTableFilterComposer get category {
+    final $$CategoryTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.category,
+        referencedTable: $db.categoryTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CategoryTableTableFilterComposer(
+              $db: $db,
+              $table: $db.categoryTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$GovernorateTableTableFilterComposer get governorate {
+    final $$GovernorateTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.governorate,
+        referencedTable: $db.governorateTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GovernorateTableTableFilterComposer(
+              $db: $db,
+              $table: $db.governorateTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$UserTableTableFilterComposer get owner {
+    final $$UserTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.owner,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$UserTableTableFilterComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<bool> taskAttachmentTableRefs(
+      Expression<bool> Function($$TaskAttachmentTableTableFilterComposer f) f) {
+    final $$TaskAttachmentTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.taskAttachmentTable,
+        getReferencedColumn: (t) => t.taskId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskAttachmentTableTableFilterComposer(
+              $db: $db,
+              $table: $db.taskAttachmentTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$TaskTableTableOrderingComposer
+    extends Composer<_$Database, $TaskTableTable> {
+  $$TaskTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get price => $composableBuilder(
+      column: $table.price, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get dueDate => $composableBuilder(
+      column: $table.dueDate, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get delivrables => $composableBuilder(
+      column: $table.delivrables, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isfavorite => $composableBuilder(
+      column: $table.isfavorite, builder: (column) => ColumnOrderings(column));
+
+  $$CategoryTableTableOrderingComposer get category {
+    final $$CategoryTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.category,
+        referencedTable: $db.categoryTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CategoryTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.categoryTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$GovernorateTableTableOrderingComposer get governorate {
+    final $$GovernorateTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.governorate,
+        referencedTable: $db.governorateTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GovernorateTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.governorateTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$UserTableTableOrderingComposer get owner {
+    final $$UserTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.owner,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$UserTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$TaskTableTableAnnotationComposer
+    extends Composer<_$Database, $TaskTableTable> {
+  $$TaskTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get price =>
+      $composableBuilder(column: $table.price, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get dueDate =>
+      $composableBuilder(column: $table.dueDate, builder: (column) => column);
+
+  GeneratedColumn<String> get delivrables => $composableBuilder(
+      column: $table.delivrables, builder: (column) => column);
+
+  GeneratedColumn<bool> get isfavorite => $composableBuilder(
+      column: $table.isfavorite, builder: (column) => column);
+
+  $$CategoryTableTableAnnotationComposer get category {
+    final $$CategoryTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.category,
+        referencedTable: $db.categoryTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CategoryTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.categoryTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$GovernorateTableTableAnnotationComposer get governorate {
+    final $$GovernorateTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.governorate,
+        referencedTable: $db.governorateTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GovernorateTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.governorateTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$UserTableTableAnnotationComposer get owner {
+    final $$UserTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.owner,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$UserTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<T> taskAttachmentTableRefs<T extends Object>(
+      Expression<T> Function($$TaskAttachmentTableTableAnnotationComposer a)
+          f) {
+    final $$TaskAttachmentTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.taskAttachmentTable,
+            getReferencedColumn: (t) => t.taskId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$TaskAttachmentTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.taskAttachmentTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
+}
+
 class $$TaskTableTableTableManager extends RootTableManager<
     _$Database,
     $TaskTableTable,
     TaskTableData,
     $$TaskTableTableFilterComposer,
     $$TaskTableTableOrderingComposer,
+    $$TaskTableTableAnnotationComposer,
     $$TaskTableTableCreateCompanionBuilder,
-    $$TaskTableTableUpdateCompanionBuilder> {
+    $$TaskTableTableUpdateCompanionBuilder,
+    (TaskTableData, $$TaskTableTableReferences),
+    TaskTableData,
+    PrefetchHooks Function(
+        {bool category,
+        bool governorate,
+        bool owner,
+        bool taskAttachmentTableRefs})> {
   $$TaskTableTableTableManager(_$Database db, $TaskTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$TaskTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$TaskTableTableOrderingComposer(ComposerState(db, table)),
+          createFilteringComposer: () =>
+              $$TaskTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TaskTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TaskTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
             Value<double> price = const Value.absent(),
@@ -4409,179 +5664,104 @@ class $$TaskTableTableTableManager extends RootTableManager<
             isfavorite: isfavorite,
             rowid: rowid,
           ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$TaskTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {category = false,
+              governorate = false,
+              owner = false,
+              taskAttachmentTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (taskAttachmentTableRefs) db.taskAttachmentTable
+              ],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (category) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.category,
+                    referencedTable:
+                        $$TaskTableTableReferences._categoryTable(db),
+                    referencedColumn:
+                        $$TaskTableTableReferences._categoryTable(db).id,
+                  ) as T;
+                }
+                if (governorate) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.governorate,
+                    referencedTable:
+                        $$TaskTableTableReferences._governorateTable(db),
+                    referencedColumn:
+                        $$TaskTableTableReferences._governorateTable(db).id,
+                  ) as T;
+                }
+                if (owner) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.owner,
+                    referencedTable: $$TaskTableTableReferences._ownerTable(db),
+                    referencedColumn:
+                        $$TaskTableTableReferences._ownerTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (taskAttachmentTableRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable: $$TaskTableTableReferences
+                            ._taskAttachmentTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$TaskTableTableReferences(db, table, p0)
+                                .taskAttachmentTableRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.taskId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
         ));
 }
 
-class $$TaskTableTableFilterComposer
-    extends FilterComposer<_$Database, $TaskTableTable> {
-  $$TaskTableTableFilterComposer(super.$state);
-  ColumnFilters<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get price => $state.composableBuilder(
-      column: $state.table.price,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get title => $state.composableBuilder(
-      column: $state.table.title,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get description => $state.composableBuilder(
-      column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<DateTime> get dueDate => $state.composableBuilder(
-      column: $state.table.dueDate,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get delivrables => $state.composableBuilder(
-      column: $state.table.delivrables,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<bool> get isfavorite => $state.composableBuilder(
-      column: $state.table.isfavorite,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  $$CategoryTableTableFilterComposer get category {
-    final $$CategoryTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.category,
-        referencedTable: $state.db.categoryTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$CategoryTableTableFilterComposer(ComposerState($state.db,
-                $state.db.categoryTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$GovernorateTableTableFilterComposer get governorate {
-    final $$GovernorateTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.governorate,
-            referencedTable: $state.db.governorateTable,
-            getReferencedColumn: (t) => t.id,
-            builder: (joinBuilder, parentComposers) =>
-                $$GovernorateTableTableFilterComposer(ComposerState($state.db,
-                    $state.db.governorateTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$UserTableTableFilterComposer get owner {
-    final $$UserTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.owner,
-        referencedTable: $state.db.userTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$UserTableTableFilterComposer(ComposerState(
-                $state.db, $state.db.userTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  ComposableFilter taskAttachmentTableRefs(
-      ComposableFilter Function($$TaskAttachmentTableTableFilterComposer f) f) {
-    final $$TaskAttachmentTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $state.db.taskAttachmentTable,
-            getReferencedColumn: (t) => t.taskId,
-            builder: (joinBuilder, parentComposers) =>
-                $$TaskAttachmentTableTableFilterComposer(ComposerState(
-                    $state.db,
-                    $state.db.taskAttachmentTable,
-                    joinBuilder,
-                    parentComposers)));
-    return f(composer);
-  }
-}
-
-class $$TaskTableTableOrderingComposer
-    extends OrderingComposer<_$Database, $TaskTableTable> {
-  $$TaskTableTableOrderingComposer(super.$state);
-  ColumnOrderings<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get price => $state.composableBuilder(
-      column: $state.table.price,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get title => $state.composableBuilder(
-      column: $state.table.title,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get description => $state.composableBuilder(
-      column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<DateTime> get dueDate => $state.composableBuilder(
-      column: $state.table.dueDate,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get delivrables => $state.composableBuilder(
-      column: $state.table.delivrables,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<bool> get isfavorite => $state.composableBuilder(
-      column: $state.table.isfavorite,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  $$CategoryTableTableOrderingComposer get category {
-    final $$CategoryTableTableOrderingComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.category,
-            referencedTable: $state.db.categoryTable,
-            getReferencedColumn: (t) => t.id,
-            builder: (joinBuilder, parentComposers) =>
-                $$CategoryTableTableOrderingComposer(ComposerState($state.db,
-                    $state.db.categoryTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$GovernorateTableTableOrderingComposer get governorate {
-    final $$GovernorateTableTableOrderingComposer composer = $state
-        .composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.governorate,
-            referencedTable: $state.db.governorateTable,
-            getReferencedColumn: (t) => t.id,
-            builder: (joinBuilder, parentComposers) =>
-                $$GovernorateTableTableOrderingComposer(ComposerState($state.db,
-                    $state.db.governorateTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$UserTableTableOrderingComposer get owner {
-    final $$UserTableTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.owner,
-        referencedTable: $state.db.userTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$UserTableTableOrderingComposer(ComposerState(
-                $state.db, $state.db.userTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
+typedef $$TaskTableTableProcessedTableManager = ProcessedTableManager<
+    _$Database,
+    $TaskTableTable,
+    TaskTableData,
+    $$TaskTableTableFilterComposer,
+    $$TaskTableTableOrderingComposer,
+    $$TaskTableTableAnnotationComposer,
+    $$TaskTableTableCreateCompanionBuilder,
+    $$TaskTableTableUpdateCompanionBuilder,
+    (TaskTableData, $$TaskTableTableReferences),
+    TaskTableData,
+    PrefetchHooks Function(
+        {bool category,
+        bool governorate,
+        bool owner,
+        bool taskAttachmentTableRefs})>;
 typedef $$TaskAttachmentTableTableCreateCompanionBuilder
     = TaskAttachmentTableCompanion Function({
   Value<int> id,
@@ -4597,23 +5777,168 @@ typedef $$TaskAttachmentTableTableUpdateCompanionBuilder
   Value<String?> taskId,
 });
 
+final class $$TaskAttachmentTableTableReferences extends BaseReferences<
+    _$Database, $TaskAttachmentTableTable, TaskAttachmentTableData> {
+  $$TaskAttachmentTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $TaskTableTable _taskIdTable(_$Database db) =>
+      db.taskTable.createAlias(
+          $_aliasNameGenerator(db.taskAttachmentTable.taskId, db.taskTable.id));
+
+  $$TaskTableTableProcessedTableManager? get taskId {
+    if ($_item.taskId == null) return null;
+    final manager = $$TaskTableTableTableManager($_db, $_db.taskTable)
+        .filter((f) => f.id($_item.taskId!));
+    final item = $_typedResult.readTableOrNull(_taskIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$TaskAttachmentTableTableFilterComposer
+    extends Composer<_$Database, $TaskAttachmentTableTable> {
+  $$TaskAttachmentTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get url => $composableBuilder(
+      column: $table.url, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnFilters(column));
+
+  $$TaskTableTableFilterComposer get taskId {
+    final $$TaskTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.taskId,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableFilterComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$TaskAttachmentTableTableOrderingComposer
+    extends Composer<_$Database, $TaskAttachmentTableTable> {
+  $$TaskAttachmentTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get url => $composableBuilder(
+      column: $table.url, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnOrderings(column));
+
+  $$TaskTableTableOrderingComposer get taskId {
+    final $$TaskTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.taskId,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$TaskAttachmentTableTableAnnotationComposer
+    extends Composer<_$Database, $TaskAttachmentTableTable> {
+  $$TaskAttachmentTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get url =>
+      $composableBuilder(column: $table.url, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  $$TaskTableTableAnnotationComposer get taskId {
+    final $$TaskTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.taskId,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
 class $$TaskAttachmentTableTableTableManager extends RootTableManager<
     _$Database,
     $TaskAttachmentTableTable,
     TaskAttachmentTableData,
     $$TaskAttachmentTableTableFilterComposer,
     $$TaskAttachmentTableTableOrderingComposer,
+    $$TaskAttachmentTableTableAnnotationComposer,
     $$TaskAttachmentTableTableCreateCompanionBuilder,
-    $$TaskAttachmentTableTableUpdateCompanionBuilder> {
+    $$TaskAttachmentTableTableUpdateCompanionBuilder,
+    (TaskAttachmentTableData, $$TaskAttachmentTableTableReferences),
+    TaskAttachmentTableData,
+    PrefetchHooks Function({bool taskId})> {
   $$TaskAttachmentTableTableTableManager(
       _$Database db, $TaskAttachmentTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer: $$TaskAttachmentTableTableFilterComposer(
-              ComposerState(db, table)),
-          orderingComposer: $$TaskAttachmentTableTableOrderingComposer(
-              ComposerState(db, table)),
+          createFilteringComposer: () =>
+              $$TaskAttachmentTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TaskAttachmentTableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TaskAttachmentTableTableAnnotationComposer(
+                  $db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> url = const Value.absent(),
@@ -4638,71 +5963,63 @@ class $$TaskAttachmentTableTableTableManager extends RootTableManager<
             type: type,
             taskId: taskId,
           ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$TaskAttachmentTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({taskId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (taskId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.taskId,
+                    referencedTable:
+                        $$TaskAttachmentTableTableReferences._taskIdTable(db),
+                    referencedColumn: $$TaskAttachmentTableTableReferences
+                        ._taskIdTable(db)
+                        .id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ));
 }
 
-class $$TaskAttachmentTableTableFilterComposer
-    extends FilterComposer<_$Database, $TaskAttachmentTableTable> {
-  $$TaskAttachmentTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get url => $state.composableBuilder(
-      column: $state.table.url,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get type => $state.composableBuilder(
-      column: $state.table.type,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  $$TaskTableTableFilterComposer get taskId {
-    final $$TaskTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.taskId,
-        referencedTable: $state.db.taskTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TaskTableTableFilterComposer(ComposerState(
-                $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
-class $$TaskAttachmentTableTableOrderingComposer
-    extends OrderingComposer<_$Database, $TaskAttachmentTableTable> {
-  $$TaskAttachmentTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get url => $state.composableBuilder(
-      column: $state.table.url,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get type => $state.composableBuilder(
-      column: $state.table.type,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  $$TaskTableTableOrderingComposer get taskId {
-    final $$TaskTableTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.taskId,
-        referencedTable: $state.db.taskTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TaskTableTableOrderingComposer(ComposerState(
-                $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
+typedef $$TaskAttachmentTableTableProcessedTableManager = ProcessedTableManager<
+    _$Database,
+    $TaskAttachmentTableTable,
+    TaskAttachmentTableData,
+    $$TaskAttachmentTableTableFilterComposer,
+    $$TaskAttachmentTableTableOrderingComposer,
+    $$TaskAttachmentTableTableAnnotationComposer,
+    $$TaskAttachmentTableTableCreateCompanionBuilder,
+    $$TaskAttachmentTableTableUpdateCompanionBuilder,
+    (TaskAttachmentTableData, $$TaskAttachmentTableTableReferences),
+    TaskAttachmentTableData,
+    PrefetchHooks Function({bool taskId})>;
 typedef $$StoreTableTableCreateCompanionBuilder = StoreTableCompanion Function({
   Value<int> id,
   Value<String> name,
@@ -4724,22 +6041,323 @@ typedef $$StoreTableTableUpdateCompanionBuilder = StoreTableCompanion Function({
   Value<bool> isFavorite,
 });
 
+final class $$StoreTableTableReferences
+    extends BaseReferences<_$Database, $StoreTableTable, StoreTableData> {
+  $$StoreTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $GovernorateTableTable _governorateTable(_$Database db) =>
+      db.governorateTable.createAlias($_aliasNameGenerator(
+          db.storeTable.governorate, db.governorateTable.id));
+
+  $$GovernorateTableTableProcessedTableManager? get governorate {
+    if ($_item.governorate == null) return null;
+    final manager =
+        $$GovernorateTableTableTableManager($_db, $_db.governorateTable)
+            .filter((f) => f.id($_item.governorate!));
+    final item = $_typedResult.readTableOrNull(_governorateTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $UserTableTable _ownerTable(_$Database db) => db.userTable
+      .createAlias($_aliasNameGenerator(db.storeTable.owner, db.userTable.id));
+
+  $$UserTableTableProcessedTableManager? get owner {
+    if ($_item.owner == null) return null;
+    final manager = $$UserTableTableTableManager($_db, $_db.userTable)
+        .filter((f) => f.id($_item.owner!));
+    final item = $_typedResult.readTableOrNull(_ownerTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static MultiTypedResultKey<$ServiceTableTable, List<ServiceTableData>>
+      _serviceTableRefsTable(_$Database db) => MultiTypedResultKey.fromTable(
+          db.serviceTable,
+          aliasName:
+              $_aliasNameGenerator(db.storeTable.id, db.serviceTable.store));
+
+  $$ServiceTableTableProcessedTableManager get serviceTableRefs {
+    final manager = $$ServiceTableTableTableManager($_db, $_db.serviceTable)
+        .filter((f) => f.store.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_serviceTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$StoreTableTableFilterComposer
+    extends Composer<_$Database, $StoreTableTable> {
+  $$StoreTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get picture => $composableBuilder(
+      column: $table.picture, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get coordinates => $composableBuilder(
+      column: $table.coordinates, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isFavorite => $composableBuilder(
+      column: $table.isFavorite, builder: (column) => ColumnFilters(column));
+
+  $$GovernorateTableTableFilterComposer get governorate {
+    final $$GovernorateTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.governorate,
+        referencedTable: $db.governorateTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GovernorateTableTableFilterComposer(
+              $db: $db,
+              $table: $db.governorateTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$UserTableTableFilterComposer get owner {
+    final $$UserTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.owner,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$UserTableTableFilterComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<bool> serviceTableRefs(
+      Expression<bool> Function($$ServiceTableTableFilterComposer f) f) {
+    final $$ServiceTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.serviceTable,
+        getReferencedColumn: (t) => t.store,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ServiceTableTableFilterComposer(
+              $db: $db,
+              $table: $db.serviceTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$StoreTableTableOrderingComposer
+    extends Composer<_$Database, $StoreTableTable> {
+  $$StoreTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get picture => $composableBuilder(
+      column: $table.picture, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get coordinates => $composableBuilder(
+      column: $table.coordinates, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isFavorite => $composableBuilder(
+      column: $table.isFavorite, builder: (column) => ColumnOrderings(column));
+
+  $$GovernorateTableTableOrderingComposer get governorate {
+    final $$GovernorateTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.governorate,
+        referencedTable: $db.governorateTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GovernorateTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.governorateTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$UserTableTableOrderingComposer get owner {
+    final $$UserTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.owner,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$UserTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$StoreTableTableAnnotationComposer
+    extends Composer<_$Database, $StoreTableTable> {
+  $$StoreTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => column);
+
+  GeneratedColumn<String> get picture =>
+      $composableBuilder(column: $table.picture, builder: (column) => column);
+
+  GeneratedColumn<String> get coordinates => $composableBuilder(
+      column: $table.coordinates, builder: (column) => column);
+
+  GeneratedColumn<bool> get isFavorite => $composableBuilder(
+      column: $table.isFavorite, builder: (column) => column);
+
+  $$GovernorateTableTableAnnotationComposer get governorate {
+    final $$GovernorateTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.governorate,
+        referencedTable: $db.governorateTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GovernorateTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.governorateTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$UserTableTableAnnotationComposer get owner {
+    final $$UserTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.owner,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$UserTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<T> serviceTableRefs<T extends Object>(
+      Expression<T> Function($$ServiceTableTableAnnotationComposer a) f) {
+    final $$ServiceTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.serviceTable,
+        getReferencedColumn: (t) => t.store,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ServiceTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.serviceTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
 class $$StoreTableTableTableManager extends RootTableManager<
     _$Database,
     $StoreTableTable,
     StoreTableData,
     $$StoreTableTableFilterComposer,
     $$StoreTableTableOrderingComposer,
+    $$StoreTableTableAnnotationComposer,
     $$StoreTableTableCreateCompanionBuilder,
-    $$StoreTableTableUpdateCompanionBuilder> {
+    $$StoreTableTableUpdateCompanionBuilder,
+    (StoreTableData, $$StoreTableTableReferences),
+    StoreTableData,
+    PrefetchHooks Function(
+        {bool governorate, bool owner, bool serviceTableRefs})> {
   $$StoreTableTableTableManager(_$Database db, $StoreTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$StoreTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$StoreTableTableOrderingComposer(ComposerState(db, table)),
+          createFilteringComposer: () =>
+              $$StoreTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$StoreTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$StoreTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
@@ -4780,140 +6398,87 @@ class $$StoreTableTableTableManager extends RootTableManager<
             owner: owner,
             isFavorite: isFavorite,
           ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$StoreTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {governorate = false, owner = false, serviceTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (serviceTableRefs) db.serviceTable],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (governorate) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.governorate,
+                    referencedTable:
+                        $$StoreTableTableReferences._governorateTable(db),
+                    referencedColumn:
+                        $$StoreTableTableReferences._governorateTable(db).id,
+                  ) as T;
+                }
+                if (owner) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.owner,
+                    referencedTable:
+                        $$StoreTableTableReferences._ownerTable(db),
+                    referencedColumn:
+                        $$StoreTableTableReferences._ownerTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (serviceTableRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable: $$StoreTableTableReferences
+                            ._serviceTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$StoreTableTableReferences(db, table, p0)
+                                .serviceTableRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.store == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
         ));
 }
 
-class $$StoreTableTableFilterComposer
-    extends FilterComposer<_$Database, $StoreTableTable> {
-  $$StoreTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get description => $state.composableBuilder(
-      column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get picture => $state.composableBuilder(
-      column: $state.table.picture,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get coordinates => $state.composableBuilder(
-      column: $state.table.coordinates,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<bool> get isFavorite => $state.composableBuilder(
-      column: $state.table.isFavorite,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  $$GovernorateTableTableFilterComposer get governorate {
-    final $$GovernorateTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.governorate,
-            referencedTable: $state.db.governorateTable,
-            getReferencedColumn: (t) => t.id,
-            builder: (joinBuilder, parentComposers) =>
-                $$GovernorateTableTableFilterComposer(ComposerState($state.db,
-                    $state.db.governorateTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$UserTableTableFilterComposer get owner {
-    final $$UserTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.owner,
-        referencedTable: $state.db.userTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$UserTableTableFilterComposer(ComposerState(
-                $state.db, $state.db.userTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  ComposableFilter serviceTableRefs(
-      ComposableFilter Function($$ServiceTableTableFilterComposer f) f) {
-    final $$ServiceTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.serviceTable,
-        getReferencedColumn: (t) => t.store,
-        builder: (joinBuilder, parentComposers) =>
-            $$ServiceTableTableFilterComposer(ComposerState($state.db,
-                $state.db.serviceTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
-}
-
-class $$StoreTableTableOrderingComposer
-    extends OrderingComposer<_$Database, $StoreTableTable> {
-  $$StoreTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get description => $state.composableBuilder(
-      column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get picture => $state.composableBuilder(
-      column: $state.table.picture,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get coordinates => $state.composableBuilder(
-      column: $state.table.coordinates,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<bool> get isFavorite => $state.composableBuilder(
-      column: $state.table.isFavorite,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  $$GovernorateTableTableOrderingComposer get governorate {
-    final $$GovernorateTableTableOrderingComposer composer = $state
-        .composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.governorate,
-            referencedTable: $state.db.governorateTable,
-            getReferencedColumn: (t) => t.id,
-            builder: (joinBuilder, parentComposers) =>
-                $$GovernorateTableTableOrderingComposer(ComposerState($state.db,
-                    $state.db.governorateTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$UserTableTableOrderingComposer get owner {
-    final $$UserTableTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.owner,
-        referencedTable: $state.db.userTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$UserTableTableOrderingComposer(ComposerState(
-                $state.db, $state.db.userTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
+typedef $$StoreTableTableProcessedTableManager = ProcessedTableManager<
+    _$Database,
+    $StoreTableTable,
+    StoreTableData,
+    $$StoreTableTableFilterComposer,
+    $$StoreTableTableOrderingComposer,
+    $$StoreTableTableAnnotationComposer,
+    $$StoreTableTableCreateCompanionBuilder,
+    $$StoreTableTableUpdateCompanionBuilder,
+    (StoreTableData, $$StoreTableTableReferences),
+    StoreTableData,
+    PrefetchHooks Function(
+        {bool governorate, bool owner, bool serviceTableRefs})>;
 typedef $$ServiceTableTableCreateCompanionBuilder = ServiceTableCompanion
     Function({
   required String id,
@@ -4935,22 +6500,310 @@ typedef $$ServiceTableTableUpdateCompanionBuilder = ServiceTableCompanion
   Value<int> rowid,
 });
 
+final class $$ServiceTableTableReferences
+    extends BaseReferences<_$Database, $ServiceTableTable, ServiceTableData> {
+  $$ServiceTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $CategoryTableTable _categoryTable(_$Database db) =>
+      db.categoryTable.createAlias(
+          $_aliasNameGenerator(db.serviceTable.category, db.categoryTable.id));
+
+  $$CategoryTableTableProcessedTableManager? get category {
+    if ($_item.category == null) return null;
+    final manager = $$CategoryTableTableTableManager($_db, $_db.categoryTable)
+        .filter((f) => f.id($_item.category!));
+    final item = $_typedResult.readTableOrNull(_categoryTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $StoreTableTable _storeTable(_$Database db) =>
+      db.storeTable.createAlias(
+          $_aliasNameGenerator(db.serviceTable.store, db.storeTable.id));
+
+  $$StoreTableTableProcessedTableManager? get store {
+    if ($_item.store == null) return null;
+    final manager = $$StoreTableTableTableManager($_db, $_db.storeTable)
+        .filter((f) => f.id($_item.store!));
+    final item = $_typedResult.readTableOrNull(_storeTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static MultiTypedResultKey<$ServiceGalleryTableTable,
+      List<ServiceGalleryTableData>> _serviceGalleryTableRefsTable(
+          _$Database db) =>
+      MultiTypedResultKey.fromTable(db.serviceGalleryTable,
+          aliasName: $_aliasNameGenerator(
+              db.serviceTable.id, db.serviceGalleryTable.serviceId));
+
+  $$ServiceGalleryTableTableProcessedTableManager get serviceGalleryTableRefs {
+    final manager =
+        $$ServiceGalleryTableTableTableManager($_db, $_db.serviceGalleryTable)
+            .filter((f) => f.serviceId.id($_item.id));
+
+    final cache =
+        $_typedResult.readTableOrNull(_serviceGalleryTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$ServiceTableTableFilterComposer
+    extends Composer<_$Database, $ServiceTableTable> {
+  $$ServiceTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get price => $composableBuilder(
+      column: $table.price, builder: (column) => ColumnFilters(column));
+
+  $$CategoryTableTableFilterComposer get category {
+    final $$CategoryTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.category,
+        referencedTable: $db.categoryTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CategoryTableTableFilterComposer(
+              $db: $db,
+              $table: $db.categoryTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$StoreTableTableFilterComposer get store {
+    final $$StoreTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.store,
+        referencedTable: $db.storeTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoreTableTableFilterComposer(
+              $db: $db,
+              $table: $db.storeTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<bool> serviceGalleryTableRefs(
+      Expression<bool> Function($$ServiceGalleryTableTableFilterComposer f) f) {
+    final $$ServiceGalleryTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.serviceGalleryTable,
+        getReferencedColumn: (t) => t.serviceId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ServiceGalleryTableTableFilterComposer(
+              $db: $db,
+              $table: $db.serviceGalleryTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$ServiceTableTableOrderingComposer
+    extends Composer<_$Database, $ServiceTableTable> {
+  $$ServiceTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get price => $composableBuilder(
+      column: $table.price, builder: (column) => ColumnOrderings(column));
+
+  $$CategoryTableTableOrderingComposer get category {
+    final $$CategoryTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.category,
+        referencedTable: $db.categoryTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CategoryTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.categoryTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$StoreTableTableOrderingComposer get store {
+    final $$StoreTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.store,
+        referencedTable: $db.storeTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoreTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.storeTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$ServiceTableTableAnnotationComposer
+    extends Composer<_$Database, $ServiceTableTable> {
+  $$ServiceTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => column);
+
+  GeneratedColumn<double> get price =>
+      $composableBuilder(column: $table.price, builder: (column) => column);
+
+  $$CategoryTableTableAnnotationComposer get category {
+    final $$CategoryTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.category,
+        referencedTable: $db.categoryTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CategoryTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.categoryTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$StoreTableTableAnnotationComposer get store {
+    final $$StoreTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.store,
+        referencedTable: $db.storeTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoreTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.storeTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<T> serviceGalleryTableRefs<T extends Object>(
+      Expression<T> Function($$ServiceGalleryTableTableAnnotationComposer a)
+          f) {
+    final $$ServiceGalleryTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.serviceGalleryTable,
+            getReferencedColumn: (t) => t.serviceId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$ServiceGalleryTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.serviceGalleryTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
+}
+
 class $$ServiceTableTableTableManager extends RootTableManager<
     _$Database,
     $ServiceTableTable,
     ServiceTableData,
     $$ServiceTableTableFilterComposer,
     $$ServiceTableTableOrderingComposer,
+    $$ServiceTableTableAnnotationComposer,
     $$ServiceTableTableCreateCompanionBuilder,
-    $$ServiceTableTableUpdateCompanionBuilder> {
+    $$ServiceTableTableUpdateCompanionBuilder,
+    (ServiceTableData, $$ServiceTableTableReferences),
+    ServiceTableData,
+    PrefetchHooks Function(
+        {bool category, bool store, bool serviceGalleryTableRefs})> {
   $$ServiceTableTableTableManager(_$Database db, $ServiceTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$ServiceTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$ServiceTableTableOrderingComposer(ComposerState(db, table)),
+          createFilteringComposer: () =>
+              $$ServiceTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ServiceTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ServiceTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
             Value<String> name = const Value.absent(),
@@ -4987,123 +6840,91 @@ class $$ServiceTableTableTableManager extends RootTableManager<
             price: price,
             rowid: rowid,
           ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$ServiceTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {category = false,
+              store = false,
+              serviceGalleryTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (serviceGalleryTableRefs) db.serviceGalleryTable
+              ],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (category) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.category,
+                    referencedTable:
+                        $$ServiceTableTableReferences._categoryTable(db),
+                    referencedColumn:
+                        $$ServiceTableTableReferences._categoryTable(db).id,
+                  ) as T;
+                }
+                if (store) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.store,
+                    referencedTable:
+                        $$ServiceTableTableReferences._storeTable(db),
+                    referencedColumn:
+                        $$ServiceTableTableReferences._storeTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (serviceGalleryTableRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable: $$ServiceTableTableReferences
+                            ._serviceGalleryTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$ServiceTableTableReferences(db, table, p0)
+                                .serviceGalleryTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems
+                                .where((e) => e.serviceId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
         ));
 }
 
-class $$ServiceTableTableFilterComposer
-    extends FilterComposer<_$Database, $ServiceTableTable> {
-  $$ServiceTableTableFilterComposer(super.$state);
-  ColumnFilters<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get description => $state.composableBuilder(
-      column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get price => $state.composableBuilder(
-      column: $state.table.price,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  $$CategoryTableTableFilterComposer get category {
-    final $$CategoryTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.category,
-        referencedTable: $state.db.categoryTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$CategoryTableTableFilterComposer(ComposerState($state.db,
-                $state.db.categoryTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$StoreTableTableFilterComposer get store {
-    final $$StoreTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.store,
-        referencedTable: $state.db.storeTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$StoreTableTableFilterComposer(ComposerState($state.db,
-                $state.db.storeTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  ComposableFilter serviceGalleryTableRefs(
-      ComposableFilter Function($$ServiceGalleryTableTableFilterComposer f) f) {
-    final $$ServiceGalleryTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $state.db.serviceGalleryTable,
-            getReferencedColumn: (t) => t.serviceId,
-            builder: (joinBuilder, parentComposers) =>
-                $$ServiceGalleryTableTableFilterComposer(ComposerState(
-                    $state.db,
-                    $state.db.serviceGalleryTable,
-                    joinBuilder,
-                    parentComposers)));
-    return f(composer);
-  }
-}
-
-class $$ServiceTableTableOrderingComposer
-    extends OrderingComposer<_$Database, $ServiceTableTable> {
-  $$ServiceTableTableOrderingComposer(super.$state);
-  ColumnOrderings<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get description => $state.composableBuilder(
-      column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get price => $state.composableBuilder(
-      column: $state.table.price,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  $$CategoryTableTableOrderingComposer get category {
-    final $$CategoryTableTableOrderingComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.category,
-            referencedTable: $state.db.categoryTable,
-            getReferencedColumn: (t) => t.id,
-            builder: (joinBuilder, parentComposers) =>
-                $$CategoryTableTableOrderingComposer(ComposerState($state.db,
-                    $state.db.categoryTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$StoreTableTableOrderingComposer get store {
-    final $$StoreTableTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.store,
-        referencedTable: $state.db.storeTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$StoreTableTableOrderingComposer(ComposerState($state.db,
-                $state.db.storeTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
+typedef $$ServiceTableTableProcessedTableManager = ProcessedTableManager<
+    _$Database,
+    $ServiceTableTable,
+    ServiceTableData,
+    $$ServiceTableTableFilterComposer,
+    $$ServiceTableTableOrderingComposer,
+    $$ServiceTableTableAnnotationComposer,
+    $$ServiceTableTableCreateCompanionBuilder,
+    $$ServiceTableTableUpdateCompanionBuilder,
+    (ServiceTableData, $$ServiceTableTableReferences),
+    ServiceTableData,
+    PrefetchHooks Function(
+        {bool category, bool store, bool serviceGalleryTableRefs})>;
 typedef $$ServiceGalleryTableTableCreateCompanionBuilder
     = ServiceGalleryTableCompanion Function({
   Value<int> id,
@@ -5119,23 +6940,168 @@ typedef $$ServiceGalleryTableTableUpdateCompanionBuilder
   Value<String?> serviceId,
 });
 
+final class $$ServiceGalleryTableTableReferences extends BaseReferences<
+    _$Database, $ServiceGalleryTableTable, ServiceGalleryTableData> {
+  $$ServiceGalleryTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $ServiceTableTable _serviceIdTable(_$Database db) =>
+      db.serviceTable.createAlias($_aliasNameGenerator(
+          db.serviceGalleryTable.serviceId, db.serviceTable.id));
+
+  $$ServiceTableTableProcessedTableManager? get serviceId {
+    if ($_item.serviceId == null) return null;
+    final manager = $$ServiceTableTableTableManager($_db, $_db.serviceTable)
+        .filter((f) => f.id($_item.serviceId!));
+    final item = $_typedResult.readTableOrNull(_serviceIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$ServiceGalleryTableTableFilterComposer
+    extends Composer<_$Database, $ServiceGalleryTableTable> {
+  $$ServiceGalleryTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get url => $composableBuilder(
+      column: $table.url, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnFilters(column));
+
+  $$ServiceTableTableFilterComposer get serviceId {
+    final $$ServiceTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.serviceId,
+        referencedTable: $db.serviceTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ServiceTableTableFilterComposer(
+              $db: $db,
+              $table: $db.serviceTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$ServiceGalleryTableTableOrderingComposer
+    extends Composer<_$Database, $ServiceGalleryTableTable> {
+  $$ServiceGalleryTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get url => $composableBuilder(
+      column: $table.url, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnOrderings(column));
+
+  $$ServiceTableTableOrderingComposer get serviceId {
+    final $$ServiceTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.serviceId,
+        referencedTable: $db.serviceTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ServiceTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.serviceTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$ServiceGalleryTableTableAnnotationComposer
+    extends Composer<_$Database, $ServiceGalleryTableTable> {
+  $$ServiceGalleryTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get url =>
+      $composableBuilder(column: $table.url, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  $$ServiceTableTableAnnotationComposer get serviceId {
+    final $$ServiceTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.serviceId,
+        referencedTable: $db.serviceTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ServiceTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.serviceTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
 class $$ServiceGalleryTableTableTableManager extends RootTableManager<
     _$Database,
     $ServiceGalleryTableTable,
     ServiceGalleryTableData,
     $$ServiceGalleryTableTableFilterComposer,
     $$ServiceGalleryTableTableOrderingComposer,
+    $$ServiceGalleryTableTableAnnotationComposer,
     $$ServiceGalleryTableTableCreateCompanionBuilder,
-    $$ServiceGalleryTableTableUpdateCompanionBuilder> {
+    $$ServiceGalleryTableTableUpdateCompanionBuilder,
+    (ServiceGalleryTableData, $$ServiceGalleryTableTableReferences),
+    ServiceGalleryTableData,
+    PrefetchHooks Function({bool serviceId})> {
   $$ServiceGalleryTableTableTableManager(
       _$Database db, $ServiceGalleryTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer: $$ServiceGalleryTableTableFilterComposer(
-              ComposerState(db, table)),
-          orderingComposer: $$ServiceGalleryTableTableOrderingComposer(
-              ComposerState(db, table)),
+          createFilteringComposer: () =>
+              $$ServiceGalleryTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ServiceGalleryTableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ServiceGalleryTableTableAnnotationComposer(
+                  $db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> url = const Value.absent(),
@@ -5160,71 +7126,63 @@ class $$ServiceGalleryTableTableTableManager extends RootTableManager<
             type: type,
             serviceId: serviceId,
           ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$ServiceGalleryTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({serviceId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (serviceId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.serviceId,
+                    referencedTable: $$ServiceGalleryTableTableReferences
+                        ._serviceIdTable(db),
+                    referencedColumn: $$ServiceGalleryTableTableReferences
+                        ._serviceIdTable(db)
+                        .id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ));
 }
 
-class $$ServiceGalleryTableTableFilterComposer
-    extends FilterComposer<_$Database, $ServiceGalleryTableTable> {
-  $$ServiceGalleryTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get url => $state.composableBuilder(
-      column: $state.table.url,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get type => $state.composableBuilder(
-      column: $state.table.type,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  $$ServiceTableTableFilterComposer get serviceId {
-    final $$ServiceTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.serviceId,
-        referencedTable: $state.db.serviceTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$ServiceTableTableFilterComposer(ComposerState($state.db,
-                $state.db.serviceTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
-class $$ServiceGalleryTableTableOrderingComposer
-    extends OrderingComposer<_$Database, $ServiceGalleryTableTable> {
-  $$ServiceGalleryTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get url => $state.composableBuilder(
-      column: $state.table.url,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get type => $state.composableBuilder(
-      column: $state.table.type,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  $$ServiceTableTableOrderingComposer get serviceId {
-    final $$ServiceTableTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.serviceId,
-        referencedTable: $state.db.serviceTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$ServiceTableTableOrderingComposer(ComposerState($state.db,
-                $state.db.serviceTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
+typedef $$ServiceGalleryTableTableProcessedTableManager = ProcessedTableManager<
+    _$Database,
+    $ServiceGalleryTableTable,
+    ServiceGalleryTableData,
+    $$ServiceGalleryTableTableFilterComposer,
+    $$ServiceGalleryTableTableOrderingComposer,
+    $$ServiceGalleryTableTableAnnotationComposer,
+    $$ServiceGalleryTableTableCreateCompanionBuilder,
+    $$ServiceGalleryTableTableUpdateCompanionBuilder,
+    (ServiceGalleryTableData, $$ServiceGalleryTableTableReferences),
+    ServiceGalleryTableData,
+    PrefetchHooks Function({bool serviceId})>;
 typedef $$ReservationTableTableCreateCompanionBuilder
     = ReservationTableCompanion Function({
   required String id,
@@ -5256,23 +7214,360 @@ typedef $$ReservationTableTableUpdateCompanionBuilder
   Value<int> rowid,
 });
 
+final class $$ReservationTableTableReferences extends BaseReferences<_$Database,
+    $ReservationTableTable, ReservationTableData> {
+  $$ReservationTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $TaskTableTable _taskTable(_$Database db) => db.taskTable.createAlias(
+      $_aliasNameGenerator(db.reservationTable.task, db.taskTable.id));
+
+  $$TaskTableTableProcessedTableManager? get task {
+    if ($_item.task == null) return null;
+    final manager = $$TaskTableTableTableManager($_db, $_db.taskTable)
+        .filter((f) => f.id($_item.task!));
+    final item = $_typedResult.readTableOrNull(_taskTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $TaskTableTable _serviceTable(_$Database db) =>
+      db.taskTable.createAlias(
+          $_aliasNameGenerator(db.reservationTable.service, db.taskTable.id));
+
+  $$TaskTableTableProcessedTableManager? get service {
+    if ($_item.service == null) return null;
+    final manager = $$TaskTableTableTableManager($_db, $_db.taskTable)
+        .filter((f) => f.id($_item.service!));
+    final item = $_typedResult.readTableOrNull(_serviceTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $UserTableTable _userTable(_$Database db) => db.userTable.createAlias(
+      $_aliasNameGenerator(db.reservationTable.user, db.userTable.id));
+
+  $$UserTableTableProcessedTableManager? get user {
+    if ($_item.user == null) return null;
+    final manager = $$UserTableTableTableManager($_db, $_db.userTable)
+        .filter((f) => f.id($_item.user!));
+    final item = $_typedResult.readTableOrNull(_userTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$ReservationTableTableFilterComposer
+    extends Composer<_$Database, $ReservationTableTable> {
+  $$ReservationTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+      column: $table.date, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get totalPrice => $composableBuilder(
+      column: $table.totalPrice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get proposedPrice => $composableBuilder(
+      column: $table.proposedPrice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get coupon => $composableBuilder(
+      column: $table.coupon, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get note => $composableBuilder(
+      column: $table.note, builder: (column) => ColumnFilters(column));
+
+  ColumnWithTypeConverterFilters<RequestStatus, RequestStatus, int>
+      get status => $composableBuilder(
+          column: $table.status,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnFilters<int> get coins => $composableBuilder(
+      column: $table.coins, builder: (column) => ColumnFilters(column));
+
+  $$TaskTableTableFilterComposer get task {
+    final $$TaskTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.task,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableFilterComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$TaskTableTableFilterComposer get service {
+    final $$TaskTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.service,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableFilterComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$UserTableTableFilterComposer get user {
+    final $$UserTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.user,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$UserTableTableFilterComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$ReservationTableTableOrderingComposer
+    extends Composer<_$Database, $ReservationTableTable> {
+  $$ReservationTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+      column: $table.date, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get totalPrice => $composableBuilder(
+      column: $table.totalPrice, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get proposedPrice => $composableBuilder(
+      column: $table.proposedPrice,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get coupon => $composableBuilder(
+      column: $table.coupon, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get note => $composableBuilder(
+      column: $table.note, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get coins => $composableBuilder(
+      column: $table.coins, builder: (column) => ColumnOrderings(column));
+
+  $$TaskTableTableOrderingComposer get task {
+    final $$TaskTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.task,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$TaskTableTableOrderingComposer get service {
+    final $$TaskTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.service,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$UserTableTableOrderingComposer get user {
+    final $$UserTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.user,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$UserTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$ReservationTableTableAnnotationComposer
+    extends Composer<_$Database, $ReservationTableTable> {
+  $$ReservationTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<double> get totalPrice => $composableBuilder(
+      column: $table.totalPrice, builder: (column) => column);
+
+  GeneratedColumn<double> get proposedPrice => $composableBuilder(
+      column: $table.proposedPrice, builder: (column) => column);
+
+  GeneratedColumn<String> get coupon =>
+      $composableBuilder(column: $table.coupon, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<RequestStatus, int> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get coins =>
+      $composableBuilder(column: $table.coins, builder: (column) => column);
+
+  $$TaskTableTableAnnotationComposer get task {
+    final $$TaskTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.task,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$TaskTableTableAnnotationComposer get service {
+    final $$TaskTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.service,
+        referencedTable: $db.taskTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$TaskTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.taskTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$UserTableTableAnnotationComposer get user {
+    final $$UserTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.user,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$UserTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
 class $$ReservationTableTableTableManager extends RootTableManager<
     _$Database,
     $ReservationTableTable,
     ReservationTableData,
     $$ReservationTableTableFilterComposer,
     $$ReservationTableTableOrderingComposer,
+    $$ReservationTableTableAnnotationComposer,
     $$ReservationTableTableCreateCompanionBuilder,
-    $$ReservationTableTableUpdateCompanionBuilder> {
+    $$ReservationTableTableUpdateCompanionBuilder,
+    (ReservationTableData, $$ReservationTableTableReferences),
+    ReservationTableData,
+    PrefetchHooks Function({bool task, bool service, bool user})> {
   $$ReservationTableTableTableManager(
       _$Database db, $ReservationTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$ReservationTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$ReservationTableTableOrderingComposer(ComposerState(db, table)),
+          createFilteringComposer: () =>
+              $$ReservationTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReservationTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReservationTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
             Value<String?> task = const Value.absent(),
@@ -5329,170 +7624,83 @@ class $$ReservationTableTableTableManager extends RootTableManager<
             user: user,
             rowid: rowid,
           ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$ReservationTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {task = false, service = false, user = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (task) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.task,
+                    referencedTable:
+                        $$ReservationTableTableReferences._taskTable(db),
+                    referencedColumn:
+                        $$ReservationTableTableReferences._taskTable(db).id,
+                  ) as T;
+                }
+                if (service) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.service,
+                    referencedTable:
+                        $$ReservationTableTableReferences._serviceTable(db),
+                    referencedColumn:
+                        $$ReservationTableTableReferences._serviceTable(db).id,
+                  ) as T;
+                }
+                if (user) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.user,
+                    referencedTable:
+                        $$ReservationTableTableReferences._userTable(db),
+                    referencedColumn:
+                        $$ReservationTableTableReferences._userTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ));
 }
 
-class $$ReservationTableTableFilterComposer
-    extends FilterComposer<_$Database, $ReservationTableTable> {
-  $$ReservationTableTableFilterComposer(super.$state);
-  ColumnFilters<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<DateTime> get date => $state.composableBuilder(
-      column: $state.table.date,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get totalPrice => $state.composableBuilder(
-      column: $state.table.totalPrice,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get proposedPrice => $state.composableBuilder(
-      column: $state.table.proposedPrice,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get coupon => $state.composableBuilder(
-      column: $state.table.coupon,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get note => $state.composableBuilder(
-      column: $state.table.note,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnWithTypeConverterFilters<RequestStatus, RequestStatus, int>
-      get status => $state.composableBuilder(
-          column: $state.table.status,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
-
-  ColumnFilters<int> get coins => $state.composableBuilder(
-      column: $state.table.coins,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  $$TaskTableTableFilterComposer get task {
-    final $$TaskTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.task,
-        referencedTable: $state.db.taskTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TaskTableTableFilterComposer(ComposerState(
-                $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$TaskTableTableFilterComposer get service {
-    final $$TaskTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.service,
-        referencedTable: $state.db.taskTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TaskTableTableFilterComposer(ComposerState(
-                $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$UserTableTableFilterComposer get user {
-    final $$UserTableTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.user,
-        referencedTable: $state.db.userTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$UserTableTableFilterComposer(ComposerState(
-                $state.db, $state.db.userTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
-
-class $$ReservationTableTableOrderingComposer
-    extends OrderingComposer<_$Database, $ReservationTableTable> {
-  $$ReservationTableTableOrderingComposer(super.$state);
-  ColumnOrderings<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<DateTime> get date => $state.composableBuilder(
-      column: $state.table.date,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get totalPrice => $state.composableBuilder(
-      column: $state.table.totalPrice,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get proposedPrice => $state.composableBuilder(
-      column: $state.table.proposedPrice,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get coupon => $state.composableBuilder(
-      column: $state.table.coupon,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get note => $state.composableBuilder(
-      column: $state.table.note,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get status => $state.composableBuilder(
-      column: $state.table.status,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get coins => $state.composableBuilder(
-      column: $state.table.coins,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  $$TaskTableTableOrderingComposer get task {
-    final $$TaskTableTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.task,
-        referencedTable: $state.db.taskTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TaskTableTableOrderingComposer(ComposerState(
-                $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$TaskTableTableOrderingComposer get service {
-    final $$TaskTableTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.service,
-        referencedTable: $state.db.taskTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TaskTableTableOrderingComposer(ComposerState(
-                $state.db, $state.db.taskTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-
-  $$UserTableTableOrderingComposer get user {
-    final $$UserTableTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.user,
-        referencedTable: $state.db.userTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$UserTableTableOrderingComposer(ComposerState(
-                $state.db, $state.db.userTable, joinBuilder, parentComposers)));
-    return composer;
-  }
-}
+typedef $$ReservationTableTableProcessedTableManager = ProcessedTableManager<
+    _$Database,
+    $ReservationTableTable,
+    ReservationTableData,
+    $$ReservationTableTableFilterComposer,
+    $$ReservationTableTableOrderingComposer,
+    $$ReservationTableTableAnnotationComposer,
+    $$ReservationTableTableCreateCompanionBuilder,
+    $$ReservationTableTableUpdateCompanionBuilder,
+    (ReservationTableData, $$ReservationTableTableReferences),
+    ReservationTableData,
+    PrefetchHooks Function({bool task, bool service, bool user})>;
 
 class $DatabaseManager {
   final _$Database _db;
