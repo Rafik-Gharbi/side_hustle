@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: unnecessary_null_comparison
-
 part of 'database.dart';
 
 // ignore_for_file: type=lint
@@ -29,9 +27,9 @@ class $CategoryTableTable extends CategoryTable
       defaultValue: const Constant(''));
   static const VerificationMeta _iconMeta = const VerificationMeta('icon');
   @override
-  late final GeneratedColumn<int> icon = GeneratedColumn<int>(
+  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
       'icon', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _parentMeta = const VerificationMeta('parent');
   @override
   late final GeneratedColumn<int> parent = GeneratedColumn<int>(
@@ -98,7 +96,7 @@ class $CategoryTableTable extends CategoryTable
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       icon: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}icon'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}icon'])!,
       parent: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}parent'])!,
       subscribed: attachedDatabase.typeMapping
@@ -116,7 +114,7 @@ class CategoryTableData extends DataClass
     implements Insertable<CategoryTableData> {
   final int id;
   final String name;
-  final int icon;
+  final String icon;
   final int parent;
   final int subscribed;
   const CategoryTableData(
@@ -130,7 +128,7 @@ class CategoryTableData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
-    map['icon'] = Variable<int>(icon);
+    map['icon'] = Variable<String>(icon);
     map['parent'] = Variable<int>(parent);
     map['subscribed'] = Variable<int>(subscribed);
     return map;
@@ -152,7 +150,7 @@ class CategoryTableData extends DataClass
     return CategoryTableData(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      icon: serializer.fromJson<int>(json['icon']),
+      icon: serializer.fromJson<String>(json['icon']),
       parent: serializer.fromJson<int>(json['parent']),
       subscribed: serializer.fromJson<int>(json['subscribed']),
     );
@@ -163,14 +161,18 @@ class CategoryTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
-      'icon': serializer.toJson<int>(icon),
+      'icon': serializer.toJson<String>(icon),
       'parent': serializer.toJson<int>(parent),
       'subscribed': serializer.toJson<int>(subscribed),
     };
   }
 
   CategoryTableData copyWith(
-          {int? id, String? name, int? icon, int? parent, int? subscribed}) =>
+          {int? id,
+          String? name,
+          String? icon,
+          int? parent,
+          int? subscribed}) =>
       CategoryTableData(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -217,7 +219,7 @@ class CategoryTableData extends DataClass
 class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
   final Value<int> id;
   final Value<String> name;
-  final Value<int> icon;
+  final Value<String> icon;
   final Value<int> parent;
   final Value<int> subscribed;
   const CategoryTableCompanion({
@@ -230,14 +232,14 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
   CategoryTableCompanion.insert({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
-    required int icon,
+    required String icon,
     this.parent = const Value.absent(),
     this.subscribed = const Value.absent(),
   }) : icon = Value(icon);
   static Insertable<CategoryTableData> custom({
     Expression<int>? id,
     Expression<String>? name,
-    Expression<int>? icon,
+    Expression<String>? icon,
     Expression<int>? parent,
     Expression<int>? subscribed,
   }) {
@@ -253,7 +255,7 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
   CategoryTableCompanion copyWith(
       {Value<int>? id,
       Value<String>? name,
-      Value<int>? icon,
+      Value<String>? icon,
       Value<int>? parent,
       Value<int>? subscribed}) {
     return CategoryTableCompanion(
@@ -275,7 +277,7 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
       map['name'] = Variable<String>(name.value);
     }
     if (icon.present) {
-      map['icon'] = Variable<int>(icon.value);
+      map['icon'] = Variable<String>(icon.value);
     }
     if (parent.present) {
       map['parent'] = Variable<int>(parent.value);
@@ -3726,7 +3728,7 @@ typedef $$CategoryTableTableCreateCompanionBuilder = CategoryTableCompanion
     Function({
   Value<int> id,
   Value<String> name,
-  required int icon,
+  required String icon,
   Value<int> parent,
   Value<int> subscribed,
 });
@@ -3734,7 +3736,7 @@ typedef $$CategoryTableTableUpdateCompanionBuilder = CategoryTableCompanion
     Function({
   Value<int> id,
   Value<String> name,
-  Value<int> icon,
+  Value<String> icon,
   Value<int> parent,
   Value<int> subscribed,
 });
@@ -3749,7 +3751,6 @@ final class $$CategoryTableTableReferences
           $_aliasNameGenerator(db.categoryTable.parent, db.categoryTable.id));
 
   $$CategoryTableTableProcessedTableManager? get parent {
-    if ($_item.parent == null) return null;
     final manager = $$CategoryTableTableTableManager($_db, $_db.categoryTable)
         .filter((f) => f.id($_item.parent));
     final item = $_typedResult.readTableOrNull(_parentTable($_db));
@@ -3804,7 +3805,7 @@ class $$CategoryTableTableFilterComposer
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get icon => $composableBuilder(
+  ColumnFilters<String> get icon => $composableBuilder(
       column: $table.icon, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get subscribed => $composableBuilder(
@@ -3888,7 +3889,7 @@ class $$CategoryTableTableOrderingComposer
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get icon => $composableBuilder(
+  ColumnOrderings<String> get icon => $composableBuilder(
       column: $table.icon, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get subscribed => $composableBuilder(
@@ -3930,7 +3931,7 @@ class $$CategoryTableTableAnnotationComposer
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
-  GeneratedColumn<int> get icon =>
+  GeneratedColumn<String> get icon =>
       $composableBuilder(column: $table.icon, builder: (column) => column);
 
   GeneratedColumn<int> get subscribed => $composableBuilder(
@@ -4025,7 +4026,7 @@ class $$CategoryTableTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
-            Value<int> icon = const Value.absent(),
+            Value<String> icon = const Value.absent(),
             Value<int> parent = const Value.absent(),
             Value<int> subscribed = const Value.absent(),
           }) =>
@@ -4039,7 +4040,7 @@ class $$CategoryTableTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
-            required int icon,
+            required String icon,
             Value<int> parent = const Value.absent(),
             Value<int> subscribed = const Value.absent(),
           }) =>
@@ -4538,7 +4539,6 @@ final class $$UserTableTableReferences
           db.userTable.governorate, db.governorateTable.id));
 
   $$GovernorateTableTableProcessedTableManager? get governorate {
-    if ($_item.governorate == null) return null;
     final manager =
         $$GovernorateTableTableTableManager($_db, $_db.governorateTable)
             .filter((f) => f.id($_item.governorate));
@@ -5213,7 +5213,6 @@ final class $$TaskTableTableReferences
           $_aliasNameGenerator(db.taskTable.category, db.categoryTable.id));
 
   $$CategoryTableTableProcessedTableManager? get category {
-    if ($_item.category == null) return null;
     final manager = $$CategoryTableTableTableManager($_db, $_db.categoryTable)
         .filter((f) => f.id($_item.category));
     final item = $_typedResult.readTableOrNull(_categoryTable($_db));

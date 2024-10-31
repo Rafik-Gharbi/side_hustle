@@ -133,7 +133,7 @@ class ServiceCard extends StatelessWidget {
               ),
             ),
           ),
-          leading: Icon(service.category?.icon ?? Icons.error_outline),
+          leading: Image.asset(service.category?.icon ?? ''), // TODO
         );
       },
     );

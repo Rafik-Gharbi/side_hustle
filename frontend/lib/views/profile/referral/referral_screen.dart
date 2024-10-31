@@ -111,7 +111,7 @@ class ReferralScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: Paddings.exceptional),
                 Text('how_it_works'.tr, style: AppFonts.x16Bold),
-                const SizedBox(height: Paddings.regular),
+                const SizedBox(height: Paddings.large),
                 ListTile(
                   title: Text('how_it_works_step1'.tr, style: AppFonts.x14Bold),
                   subtitle: Text('how_it_works_step1_subtitle'.tr, softWrap: true, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),

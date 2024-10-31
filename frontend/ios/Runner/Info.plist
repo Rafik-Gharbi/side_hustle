@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BUNDLE_ID</key>
-	<string>com.example.side_hustle</string>
+	<string>com.example.side-hustle</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

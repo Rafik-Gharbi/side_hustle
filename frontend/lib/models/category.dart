@@ -1,13 +1,11 @@
 import 'package:drift/drift.dart';
-import 'package:flutter/material.dart';
 
 import '../database/database.dart';
-import '../helpers/extensions/icondata_convert_extension.dart';
 
 class Category {
   final int id;
   final String name;
-  final IconData icon;
+  final String icon;
   final int parentId;
   final int subscribed;
 
@@ -22,7 +20,7 @@ class Category {
   factory Category.fromJson(Map<String, dynamic> json) => Category(
         id: json['id'],
         parentId: json['parentId'],
-        icon: (json['icon'] as String).getIconData(),
+        icon: json['icon'],
         name: json['name'],
         subscribed: json['subscribed'] ?? 0,
       );
@@ -31,7 +29,7 @@ class Category {
     final Map<String, dynamic> data = {};
     data['id'] = id;
     data['name'] = name;
-    data['icon'] = icon.codePoint;
+    data['icon'] = icon;
     data['parentId'] = parentId;
     return data;
   }
@@ -39,7 +37,7 @@ class Category {
   factory Category.fromCategoryData({required CategoryTableData category}) => Category(
         id: category.id,
         name: category.name,
-        icon: category.icon.toString().getIconData(),
+        icon: category.icon.toString(),
         parentId: category.parent,
         subscribed: category.subscribed,
       );
@@ -47,7 +45,7 @@ class Category {
   CategoryTableCompanion toCategoryCompanion() => CategoryTableCompanion(
         id: Value(id),
         name: Value(name),
-        icon: Value(icon.codePoint),
+        icon: Value(icon),
         parent: Value(parentId),
         subscribed: Value(subscribed),
       );

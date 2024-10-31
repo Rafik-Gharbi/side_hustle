@@ -117,7 +117,7 @@ class TaskDetailsScreen extends StatelessWidget {
                         Text(task.title, style: AppFonts.x16Bold),
                         Row(
                           children: [
-                            Icon(task.category?.icon, size: 14),
+                            Image.asset(task.category!.icon, width: 14),
                             const SizedBox(width: Paddings.regular),
                             Text(task.category?.name ?? '', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                             Padding(

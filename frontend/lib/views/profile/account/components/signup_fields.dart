@@ -118,18 +118,20 @@ class SignUpFields extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
               child: Text('share_my_position_msg'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
             ),
-            const SizedBox(height: Paddings.regular),
-            CustomTextField(
-              hintText: 'referral_code'.tr,
-              fieldController: controller.referralCodeController,
-              isOptional: true,
-              outlinedBorder: true,
-            ),
-            const SizedBox(height: Paddings.small),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
-              child: Text('provide_referral_code_msg'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-            ),
+            if (!isEditProfile) ...[
+              const SizedBox(height: Paddings.regular),
+              CustomTextField(
+                hintText: 'referral_code'.tr,
+                fieldController: controller.referralCodeController,
+                isOptional: true,
+                outlinedBorder: true,
+              ),
+              const SizedBox(height: Paddings.small),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
+                child: Text('provide_referral_code_msg'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+              ),
+            ],
             const SizedBox(height: Paddings.exceptional),
             CustomButtons.elevatePrimary(
               width: double.infinity,

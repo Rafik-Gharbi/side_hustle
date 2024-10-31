@@ -149,7 +149,7 @@ class TaskCard extends StatelessWidget {
                 ),
             ],
           ),
-          leading: task.category != null ? Icon(task.category!.icon) : null,
+          leading: task.category != null ? Image.asset(task.category!.icon) : null,
         ),
       );
     });

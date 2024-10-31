@@ -99,7 +99,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                   Text(service.name ?? 'service'.tr, style: AppFonts.x16Bold),
                   Row(
                     children: [
-                      Icon(service.category?.icon, size: 14),
+                      Image.asset(service.category!.icon, width: 14),
                       const SizedBox(width: Paddings.regular),
                       Text(service.category?.name ?? '', style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                     ],

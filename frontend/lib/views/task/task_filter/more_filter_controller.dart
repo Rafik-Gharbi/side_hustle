@@ -8,7 +8,7 @@ import '../../../models/filter_model.dart';
 class MoreFilterController extends GetxController {
   final TextEditingController minPriceController = TextEditingController();
   final TextEditingController maxPriceController = TextEditingController();
-  Category _category = Category(id: -1, name: 'any'.tr, icon: Icons.all_inclusive_outlined);
+  Category _category = Category(id: -1, name: 'any'.tr, icon: ''); // TODO
   RxDouble nearbyRange = 10.0.obs;
   FilterModel filter;
 
@@ -27,7 +27,7 @@ class MoreFilterController extends GetxController {
     // TODO get max task price from backend
     minPriceController.text = filter.minPrice?.toStringAsFixed(0) ?? '';
     maxPriceController.text = filter.maxPrice?.toStringAsFixed(0) ?? '';
-    _category = filter.category ?? Category(id: -1, name: 'any'.tr, icon: Icons.all_inclusive_outlined);
+    _category = filter.category ?? Category(id: -1, name: 'any'.tr, icon: ''); // TODO
     nearbyRange.value = filter.nearby ?? 1.0;
     update();
   }

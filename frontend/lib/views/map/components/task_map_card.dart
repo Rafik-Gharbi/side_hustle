@@ -31,7 +31,7 @@ class TaskMapCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Leading category icon
-              if (task.category != null) SizedBox(width: 50, child: Icon(task.category!.icon)),
+              if (task.category != null) SizedBox(width: 50, child: Image.asset(task.category!.icon)),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

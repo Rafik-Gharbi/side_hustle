@@ -185,7 +185,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                                               CircleAvatar(
                                                 radius: 20,
                                                 backgroundColor: isSelected ? kPrimaryColor : kNeutralColor,
-                                                child: Center(child: Icon(subCategory.icon, color: kNeutralColor100)),
+                                                child: Center(child: Image.asset(subCategory.icon, color: kNeutralColor100)),
                                               ),
                                               const SizedBox(height: Paddings.small),
                                               Text(
