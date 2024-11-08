@@ -395,4 +395,11 @@ class Buildables {
           ),
         ),
       );
+
+  static Widget buildCategoryIcon(String icon, {double size = 30, Color? color}) => Image.network(
+        icon,
+        width: size,
+        color: color ?? kBlackColor,
+        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+      );
 }

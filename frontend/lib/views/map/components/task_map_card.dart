@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/sizes.dart';
 import '../../../controllers/main_app_controller.dart';
+import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/task.dart';
 import '../../../services/authentication_service.dart';
@@ -31,7 +32,11 @@ class TaskMapCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Leading category icon
-              if (task.category != null) SizedBox(width: 50, child: Image.asset(task.category!.icon)),
+              if (task.category != null)
+                SizedBox(
+                  width: 50,
+                  child: Buildables.buildCategoryIcon(task.category!.icon),
+                ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

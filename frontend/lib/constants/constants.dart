@@ -19,7 +19,7 @@ BorderRadius smallRadius = BorderRadius.circular(10);
 Border lightBorder = Border.all(color: kNeutralLightColor, width: 0.5);
 Border regularBorder = Border.all(color: kNeutralColor, width: 0.8);
 
-final anyCategory = Category(id: -1, name: 'any'.tr, icon: ''); // TODO fix default category icon
+final anyCategory = Category(id: -1, name: 'any'.tr, description: '', icon: ''); // TODO fix default category icon
 
 const String phoneRegex = r'^(?:[+0][1-9])?[0-9]{10,12}$';
 

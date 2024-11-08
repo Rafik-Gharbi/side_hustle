@@ -7,6 +7,7 @@ import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
 import '../controllers/main_app_controller.dart';
+import '../helpers/buildables.dart';
 import '../helpers/helper.dart';
 import '../models/enum/request_status.dart';
 import '../models/service.dart';
@@ -133,7 +134,7 @@ class ServiceCard extends StatelessWidget {
               ),
             ),
           ),
-          leading: Image.asset(service.category?.icon ?? ''), // TODO
+          leading: Buildables.buildCategoryIcon(service.category?.icon ?? ''),
         );
       },
     );

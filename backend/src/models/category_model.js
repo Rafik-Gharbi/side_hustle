@@ -4,8 +4,11 @@ const Category = sequelize.define(
   {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: Sequelize.STRING, allowNull: false },
-    name_fr: { type: Sequelize.STRING, allowNull: true },
-    name_ar: { type: Sequelize.STRING, allowNull: true },
+    description: { type: Sequelize.STRING, allowNull: false },
+    nameFr: { type: Sequelize.STRING, allowNull: true },
+    descriptionFr: { type: Sequelize.STRING, allowNull: true },
+    nameAr: { type: Sequelize.STRING, allowNull: true },
+    descriptionAr: { type: Sequelize.STRING, allowNull: true },
     icon: { type: Sequelize.STRING, allowNull: false },
     parentId: { type: Sequelize.INTEGER, allowNull: false, default: -1 },
   },

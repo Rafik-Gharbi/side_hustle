@@ -8,6 +8,7 @@ import '../constants/constants.dart';
 import '../constants/sizes.dart';
 import '../controllers/main_app_controller.dart';
 import '../database/database_repository/task_database_repository.dart';
+import '../helpers/buildables.dart';
 import '../helpers/helper.dart';
 import '../models/task.dart';
 import '../services/authentication_service.dart';
@@ -149,7 +150,7 @@ class TaskCard extends StatelessWidget {
                 ),
             ],
           ),
-          leading: task.category != null ? Image.asset(task.category!.icon) : null,
+          leading: task.category != null ? Buildables.buildCategoryIcon(task.category!.icon) : null,
         ),
       );
     });

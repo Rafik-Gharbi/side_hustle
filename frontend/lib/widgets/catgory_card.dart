@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
+import '../helpers/buildables.dart';
 import '../models/category.dart';
 import '../models/filter_model.dart';
 import '../services/theme/theme.dart';
@@ -31,11 +32,13 @@ class CategoryCard extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(category.icon),
+                  Buildables.buildCategoryIcon(category.icon, size: 40),
                   const SizedBox(height: Paddings.small),
                   Text(
                     category.name,
                     softWrap: true,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: category.name.length > 10 ? AppFonts.x10Bold : AppFonts.x11Bold,
                     textAlign: TextAlign.center,
                   ),

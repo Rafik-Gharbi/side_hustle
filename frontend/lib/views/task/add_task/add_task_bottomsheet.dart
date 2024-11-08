@@ -88,7 +88,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                 children: [TextSpan(text: controller.category!.name, style: AppFonts.x15Bold)],
                               ),
                             ),
-                            leading: Image.asset(task?.category?.icon ?? controller.category!.icon, color: kNeutralColor),
+                            leading: Buildables.buildCategoryIcon(task?.category?.icon ?? controller.category!.icon),
                           ),
                           Buildables.lightDivider(),
                           ListTile(

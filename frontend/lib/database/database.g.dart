@@ -25,6 +25,14 @@ class $CategoryTableTable extends CategoryTable
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant(''));
+  static const VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+      'description', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
   static const VerificationMeta _iconMeta = const VerificationMeta('icon');
   @override
   late final GeneratedColumn<String> icon = GeneratedColumn<String>(
@@ -48,7 +56,8 @@ class $CategoryTableTable extends CategoryTable
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   @override
-  List<GeneratedColumn> get $columns => [id, name, icon, parent, subscribed];
+  List<GeneratedColumn> get $columns =>
+      [id, name, description, icon, parent, subscribed];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -65,6 +74,12 @@ class $CategoryTableTable extends CategoryTable
     if (data.containsKey('name')) {
       context.handle(
           _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description']!, _descriptionMeta));
     }
     if (data.containsKey('icon')) {
       context.handle(
@@ -95,6 +110,8 @@ class $CategoryTableTable extends CategoryTable
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      description: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
       icon: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}icon'])!,
       parent: attachedDatabase.typeMapping
@@ -114,12 +131,14 @@ class CategoryTableData extends DataClass
     implements Insertable<CategoryTableData> {
   final int id;
   final String name;
+  final String description;
   final String icon;
   final int parent;
   final int subscribed;
   const CategoryTableData(
       {required this.id,
       required this.name,
+      required this.description,
       required this.icon,
       required this.parent,
       required this.subscribed});
@@ -128,6 +147,7 @@ class CategoryTableData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
+    map['description'] = Variable<String>(description);
     map['icon'] = Variable<String>(icon);
     map['parent'] = Variable<int>(parent);
     map['subscribed'] = Variable<int>(subscribed);
@@ -138,6 +158,7 @@ class CategoryTableData extends DataClass
     return CategoryTableCompanion(
       id: Value(id),
       name: Value(name),
+      description: Value(description),
       icon: Value(icon),
       parent: Value(parent),
       subscribed: Value(subscribed),
@@ -150,6 +171,7 @@ class CategoryTableData extends DataClass
     return CategoryTableData(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      description: serializer.fromJson<String>(json['description']),
       icon: serializer.fromJson<String>(json['icon']),
       parent: serializer.fromJson<int>(json['parent']),
       subscribed: serializer.fromJson<int>(json['subscribed']),
@@ -161,6 +183,7 @@ class CategoryTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
+      'description': serializer.toJson<String>(description),
       'icon': serializer.toJson<String>(icon),
       'parent': serializer.toJson<int>(parent),
       'subscribed': serializer.toJson<int>(subscribed),
@@ -170,12 +193,14 @@ class CategoryTableData extends DataClass
   CategoryTableData copyWith(
           {int? id,
           String? name,
+          String? description,
           String? icon,
           int? parent,
           int? subscribed}) =>
       CategoryTableData(
         id: id ?? this.id,
         name: name ?? this.name,
+        description: description ?? this.description,
         icon: icon ?? this.icon,
         parent: parent ?? this.parent,
         subscribed: subscribed ?? this.subscribed,
@@ -184,6 +209,8 @@ class CategoryTableData extends DataClass
     return CategoryTableData(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
+      description:
+          data.description.present ? data.description.value : this.description,
       icon: data.icon.present ? data.icon.value : this.icon,
       parent: data.parent.present ? data.parent.value : this.parent,
       subscribed:
@@ -196,6 +223,7 @@ class CategoryTableData extends DataClass
     return (StringBuffer('CategoryTableData(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('description: $description, ')
           ..write('icon: $icon, ')
           ..write('parent: $parent, ')
           ..write('subscribed: $subscribed')
@@ -204,13 +232,15 @@ class CategoryTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, name, icon, parent, subscribed);
+  int get hashCode =>
+      Object.hash(id, name, description, icon, parent, subscribed);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is CategoryTableData &&
           other.id == this.id &&
           other.name == this.name &&
+          other.description == this.description &&
           other.icon == this.icon &&
           other.parent == this.parent &&
           other.subscribed == this.subscribed);
@@ -219,12 +249,14 @@ class CategoryTableData extends DataClass
 class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
   final Value<int> id;
   final Value<String> name;
+  final Value<String> description;
   final Value<String> icon;
   final Value<int> parent;
   final Value<int> subscribed;
   const CategoryTableCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.description = const Value.absent(),
     this.icon = const Value.absent(),
     this.parent = const Value.absent(),
     this.subscribed = const Value.absent(),
@@ -232,6 +264,7 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
   CategoryTableCompanion.insert({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.description = const Value.absent(),
     required String icon,
     this.parent = const Value.absent(),
     this.subscribed = const Value.absent(),
@@ -239,6 +272,7 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
   static Insertable<CategoryTableData> custom({
     Expression<int>? id,
     Expression<String>? name,
+    Expression<String>? description,
     Expression<String>? icon,
     Expression<int>? parent,
     Expression<int>? subscribed,
@@ -246,6 +280,7 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
+      if (description != null) 'description': description,
       if (icon != null) 'icon': icon,
       if (parent != null) 'parent': parent,
       if (subscribed != null) 'subscribed': subscribed,
@@ -255,12 +290,14 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
   CategoryTableCompanion copyWith(
       {Value<int>? id,
       Value<String>? name,
+      Value<String>? description,
       Value<String>? icon,
       Value<int>? parent,
       Value<int>? subscribed}) {
     return CategoryTableCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      description: description ?? this.description,
       icon: icon ?? this.icon,
       parent: parent ?? this.parent,
       subscribed: subscribed ?? this.subscribed,
@@ -275,6 +312,9 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
     }
     if (icon.present) {
       map['icon'] = Variable<String>(icon.value);
@@ -293,6 +333,7 @@ class CategoryTableCompanion extends UpdateCompanion<CategoryTableData> {
     return (StringBuffer('CategoryTableCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('description: $description, ')
           ..write('icon: $icon, ')
           ..write('parent: $parent, ')
           ..write('subscribed: $subscribed')
@@ -3728,6 +3769,7 @@ typedef $$CategoryTableTableCreateCompanionBuilder = CategoryTableCompanion
     Function({
   Value<int> id,
   Value<String> name,
+  Value<String> description,
   required String icon,
   Value<int> parent,
   Value<int> subscribed,
@@ -3736,6 +3778,7 @@ typedef $$CategoryTableTableUpdateCompanionBuilder = CategoryTableCompanion
     Function({
   Value<int> id,
   Value<String> name,
+  Value<String> description,
   Value<String> icon,
   Value<int> parent,
   Value<int> subscribed,
@@ -3751,8 +3794,9 @@ final class $$CategoryTableTableReferences
           $_aliasNameGenerator(db.categoryTable.parent, db.categoryTable.id));
 
   $$CategoryTableTableProcessedTableManager? get parent {
+    if ($_item.parent == null) return null;
     final manager = $$CategoryTableTableTableManager($_db, $_db.categoryTable)
-        .filter((f) => f.id($_item.parent));
+        .filter((f) => f.id($_item.parent!));
     final item = $_typedResult.readTableOrNull(_parentTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
@@ -3804,6 +3848,9 @@ class $$CategoryTableTableFilterComposer
 
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get icon => $composableBuilder(
       column: $table.icon, builder: (column) => ColumnFilters(column));
@@ -3889,6 +3936,9 @@ class $$CategoryTableTableOrderingComposer
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get icon => $composableBuilder(
       column: $table.icon, builder: (column) => ColumnOrderings(column));
 
@@ -3930,6 +3980,9 @@ class $$CategoryTableTableAnnotationComposer
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => column);
 
   GeneratedColumn<String> get icon =>
       $composableBuilder(column: $table.icon, builder: (column) => column);
@@ -4026,6 +4079,7 @@ class $$CategoryTableTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
+            Value<String> description = const Value.absent(),
             Value<String> icon = const Value.absent(),
             Value<int> parent = const Value.absent(),
             Value<int> subscribed = const Value.absent(),
@@ -4033,6 +4087,7 @@ class $$CategoryTableTableTableManager extends RootTableManager<
               CategoryTableCompanion(
             id: id,
             name: name,
+            description: description,
             icon: icon,
             parent: parent,
             subscribed: subscribed,
@@ -4040,6 +4095,7 @@ class $$CategoryTableTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
+            Value<String> description = const Value.absent(),
             required String icon,
             Value<int> parent = const Value.absent(),
             Value<int> subscribed = const Value.absent(),
@@ -4047,6 +4103,7 @@ class $$CategoryTableTableTableManager extends RootTableManager<
               CategoryTableCompanion.insert(
             id: id,
             name: name,
+            description: description,
             icon: icon,
             parent: parent,
             subscribed: subscribed,
@@ -4539,9 +4596,10 @@ final class $$UserTableTableReferences
           db.userTable.governorate, db.governorateTable.id));
 
   $$GovernorateTableTableProcessedTableManager? get governorate {
+    if ($_item.governorate == null) return null;
     final manager =
         $$GovernorateTableTableTableManager($_db, $_db.governorateTable)
-            .filter((f) => f.id($_item.governorate));
+            .filter((f) => f.id($_item.governorate!));
     final item = $_typedResult.readTableOrNull(_governorateTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
@@ -5213,8 +5271,9 @@ final class $$TaskTableTableReferences
           $_aliasNameGenerator(db.taskTable.category, db.categoryTable.id));
 
   $$CategoryTableTableProcessedTableManager? get category {
+    if ($_item.category == null) return null;
     final manager = $$CategoryTableTableTableManager($_db, $_db.categoryTable)
-        .filter((f) => f.id($_item.category));
+        .filter((f) => f.id($_item.category!));
     final item = $_typedResult.readTableOrNull(_categoryTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
