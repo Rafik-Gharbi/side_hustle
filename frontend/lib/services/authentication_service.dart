@@ -22,7 +22,6 @@ import '../views/chat/chat_controller.dart';
 import '../views/chat/chat_screen.dart';
 import '../views/profile/profile_screen/profile_controller.dart';
 import '../views/profile/profile_screen/profile_screen.dart';
-import '../widgets/verify_email_dialog.dart';
 import 'logger_service.dart';
 import 'shared_preferences.dart';
 
@@ -296,13 +295,8 @@ class AuthenticationService extends GetxController {
         // });
         // } else {
         // Email verification Dialog
-        await Get.dialog(const VerifyEmailDialog());
         clearFormFields();
-        if (GetPlatform.isMobile) {
-          await Helper.mobileEmailVerification(user.email);
-        } else {
-          Helper.goBack();
-        }
+        await Helper.mobileEmailVerification(user.email);
       }
     }
   }
@@ -386,9 +380,7 @@ class AuthenticationService extends GetxController {
       }
       initiateCurrentUser(loginResponse?.token, user: user);
       if (!(isUserMailVerified ?? false)) {
-        Get.dialog(const VerifyEmailDialog()).then((value) {
-          if (GetPlatform.isMobile) Helper.mobileEmailVerification(user.email);
-        });
+        Helper.mobileEmailVerification(user.email);
       }
     } else {
       logout();
@@ -400,8 +392,7 @@ class AuthenticationService extends GetxController {
       final jwtPayload = JwtDecoder.decode(jwt);
       final isTokenExpired = JwtDecoder.isExpired(jwt);
       isUserMailVerified = jwtPayload['isMailVerified'];
-      // Only login verified users
-      if ((isUserMailVerified ?? false) && !isTokenExpired) {
+      if (!isTokenExpired) {
         SharedPreferencesService.find.add(jwtKey, jwt);
         final userFromToken = User.fromToken(jwtPayload);
         _jwtUserData ??= user ?? userFromToken;

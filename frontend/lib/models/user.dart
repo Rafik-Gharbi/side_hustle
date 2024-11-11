@@ -53,6 +53,7 @@ class User {
   int baseCoins;
   int availableCoins;
   int availablePurchasedCoins;
+  double balance;
 
   User({
     this.id,
@@ -74,6 +75,7 @@ class User {
     this.hasSharedPosition = false,
     this.isVerified = VerifyIdentityStatus.none,
     this.rating = 0,
+    this.balance = 0,
     this.baseCoins = 0,
     this.availableCoins = 0,
     this.availablePurchasedCoins = 0,
@@ -115,6 +117,7 @@ class User {
         bio: json['bio'],
         referralCode: json['referral_code'],
         baseCoins: json['coins'] ?? 0,
+        balance: json['balance'] ?? 0,
         availableCoins: json['availableCoins'] ?? 0,
         availablePurchasedCoins: json['availablePurchasedCoins'] ?? 0,
         isMailVerified: json['isMailVerified'],

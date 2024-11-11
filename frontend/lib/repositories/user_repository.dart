@@ -133,9 +133,12 @@ class UserRepository extends GetxService {
   Future<ProfileDTO?> getLoggedInUser() async {
     try {
       ProfileDTO? profileDTO;
+      if (ApiBaseHelper.find.getToken() == null) return null;
       if (MainAppController.find.isConnected) {
         final result = await ApiBaseHelper().request(RequestType.get, '/user/profile', sendToken: true);
-        profileDTO = ProfileDTO.fromJson(result);
+        if (result?['token'] != null) {
+          profileDTO = ProfileDTO.fromJson(result);
+        }
         AuthenticationService.find.initiateCurrentUser(result['token'], silent: true);
       } else {
         final user = AuthenticationService.find.jwtUserData?.id != null ? await UserDatabaseRepository.find.getUserById(AuthenticationService.find.jwtUserData!.id!) : null;
@@ -318,6 +321,7 @@ class UserRepository extends GetxService {
 
   Future<int> getRequiredActionsCount() async {
     try {
+      if (ApiBaseHelper.find.getToken() == null) return 0;
       final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/user/required-actions');
       return result?['count'] ?? 0;
     } catch (e) {

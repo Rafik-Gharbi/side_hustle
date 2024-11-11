@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../models/notification.dart';
 import '../constants/colors.dart';
@@ -28,6 +29,7 @@ import '../views/notifications/notification_controller.dart';
 import '../views/profile/verification_screen.dart';
 import '../widgets/custom_popup.dart';
 import '../widgets/phone_otp_dialog.dart';
+import '../widgets/verify_email_dialog.dart';
 import 'extensions/date_time_extension.dart';
 
 class Helper {
@@ -35,6 +37,7 @@ class Helper {
 
   static String selectedIsoCode = defaultIsoCode;
   static String phonePrefix = defaultPrefix;
+  static bool? lastCheckedVersion;
 
   static void snackBar({String message = 'Snack bar test', String? title, Duration? duration, bool includeDismiss = true, Widget? overrideButton, TextStyle? styleMessage}) =>
       GetSnackBar(
@@ -228,23 +231,24 @@ class Helper {
     );
   }
 
-  static Future<bool> mobileEmailVerification(String? email) => Get.bottomSheet(isScrollControlled: true, PhoneOTPDialog(phone: email!, isEmail: true)).then((code) async {
-        if (code != null) {
-          UserRepository.find.verifyEmail(code, email: email).then(
-                (value) => WidgetsBinding.instance.addPostFrameCallback(
-                  (timeStamp) {
-                    if (value != null && value is Map && value['token'] != null) AuthenticationService.find.initiateCurrentUser(value['token']);
-                    if (value != null && value is Map && value['token'] != null) value = '';
-                    Get.toNamed(VerificationScreen.routeName, arguments: value);
-                  },
-                ),
-              );
-          return true;
-        } else {
-          LoggerService.logger?.i('Phone verification process canceled by the user');
-          return false;
-        }
-      });
+  static Future<bool> mobileEmailVerification(String? email) =>
+      Get.dialog(const VerifyEmailDialog()).then((value) => Get.bottomSheet(isScrollControlled: true, PhoneOTPDialog(phone: email!, isEmail: true)).then((code) async {
+            if (code != null) {
+              UserRepository.find.verifyEmail(code, email: email).then(
+                    (value) => WidgetsBinding.instance.addPostFrameCallback(
+                      (timeStamp) {
+                        if (value != null && value is Map && value['token'] != null) AuthenticationService.find.initiateCurrentUser(value['token']);
+                        if (value != null && value is Map && value['token'] != null) value = '';
+                        Get.toNamed(VerificationScreen.routeName, arguments: value);
+                      },
+                    ),
+                  );
+              return true;
+            } else {
+              LoggerService.logger?.i('Phone verification process canceled by the user');
+              return false;
+            }
+          }));
 
   static Future<bool> handlePermission() async {
     bool serviceEnabled;
@@ -394,10 +398,37 @@ class Helper {
   static void goBack() => Get.isSnackbarOpen ? Navigator.of(Get.context!).pop() : Get.back();
 
   static int calculateTaskCoinsPrice(double taskPrice) {
-    const baseCoins = 3;
+    const baseCoins = 5;
     const basePriceThreshold = 50;
     if (taskPrice <= basePriceThreshold) return baseCoins;
     final additionalCoins = (max(0, taskPrice - basePriceThreshold) / basePriceThreshold).ceil();
     return baseCoins + additionalCoins;
+  }
+
+  static Future<String> getCurrentVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.version; // e.g., "1.2.3"
+  }
+
+  static bool compareVersions(String latestVersion, String currentVersion) {
+    // Split versions into major, minor, and patch numbers
+    List<int> currentParts = currentVersion.split('.').map(int.parse).toList();
+    List<int> latestParts = latestVersion.split('.').map(int.parse).toList();
+    // Check for major, minor, or patch updates
+    if (latestParts[0] > currentParts[0] || (latestParts[0] == currentParts[0] && latestParts[1] > currentParts[1])) {
+      // Major or minor update: required update
+      return lastCheckedVersion = true;
+    } else if (latestParts[2] > currentParts[2]) {
+      // Patch update: suggest update with a snackbar
+      if (lastCheckedVersion == null) {
+        Helper.waitAndExecute(
+          () => Get.locale != null,
+          () => snackBar(title: 'new_update_available'.tr, message: 'new_update_available_msg'.tr, duration: const Duration(seconds: 5)),
+        );
+        LoggerService.logger?.i('New update available');
+        Future.delayed(const Duration(minutes: 1), () => lastCheckedVersion = null);
+      }
+    }
+    return lastCheckedVersion = false;
   }
 }

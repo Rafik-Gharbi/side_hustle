@@ -37,6 +37,8 @@ import 'views/boost/list_boost/list_boost_controller.dart';
 import 'views/boost/list_boost/list_boost_screen.dart';
 import 'views/notifications/notification_controller.dart';
 import 'views/notifications/notification_screen.dart';
+import 'views/profile/balance/balance_controller.dart';
+import 'views/profile/balance/balance_screen.dart';
 import 'views/profile/referral/components/referees_screen.dart';
 import 'views/profile/referral/referral_controller.dart';
 import 'views/profile/referral/referral_screen.dart';
@@ -152,7 +154,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) _checkUserPosition();
+    if (state == AppLifecycleState.resumed) {
+      _checkUserPosition();
+      MainAppController.find.checkVersionRequired();
+    }
   }
 
   Future<void> _checkUserPosition() async {
@@ -311,6 +316,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             name: RefereesScreen.routeName,
             page: () => const RefereesScreen(),
             binding: BindingsBuilder.put(() => ReferralController()),
+          ),
+          GetPage(
+            name: BalanceScreen.routeName,
+            page: () => const BalanceScreen(),
+            binding: BindingsBuilder.put(() => BalanceController()),
           ),
         ],
       );

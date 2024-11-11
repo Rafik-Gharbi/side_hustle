@@ -475,7 +475,7 @@ function formatDate(date) {
 }
 
 function calculateTaskCoinsPrice(taskPrice) {
-  const baseCoins = 3;
+  const baseCoins = 5;
   const basePriceThreshold = 50;
 
   if (taskPrice <= basePriceThreshold) {

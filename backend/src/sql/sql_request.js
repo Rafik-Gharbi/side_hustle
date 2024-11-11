@@ -403,11 +403,13 @@ async function fetchAndSortNearbyTasks(user, limit = 10, offset = 0) {
         FROM
         task
         WHERE
-        task.archived = false AND 
+        task.archived = false 
         ${
           userLongitude && userLatitude
-            ? `coordinates IS NOT NULL`
-            : `governorate_id = :userGovernorateId`
+            ? `AND coordinates IS NOT NULL`
+            : user && user.governorate_id && user.governorate_id !== 1
+            ? `AND governorate_id = :userGovernorateId`
+            : ``
         }
         ${userLongitude && userLatitude ? `ORDER BY distance ASC` : ``}
       `;

@@ -72,6 +72,7 @@ class Buildables {
 
   static Widget buildLoginRequest({String? message, void Function()? onLogin}) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(child: Text(message ?? 'login_profile_msg'.tr)),
           CustomButtons.text(
@@ -136,7 +137,7 @@ class Buildables {
         child: Divider(thickness: 0.4, color: kNeutralColor),
       );
 
-  static Widget buildProfileInfoRow(String label, String value) => SizedBox(
+  static Widget buildProfileInfoRow(String label, String value, {Widget? extraWidget}) => SizedBox(
         height: 30,
         child: Row(
           children: [
@@ -153,6 +154,7 @@ class Buildables {
                 ),
               ),
             ),
+            if (extraWidget != null) extraWidget
           ],
         ),
       );
@@ -400,6 +402,9 @@ class Buildables {
         icon,
         width: size,
         color: color ?? kBlackColor,
-        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+        errorBuilder: (context, error, stackTrace) {
+          print("Error getting category icon: $error\n$stackTrace");
+          return const Icon(Icons.error);
+        },
       );
 }

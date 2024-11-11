@@ -19,6 +19,7 @@ import '../../boost/list_boost/list_boost_screen.dart';
 import '../../store/service_history/service_history_screen.dart';
 import '../account/components/signup_fields.dart';
 import '../approve_user/approve_user_screen.dart';
+import '../balance/balance_screen.dart';
 import '../favorite/favorite_screen.dart';
 import '../../home/home_controller.dart';
 import '../../store/my_store/my_store_screen.dart';
@@ -68,7 +69,7 @@ class ProfileScreen extends StatelessWidget {
                         isLoading: controller.isLoading,
                         child: SingleChildScrollView(
                           child: SharedPreferencesService.find.isReady && authService.jwtUserData == null
-                              ? Buildables.buildLoginRequest(onLogin: controller.init)
+                              ? SizedBox(height: Get.height - 300, child: Buildables.buildLoginRequest(onLogin: controller.init))
                               : controller.loggedInUser == null
                                   ? Buildables.buildLoadingWidget()
                                   : Column(
@@ -108,21 +109,38 @@ class ProfileScreen extends StatelessWidget {
                                           onTap: () => Get.toNamed(TransactionsScreen.routeName)?.then((value) => controller.update()),
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(horizontal: Paddings.regular, vertical: Paddings.small),
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    const Icon(Icons.paid_outlined, size: 18, color: kAccentColor),
-                                                    const SizedBox(width: Paddings.regular),
-                                                    Text(
-                                                      '${AuthenticationService.find.jwtUserData!.totalCoins} ${'coins'.tr}',
-                                                      style: AppFonts.x14Regular.copyWith(color: kAccentColor),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const DecoratedBox(decoration: BoxDecoration(color: kAccentColor), child: SizedBox(width: 90, height: 1)),
-                                              ],
+                                            child: DecoratedBox(
+                                              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: kAccentColor))),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  const Icon(Icons.paid_outlined, size: 18, color: kAccentColor),
+                                                  const SizedBox(width: Paddings.regular),
+                                                  Text(
+                                                    '${AuthenticationService.find.jwtUserData!.totalCoins} ${'coins'.tr}',
+                                                    style: AppFonts.x14Regular.copyWith(color: kAccentColor),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: Paddings.small),
+                                        InkWell(
+                                          onTap: () => Get.toNamed(BalanceScreen.routeName)?.then((value) => controller.update()),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: Paddings.regular, vertical: Paddings.small),
+                                            child: DecoratedBox(
+                                              decoration: BoxDecoration(border: Border(bottom: BorderSide(color: kPrimaryDark))),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                    '${'my_balance'.tr}: ${Helper.formatAmount(AuthenticationService.find.jwtUserData!.balance)} ${MainAppController.find.currency.value}',
+                                                    style: AppFonts.x14Regular.copyWith(color: kPrimaryDark),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -139,7 +157,27 @@ class ProfileScreen extends StatelessWidget {
                                                     padding: const EdgeInsets.all(Paddings.large),
                                                     child: Column(
                                                       children: [
-                                                        Buildables.buildProfileInfoRow('email'.tr, controller.loggedInUser?.email ?? 'not_provided'.tr),
+                                                        Buildables.buildProfileInfoRow(
+                                                          'email'.tr,
+                                                          controller.loggedInUser?.email ?? 'not_provided'.tr,
+                                                          extraWidget: (controller.loggedInUser?.isMailVerified ?? false) == false
+                                                              ? InkWell(
+                                                                  onTap: () => Helper.mobileEmailVerification(controller.loggedInUser!.email),
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.symmetric(horizontal: Paddings.small),
+                                                                    child: Text(
+                                                                      '(${'verify'.tr})',
+                                                                      style: AppFonts.x11Bold.copyWith(
+                                                                        color: kErrorColor,
+                                                                        decoration: TextDecoration.underline,
+                                                                        decorationColor: kErrorColor,
+                                                                        height: 1,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              : null,
+                                                        ),
                                                         Buildables.lightDivider(),
                                                         Buildables.buildProfileInfoRow(
                                                           'birthdate'.tr,

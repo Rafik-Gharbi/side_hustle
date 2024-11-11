@@ -60,9 +60,9 @@ class PhoneOTPDialog extends StatelessWidget {
                   const SizedBox(height: Paddings.exceptional),
                   OTPTextField(
                     length: 6,
-                    width: GetPlatform.isMobile ? Get.width - 100 : Get.width,
+                    width: GetPlatform.isMobile ? Get.width - 60 : Get.width,
                     fieldWidth: GetPlatform.isMobile ? 40 : 60,
-                    otpFieldStyle: OtpFieldStyle(enabledBorderColor: kNeutralLightColor, focusBorderColor: kPrimaryColor, backgroundColor: kNeutralLightColor.withOpacity(0.1)),
+                    otpFieldStyle: OtpFieldStyle(enabledBorderColor: kNeutralColor.withOpacity(0.6), focusBorderColor: kPrimaryColor, backgroundColor: kNeutralLightColor),
                     style: AppFonts.x15Bold,
                     textFieldAlignment: MainAxisAlignment.spaceAround,
                     fieldStyle: FieldStyle.underline,

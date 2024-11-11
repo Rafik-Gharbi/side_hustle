@@ -255,7 +255,7 @@ class ApiBaseHelper extends GetxController {
     }
   }
 
-  Future<bool> checkConnectionToBackend() async {
+  Future<(bool, String?)> checkConnectionToBackend() async {
     // ignore: avoid_print
     print('baseUrl: $baseUrl');
     void openIPAddressChanger() {
@@ -270,6 +270,8 @@ class ApiBaseHelper extends GetxController {
                 children: [
                   const Center(child: Text('Change real device IP address', style: AppFonts.x15Bold)),
                   const SizedBox(height: Paddings.exceptional),
+                  Text('Current baseURL: $baseUrl', style: AppFonts.x12Regular),
+                  const SizedBox(height: Paddings.regular),
                   CustomTextField(
                     hintText: 'IP address e.g. 192.168.1.23',
                     onSubmitted: (value) {
@@ -309,12 +311,12 @@ class ApiBaseHelper extends GetxController {
 
     try {
       final response = await request(RequestType.get, '/params/check-connection');
-      final result = response?['result'] ?? false;
+      bool result = response?['result'] ?? false;
       if (!result) openIPAddressChanger();
-      return result;
+      return (result, response?['version'] as String?);
     } catch (e) {
       openIPAddressChanger();
-      return false;
+      return (false, null);
     }
   }
 }

@@ -7,11 +7,14 @@ const { User } = require("../models/user_model");
 const { Report } = require("../models/report_model");
 const { Feedback } = require("../models/feedback_model");
 const { CoinPack } = require("../models/coin_pack_model");
+const { contactUsMail } = require("../views/template_email");
+const { sendMail } = require("../helper/email_service");
 
 // check backend is reachable
-exports.checkConnection = async (req, res) => {
+exports.checkCurrentVersion = async (req, res) => {
   try {
-    return res.status(200).json({ result: true });
+    const version = process.env.APP_VERSION;
+    return res.status(200).json({ result: true, version: version });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);
@@ -44,6 +47,7 @@ exports.getAllCategories = async (req, res) => {
         return {
           id: row.id,
           name: row.name,
+          description: row.description,
           icon: row.icon,
           parentId: row.parentId,
           subscribed: subscribedUsers.length,
@@ -62,6 +66,23 @@ exports.getCoinPacks = async (req, res) => {
   try {
     const coins = await CoinPack.findAll();
     return res.status(200).json({ coins });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.sendMail = async (req, res) => {
+  try {
+    const template = contactUsMail('email', 'name', 'subject', 'body', 'phone');
+    sendMail(
+      process.env.AUTH_USER_EMAIL,
+      `Contact Us The Landlord - Testing`,
+      template,
+      req.host
+    );
+    return res.status(200).json({ done: true });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

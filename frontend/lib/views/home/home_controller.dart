@@ -73,7 +73,14 @@ class HomeController extends GetxController {
   }
 
   Future<void> onRefreshScreen() async {
-    MainAppController.find.isBackReachable.value = await ApiBaseHelper.find.checkConnectionToBackend();
+    final (isBEConnected, version) = await ApiBaseHelper.find.checkConnectionToBackend();
+    MainAppController.find.isBackReachable.value = isBEConnected;
+    if (version != null) {
+      final currentVersion = await Helper.getCurrentVersion();
+      MainAppController.find.hasVersionUpdate.value = version != currentVersion;
+    } else {
+      Helper.snackBar(message: 'Couldn\'t check version update');
+    }
     init();
   }
 

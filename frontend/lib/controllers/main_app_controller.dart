@@ -25,12 +25,15 @@ import '../repositories/notification_repository.dart';
 import '../repositories/params_repository.dart';
 import '../repositories/user_repository.dart';
 import '../services/authentication_service.dart';
+import '../services/logger_service.dart';
 import '../services/shared_preferences.dart';
+import '../services/theme/theme.dart';
 import '../services/translation/app_localization.dart';
 import '../views/chat/chat_screen.dart';
 import '../views/home/home_screen.dart';
 import '../views/store/market/market_screen.dart';
 import '../views/profile/profile_screen/profile_screen.dart';
+import '../widgets/custom_buttons.dart';
 
 class MainAppController extends GetxController {
   static MainAppController get find => Get.find<MainAppController>();
@@ -45,6 +48,7 @@ class MainAppController extends GetxController {
   ConnectivityResult currentConnectivityStatus = ConnectivityResult.none;
   RxBool hasInternetConnection = true.obs;
   RxBool isBackReachable = true.obs;
+  RxBool hasVersionUpdate = false.obs;
   final _localAuthentication = LocalAuthentication();
   RxBool isAuthenticationRequired = false.obs;
   RxBool isAuthenticated = false.obs;
@@ -61,9 +65,32 @@ class MainAppController extends GetxController {
   Governorate? getGovernorateById(id) => governorates.cast<Governorate?>().singleWhere((element) => element?.id == id, orElse: () => null);
 
   MainAppController() {
+    ever(hasVersionUpdate, (_) {
+      if (hasVersionUpdate.value) {
+        Helper.waitAndExecute(
+          () => Get.locale != null,
+          () => Get.dialog(
+            AlertDialog(
+              title: Text('update_required'.tr, style: AppFonts.x15Bold),
+              content: Text('update_required_msg'.tr, style: AppFonts.x14Regular),
+              actions: [
+                CustomButtons.elevatePrimary(
+                  onPressed: () => debugPrint('Open Store for update'), // TODO
+                  title: 'update_now'.tr,
+                  width: 150,
+                  height: 40,
+                  titleStyle: AppFonts.x14Bold,
+                ),
+              ],
+            ),
+            barrierDismissible: false,
+          ),
+        );
+      }
+    });
     subscription = Connectivity().onConnectivityChanged.listen((result) async {
       currentConnectivityStatus = await checkConnectivity(connectivity: result);
-      isBackReachable.value = await ApiBaseHelper.find.checkConnectionToBackend();
+      await checkVersionRequired();
       hasInternetConnection.value = currentConnectivityStatus != ConnectivityResult.none;
       foundation.debugPrint('Device is connected: $isConnected');
     });
@@ -74,6 +101,18 @@ class MainAppController extends GetxController {
   dispose() {
     subscription.cancel();
     super.dispose();
+  }
+
+  Future<void> checkVersionRequired() async {
+    final (isBEConnected, version) = await ApiBaseHelper.find.checkConnectionToBackend();
+    isBackReachable.value = isBEConnected;
+    if (version != null) {
+      final currentVersion = await Helper.getCurrentVersion();
+      hasVersionUpdate.value = Helper.compareVersions(version, currentVersion);
+      LoggerService.logger?.i(hasVersionUpdate.value ? 'Version update is required' : 'Current version is compatible');
+    } else {
+      Helper.snackBar(message: 'Couldn\'t check version update');
+    }
   }
 
   void manageNavigation(String routeName) {
@@ -163,7 +202,7 @@ class MainAppController extends GetxController {
 
   Future<void> _init() async {
     currentConnectivityStatus = await Future.delayed(const Duration(milliseconds: 600), () async => await checkConnectivity());
-    isBackReachable.value = await ApiBaseHelper.find.checkConnectionToBackend();
+    await checkVersionRequired();
     hasInternetConnection.value = currentConnectivityStatus != ConnectivityResult.none;
     await Helper.waitAndExecute(
       () => SharedPreferencesService.find.isReady,

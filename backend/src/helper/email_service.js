@@ -26,7 +26,7 @@ function sendMail(email, subject, template, host, pdf) {
       .createTransport({
         host: process.env.HOST_MAIL,
         port: process.env.MAIL_PORT,
-        secure: secure,
+        secure: false,
         debug: true,
         // logger: true,
         auth: {

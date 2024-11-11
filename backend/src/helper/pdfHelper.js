@@ -108,8 +108,12 @@ Signaler les activités suspectes aux autorités compétentes, si nécessaire.
 Toute tentative de contourner les mécanismes de surveillance de la Plateforme (ex. : utiliser un langage codé ou modifier les informations de contact) sera considérée comme une violation grave et pourra entraîner la résiliation immédiate du compte de l'utilisateur.
 En utilisant la Plateforme, les Demandeurs et les Prestataires s'engagent à respecter cette clause et acceptent que toute violation puisse entraîner une exclusion définitive de la Plateforme.
 
+14. Acceptation des Conditions Générales
+En signant ce contrat, le Demandeur et le Prestataire reconnaissent avoir lu et accepté les Conditions Générales d'Utilisation de la Plateforme. Ces conditions incluent des règles et restrictions importantes, telles que l'interdiction de publicités pour certaines professions réglementées, auxquelles tous les utilisateurs de la Plateforme doivent se conformer.
+
 12. Acceptation
-En signant électroniquement ce contrat, les deux parties acceptent les termes et conditions ci-dessus. Cet accord sera contraignant à partir de la date indiquée au début du contrat.
+En signant électroniquement ce contrat, le Demandeur et le Prestataire acceptent les termes et conditions ci-dessus, ainsi que les Conditions Générales d'Utilisation de la Plateforme. Auxquelles tous les utilisateurs de la Plateforme doivent se conformer. Cet accord sera contraignant à partir de la date indiquée au début du contrat.
+
 `,
   ar: `
 3. شروط الدفع

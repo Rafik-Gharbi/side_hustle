@@ -6,7 +6,7 @@ module.exports = (app) => {
   var router = require("express").Router();
 
   // check backend is reachable
-  router.get("/check-connection", paramsController.checkConnection);
+  router.get("/check-connection", paramsController.checkCurrentVersion);
 
   // get app params governorates and categories
   router.get("/governorates", paramsController.getAllGovernorates);
@@ -14,6 +14,8 @@ module.exports = (app) => {
   router.get("/categories", paramsController.getAllCategories);
 
   router.get("/coin-packs", paramsController.getCoinPacks);
+
+  router.get("/send-mail", paramsController.sendMail);
 
   router.post("/report", tokenVerification, paramsController.reportUser);
 

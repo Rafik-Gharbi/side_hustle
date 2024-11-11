@@ -288,12 +288,15 @@ exports.signUp = async (req, res) => {
       //save the code in the database
       await VerificationCode.create({
         code,
+        phone_number: response.phone_number,
+        email: response.email,
         user_id: response.id,
       });
 
       const mailVerificationToken = jwt.sign(
         {
           code: code,
+          phone_number: response.phone_number,
           user_id: response.id,
         },
         process.env.JWT_SECRET,
@@ -758,9 +761,15 @@ exports.resendVerification = async (req, res) => {
   }
 };
 
-async function createAndSaveCode(userId, type) {
+async function createAndSaveCode(user, type) {
   const code = generateRandomCode();
-  await VerificationCode.create({ code, user_id: userId, type: type });
+  await VerificationCode.create({
+    code,
+    user_id: user.id,
+    phone_number: user.phone_number,
+    email: user.email,
+    type: type,
+  });
   return code;
 }
 
@@ -795,12 +804,12 @@ exports.emailForgotPassword = async (req, res) => {
 
       if (minuteDiff >= 30) {
         await foundCode.destroy();
-        code = await createAndSaveCode(foundUser.id, "forgotPassword");
+        code = await createAndSaveCode(foundUser, "forgotPassword");
       } else {
         code = foundCode.code; // Reuse the existing code
       }
     } else {
-      code = await createAndSaveCode(foundUser.id, "forgotPassword");
+      code = await createAndSaveCode(foundUser, "forgotPassword");
     }
 
     const templateUser = forgotPasswordEmailTemplate(code);
@@ -1135,6 +1144,8 @@ async function resendConfirmationMail(user, host, isMobile) {
   if (!verificationCode) {
     verificationCode = await VerificationCode.create({
       user_id: user.id,
+      phone_number: user.phone_number,
+      email: user.email,
       code: generateRandomCode(),
     });
   } else {
