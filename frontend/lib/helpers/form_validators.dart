@@ -31,8 +31,8 @@ class FormValidators {
       ? 'diffrent_new_password'.tr
       : minNumberOfCharsValidator(value, minPasswordNumberOfCharacters);
 
-  static String? minNumberOfCharsValidator(String? value, int N) =>
-      notEmptyOrNullValidator(value) ?? (value!.length < N ? 'field_should_include'.trParams({'number': N.toString()}) : null);
+  static String? minNumberOfCharsValidator(String? value, int N, {bool isNumber = false}) =>
+      (isNumber ? notEmptyOrNullFloatValidator(value) : notEmptyOrNullValidator(value)) ?? (value!.length < N ? 'field_should_include'.trParams({'number': N.toString()}) : null);
 
   static String? confirmPasswordValidator(String? value, String? newPassword) => notEmptyOrNullValidator(value) ?? (value != newPassword ? 'invalid_confirmation'.tr : null);
 }

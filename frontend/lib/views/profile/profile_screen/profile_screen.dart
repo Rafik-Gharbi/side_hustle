@@ -127,7 +127,7 @@ class ProfileScreen extends StatelessWidget {
                                         ),
                                         const SizedBox(height: Paddings.small),
                                         InkWell(
-                                          onTap: () => Get.toNamed(BalanceScreen.routeName)?.then((value) => controller.update()),
+                                          onTap: () => Get.toNamed(BalanceScreen.routeName, arguments: controller.loggedInUser)?.then((value) => controller.update()),
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(horizontal: Paddings.regular, vertical: Paddings.small),
                                             child: DecoratedBox(
@@ -136,7 +136,7 @@ class ProfileScreen extends StatelessWidget {
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Text(
-                                                    '${'my_balance'.tr}: ${Helper.formatAmount(AuthenticationService.find.jwtUserData!.balance)} ${MainAppController.find.currency.value}',
+                                                    '${'my_balance'.tr}: ${Helper.formatAmount(controller.loggedInUser!.balance)} ${MainAppController.find.currency.value}',
                                                     style: AppFonts.x14Regular.copyWith(color: kPrimaryDark),
                                                   ),
                                                 ],

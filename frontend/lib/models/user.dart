@@ -54,6 +54,7 @@ class User {
   int availableCoins;
   int availablePurchasedCoins;
   double balance;
+  String? bankNumber;
 
   User({
     this.id,
@@ -76,6 +77,7 @@ class User {
     this.isVerified = VerifyIdentityStatus.none,
     this.rating = 0,
     this.balance = 0,
+    this.bankNumber,
     this.baseCoins = 0,
     this.availableCoins = 0,
     this.availablePurchasedCoins = 0,
@@ -115,9 +117,10 @@ class User {
         googleId: json['googleId'],
         governorate: json['governorate_id'] != null ? MainAppController.find.getGovernorateById(json['governorate_id']) : null,
         bio: json['bio'],
+        bankNumber: json['bankNumber'],
         referralCode: json['referral_code'],
         baseCoins: json['coins'] ?? 0,
-        balance: json['balance'] ?? 0,
+        balance: json['balance'] != null ? Helper.resolveDouble(json['balance']) : 0,
         availableCoins: json['availableCoins'] ?? 0,
         availablePurchasedCoins: json['availablePurchasedCoins'] ?? 0,
         isMailVerified: json['isMailVerified'],
@@ -131,6 +134,7 @@ class User {
     if (email != null) data['email'] = email?.toLowerCase();
     if (name != null) data['name'] = name;
     if (password != null) data['password'] = password;
+    if (bankNumber != null) data['bankNumber'] = bankNumber;
     if (phone != null) data['phoneNumber'] = phone;
     if (coordinates != null) data['coordinates'] = coordinates?.toCoordinatesString();
     if (birthdate != null) data['birthdate'] = birthdate?.toIso8601String();
@@ -143,6 +147,7 @@ class User {
     if (bio != null) data['bio'] = bio;
     if (isMailVerified != null) data['isMailVerified'] = isMailVerified;
     if (referralCode != null) data['referralCode'] = referralCode;
+    data['balance'] = balance;
     data['hasSharedPosition'] = hasSharedPosition;
     data['isVerified'] = isVerified.name;
     return data;
@@ -160,16 +165,18 @@ class User {
 
   Map<String, dynamic> toUpdateJson() {
     final Map<String, dynamic> data = {};
-    data['id'] = id;
-    data['email'] = email;
-    data['name'] = name;
-    data['phone'] = phone;
-    data['coordinates'] = coordinates?.toCoordinatesString();
+    if (id != null) data['id'] = id;
+    if (email != null) data['email'] = email;
+    if (name != null) data['name'] = name;
+    if (phone != null) data['phone'] = phone;
+    if (coordinates != null) data['coordinates'] = coordinates?.toCoordinatesString();
+    if (governorate != null) data['governorate'] = governorate?.id;
+    if (birthdate != null) data['birthdate'] = birthdate?.toIso8601String();
+    if (gender != null) data['gender'] = gender?.value.toLowerCase();
+    if (bio != null) data['bio'] = bio;
+    if (bankNumber != null) data['bankNumber'] = bankNumber;
     data['hasSharedPosition'] = hasSharedPosition;
-    data['governorate'] = governorate?.id;
-    data['birthdate'] = birthdate?.toIso8601String();
-    data['gender'] = gender?.value.toLowerCase();
-    data['bio'] = bio;
+    data['balance'] = balance;
     return data;
   }
 

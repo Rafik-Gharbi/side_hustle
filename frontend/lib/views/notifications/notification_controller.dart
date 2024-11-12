@@ -12,6 +12,8 @@ import '../../models/user.dart';
 import '../../repositories/notification_repository.dart';
 import '../../services/authentication_service.dart';
 import '../profile/approve_user/approve_user_screen.dart';
+import '../profile/balance/balance_screen.dart';
+import '../profile/profile_screen/profile_controller.dart';
 import '../profile/profile_screen/profile_screen.dart';
 import '../profile/transactions/transactions_screen.dart';
 import '../review/add_review/add_review_bottomsheet.dart';
@@ -69,6 +71,12 @@ class NotificationsController extends GetxController {
       switch (notification.type) {
         case NotificationType.chat:
           // TODO add a reminder if a first chat stays more than 24 hours without an answer
+          break;
+        case NotificationType.balance:
+          Future.delayed(const Duration(milliseconds: 600), () {
+            Get.toNamed(BalanceScreen.routeName, arguments: ProfileController.find.loggedInUser);
+          });
+          MainAppController.find.manageNavigation(ProfileScreen.routeName);
           break;
         case NotificationType.rewards:
           if (decodedAction['coinPack'] != null) {

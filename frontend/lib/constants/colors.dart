@@ -8,6 +8,7 @@ Color kPrimaryDark = Color.alphaBlend(kPrimaryColor.withOpacity(0.4), kNeutralCo
 const Color kSecondaryColor = Color(0xff232d37);
 const MaterialColor kAccentColor = Colors.orange;
 const Color kErrorColor = Color(0xFFE21200);
+Color kErrorLightColor = Colors.red.shade600;
 const Color kRatingColor = Color(0xFFFDCC0D);
 Color kNeutralColor = Colors.grey.shade700;
 Color kNeutralLightColor = Colors.grey.shade200;

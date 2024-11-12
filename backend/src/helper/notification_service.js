@@ -7,6 +7,7 @@ const NotificationType = Object.freeze({
   REWARDS: "rewards",
   CHAT: "chat",
   RESERVATION: "reservation",
+  BALANCE: "balance",
   BOOKING: "booking",
   NEWTASK: "newTask",
   REVIEW: "review",

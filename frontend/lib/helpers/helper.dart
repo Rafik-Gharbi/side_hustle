@@ -192,7 +192,7 @@ class Helper {
 
   static String formatDate(DateTime createdAt) => DateFormat('yyyy-MM-dd').format(createdAt);
 
-  static String formatDateWithTime(DateTime createdAt) => DateFormat('yyyy-MM-dd hh:mm').format(createdAt);
+  static String formatDateWithTime(DateTime createdAt) => DateFormat('yyyy-MM-dd HH:mm').format(createdAt);
 
   static String formatAmount(double amount) => amount == amount.roundToDouble() ? amount.toInt().toString() : amount.toStringAsFixed(1);
 

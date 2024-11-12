@@ -181,6 +181,7 @@ class ApiBaseHelper extends GetxController {
   }
 
   String getImageTask(String pictureName) => '$baseUrl/public/task/$pictureName';
+  String getImageDepositSlip(String pictureName) => '$baseUrl/public/deposit/$pictureName';
   String getImageStore(String pictureName) => '$baseUrl/public/store/$pictureName';
   String getImageLocal(String pictureName) => pictureName;
   String getUserImage(String pictureName) => '$baseUrl/public/images/user/$pictureName';

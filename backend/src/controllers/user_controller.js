@@ -910,6 +910,8 @@ exports.updateProfile = async (req, res) => {
     gender,
     coordinates,
     keepPrivacy,
+    bankNumber,
+    balance,
     bio,
   } = req.body;
   const formattedPhoneNumber = removeSpacesFromPhoneNumber(phone);
@@ -948,6 +950,8 @@ exports.updateProfile = async (req, res) => {
       gender,
       coordinates,
       keepPrivacy,
+      bankNumber,
+      balance
       // bio,
     });
     req.files?.gallery?.forEach(async (image) => {
