@@ -425,7 +425,6 @@ final Map<String, String> enUs = <String, String>{
   'please_authenticate': 'Please authenticate',
   'light': 'Light',
   'dark': 'Dark',
-  // new
   'create_contract': 'Create a contract',
   'new_contract': 'New contract',
   'delivery_date': 'Delivery date',
@@ -543,7 +542,12 @@ final Map<String, String> enUs = <String, String>{
   'deposit': 'Deposit',
   'withdrawal': 'Withdrawal',
   'system': 'System',
+  'completed': 'Completed',
   'bankCard': 'Bank Card',
+  'account_balance': 'Account balance',
+  'balance_history': 'Balance history',
+  'deposit_slip_picture': 'Deposit slip picture',
+  'deposit_slip_picture_required': 'Deposit slip picture is required',
   // Validation messages
   'field_not_empty': 'Field cannot be empty !',
   'invalid_number': 'Invalid number !',

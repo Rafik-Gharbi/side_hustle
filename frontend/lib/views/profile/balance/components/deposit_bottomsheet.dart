@@ -98,14 +98,14 @@ class DepositBottomsheet extends StatelessWidget {
                               borderRadius: smallRadius,
                               child: controller.depositSlip != null
                                   ? Image.file(File(controller.depositSlip!.path), height: 150, width: 150, fit: BoxFit.cover)
-                                  : const Column(
+                                  : Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        Icon(Icons.add_a_photo_outlined),
-                                        SizedBox(height: Paddings.regular),
+                                        const Icon(Icons.add_a_photo_outlined),
+                                        const SizedBox(height: Paddings.regular),
                                         Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: Paddings.regular),
-                                          child: Text('Deposit slip picture', style: AppFonts.x12Regular, softWrap: true),
+                                          padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                                          child: Text('deposit_slip_picture'.tr, style: AppFonts.x12Regular, softWrap: true),
                                         ),
                                       ],
                                     ),
@@ -117,7 +117,7 @@ class DepositBottomsheet extends StatelessWidget {
                     if (controller.hasValidatorErrorSlipDeposit)
                       Padding(
                         padding: const EdgeInsets.only(top: Paddings.small),
-                        child: Text('Deposit slip picture is required', style: AppFonts.x12Regular.copyWith(color: kErrorColor)),
+                        child: Text('deposit_slip_picture_required'.tr, style: AppFonts.x12Regular.copyWith(color: kErrorColor)),
                       )
                   ],
                 ),

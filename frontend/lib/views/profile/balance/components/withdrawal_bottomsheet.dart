@@ -53,7 +53,7 @@ class WithdrawalBottomsheet extends StatelessWidget {
                       height: 30,
                       child: ListTile(
                         title: Text('requirement_bank_number'.tr, style: AppFonts.x12Regular),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
+                        contentPadding: EdgeInsets.zero,
                         dense: true,
                         leading: controller.hasBankNumber ? const Icon(Icons.done, color: kConfirmedColor) : const Icon(Icons.close, color: kErrorColor),
                       ),
@@ -62,7 +62,7 @@ class WithdrawalBottomsheet extends StatelessWidget {
                       height: 30,
                       child: ListTile(
                         title: Text('requirement_reach_100'.trParams({'currency': MainAppController.find.currency.value}), style: AppFonts.x12Regular),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
+                        contentPadding: EdgeInsets.zero,
                         dense: true,
                         leading: controller.loggedUser.balance >= 100 ? const Icon(Icons.done, color: kConfirmedColor) : const Icon(Icons.close, color: kErrorColor),
                       ),
@@ -71,7 +71,7 @@ class WithdrawalBottomsheet extends StatelessWidget {
                       height: 30,
                       child: ListTile(
                         title: Text('requirement_withdraw_count'.trParams({'count': controller.withdrawalsCount.toString()}), style: AppFonts.x12Regular),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
+                        contentPadding: EdgeInsets.zero,
                         dense: true,
                         leading: controller.withdrawalsCount < 3 ? const Icon(Icons.done, color: kConfirmedColor) : const Icon(Icons.close, color: kErrorColor),
                       ),

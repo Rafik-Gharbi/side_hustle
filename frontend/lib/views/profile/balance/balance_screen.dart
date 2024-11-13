@@ -51,7 +51,7 @@ class BalanceScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Account balance', style: AppFonts.x16Regular.copyWith(color: kNeutralColor100)),
+                              Text('account_balance'.tr, style: AppFonts.x16Regular.copyWith(color: kNeutralColor100)),
                               Text(
                                 '${Helper.formatAmount(controller.loggedUser.balance)} ${MainAppController.find.currency.value}',
                                 style: AppFonts.x24Bold.copyWith(color: kNeutralColor100),
@@ -73,7 +73,7 @@ class BalanceScreen extends StatelessWidget {
                                             children: [
                                               Image.asset(Assets.withdrawMoneyIcon, width: 20, color: kNeutralColor100),
                                               const SizedBox(width: Paddings.regular),
-                                              Text('Widhdraw', style: AppFonts.x14Bold.copyWith(color: kNeutralColor100)),
+                                              Text('widhdraw'.tr, style: AppFonts.x14Bold.copyWith(color: kNeutralColor100)),
                                             ],
                                           ),
                                         ),
@@ -97,7 +97,7 @@ class BalanceScreen extends StatelessWidget {
                                                 color: kNeutralColor100,
                                               ),
                                               const SizedBox(width: Paddings.regular),
-                                              Text('Deposit', style: AppFonts.x14Bold.copyWith(color: kNeutralColor100)),
+                                              Text('deposit'.tr, style: AppFonts.x14Bold.copyWith(color: kNeutralColor100)),
                                             ],
                                           ),
                                         ),
@@ -181,7 +181,7 @@ class BalanceScreen extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Balance history', style: AppFonts.x15Bold),
+                                  Text('balance_history'.tr, style: AppFonts.x15Bold),
                                   if (controller.balanceTransactions.isEmpty)
                                     SizedBox(height: Get.height - 495, child: Center(child: Text('no_history_yet'.tr, style: AppFonts.x14Regular)))
                                   else
