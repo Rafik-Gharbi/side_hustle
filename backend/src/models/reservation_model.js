@@ -23,7 +23,11 @@ const Reservation = sequelize.define(
   }
 );
 
-Reservation.belongsTo(Service, { foreignKey: "service_id", allowNull: true });
+Reservation.belongsTo(Service, {
+  as: "service",
+  foreignKey: "service_id",
+  allowNull: true,
+});
 Reservation.belongsTo(Task, { foreignKey: "task_id", allowNull: true });
 Reservation.belongsTo(User, { foreignKey: "user_id", allowNull: false });
 

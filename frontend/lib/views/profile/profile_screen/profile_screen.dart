@@ -18,7 +18,7 @@ import '../../../widgets/loading_request.dart';
 import '../../boost/list_boost/list_boost_screen.dart';
 import '../../store/service_history/service_history_screen.dart';
 import '../account/components/signup_fields.dart';
-import '../approve_user/approve_user_screen.dart';
+import '../admin_dashboard/admin_dashboard_screen.dart';
 import '../balance/balance_screen.dart';
 import '../favorite/favorite_screen.dart';
 import '../../home/home_controller.dart';
@@ -198,6 +198,12 @@ class ProfileScreen extends StatelessWidget {
                                                     padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
                                                     child: Column(
                                                       children: [
+                                                        if (AuthenticationService.find.jwtUserData?.role == Role.admin)
+                                                          buildActionTile(
+                                                            label: 'admin_dashboard'.tr,
+                                                            icon: Icons.dashboard_outlined,
+                                                            onTap: () => Get.toNamed(AdminDashboardScreen.routeName),
+                                                          ),
                                                         buildActionTile(
                                                           label: 'edit_profile'.tr,
                                                           icon: Icons.edit_outlined,
@@ -280,13 +286,6 @@ class ProfileScreen extends StatelessWidget {
                                                           icon: Icons.store_outlined,
                                                           onTap: () => Get.toNamed(MyStoreScreen.routeName),
                                                         ),
-                                                        if (AuthenticationService.find.jwtUserData?.role == Role.admin)
-                                                          buildActionTile(
-                                                            actionRequired: controller.approveUsersActionRequired,
-                                                            label: 'approve_users'.tr,
-                                                            icon: Icons.verified_user_outlined,
-                                                            onTap: () => Get.toNamed(ApproveUserScreen.routeName),
-                                                          ),
                                                         if (controller.userHasBoosts)
                                                           buildActionTile(
                                                             label: 'my_boosts'.tr,

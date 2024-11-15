@@ -10,6 +10,7 @@ import '../models/user.dart';
 import '../services/authentication_service.dart';
 import '../services/navigation_history_observer.dart';
 import '../services/theme/theme.dart';
+import '../views/profile/admin_dashboard/admin_dashboard_screen.dart';
 import '../views/profile/referral/components/referees_screen.dart';
 import '../views/store/service_request/service_request_screen.dart';
 import '../views/task/add_task/add_task_bottomsheet.dart';
@@ -73,8 +74,10 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                             Get.currentRoute == MessagesScreen.routeName ||
                             Get.currentRoute == CoinsMarket.routeName ||
                             Get.currentRoute == RefereesScreen.routeName ||
+                            Get.currentRoute != AdminDashboardScreen.routeName && NavigationHistoryObserver.instance.previousRouteHistory == AdminDashboardScreen.routeName ||
                             Get.currentRoute == ServiceRequestScreen.routeName) {
-                          Helper.goBack();
+                          // Helper.goBack();
+                          NavigationHistoryObserver.instance.goToPreviousRoute();
                         } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && Get.currentRoute != ProfileScreen.routeName) {
                           NavigationHistoryObserver.instance.goToPreviousRoute(popToProfile: true);
                         } else {
@@ -86,8 +89,8 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                   : const SizedBox(),
             )
           : null,
-      body: StatefulBuilder(builder: (context, setState) {
-        return Column(
+      body: StatefulBuilder(
+        builder: (context, setState) => Column(
           children: [
             Obx(
               () => (!MainAppController.find.hasInternetConnection.value || !MainAppController.find.isBackReachable.value) && showConnectivityMsg
@@ -125,8 +128,8 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
             ),
             Expanded(child: body),
           ],
-        );
-      }),
+        ),
+      ),
       floatingActionButton: hideBottomNavigation
           ? null
           : FloatingActionButton(

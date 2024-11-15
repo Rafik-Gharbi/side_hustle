@@ -62,55 +62,6 @@ exports.requestDeposit = async (req, res) => {
   }
 };
 
-exports.updateStatus = async (req, res) => {
-  try {
-    let id = req.body.id;
-    let status = req.body.status;
-    if (!id || !status) {
-      return res.status(400).json({ message: "missing" });
-    }
-    let transaction = await BalanceTransaction.findByPk(id);
-    if (!transaction) {
-      return res.status(404).json({ message: "transaction_not_found" });
-    }
-    const transactionUser = await User.findByPk(transaction.userId);
-    if (!transactionUser) {
-      return res.status(404).json({ message: "user_not_found" });
-    }
-
-    if (status === "completed") {
-      transactionUser.balance += transaction.amount;
-      transactionUser.save();
-      notificationService.sendNotification(
-        transactionUser.id,
-        "Balance Update",
-        "Your deposit has been accepted.",
-        NotificationType.BALANCE,
-        {}
-      );
-    } else if (status === "failed") {
-      notificationService.sendNotification(
-        transactionUser.id,
-        "Deposit Failed",
-        "Your deposit has been failed.",
-        NotificationType.BALANCE,
-        {
-          /* TODO add reasons */
-        }
-      );
-    }
-
-    transaction.status = status;
-    transaction.save();
-
-    return res.status(200).json({ done: true });
-  } catch (error) {
-    console.log(`Error at ${req.route.path}`);
-    console.error("\x1b[31m%s\x1b[0m", error);
-    return res.status(500).json({ message: error });
-  }
-};
-
 exports.getBalanceTransactions = async (req, res) => {
   try {
     let userFound = await User.findByPk(req.decoded.id);

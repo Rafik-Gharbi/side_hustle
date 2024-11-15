@@ -11,14 +11,14 @@ const Report = sequelize.define(
   },
   {
     tableName: "report",
-    timestamps: false,
+    timestamps: true,
   }
 );
 
 Report.belongsTo(Task, { foreignKey: "task_id", allowNull: true });
 Report.belongsTo(Service, { foreignKey: "service_id", allowNull: true });
-Report.belongsTo(User, { foreignKey: "user_id", allowNull: false });
-Report.belongsTo(User, { foreignKey: "reported_id", allowNull: false });
+Report.belongsTo(User, { as: 'user', foreignKey: "user_id", allowNull: false });
+Report.belongsTo(User, { as: 'reportedUser', foreignKey: "reported_id", allowNull: false });
 
 module.exports = {
   Report,

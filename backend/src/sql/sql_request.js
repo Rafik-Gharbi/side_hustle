@@ -15,6 +15,9 @@ const { Task } = require("../models/task_model");
 const { User } = require("../models/user_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
 const { Contract } = require("../models/contract_model");
+const { BalanceTransaction } = require("../models/balance_transaction_model");
+const { Report } = require("../models/report_model");
+const { Feedback } = require("../models/feedback_model");
 
 //function to get name and id from a given ids and table
 const fetchNames = async (ids, tableName) => {
@@ -174,12 +177,32 @@ const getMyStoreRequiredActionsCount = async (userId) => {
   return result;
 };
 
-const getApproveUsersRequiredActionsCount = async (userId) => {
+const getApproveUsersRequiredActionsCount = async () => {
   const approveUsers = await User.findAll({
     where: { isVerified: "pending" },
   });
 
   return approveUsers.length;
+};
+
+const getBalanceTransactionsRequiredActionsCount = async () => {
+  const transactions = await BalanceTransaction.findAll({
+    where: { status: "pending" },
+  });
+
+  return transactions.length;
+};
+
+const getUserReportsRequiredActionsCount = async () => {
+  const reports = await Report.findAll();
+
+  return reports.length;
+};
+
+const getUserFeedbacksRequiredActionsCount = async () => {
+  const feedbacks = await Feedback.findAll();
+
+  return feedbacks.length;
 };
 
 async function fetchUserBooking(userId) {
@@ -536,6 +559,34 @@ async function populateOneService(service) {
   };
 }
 
+async function populateStores(fetchedStores) {
+  const tasks = await Promise.all(
+    fetchedStores.map(async (row) => {
+      return await populateOneStore(row);
+    })
+  );
+
+  return tasks;
+}
+
+async function populateOneStore(store) {
+  let services = await Service.findAll({ where: { store_id: store.id } });
+  services = await populateServices(services);
+
+  return {
+    id: store.id,
+    name: store.name,
+    description: store.description,
+    picture: store.picture,
+    governorate_id: store.governorate_id,
+    coordinates: store.coordinates,
+    owner: store.user,
+    services: services,
+    isFavorite: store.notIncluded,
+    rating: store.notes,
+  };
+}
+
 const getFavoriteTaskByUserId = async (userId) => {
   const query = `
     SELECT task_id
@@ -800,4 +851,8 @@ module.exports = {
   fetchUserOngoingReservation,
   getRandomHotTasks,
   populateContract,
+  getBalanceTransactionsRequiredActionsCount,
+  getUserReportsRequiredActionsCount,
+  getUserFeedbacksRequiredActionsCount,
+  populateStores,
 };

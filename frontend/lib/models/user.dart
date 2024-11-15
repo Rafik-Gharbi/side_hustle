@@ -55,6 +55,7 @@ class User {
   int availablePurchasedCoins;
   double balance;
   String? bankNumber;
+  DateTime? createdAt;
 
   User({
     this.id,
@@ -81,6 +82,7 @@ class User {
     this.baseCoins = 0,
     this.availableCoins = 0,
     this.availablePurchasedCoins = 0,
+    this.createdAt,
   });
 
   bool get isOwner => role != null && role != Role.user; // TODO delete this
@@ -110,6 +112,7 @@ class User {
         coordinates: json['coordinates'] != null ? (json['coordinates'] as String).fromString() : null,
         hasSharedPosition: json['hasSharedPosition'] ?? false,
         birthdate: json['birthdate'] != null ? DateTime.parse(json['birthdate']) : null,
+        createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
         gender: json['gender'] != null ? Gender.fromString(json['gender']) : null,
         role: json['role'] != null ? Role.values.singleWhere((element) => element.name == json['role']) : null,
         picture: json['picture'] != null ? ApiBaseHelper().getUserImage(json['picture']) : null,

@@ -26,6 +26,7 @@ import '../services/logger_service.dart';
 import '../services/theme/theme.dart';
 import '../views/chat/chat_screen.dart';
 import '../views/notifications/notification_controller.dart';
+import '../views/profile/admin_dashboard/components/stats_screen/components/pie_chart.dart';
 import '../views/profile/verification_screen.dart';
 import '../widgets/custom_popup.dart';
 import '../widgets/phone_otp_dialog.dart';
@@ -430,5 +431,64 @@ class Helper {
       }
     }
     return lastCheckedVersion = false;
+  }
+
+  static double getBiggestDouble(List<double> numbers) {
+    if (numbers.isEmpty) throw ArgumentError('List cannot be empty');
+    return numbers.reduce(max);
+  }
+
+  static double getSmallestDouble(List<double> numbers) {
+    if (numbers.isEmpty) throw ArgumentError('List cannot be empty');
+    return numbers.reduce(min);
+  }
+
+  static Color getRandomColor({Color? baseColor}) => ColorGenerator().getRandomColor(baseColor: baseColor);
+
+  static Map<T, double> sortByValueDesc<T>(Map<T, double> map) => Map.fromEntries(
+        map.entries.toList()..sort((a, b) => b.value.compareTo(a.value)),
+      );
+
+  static Map<DateTime, double> sortByDateDesc(Map<DateTime, double> map) => Map.fromEntries(
+        map.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
+      );
+
+  static int resolveBiggestIndex(List<PieChartModel> list) => list.indexWhere((element) => element.amount == Helper.getBiggestDouble(list.map((e) => e.amount).toList()));
+}
+
+class ColorGenerator {
+  late List<Color> _availableColors;
+  final Random _random = Random();
+  List<Color> colors = Colors.primaries;
+
+  ColorGenerator() {
+    _availableColors = List.from(colors)..shuffle(_random);
+  }
+
+  Color getRandomColor({Color? baseColor}) {
+    if (baseColor != null) {
+      // Generate a random variation of the baseColor
+      return _getRandomVariation(baseColor);
+    } else {
+      // Use existing logic for default random color
+      if (_availableColors.isEmpty) {
+        _availableColors.addAll(colors);
+        _availableColors.shuffle(_random);
+      }
+      return _availableColors.removeLast();
+    }
+  }
+
+  Color _getRandomVariation(Color baseColor) {
+    // Convert baseColor to HSLColor
+    final baseHSLColor = HSLColor.fromColor(baseColor);
+    // Adjust hue by a random value between -0.4 and 0.2
+    final adjustedHue = baseHSLColor.hue + _random.nextDouble() * 0.4 - 0.2;
+    // Ensure hue stays within 0.0 to 360.0 range
+    final normalizedHue = adjustedHue % 360.0;
+    final adjustedSaturation = baseHSLColor.saturation * (1.0 + _random.nextDouble() * 0.2 - 0.1);
+    final adjustedLightness = baseHSLColor.lightness * (1.0 + _random.nextDouble() * 0.2 - 0.1);
+    // Create a new HSLColor with adjusted hue and original saturation/lightness
+    return HSLColor.fromAHSL(1.0, normalizedHue, adjustedSaturation, adjustedLightness).toColor();
   }
 }

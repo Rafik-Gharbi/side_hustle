@@ -23,6 +23,7 @@ require("./src/routes/boost_route")(app);
 require("./src/routes/transaction_route")(app);
 require("./src/routes/referral_route")(app);
 require("./src/routes/balance_route")(app);
+require("./src/routes/admin_route")(app);
 
 // Create HTTP server
 

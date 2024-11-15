@@ -7,9 +7,9 @@ import '../../../constants/constants.dart';
 import '../../../constants/sizes.dart';
 import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/helper.dart';
-import '../../../models/balance_transaction.dart';
 import '../../../models/user.dart';
 import '../../../services/theme/theme.dart';
+import '../../../widgets/balance_transaction_card.dart';
 import '../../../widgets/custom_button_with_overlay.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
@@ -187,35 +187,7 @@ class BalanceScreen extends StatelessWidget {
                                   else
                                     ...List.generate(
                                       controller.balanceTransactions.length,
-                                      (index) {
-                                        final transaction = controller.balanceTransactions[index];
-                                        final isDeposit = transaction.type == BalanceTransactionType.deposit; // TODO does system type is income?
-                                        return ListTile(
-                                          title: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Text(transaction.type?.name.tr ?? 'NA', style: AppFonts.x14Regular),
-                                                  if (transaction.type == BalanceTransactionType.deposit)
-                                                    Text(' (${transaction.depositType?.name.tr ?? 'NA'})', style: AppFonts.x14Regular),
-                                                ],
-                                              ),
-                                              Text(
-                                                '${isDeposit ? '+' : '-'} ${Helper.formatAmount(transaction.amount ?? 0)} ${MainAppController.find.currency.value}',
-                                                style: AppFonts.x16Bold.copyWith(color: isDeposit ? kConfirmedColor : kErrorColor),
-                                              ),
-                                            ],
-                                          ),
-                                          subtitle: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(transaction.status?.name.tr ?? 'NA', style: AppFonts.x12Regular),
-                                              Text(transaction.createdAt != null ? Helper.formatDateWithTime(transaction.createdAt!) : 'NA', style: AppFonts.x12Regular),
-                                            ],
-                                          ),
-                                        );
-                                      },
+                                      (index) => BalanceTransactionCard(transaction: controller.balanceTransactions[index]),
                                     ),
                                   if (controller.balanceTransactions.length < 5) SizedBox(height: Get.height - 495 - controller.balanceTransactions.length * 70)
                                 ],

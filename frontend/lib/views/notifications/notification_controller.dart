@@ -11,7 +11,7 @@ import '../../models/notification.dart';
 import '../../models/user.dart';
 import '../../repositories/notification_repository.dart';
 import '../../services/authentication_service.dart';
-import '../profile/approve_user/approve_user_screen.dart';
+import '../profile/admin_dashboard/components/approve_user/approve_user_screen.dart';
 import '../profile/balance/balance_screen.dart';
 import '../profile/profile_screen/profile_controller.dart';
 import '../profile/profile_screen/profile_screen.dart';

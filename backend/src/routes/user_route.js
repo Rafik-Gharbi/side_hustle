@@ -97,29 +97,6 @@ module.exports = (app) => {
     fileUpload,
     userController.verifyIdentity
   );
-  
-  // get users for approve
-  router.get(
-    "/approve",
-    tokenVerification,
-    roleMiddleware('admin'),
-    userController.usersForApproving
-  );
-  // approve a user
-  router.put(
-    "/approve",
-    tokenVerification,
-    roleMiddleware('admin'),
-    userController.approveUser
-  );
-
-  // send notification for not approvable user
-  router.put(
-    "/not-approvable",
-    tokenVerification,
-    roleMiddleware('admin'),
-    userController.userNotApprovable
-  );
 
   app.use("/user", router);
 };

@@ -22,13 +22,6 @@ module.exports = (app) => {
     tokenVerification,
     balanceController.getBalanceTransactions
   );
-  router.put(
-    "/status",
-    // TODO
-    // tokenVerification, 
-    // roleMiddleware("admin"),
-    balanceController.updateStatus
-  );
 
   app.use("/balance", router);
 };

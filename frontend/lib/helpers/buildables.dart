@@ -159,9 +159,13 @@ class Buildables {
         ),
       );
 
-  static Widget lightVerticalDivider({EdgeInsets? padding, bool expand = false, double? height}) => Padding(
+  static Widget verticalDivider({EdgeInsets? padding, bool expand = false, double? height, Color? color, double? thickness}) => Padding(
         padding: padding ?? const EdgeInsets.symmetric(horizontal: Paddings.exceptional),
-        child: Container(color: kNeutralLightColor, width: 1, height: expand ? height ?? Get.height * 0.8 : 50),
+        child: Container(
+          decoration: BoxDecoration(color: color ?? kNeutralLightColor, borderRadius: regularRadius),
+          width: thickness ?? 1,
+          height: expand ? height ?? Get.height * 0.8 : 50,
+        ),
       );
 
   static Future<void> requestBottomsheet({

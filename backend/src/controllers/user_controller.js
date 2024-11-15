@@ -513,155 +513,6 @@ exports.verifyPhone = async (req, res) => {
   }
 };
 
-exports.usersForApproving = async (req, res) => {
-  try {
-    const connectedUserId = req.decoded.id;
-
-    const connectedUser = await User.findByPk(connectedUserId);
-    if (!connectedUser) {
-      return res.status(404).json({ message: "user_not_found" });
-    }
-    const approveUsers = await User.findAll({
-      where: { isVerified: "pending" },
-    });
-
-    const users = await Promise.all(
-      approveUsers.map(async (user) => {
-        const userDocument = await UserDocumentModel.findOne({
-          where: { user_id: user.id },
-        });
-        return { user, userDocument };
-      })
-    );
-
-    return res.status(200).json({ users });
-  } catch (error) {
-    console.log(`Error at ${req.route.path}`);
-    console.error("\x1b[31m%s\x1b[0m", error);
-    return res.status(500).json({ message: error });
-  }
-};
-
-exports.approveUser = async (req, res) => {
-  try {
-    const userForApproveId = req.query.userId;
-
-    const userApprove = await User.findByPk(userForApproveId);
-    if (!userApprove) {
-      return res.status(404).json({ message: "user_not_found" });
-    }
-
-    userApprove.isVerified = "verified";
-    await userApprove.save();
-
-    const referral = await Referral.findOne({
-      where: { referred_user_id: userApprove.id },
-      include: [{ model: User, as: "referred_user" }],
-    });
-    let coinPurchase;
-    let coinPack;
-    let referrer;
-    let isReferrerRewarded = false;
-    if (referral) {
-      await referral.update({
-        status: "registered",
-        reward_coins: 5,
-        registration_date: new Date(),
-      });
-
-      coinPack = await CoinPack.findOne({ where: { totalCoins: 5 } });
-
-      coinPurchase = await CoinPackPurchase.create({
-        user_id: userApprove.id,
-        coin_pack_id: coinPack.id,
-        available: coinPack.totalCoins,
-      });
-      await Transaction.create({
-        coins: coinPack.totalCoins,
-        coin_pack_id: coinPurchase.id,
-        user_id: userApprove.id,
-        status: "completed",
-        type: "purchase",
-      });
-
-      referrer = await User.findByPk(referral.referrer_id);
-      if (referrer.coins + 5 < 100) {
-        isReferrerRewarded = true;
-        referrer.coins += 5;
-        referrer.availableCoins += 5;
-        referrer.save();
-      }
-    }
-
-    notificationService.sendNotification(
-      userApprove.id,
-      "Successfully Approved",
-      "Your profile has been approved.",
-      NotificationType.VERIFICATION,
-      { userId: userApprove.id, Approved: true }
-    );
-    if (coinPurchase) {
-      // For referrer
-      if (isReferrerRewarded)
-        notificationService.sendNotification(
-          referral.referrer_id,
-          "🎉 You Earned a Referral Reward!",
-          "Your friend joined Ekhdemli! You've earned more base coins. Thanks for helping grow our community!",
-          NotificationType.REWARDS,
-          { baseCoins: referrer.coins }
-        );
-      // For referee
-      notificationService.sendNotification(
-        userApprove.id,
-        "🎉 You Earned a Referral Reward!",
-        "Your referral reward has been credited to your account. Keep referring and keep earning!",
-        NotificationType.REWARDS,
-        { coinPack: coinPack.title }
-      );
-    }
-
-    return res.status(200).json({ done: true });
-  } catch (error) {
-    console.log(`Error at ${req.route.path}`);
-    console.error("\x1b[31m%s\x1b[0m", error);
-    return res.status(500).json({ message: error });
-  }
-};
-
-exports.userNotApprovable = async (req, res) => {
-  try {
-    const userForApproveId = req.query.userId;
-
-    const userApprove = await User.findByPk(userForApproveId);
-    if (!userApprove) {
-      return res.status(404).json({ message: "user_not_found" });
-    }
-    const userDocument = await UserDocumentModel.findOne({
-      where: { user_id: userForApproveId },
-    });
-    if (!userDocument) {
-      return res.status(404).json({ message: "user_document_not_found" });
-    }
-
-    userDocument.destroy();
-    userApprove.isVerified = "none";
-    await userApprove.save();
-
-    notificationService.sendNotification(
-      userApprove.id,
-      "Failed to Approve",
-      "Your profile hasn't been approved. Probably your profile is missing some needed data or your provided documents weren't acceptable.",
-      NotificationType.VERIFICATION,
-      { userId: userApprove.id, Approved: false }
-    );
-    return res.status(200).json({ done: true });
-  } catch (error) {
-    console.log(`Error at ${req.route.path}`);
-    console.error("\x1b[31m%s\x1b[0m", error);
-    return res.status(500).json({ message: error });
-  }
-};
-
 exports.socialMedia = async (req, res) => {
   try {
     console.log(req.body);
@@ -1064,11 +915,6 @@ exports.userActionsRequiredCount = async (req, res) => {
     let myStoreActionRequired = await getMyStoreRequiredActionsCount(
       userFound.id
     );
-    let approveUsersActionRequired = 0;
-    if (userFound.role === "admin")
-      approveUsersActionRequired = await getApproveUsersRequiredActionsCount(
-        userFound.id
-      );
     let servieHistoryActionRequired =
       await getServiceHistoryRequiredActionsCount(userFound.id);
     const categories = await CategorySubscriptionModel.findAll({
@@ -1079,8 +925,7 @@ exports.userActionsRequiredCount = async (req, res) => {
       myRequestActionRequired +
       taskHistoryActionRequired +
       myStoreActionRequired +
-      servieHistoryActionRequired +
-      approveUsersActionRequired;
+      servieHistoryActionRequired;
     if (categories.length == 0) count++;
     return res.status(200).json({ count });
   } catch (error) {

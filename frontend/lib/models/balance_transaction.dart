@@ -4,6 +4,7 @@ import '../helpers/helper.dart';
 import '../networking/api_base_helper.dart';
 import '../views/profile/balance/balance_controller.dart';
 import 'dto/image_dto.dart';
+import 'user.dart';
 
 enum BalanceTransactionType { taskPayment, deposit, withdrawal, system }
 
@@ -18,6 +19,7 @@ class BalanceTransaction {
   final DepositType? depositType;
   final ImageDTO? depositSlip;
   final DateTime? createdAt;
+  final User? user;
 
   BalanceTransaction({
     this.id,
@@ -28,6 +30,7 @@ class BalanceTransaction {
     required this.depositType,
     required this.depositSlip,
     this.createdAt,
+    this.user,
   });
 
   factory BalanceTransaction.fromJson(Map<String, dynamic> json) => BalanceTransaction(
@@ -39,5 +42,6 @@ class BalanceTransaction {
         depositType: json['depositType'] != null ? DepositType.values.singleWhere((element) => element.name == json['depositType']) : null,
         depositSlip: json['depositSlip'] != null ? ImageDTO(file: XFile(ApiBaseHelper.find.getImageDepositSlip(json['depositSlip'])), type: ImageType.image) : null,
         createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
+        user: json['user'] != null ? User.fromJson(json['user']) : null,
       );
 }

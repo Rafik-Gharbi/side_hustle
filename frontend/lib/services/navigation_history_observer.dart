@@ -96,13 +96,9 @@ class NavigationHistoryObserver extends NavigatorObserver {
   void goToPreviousRoute({bool? result, bool popToProfile = false}) {
     if (popToProfile) {
       while (previousRouteHistory != ProfileScreen.routeName) {
-        Helper.goBack();
-        if (isStackHasProfileScreen && previousRouteHistory != ProfileScreen.routeName) history.removeLast();
-      }
-      if (Get.currentRoute != ProfileScreen.routeName) {
         history.removeLast();
-        Get.toNamed(ProfileScreen.routeName);
       }
+      Get.offNamedUntil(ProfileScreen.routeName, (route) => route.settings.name == ProfileScreen.routeName);
     } else if (result != null) {
       Get.back(result: result);
       history.removeLast();

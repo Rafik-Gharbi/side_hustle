@@ -19,6 +19,7 @@ import 'firebase_options.dart';
 import 'helpers/helper.dart';
 import 'helpers/notification_service.dart';
 import 'networking/api_base_helper.dart';
+import 'repositories/admin_repository.dart';
 import 'repositories/balance_repository.dart';
 import 'repositories/boost_repository.dart';
 import 'repositories/chat_repository.dart';
@@ -38,6 +39,42 @@ import 'views/boost/list_boost/list_boost_controller.dart';
 import 'views/boost/list_boost/list_boost_screen.dart';
 import 'views/notifications/notification_controller.dart';
 import 'views/notifications/notification_screen.dart';
+import 'views/profile/admin_dashboard/admin_dashboard_controller.dart';
+import 'views/profile/admin_dashboard/admin_dashboard_screen.dart';
+import 'views/profile/admin_dashboard/components/feedbacks/feedbacks_controller.dart';
+import 'views/profile/admin_dashboard/components/feedbacks/feedbacks_screen.dart';
+import 'views/profile/admin_dashboard/components/manage_balance/manage_balance_controller.dart';
+import 'views/profile/admin_dashboard/components/manage_balance/manage_balance_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/balance_stats/balance_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/balance_stats/balance_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/category_stats/category_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/category_stats/category_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/chat_stats/chat_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/chat_stats/chat_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/coins_stats/coins_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/coins_stats/coins_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/contract_stats/contract_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/contract_stats/contract_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/favorite_stats/favorite_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/favorite_stats/favorite_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/feedbacks_stats/feedbacks_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/feedbacks_stats/feedbacks_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/governorate_stats/governorate_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/governorate_stats/governorate_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/referrals_stats/referrals_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/referrals_stats/referrals_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/report_stats/report_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/report_stats/report_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/review_stats/review_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/review_stats/review_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/store_stats/store_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/store_stats/store_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/task_stats/task_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/task_stats/task_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/user_stats/user_stats_controller.dart';
+import 'views/profile/admin_dashboard/components/stats_screen/user_stats/user_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/user_reports/user_reports_controller.dart';
+import 'views/profile/admin_dashboard/components/user_reports/user_reports_screen.dart';
 import 'views/profile/balance/balance_screen.dart';
 import 'views/profile/referral/components/referees_screen.dart';
 import 'views/profile/referral/referral_controller.dart';
@@ -47,8 +84,8 @@ import 'views/profile/transactions/transactions_screen.dart';
 import 'views/store/service_history/service_history_controller.dart';
 import 'views/store/service_history/service_history_screen.dart';
 import 'views/task/add_task/add_task_bottomsheet.dart';
-import 'views/profile/approve_user/approve_user_controller.dart';
-import 'views/profile/approve_user/approve_user_screen.dart';
+import 'views/profile/admin_dashboard/components/approve_user/approve_user_controller.dart';
+import 'views/profile/admin_dashboard/components/approve_user/approve_user_screen.dart';
 import 'views/chat/chat_controller.dart';
 import 'views/chat/chat_screen.dart';
 import 'views/chat/components/messages_screen.dart';
@@ -321,6 +358,42 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             name: BalanceScreen.routeName,
             page: () => BalanceScreen(loggedUser: Get.arguments),
           ),
+          GetPage(
+            name: AdminDashboardScreen.routeName,
+            page: () => const AdminDashboardScreen(),
+            binding: BindingsBuilder.put(() => AdminDashboardController()),
+            children: [
+              GetPage(name: UserStatsScreen.routeName, page: () => const UserStatsScreen(), binding: BindingsBuilder.put(() => UserStatsController())),
+              GetPage(name: BalanceStatsScreen.routeName, page: () => const BalanceStatsScreen(), binding: BindingsBuilder.put(() => BalanceStatsController())),
+              GetPage(name: ContractStatsScreen.routeName, page: () => const ContractStatsScreen(), binding: BindingsBuilder.put(() => ContractStatsController())),
+              GetPage(name: TaskStatsScreen.routeName, page: () => const TaskStatsScreen(), binding: BindingsBuilder.put(() => TaskStatsController())),
+              GetPage(name: StoreStatsScreen.routeName, page: () => const StoreStatsScreen(), binding: BindingsBuilder.put(() => StoreStatsController())),
+              GetPage(name: FeedbacksStatsScreen.routeName, page: () => const FeedbacksStatsScreen(), binding: BindingsBuilder.put(() => FeedbacksStatsController())),
+              GetPage(name: ReportStatsScreen.routeName, page: () => const ReportStatsScreen(), binding: BindingsBuilder.put(() => ReportStatsController())),
+              GetPage(name: CategoryStatsScreen.routeName, page: () => const CategoryStatsScreen(), binding: BindingsBuilder.put(() => CategoryStatsController())),
+              GetPage(name: ChatStatsScreen.routeName, page: () => const ChatStatsScreen(), binding: BindingsBuilder.put(() => ChatStatsController())),
+              GetPage(name: CoinsStatsScreen.routeName, page: () => const CoinsStatsScreen(), binding: BindingsBuilder.put(() => CoinsStatsController())),
+              GetPage(name: FavoriteStatsScreen.routeName, page: () => const FavoriteStatsScreen(), binding: BindingsBuilder.put(() => FavoriteStatsController())),
+              GetPage(name: GovernorateStatsScreen.routeName, page: () => const GovernorateStatsScreen(), binding: BindingsBuilder.put(() => GovernorateStatsController())),
+              GetPage(name: ReferralsStatsScreen.routeName, page: () => const ReferralsStatsScreen(), binding: BindingsBuilder.put(() => ReferralsStatsController())),
+              GetPage(name: ReviewStatsScreen.routeName, page: () => const ReviewStatsScreen(), binding: BindingsBuilder.put(() => ReviewStatsController())),
+            ],
+          ),
+          GetPage(
+            name: ManageBalanceScreen.routeName,
+            page: () => const ManageBalanceScreen(),
+            binding: BindingsBuilder.put(() => ManageBalanceController()),
+          ),
+          GetPage(
+            name: UserReportsScreen.routeName,
+            page: () => const UserReportsScreen(),
+            binding: BindingsBuilder.put(() => UserReportsController()),
+          ),
+          GetPage(
+            name: FeedbacksScreen.routeName,
+            page: () => const FeedbacksScreen(),
+            binding: BindingsBuilder.put(() => FeedbacksController()),
+          ),
         ],
       );
 }
@@ -350,6 +423,7 @@ class InitialBindings implements Bindings {
     Get.put(TransactionRepository(), permanent: true);
     Get.put(ReferralRepository(), permanent: true);
     Get.put(BalanceRepository(), permanent: true);
+    Get.put(AdminRepository(), permanent: true);
     // Database repositories
     Get.put(UserDatabaseRepository(), permanent: true);
     Get.put(TaskDatabaseRepository(), permanent: true);

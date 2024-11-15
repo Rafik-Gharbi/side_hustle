@@ -8,8 +8,8 @@ const Discussion = sequelize.define(
     timestamps: true,
   }
 );
-Discussion.belongsTo(User, { foreignKey: "user_id" });
-Discussion.belongsTo(User, { foreignKey: "owner_id" });
+Discussion.belongsTo(User, { as: "user", foreignKey: "user_id" });
+Discussion.belongsTo(User, { as: "owner", foreignKey: "owner_id" });
 
 module.exports = {
   Discussion,

@@ -22,7 +22,7 @@ const Review = sequelize.define(
   }
 );
 Review.belongsTo(User, { foreignKey: "user_id" });
-Review.belongsTo(User, { foreignKey: "reviewee_id" });
+Review.belongsTo(User, { as: "reviewee", foreignKey: "reviewee_id" });
 
 module.exports = {
   Review,

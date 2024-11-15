@@ -21,6 +21,7 @@ class Task {
   String? delivrables;
   User owner;
   DateTime? dueDate;
+  DateTime? createdAt;
   LatLng? coordinates;
   String? distance;
   int coins;
@@ -41,6 +42,7 @@ class Task {
     this.attachments,
     this.coordinates,
     this.distance,
+    this.createdAt,
     this.isFavorite = false,
     this.coins = 0,
     this.deductedCoins = 0,
@@ -67,6 +69,7 @@ class Task {
                 ? (attachments as List).map((e) => ImageDTO.fromJson(e)).toList()
                 : null,
         dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate']) : DateTime.now().toOneMinuteBeforeMidnight(),
+        createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
         isFavorite: json['isFavorite'] ?? false,
         coins: json['coins'] ?? 0,
         deductedCoins: json['deducted_coins'] ?? 0,

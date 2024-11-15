@@ -9,11 +9,11 @@ const Feedback = sequelize.define(
   },
   {
     tableName: "feedback",
-    timestamps: false,
+    timestamps: true,
   }
 );
 
-Feedback.belongsTo(User, { foreignKey: "user_id", allowNull: false });
+Feedback.belongsTo(User, { as: "user", foreignKey: "user_id", allowNull: false });
 
 module.exports = {
   Feedback,

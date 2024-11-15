@@ -19,6 +19,7 @@ class Service {
   final String? notes;
   final int requests;
   final int coins;
+  final DateTime? createdAt;
 
   Service({
     this.id,
@@ -33,6 +34,7 @@ class Service {
     this.included,
     this.notIncluded,
     this.notes,
+    this.createdAt,
     this.coins = 0,
   });
 
@@ -52,6 +54,7 @@ class Service {
         included: json['included'],
         notIncluded: json['notIncluded'],
         notes: json['notes'],
+        createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
         coins: json['coins'] ?? 0,
       );
 
