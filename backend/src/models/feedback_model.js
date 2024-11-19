@@ -13,7 +13,7 @@ const Feedback = sequelize.define(
   }
 );
 
-Feedback.belongsTo(User, { as: "user", foreignKey: "user_id", allowNull: false });
+Feedback.belongsTo(User, { as: "user", foreignKey: "user_id", allowNull: true });
 
 module.exports = {
   Feedback,

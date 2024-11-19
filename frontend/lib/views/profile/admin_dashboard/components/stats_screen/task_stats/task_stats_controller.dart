@@ -1,17 +1,16 @@
 import 'package:get/get.dart';
 
-import '../../../../../../constants/colors.dart';
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/extensions/date_time_extension.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/category.dart';
 import '../../../../../../models/task.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class TaskStatsController extends GetxController {
   bool isLoading = true;
-  int activeTasks = 0;
-  int expiredTasks = 0;
   Map<DateTime, double> tasksPerDayData = {};
   List<PieChartModel> taskPerCategoryData = [];
   int _pieChartTouchedIndex = -1;
@@ -24,19 +23,29 @@ class TaskStatsController extends GetxController {
   }
 
   TaskStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminTaskStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final (taskList, activeCount, expiredCount) = await AdminRepository.find.getTaskStatsData();
-    if (taskList != null) {
-      _initChartPerDayData(taskList);
-      _initPieChartData(taskList);
-    }
-    activeTasks = activeCount ?? 0;
-    expiredTasks = expiredCount ?? 0;
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminTaskStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminTaskStatsData', (data) async {
+        final taskList = (data?['taskStats']?['tasks'] as List?)?.map((e) => Task.fromJson(e)).toList() ?? [];
+        if (taskList.isNotEmpty) {
+          _initChartPerDayData(taskList);
+          _initPieChartData(taskList);
+        }
+        AdminDashboardController.totalTasks.value = taskList.length;
+        AdminDashboardController.activeTasks.value = data?['taskStats']?['activeCount'] ?? 0;
+        AdminDashboardController.expiredTasks.value = data?['taskStats']?['expiredCount'] ?? 0;
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initChartPerDayData(List<Task> depositList) {
@@ -62,7 +71,7 @@ class TaskStatsController extends GetxController {
       taskPerCategoryData.clear();
     }
     totalCategoriesUseMap.forEach((key, value) {
-      taskPerCategoryData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      taskPerCategoryData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < taskPerCategoryData.length; i++) {

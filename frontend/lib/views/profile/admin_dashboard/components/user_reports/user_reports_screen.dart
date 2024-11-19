@@ -32,7 +32,7 @@ class UserReportsScreen extends StatelessWidget {
           appBarTitle: 'reports'.tr,
           onBack: () => ProfileController.find.init(),
           body: LoadingRequest(
-            isLoading: controller.isLoading,
+            isLoading: controller.isLoading.value,
             child: controller.userReportList.isEmpty
                 ? Center(child: Text('nothing_here_yet'.tr, style: AppFonts.x14Regular))
                 : ListView.builder(
@@ -65,41 +65,67 @@ class UserReportsScreen extends StatelessWidget {
                                 collapsedBackgroundColor: highlighted ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
                                 expandedCrossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Buildables.buildProfileInfoRow('email'.tr, report.user.email ?? 'not_provided'.tr),
+                                  Buildables.buildProfileInfoRow('email'.tr, report.reportedUser.email ?? 'not_provided'.tr),
                                   Buildables.lightDivider(),
                                   Buildables.buildProfileInfoRow(
                                     'birthdate'.tr,
-                                    report.user.birthdate != null ? Helper.formatDate(report.user.birthdate!) : 'not_provided'.tr,
+                                    report.reportedUser.birthdate != null ? Helper.formatDate(report.reportedUser.birthdate!) : 'not_provided'.tr,
                                   ),
                                   Buildables.lightDivider(),
-                                  Buildables.buildProfileInfoRow('gender'.tr, report.user.gender?.value ?? 'not_provided'.tr),
+                                  Buildables.buildProfileInfoRow('gender'.tr, report.reportedUser.gender?.value ?? 'not_provided'.tr),
                                   Buildables.lightDivider(),
                                   const SizedBox(height: Paddings.large),
                                   Text('user_report'.tr, style: AppFonts.x15Bold),
                                   const SizedBox(height: Paddings.regular),
                                   ListTile(
                                     title: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(report.reasons.name.tr, style: AppFonts.x14Regular),
+                                        if (report.user != null)
+                                          InkWell(
+                                            onTap: () => Get.bottomSheet(
+                                              ClipRRect(
+                                                borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                                                child: UserProfileScreen(user: report.user),
+                                              ),
+                                              isScrollControlled: true,
+                                            ),
+                                            child: Buildables.userImage(providedUser: report.user, size: 40),
+                                          )
+                                        else
+                                          Text('anonymus_user'.tr, style: AppFonts.x14Bold),
+                                        const SizedBox(width: Paddings.small),
+                                        Text('${'has_reported'.tr}: ', style: AppFonts.x14Regular),
+                                        const SizedBox(width: Paddings.small),
                                         InkWell(
                                           onTap: () => Get.bottomSheet(
                                             ClipRRect(
                                               borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-                                              child: UserProfileScreen(user: report.user),
+                                              child: UserProfileScreen(user: report.reportedUser),
                                             ),
                                             isScrollControlled: true,
                                           ),
-                                          child: Buildables.userImage(providedUser: report.user),
+                                          child: Buildables.userImage(providedUser: report.reportedUser, size: 40),
                                         ),
+                                        const SizedBox(width: Paddings.small),
+                                        Text(report.reportedUser.name ?? 'not_provided'.tr, style: AppFonts.x14Regular),
                                       ],
                                     ),
                                     subtitle: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        if (report.task != null) TaskCard(task: report.task!) else if (report.service != null) ServiceCard(service: report.service!),
                                         const SizedBox(height: Paddings.regular),
-                                        Text(report.explanation, style: AppFonts.x12Regular),
+                                        Text(
+                                          '${'in_his'.tr} ${report.task != null ? 'task'.tr : report.service != null ? 'service'.tr : 'NA'}',
+                                          style: AppFonts.x12Regular,
+                                        ),
+                                        if (report.task != null)
+                                          TaskCard(task: report.task!, dense: true)
+                                        else if (report.service != null)
+                                          ServiceCard(service: report.service!, dense: true),
+                                        const SizedBox(height: Paddings.regular),
+                                        Text('${'reason'.tr}: ${report.reasons.value.tr}', style: AppFonts.x12Regular),
+                                        const SizedBox(height: Paddings.small),
+                                        Text('${'explanation'.tr}: ${report.explanation}', style: AppFonts.x12Regular),
                                         const SizedBox(height: Paddings.regular),
                                         Align(
                                           alignment: Alignment.centerRight,
@@ -146,12 +172,12 @@ class UserReportsScreen extends StatelessWidget {
   Widget buildUserCard(ReportDTO report) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Buildables.userImage(providedUser: report.user, size: 40),
-      title: Text(report.user.name ?? 'not_provided'.tr, style: AppFonts.x14Bold),
+      leading: Buildables.userImage(providedUser: report.reportedUser, size: 40),
+      title: Text(report.reportedUser.name ?? 'not_provided'.tr, style: AppFonts.x14Bold),
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(report.user.phone ?? 'not_provided'.tr, style: AppFonts.x14Regular),
+          Text(report.reportedUser.phone ?? 'not_provided'.tr, style: AppFonts.x14Regular),
           Padding(
             padding: const EdgeInsets.only(right: Paddings.regular),
             child: Row(
@@ -159,7 +185,7 @@ class UserReportsScreen extends StatelessWidget {
               children: [
                 const Icon(Icons.pin_drop_outlined, size: 14),
                 const SizedBox(width: Paddings.small),
-                Text(report.user.governorate?.name ?? 'city'.tr, style: AppFonts.x14Regular),
+                Text(report.reportedUser.governorate?.name ?? 'city'.tr, style: AppFonts.x14Regular),
               ],
             ),
           ),

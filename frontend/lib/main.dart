@@ -19,7 +19,6 @@ import 'firebase_options.dart';
 import 'helpers/helper.dart';
 import 'helpers/notification_service.dart';
 import 'networking/api_base_helper.dart';
-import 'repositories/admin_repository.dart';
 import 'repositories/balance_repository.dart';
 import 'repositories/boost_repository.dart';
 import 'repositories/chat_repository.dart';
@@ -423,7 +422,6 @@ class InitialBindings implements Bindings {
     Get.put(TransactionRepository(), permanent: true);
     Get.put(ReferralRepository(), permanent: true);
     Get.put(BalanceRepository(), permanent: true);
-    Get.put(AdminRepository(), permanent: true);
     // Database repositories
     Get.put(UserDatabaseRepository(), permanent: true);
     Get.put(TaskDatabaseRepository(), permanent: true);

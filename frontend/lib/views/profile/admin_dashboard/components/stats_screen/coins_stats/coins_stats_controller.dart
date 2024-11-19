@@ -1,20 +1,18 @@
 import 'package:get/get.dart';
 
-import '../../../../../../constants/colors.dart';
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/extensions/date_time_extension.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/coin_pack.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class CoinsStatsController extends GetxController {
-    bool isLoading = true;
-  int totalCoinPacksSold = 0;
-  int totalActiveCoinPacks = 0;
+  bool isLoading = true;
   Map<DateTime, double> coinPacksPerDayData = {};
   List<PieChartModel> coinPacksPerCategoryData = [];
   int _pieChartTouchedIndex = -1;
-
 
   int get pieChartTouchedIndex => _pieChartTouchedIndex;
 
@@ -24,19 +22,28 @@ class CoinsStatsController extends GetxController {
   }
 
   CoinsStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminCoinStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final (coinPacksList, activeCount) = await AdminRepository.find.getCoinPackStatsData();
-    if (coinPacksList != null) {
-      _initChartPerDayData(coinPacksList);
-      _initPieChartData(coinPacksList);
-    }
-    totalCoinPacksSold = coinPacksList?.length ?? 0;
-    totalActiveCoinPacks = activeCount ?? 0;
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminCoinStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminCoinStatsData', (data) async {
+        final coinPacksList = (data?['coinStats']?['coinPacksList'] as List?)?.map((e) => CoinPack.fromJson(e)).toList() ?? [];
+        if (coinPacksList.isNotEmpty) {
+          _initChartPerDayData(coinPacksList);
+          _initPieChartData(coinPacksList);
+        }
+        AdminDashboardController.totalCoinPacksSold.value = coinPacksList.length;
+        AdminDashboardController.totalActiveCoinPacks.value = data?['coinStats']?['activeCount'] ?? 0;
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initChartPerDayData(List<CoinPack> coinPackList) {
@@ -62,7 +69,7 @@ class CoinsStatsController extends GetxController {
       coinPacksPerCategoryData.clear();
     }
     totalCategoriesUseMap.forEach((key, value) {
-      coinPacksPerCategoryData.add(PieChartModel(name: key.title, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      coinPacksPerCategoryData.add(PieChartModel(name: key.title, color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < coinPacksPerCategoryData.length; i++) {

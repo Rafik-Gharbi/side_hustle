@@ -1,29 +1,37 @@
 import 'package:get/get.dart';
 
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/extensions/date_time_extension.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/user.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
+import '../../../admin_dashboard_controller.dart';
 
 class UserStatsController extends GetxController {
   bool isLoading = true;
   Map<DateTime, double> usersPerDayData = {};
-  int totalUsers = 100;
-  int activeUsers = 30;
-  int verifiedUsers = 45;
 
   UserStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminUserStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final (userList, activeCount) = await AdminRepository.find.getUserStatsData();
-    if (userList != null) _initUsersPerDayData(userList);
-    totalUsers = userList?.length ?? 0;
-    activeUsers = activeCount ?? 0;
-    verifiedUsers = userList?.where((element) => element.isVerified == VerifyIdentityStatus.verified).length ?? 0;
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminUserStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminUserStatsData', (data) async {
+        final userList = (data?['userStats']?['users'] as List?)?.map((e) => User.fromJson(e)).toList() ?? [];
+        if (userList.isNotEmpty) _initUsersPerDayData(userList);
+        AdminDashboardController.totalUsers.value = userList.length;
+        AdminDashboardController.activeUsers.value = data?['userStats']?['activeCount'] ?? 0;
+        AdminDashboardController.verifiedUsers.value = userList.where((element) => element.isVerified == VerifyIdentityStatus.verified).length;
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initUsersPerDayData(List<User> userList) {

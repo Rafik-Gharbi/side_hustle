@@ -12,7 +12,10 @@ const { Transaction } = require("../models/transaction_model");
 const { CoinPack } = require("../models/coin_pack_model");
 const { CoinPackPurchase } = require("../models/coin_pack_purchase_model");
 const { Referral } = require("../models/referral_model");
-const { notificationService, NotificationType } = require("./notification_service");
+const {
+  notificationService,
+  NotificationType,
+} = require("./notification_service");
 
 function adjustString(inputString) {
   const ext = path.extname(inputString).toLowerCase();
@@ -49,6 +52,24 @@ function isUUID(str) {
   const uuidRegex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(str);
+}
+
+async function verifyToken(token) {
+  let checkBearer = "Bearer ";
+  if (token.startsWith(checkBearer)) {
+    token = token.slice(checkBearer.length, token.length);
+  }
+
+  return await new Promise((resolve, reject) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        console.error(`Error in verifyToken: ${err}`);
+        reject(err);
+      } else {
+        resolve(decoded);
+      }
+    });
+  });
 }
 
 function addAuthentication(body, targetProperty) {
@@ -713,4 +734,5 @@ module.exports = {
   fetchPurchasedCoinsTransactions,
   generateUniqueReferralCode,
   checkReferralActiveUserRewards,
+  verifyToken,
 };

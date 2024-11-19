@@ -92,16 +92,12 @@ exports.sendMail = async (req, res) => {
 
 exports.reportUser = async (req, res) => {
   try {
-    const { user, task, service, reasons, explanation } = req.body;
+    const { user, reportedUser, task, service, reasons, explanation } = req.body;
     if ((!task && !service) || !reasons) {
       return res.status(400).json({ message: "missing" });
     }
-    const reporterUser = await User.findByPk(req.decoded.id);
-    if (!reporterUser) {
-      return res.status(404).json({ message: "user_not_found" });
-    }
 
-    const existUser = await User.findOne({ where: { id: user.id } });
+    const existUser = await User.findOne({ where: { id: reportedUser.id } });
     if (!existUser) {
       return res.status(404).json({ message: "user_not_found" });
     }
@@ -111,8 +107,8 @@ exports.reportUser = async (req, res) => {
       explanation,
       task_id: task?.id,
       service_id: service?.id,
-      user_id: existUser.id,
-      reported_id: reporterUser.id,
+      user_id: req.decoded?.id ?? user?.id,
+      reported_id: existUser.id,
     });
 
     return res.status(200).json({ done: true });
@@ -129,15 +125,11 @@ exports.feedback = async (req, res) => {
     if (!feedback) {
       return res.status(400).json({ message: "missing" });
     }
-    const feedbackUser = await User.findByPk(req.decoded.id);
-    if (!feedbackUser) {
-      return res.status(404).json({ message: "user_not_found" });
-    }
 
     await Feedback.create({
       feedback,
       comment,
-      user_id: feedbackUser.id,
+      user_id: req.decoded?.id,
     });
 
     return res.status(200).json({ done: true });

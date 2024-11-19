@@ -1,4 +1,4 @@
-const { tokenVerification } = require("../middlewares/authentificationHelper");
+const { tokenVerification, tokenVerificationOptional } = require("../middlewares/authentificationHelper");
 
 module.exports = (app) => {
   const paramsController = require("../controllers/params_controller");
@@ -17,9 +17,9 @@ module.exports = (app) => {
 
   router.get("/send-mail", paramsController.sendMail);
 
-  router.post("/report", tokenVerification, paramsController.reportUser);
+  router.post("/report", tokenVerificationOptional, paramsController.reportUser);
 
-  router.post("/feedback", tokenVerification, paramsController.feedback);
+  router.post("/feedback", tokenVerificationOptional, paramsController.feedback);
 
   app.use("/params", router);
 };

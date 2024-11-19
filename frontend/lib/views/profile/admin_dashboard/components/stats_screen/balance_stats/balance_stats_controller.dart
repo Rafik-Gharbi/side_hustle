@@ -1,32 +1,41 @@
 import 'package:get/get.dart';
 
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/extensions/date_time_extension.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/balance_transaction.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
+import '../../../admin_dashboard_controller.dart';
 
 class BalanceStatsController extends GetxController {
   bool isLoading = true;
-  int totalDeposits = 0;
-  int totalWithdrawals = 0;
-  int maxUserBalance = 0;
   int totalUsersHasBalance = 0;
   Map<DateTime, double> depositsPerDayData = {};
   Map<DateTime, double> withdrawalsPerDayData = {};
 
   BalanceStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminBalanceStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final (depositList, withdrawalList, maxBalance, totalUsers) = await AdminRepository.find.getBalanceStatsData();
-    if (depositList != null && withdrawalList != null) _initChartPerDayData(depositList, withdrawalList);
-    totalDeposits = depositList?.length ?? 0;
-    totalWithdrawals = withdrawalList?.length ?? 0;
-    maxUserBalance = maxBalance ?? 0;
-    totalUsersHasBalance = totalUsers ?? 0;
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminBalanceStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminBalanceStatsData', (data) async {
+        final depositList = (data?['balanceStats']?['depositList'] as List?)?.map((e) => BalanceTransaction.fromJson(e)).toList() ?? [];
+        final withdrawalList = (data?['balanceStats']?['withdrawalList'] as List?)?.map((e) => BalanceTransaction.fromJson(e)).toList() ?? [];
+        if (depositList.isNotEmpty && withdrawalList.isNotEmpty) _initChartPerDayData(depositList, withdrawalList);
+        AdminDashboardController.totalDeposits.value = depositList.length;
+        AdminDashboardController.totalWithdrawals.value = withdrawalList.length;
+        AdminDashboardController.maxUserBalance.value = data?['balanceStats']?['maxBalance'] ?? 0;
+        totalUsersHasBalance = data?['balanceStats']?['totalUsers'] ?? 0;
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initChartPerDayData(List<BalanceTransaction> depositList, List<BalanceTransaction> withdrawalList) {

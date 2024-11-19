@@ -1,18 +1,17 @@
 import 'package:get/get.dart';
 
-import '../../../../../../constants/colors.dart';
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/extensions/date_time_extension.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/category.dart';
 import '../../../../../../models/reservation.dart';
 import '../../../../../../models/store.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class StoreStatsController extends GetxController {
   bool isLoading = true;
-  int totalStores = 0;
-  int totalServices = 0;
   Map<DateTime, double> servicesPerDayData = {};
   List<PieChartModel> servicesPerCategoryData = [];
   int _pieChartTouchedIndex = -1;
@@ -25,29 +24,38 @@ class StoreStatsController extends GetxController {
   }
 
   StoreStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminStoreStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final (storesList, serviceUsage) = await AdminRepository.find.getStoreStatsData();
-    if (serviceUsage != null) _initChartPerDayData(serviceUsage);
-    if (storesList != null) _initPieChartData(storesList);
-
-    totalStores = storesList?.length ?? 0;
-    totalServices = storesList?.map((e) => e.services).reduce((value, element) => value! + element!)?.length ?? 0;
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminStoreStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminStoreStatsData', (data) async {
+        final storesList = (data?['storeStats']?['stores'] as List?)?.map((e) => Store.fromJson(e)).toList() ?? [];
+        final serviceUsage = (data?['storeStats']?['usages'] as List?)?.map((e) => Reservation.fromJson(e)).toList() ?? [];
+        if (serviceUsage.isNotEmpty) _initChartPerDayData(serviceUsage);
+        if (storesList.isNotEmpty) _initPieChartData(storesList);
+        AdminDashboardController.totalStores.value = storesList.length;
+        AdminDashboardController.totalServices.value = storesList.isNotEmpty ? storesList.map((e) => e.services).reduce((value, element) => value! + element!)?.length ?? 0 : 0;
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initChartPerDayData(List<Reservation> reservationList) {
     servicesPerDayData.clear();
     for (final reservation in reservationList) {
-        DateTime date = reservation.date.normalize();
-        if (servicesPerDayData.containsKey(date)) {
-          servicesPerDayData[date] = servicesPerDayData[date]! + 1;
-        } else {
-          servicesPerDayData.putIfAbsent(date, () => 1);
-        }
+      DateTime date = reservation.date.normalize();
+      if (servicesPerDayData.containsKey(date)) {
+        servicesPerDayData[date] = servicesPerDayData[date]! + 1;
+      } else {
+        servicesPerDayData.putIfAbsent(date, () => 1);
+      }
     }
     servicesPerDayData = Helper.sortByDateDesc(servicesPerDayData);
   }
@@ -62,7 +70,7 @@ class StoreStatsController extends GetxController {
       servicesPerCategoryData.clear();
     }
     totalCategoriesUseMap.forEach((key, value) {
-      servicesPerCategoryData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      servicesPerCategoryData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < servicesPerCategoryData.length; i++) {

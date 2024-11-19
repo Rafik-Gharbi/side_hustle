@@ -137,8 +137,8 @@ class UserRepository extends GetxService {
         final result = await ApiBaseHelper().request(RequestType.get, '/user/profile', sendToken: true);
         if (result?['token'] != null) {
           profileDTO = ProfileDTO.fromJson(result);
+          AuthenticationService.find.initiateCurrentUser(result['token'], silent: true);
         }
-        AuthenticationService.find.initiateCurrentUser(result['token'], silent: true);
       } else {
         final user = AuthenticationService.find.jwtUserData?.id != null ? await UserDatabaseRepository.find.getUserById(AuthenticationService.find.jwtUserData!.id!) : null;
         if (user != null) {

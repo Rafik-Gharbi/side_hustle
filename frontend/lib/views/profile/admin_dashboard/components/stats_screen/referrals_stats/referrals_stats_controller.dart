@@ -1,15 +1,14 @@
 import 'package:get/get.dart';
 
-import '../../../../../../constants/colors.dart';
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/referral.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class ReferralsStatsController extends GetxController {
   bool isLoading = true;
-  int totalReferrals = 0;
-  int totalSuccessfulReferrals = 0;
   List<PieChartModel> referralsPerStatusData = [];
   int _pieChartTouchedIndex = -1;
 
@@ -21,18 +20,25 @@ class ReferralsStatsController extends GetxController {
   }
 
   ReferralsStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminReferralStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final (referralsList, referralSuccessCount) = await AdminRepository.find.getReferralsStatsData();
-    if (referralsList != null) {
-      _initPieChartData(referralsList);
-    }
-    totalReferrals = referralsList?.length ?? 0;
-    totalSuccessfulReferrals = referralSuccessCount ?? 0;
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminReferralStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminReferralStatsData', (data) async {
+        final referralsList = (data?['referralStats']?['depositList'] as List?)?.map((e) => Referral.fromJson(e)).toList() ?? [];
+        if (referralsList.isNotEmpty) _initPieChartData(referralsList);
+        AdminDashboardController.totalReferrals.value = referralsList.length;
+        AdminDashboardController.totalSuccessReferrals.value = data?['referralStats']?['successCount'] ?? 0;
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initPieChartData(List<Referral> referralList) {
@@ -45,7 +51,7 @@ class ReferralsStatsController extends GetxController {
       referralsPerStatusData.clear();
     }
     totalCategoriesUseMap.forEach((key, value) {
-      referralsPerStatusData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      referralsPerStatusData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < referralsPerStatusData.length; i++) {

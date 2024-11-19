@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
 import '../components/pie_chart.dart';
 import '../components/stats_scaffold.dart';
@@ -27,9 +28,9 @@ class StoreStatsScreen extends StatelessWidget {
                 children: [
                   // Store: Service consumption per day, Total stores/serices, Service per category, Stores per completion
                   ThreeStatsOverview(
-                    leftNumber: controller.totalStores,
+                    leftNumber: AdminDashboardController.totalStores.value,
                     leftLabel: 'total_stores'.tr,
-                    rightNumber: controller.totalServices,
+                    rightNumber: AdminDashboardController.totalServices.value,
                     rightLabel: 'total_services'.tr,
                   ),
                   const SizedBox(height: Paddings.large),

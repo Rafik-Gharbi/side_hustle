@@ -50,16 +50,18 @@ class ProfileController extends GetxController {
 
   Future<void> init() async {
     final result = await AuthenticationService.find.fetchUserData();
-    loggedInUser = result?.user;
-    subscribedCategories = result?.subscribedCategories ?? [];
-    nextUpdateGategory = result?.nextUpdateGategory;
-    myRequestActionRequired = result?.myRequestActionRequired ?? 0;
-    taskHistoryActionRequired = result?.taskHistoryActionRequired ?? 0;
-    myStoreActionRequired = result?.myStoreActionRequired ?? 0;
-    approveUsersActionRequired = result?.approveUsersActionRequired ?? 0;
-    serviceHistoryActionRequired = result?.servieHistoryActionRequired ?? 0;
-    userHasBoosts = result?.userHasBoosts ?? false;
-    MainAppController.find.resolveProfileActionRequired();
+    if (result != null) {
+      loggedInUser = result.user;
+      subscribedCategories = result.subscribedCategories;
+      nextUpdateGategory = result.nextUpdateGategory;
+      myRequestActionRequired = result.myRequestActionRequired;
+      taskHistoryActionRequired = result.taskHistoryActionRequired;
+      myStoreActionRequired = result.myStoreActionRequired;
+      approveUsersActionRequired = result.approveUsersActionRequired;
+      serviceHistoryActionRequired = result.servieHistoryActionRequired;
+      userHasBoosts = result.userHasBoosts;
+      MainAppController.find.resolveProfileActionRequired();
+    }
     if (!MainAppController.find.isBackReachable.value) ApiBaseHelper.find.isLoading = false;
     isLoading = false;
   }
@@ -104,9 +106,23 @@ class ProfileController extends GetxController {
 
   Future<void> subscribeToCategories(List<Category> category) async {
     subscribedCategories = category;
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    await AuthenticationService.find.subscribeToCategories(subscribedCategories, fcmToken);
-    update();
+    String? fcmToken;
+    final permission = await FirebaseMessaging.instance.requestPermission();
+    if (permission.authorizationStatus == AuthorizationStatus.authorized) {
+      try {
+        fcmToken = await FirebaseMessaging.instance.getToken();
+      } catch (e, s) {
+        LoggerService.logger?.e('Error in subscribeToCategories!\nError: $e\nStacktrace: $s');
+      }
+    }
+    Helper.openConfirmationDialog(
+      title: 'confirm_category_subscription_msg'.trParams({
+        'categoriesName': subscribedCategories.map((e) => e.name + (subscribedCategories.indexOf(e) == subscribedCategories.length - 1 ? ', ' : '')).toString(),
+        'nextUpdate': Helper.formatDate(DateTime.now().add(const Duration(days: 30))),
+      }),
+      onConfirm: () async => await AuthenticationService.find.subscribeToCategories(subscribedCategories, fcmToken),
+    );
+    init();
   }
 
   void manageCategoriesSubscription() => subscribedCategories.isEmpty

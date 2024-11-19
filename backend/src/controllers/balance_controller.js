@@ -4,6 +4,7 @@ const {
   notificationService,
   NotificationType,
 } = require("../helper/notification_service");
+const { adjustString } = require("../helper/helpers");
 
 exports.requestWithdrawal = async (req, res) => {
   try {
@@ -45,10 +46,11 @@ exports.requestDeposit = async (req, res) => {
     if (!userFound) {
       return res.status(404).json({ message: "user_not_found" });
     }
+    const files = req.files?.photo ? req.files?.photo : req.files?.gallery;
 
     await BalanceTransaction.create({
       type: "deposit",
-      depositSlip: !depositSlip ? undefined : `deposit-${depositSlip}`,
+      depositSlip: !depositSlip ? undefined : files[0].filename,
       depositType: type,
       amount: amount,
       userId: userFound.id,
@@ -70,7 +72,7 @@ exports.getBalanceTransactions = async (req, res) => {
     }
 
     const transactions = await BalanceTransaction.findAll({
-      user_id: userFound.id,
+      where: { userId: userFound.id },
     });
 
     const currentMonth = new Date().getMonth();

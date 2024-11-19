@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 import '../components/stats_scaffold.dart';
 import '../components/three_stats_overview.dart';
@@ -27,7 +28,7 @@ class ReviewStatsScreen extends StatelessWidget {
                 children: [
                   // Review: Total reviews, Reviews per review (with details if available), Review's messages
                   ThreeStatsOverview(
-                    leftNumber: controller.totalReviews,
+                    leftNumber: AdminDashboardController.totalReviews.value,
                     leftLabel: 'total_review'.tr,
                   ),
                   const SizedBox(height: Paddings.large),

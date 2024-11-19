@@ -1,14 +1,14 @@
 import 'package:get/get.dart';
 
-import '../../../../../../constants/colors.dart';
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/review.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class ReviewStatsController extends GetxController {
   bool isLoading = true;
-  int totalReviews = 0;
   List<PieChartModel> reviewsPerRatingData = [];
   int _pieChartTouchedIndex = -1;
 
@@ -20,17 +20,24 @@ class ReviewStatsController extends GetxController {
   }
 
   ReviewStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminReviewStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final reviewsList = await AdminRepository.find.getReviewStatsData();
-    if (reviewsList != null) {
-      _initPieChartData(reviewsList);
-    }
-    totalReviews = reviewsList?.length ?? 0;
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminReviewStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminReviewStatsData', (data) async {
+        final reviewsList = (data?['reviewStats'] as List?)?.map((e) => Review.fromJson(e)).toList() ?? [];
+        if (reviewsList.isNotEmpty) _initPieChartData(reviewsList);
+        AdminDashboardController.totalReviews.value = reviewsList.length;
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initPieChartData(List<Review> reviewList) {
@@ -43,7 +50,7 @@ class ReviewStatsController extends GetxController {
       reviewsPerRatingData.clear();
     }
     totalCategoriesUseMap.forEach((key, value) {
-      reviewsPerRatingData.add(PieChartModel(name: Helper.formatAmount(key), color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      reviewsPerRatingData.add(PieChartModel(name: Helper.formatAmount(key), color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < reviewsPerRatingData.length; i++) {

@@ -407,7 +407,7 @@ class Buildables {
         width: size,
         color: color ?? kBlackColor,
         errorBuilder: (context, error, stackTrace) {
-          print("Error getting category icon: $error\n$stackTrace");
+          debugPrint('Error getting category icon: $error\n$stackTrace');
           return const Icon(Icons.error);
         },
       );

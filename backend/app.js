@@ -50,9 +50,9 @@ app.get("/public/task/:id", (req, res) => {
 app.get("/public/store/:id", (req, res) => {
   res.sendFile(path.join(__dirname, `./public/store/${req.params.id}`));
 });
-// app.get("/public/task/hd/:id", (req, res) => {
-//   res.sendFile(path.join(__dirname, `./public/task/hd/${req.params.id}`));
-// });
+app.get("/public/deposit/:id", (req, res) => {
+  res.sendFile(path.join(__dirname, `./public/deposit/${req.params.id}`));
+});
 app.get("/public/images/:id", (req, res) => {
   res.sendFile(path.join(__dirname, `./public/images/${req.params.id}`));
 });

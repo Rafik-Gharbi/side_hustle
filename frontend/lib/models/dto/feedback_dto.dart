@@ -3,7 +3,7 @@ import '../user.dart';
 
 class FeedbackDTO {
   final int? id;
-  final User user;
+  final User? user;
   final FeedbackEmotion feedback;
   final String comment;
   final DateTime? createdAt;
@@ -18,8 +18,8 @@ class FeedbackDTO {
 
   factory FeedbackDTO.fromJson(Map<String, dynamic> json) => FeedbackDTO(
         id: json['id'],
-        user: User.fromJson(json['user']),
-        feedback: FeedbackEmotion.values.singleWhere((element) => element.value == json['feedback']),
+        user: json['user'] != null ? User.fromJson(json['user']) : null,
+        feedback: FeedbackEmotion.values.singleWhere((element) => element.name == json['feedback']),
         comment: json['comment'],
         createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
       );
@@ -27,7 +27,7 @@ class FeedbackDTO {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     if (id != null) data['id'] = id;
-    data['user'] = user.toJson();
+    if (user != null) data['user'] = user!.toJson();
     data['feedback'] = feedback.value;
     data['comment'] = comment;
     return data;

@@ -17,7 +17,7 @@ const Report = sequelize.define(
 
 Report.belongsTo(Task, { foreignKey: "task_id", allowNull: true });
 Report.belongsTo(Service, { foreignKey: "service_id", allowNull: true });
-Report.belongsTo(User, { as: 'user', foreignKey: "user_id", allowNull: false });
+Report.belongsTo(User, { as: 'user', foreignKey: "user_id", allowNull: true });
 Report.belongsTo(User, { as: 'reportedUser', foreignKey: "reported_id", allowNull: false });
 
 module.exports = {

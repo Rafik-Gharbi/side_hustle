@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
 import '../components/stats_scaffold.dart';
 import '../components/three_stats_overview.dart';
@@ -25,14 +26,14 @@ class BalanceStatsScreen extends StatelessWidget {
               children: [
                 // Balance: max user balance, users has balance > 0, Deposit per day, Withdrawals per day, Total deposit, Total withdrawals
                 ThreeStatsOverview(
-                  leftNumber: controller.totalDeposits,
+                  leftNumber: AdminDashboardController.totalDeposits.value,
                   leftLabel: 'total_deposits'.tr,
-                  rightNumber: controller.totalWithdrawals,
+                  rightNumber: AdminDashboardController.totalWithdrawals.value,
                   rightLabel: 'total_withdrawals'.tr,
                 ),
                 const SizedBox(height: Paddings.large),
                 ThreeStatsOverview(
-                  leftNumber: controller.maxUserBalance,
+                  leftNumber: AdminDashboardController.maxUserBalance.value,
                   leftLabel: 'max_user_balance'.tr,
                   rightNumber: controller.totalUsersHasBalance,
                   rightLabel: 'users_has_balance'.tr,

@@ -30,7 +30,7 @@ class FeedbacksScreen extends StatelessWidget {
           appBarTitle: 'feedbacks'.tr,
           onBack: () => ProfileController.find.init(),
           body: LoadingRequest(
-            isLoading: controller.isLoading,
+            isLoading: controller.isLoading.value,
             child: controller.feedbackList.isEmpty
                 ? Center(child: Text('nothing_here_yet'.tr, style: AppFonts.x14Regular))
                 : ListView.builder(
@@ -63,23 +63,21 @@ class FeedbacksScreen extends StatelessWidget {
                                 collapsedBackgroundColor: highlighted ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
                                 expandedCrossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Buildables.buildProfileInfoRow('email'.tr, feedbackDTO.user.email ?? 'not_provided'.tr),
+                                  Buildables.buildProfileInfoRow('email'.tr, feedbackDTO.user?.email ?? 'not_provided'.tr),
                                   Buildables.lightDivider(),
                                   Buildables.buildProfileInfoRow(
                                     'birthdate'.tr,
-                                    feedbackDTO.user.birthdate != null ? Helper.formatDate(feedbackDTO.user.birthdate!) : 'not_provided'.tr,
+                                    feedbackDTO.user?.birthdate != null ? Helper.formatDate(feedbackDTO.user!.birthdate!) : 'not_provided'.tr,
                                   ),
                                   Buildables.lightDivider(),
-                                  Buildables.buildProfileInfoRow('gender'.tr, feedbackDTO.user.gender?.value ?? 'not_provided'.tr),
+                                  Buildables.buildProfileInfoRow('gender'.tr, feedbackDTO.user?.gender?.value ?? 'not_provided'.tr),
                                   Buildables.lightDivider(),
                                   const SizedBox(height: Paddings.large),
                                   Text('user_feedback'.tr, style: AppFonts.x15Bold),
                                   const SizedBox(height: Paddings.regular),
                                   ListTile(
                                     title: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(feedbackDTO.feedback.value.tr, style: AppFonts.x14Regular),
                                         InkWell(
                                           onTap: () => Get.bottomSheet(
                                             ClipRRect(
@@ -88,14 +86,21 @@ class FeedbacksScreen extends StatelessWidget {
                                             ),
                                             isScrollControlled: true,
                                           ),
-                                          child: Buildables.userImage(providedUser: feedbackDTO.user),
+                                          child: Buildables.userImage(providedUser: feedbackDTO.user, size: 40),
                                         ),
+                                        const SizedBox(width: Paddings.small),
+                                        Text(feedbackDTO.user?.name ?? 'not_provided'.tr, style: AppFonts.x14Regular),
+                                        const SizedBox(width: Paddings.small),
+                                        Text('is_feeling'.tr, style: AppFonts.x14Regular),
+                                        const SizedBox(width: Paddings.small),
+                                        Text(feedbackDTO.feedback.value.tr, style: AppFonts.x14Bold),
                                       ],
                                     ),
                                     subtitle: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(feedbackDTO.comment, style: AppFonts.x12Regular),
+                                        const SizedBox(height: Paddings.small),
+                                        Text('${'comment'.tr}: ${feedbackDTO.comment}', style: AppFonts.x12Regular),
                                         const SizedBox(height: Paddings.regular),
                                         Align(
                                           alignment: Alignment.centerRight,
@@ -139,15 +144,15 @@ class FeedbacksScreen extends StatelessWidget {
     );
   }
 
-  Widget buildUserCard(FeedbackDTO report) {
+  Widget buildUserCard(FeedbackDTO feedback) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Buildables.userImage(providedUser: report.user, size: 40),
-      title: Text(report.user.name ?? 'not_provided'.tr, style: AppFonts.x14Bold),
+      leading: Buildables.userImage(providedUser: feedback.user, size: 40),
+      title: Text(feedback.user?.name ?? 'not_provided'.tr, style: AppFonts.x14Bold),
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(report.user.phone ?? 'not_provided'.tr, style: AppFonts.x14Regular),
+          Text(feedback.feedback.name.tr, style: AppFonts.x14Regular),
           Padding(
             padding: const EdgeInsets.only(right: Paddings.regular),
             child: Row(
@@ -155,7 +160,7 @@ class FeedbacksScreen extends StatelessWidget {
               children: [
                 const Icon(Icons.pin_drop_outlined, size: 14),
                 const SizedBox(width: Paddings.small),
-                Text(report.user.governorate?.name ?? 'city'.tr, style: AppFonts.x14Regular),
+                Text(feedback.user?.governorate?.name ?? 'city'.tr, style: AppFonts.x14Regular),
               ],
             ),
           ),

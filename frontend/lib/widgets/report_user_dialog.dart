@@ -12,6 +12,7 @@ import '../models/service.dart';
 import '../models/task.dart';
 import '../models/user.dart';
 import '../repositories/params_repository.dart';
+import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
 import 'custom_buttons.dart';
 import 'custom_text_field.dart';
@@ -108,7 +109,8 @@ class _ReportUserDialogState extends State<ReportUserDialog> {
                       if (formKey.currentState?.validate() ?? false) {
                         ParamsRepository.find.reportUser(
                           ReportDTO(
-                            user: widget.user,
+                            reportedUser: widget.user,
+                            user: AuthenticationService.find.jwtUserData,
                             task: widget.task,
                             service: widget.service,
                             reasons: _selectedReportReasons!,

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -85,9 +83,17 @@ class ManageBalanceScreen extends StatelessWidget {
                                       child: Text('${'description'.tr} ${balanceTransaction.description}', style: AppFonts.x15Bold),
                                     ),
                                   if (balanceTransaction.depositType == DepositType.installment && balanceTransaction.depositSlip?.file.path != null)
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: Paddings.regular),
-                                      child: Image.file(File(balanceTransaction.depositSlip!.file.path), height: 150, width: 150, fit: BoxFit.cover),
+                                    Center(
+                                      child: InkWell(
+                                        onTap: () => showImageViewer(context, Image.network(balanceTransaction.depositSlip!.file.path).image),
+                                        child: ClipRRect(
+                                          borderRadius: smallRadius,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(top: Paddings.regular),
+                                            child: Image.network(balanceTransaction.depositSlip!.file.path, height: 150, width: 150, fit: BoxFit.cover),
+                                          ),
+                                        ),
+                                      ),
                                     )
                                   else
                                     Padding(

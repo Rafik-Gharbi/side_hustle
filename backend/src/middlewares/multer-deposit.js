@@ -3,7 +3,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
-const { adjustString } = require("../helper/helpers");
+const { adjustString, getDate } = require("../helper/helpers");
 
 //config
 var storage = multer.diskStorage({
@@ -27,10 +27,7 @@ var storage = multer.diskStorage({
       error.status = 415; // Set the status code to 415
       return cb(error);
     }
-    cb(
-      null,
-      `deposit-${adjustString(file.originalname, ext)}-${req.decoded.id}${ext}`
-    );
+    cb(null, `deposit-${req.decoded.id}-${getDate()}${ext}`);
   },
 });
 

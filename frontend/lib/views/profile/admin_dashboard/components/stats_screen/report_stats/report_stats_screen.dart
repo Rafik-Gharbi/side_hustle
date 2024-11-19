@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 import '../components/stats_scaffold.dart';
 import '../components/three_stats_overview.dart';
@@ -26,7 +27,7 @@ class ReportStatsScreen extends StatelessWidget {
                 children: [
                   // Report: Total reports, Reports per type
                   ThreeStatsOverview(
-                    leftNumber: controller.totalReports,
+                    leftNumber: AdminDashboardController.totalReports.value,
                     leftLabel: 'total_report'.tr,
                   ),
                   const SizedBox(height: Paddings.large),

@@ -1,16 +1,16 @@
 import 'package:get/get.dart';
 
-import '../../../../../../constants/colors.dart';
 import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/category.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class CategoryStatsController extends GetxController {
   bool isLoading = true;
-  int totalCategories = 0;
-  int totalSubCategories = 0;
+  // int totalCategories = 0;
+  // int totalSubCategories = 0;
   List<PieChartModel> subscriptionsPerCategoryData = [];
   List<PieChartModel> categoriesPerUsageData = [];
   int _pieChartTouchedIndex = -1;
@@ -23,31 +23,39 @@ class CategoryStatsController extends GetxController {
   }
 
   CategoryStatsController() {
-    _init();
-  }
-
-  Future<void> _init() async {
-    final (subscriptionList, usageList) = await AdminRepository.find.getCategoriesStatsData();
-    if (subscriptionList != null) _initPieChartSubscriptiobData(subscriptionList);
-    if (usageList != null) _initPieChartPerUsageData(usageList);
-    totalCategories = MainAppController.find.categories.where((element) => element.parentId == -1).length;
-    totalSubCategories = MainAppController.find.categories.where((element) => element.parentId != -1).length;
-    isLoading = false;
-    update();
-  }
-
-  void _initPieChartSubscriptiobData(List<Category> categoryList) {
-    // convert total expenses in result map value to percentage
-    final totalCategoriesUseMap = getTotalByType(categoryList);
-    double totalExpanses = 0;
-    totalCategoriesUseMap.forEach((key, value) => totalExpanses += value);
-    // convert data to chart data
-    if (totalCategoriesUseMap.isNotEmpty) {
-      subscriptionsPerCategoryData.clear();
-    }
-    totalCategoriesUseMap.forEach((key, value) {
-      subscriptionsPerCategoryData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminCategoryStatsData', {'jwt': ApiBaseHelper.find.getToken()});
     });
+  }
+
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminCategoryStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminCategoryStatsData', (data) async {
+        final subscriptionList = data?['categoryStats']?['subscription'] as List?;
+        final usageList = data?['categoryStats']?['usage'] as List?;
+        final categories = (data?['categoryStats']?['categories'] as List?)?.map((e) => Category.fromJson(e)).toList() ?? [];
+        if (subscriptionList != null) _initPieChartSubscriptiobData(subscriptionList);
+        if (usageList != null) _initPieChartPerUsageData(usageList);
+        AdminDashboardController.totalCategories.value = categories.where((element) => element.parentId == -1).length;
+        AdminDashboardController.totalSubCategories.value = categories.where((element) => element.parentId != -1).length;
+        AdminDashboardController.totalSubscription.value = subscriptionList?.length ?? 0;
+        isLoading = false;
+        update();
+      });
+    });
+  }
+
+  void _initPieChartSubscriptiobData(List<dynamic> categoryList) {
+    // convert total expenses in result map value to percentage
+    double totalExpanses = 0;
+    for (var element in categoryList) {
+      final used = Helper.resolveDouble(element['total_use']);
+      totalExpanses += used;
+      subscriptionsPerCategoryData.add(PieChartModel(name: element['category.name'], color: Helper.getRandomColor(), value: used, amount: used));
+    }
 
     for (int i = 0; i < subscriptionsPerCategoryData.length; i++) {
       subscriptionsPerCategoryData[i].value = double.parse((subscriptionsPerCategoryData[i].value * 100 / totalExpanses).toStringAsFixed(1));
@@ -61,7 +69,7 @@ class CategoryStatsController extends GetxController {
     for (var element in usageList) {
       final used = Helper.resolveDouble(element['total_tasks']);
       totalExpanses += used;
-      categoriesPerUsageData.add(PieChartModel(name: element['category.name'], color: Helper.getRandomColor(baseColor: kPrimaryColor), value: used, amount: used));
+      categoriesPerUsageData.add(PieChartModel(name: element['category.name'], color: Helper.getRandomColor(), value: used, amount: used));
     }
 
     for (int i = 0; i < categoriesPerUsageData.length; i++) {

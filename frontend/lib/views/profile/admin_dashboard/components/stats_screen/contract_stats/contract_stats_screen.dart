@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
 import '../components/stats_scaffold.dart';
 import '../components/three_stats_overview.dart';
@@ -25,11 +26,11 @@ class ContractStatsScreen extends StatelessWidget {
               children: [
                 // Contract: Contracts per day, Total contracts, Total payed contracts, Total active now
                 ThreeStatsOverview(
-                  leftNumber: controller.totalContracts,
+                  leftNumber: AdminDashboardController.totalContract.value,
                   leftLabel: 'total_contract'.tr,
-                  middleNumber: controller.payedContracts,
+                  middleNumber: AdminDashboardController.totalPayedContract.value,
                   middleLabel: 'payed_contract'.tr,
-                  rightNumber: controller.activeContracts,
+                  rightNumber: AdminDashboardController.activeContract.value,
                   rightLabel: 'active_contract'.tr,
                 ),
                 const SizedBox(height: Paddings.large),

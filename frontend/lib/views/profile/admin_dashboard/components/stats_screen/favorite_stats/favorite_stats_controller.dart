@@ -1,11 +1,12 @@
 import 'package:get/get.dart';
 
-import '../../../../../../constants/colors.dart';
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/dto/favorite_dto.dart';
 import '../../../../../../models/store.dart';
 import '../../../../../../models/task.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class FavoriteStatsController extends GetxController {
@@ -23,16 +24,28 @@ class FavoriteStatsController extends GetxController {
   }
 
   FavoriteStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminFavoriteStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final (favoriteStoresList, favoriteTasksList) = await AdminRepository.find.getFavoriteStatsData();
-    if (favoriteStoresList != null) _initPieChartData(favoriteStoresList);
-    if (favoriteTasksList != null) _initPieChartTasksData(favoriteTasksList);
-    totalFavorites = (favoriteStoresList?.length ?? 0) + (favoriteTasksList?.length ?? 0);
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminFavoriteStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminFavoriteStatsData', (data) async {
+        final favoriteStoresList = (data?['favoriteStats']?['stores'] as List?)?.map((e) => FavoriteDTO.fromJson(e)).toList() ?? [];
+        final favoriteTasksList = (data?['favoriteStats']?['tasks'] as List?)?.map((e) => FavoriteDTO.fromJson(e)).toList() ?? [];
+        if (favoriteStoresList.isNotEmpty) _initPieChartData(favoriteStoresList);
+        if (favoriteTasksList.isNotEmpty) _initPieChartTasksData(favoriteTasksList);
+        totalFavorites = (favoriteStoresList.length) + (favoriteTasksList.length);
+        AdminDashboardController.totalStoresFavorite.value = favoriteStoresList.length;
+        AdminDashboardController.totalTasksFavorite.value = favoriteTasksList.length;
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initPieChartData(List<FavoriteDTO> favoriteList) {
@@ -46,7 +59,7 @@ class FavoriteStatsController extends GetxController {
       favoritesPerStoreData.clear();
     }
     totalCategoriesUseMap.forEach((key, value) {
-      favoritesPerStoreData.add(PieChartModel(name: key.name ?? 'NA', color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      favoritesPerStoreData.add(PieChartModel(name: key.name ?? 'NA', color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < favoritesPerStoreData.length; i++) {
@@ -66,7 +79,7 @@ class FavoriteStatsController extends GetxController {
       favoritesPerTaskData.clear();
     }
     totalTasksUseMap.forEach((key, value) {
-      favoritesPerTaskData.add(PieChartModel(name: key.title, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      favoritesPerTaskData.add(PieChartModel(name: key.title, color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < favoritesPerTaskData.length; i++) {

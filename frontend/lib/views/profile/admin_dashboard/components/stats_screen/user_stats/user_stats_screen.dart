@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
 import '../components/three_stats_overview.dart';
 import '../components/stats_scaffold.dart';
@@ -25,11 +26,11 @@ class UserStatsScreen extends StatelessWidget {
               children: [
                 // User: total, active, signup per day, verified, users per profile completion
                 ThreeStatsOverview(
-                  leftNumber: controller.totalUsers,
+                  leftNumber: AdminDashboardController.totalUsers.value,
                   leftLabel: 'total_users'.tr,
-                  rightNumber: controller.activeUsers,
+                  rightNumber: AdminDashboardController.activeUsers.value,
                   rightLabel: 'active_users'.tr,
-                  middleNumber: controller.verifiedUsers,
+                  middleNumber: AdminDashboardController.verifiedUsers.value,
                   middleLabel: 'verified_users'.tr,
                 ),
                 const SizedBox(height: Paddings.large),

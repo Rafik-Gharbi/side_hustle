@@ -11,6 +11,10 @@ import '../services/authentication_service.dart';
 import '../services/navigation_history_observer.dart';
 import '../services/theme/theme.dart';
 import '../views/profile/admin_dashboard/admin_dashboard_screen.dart';
+import '../views/profile/admin_dashboard/components/approve_user/approve_user_screen.dart';
+import '../views/profile/admin_dashboard/components/feedbacks/feedbacks_screen.dart';
+import '../views/profile/admin_dashboard/components/manage_balance/manage_balance_screen.dart';
+import '../views/profile/admin_dashboard/components/user_reports/user_reports_screen.dart';
 import '../views/profile/referral/components/referees_screen.dart';
 import '../views/store/service_request/service_request_screen.dart';
 import '../views/task/add_task/add_task_bottomsheet.dart';
@@ -70,19 +74,28 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                       icon: const Icon(Icons.chevron_left, size: 28),
                       onPressed: () {
                         onBack?.call();
-                        if (Get.currentRoute == TaskProposalScreen.routeName ||
-                            Get.currentRoute == MessagesScreen.routeName ||
-                            Get.currentRoute == CoinsMarket.routeName ||
-                            Get.currentRoute == RefereesScreen.routeName ||
-                            Get.currentRoute != AdminDashboardScreen.routeName && NavigationHistoryObserver.instance.previousRouteHistory == AdminDashboardScreen.routeName ||
-                            Get.currentRoute == ServiceRequestScreen.routeName) {
-                          // Helper.goBack();
+                        final currentRoute = Get.currentRoute;
+                        final previousRoute = NavigationHistoryObserver.instance.previousRouteHistory;
+                        final specialRoutes = {
+                          TaskProposalScreen.routeName,
+                          MessagesScreen.routeName,
+                          CoinsMarket.routeName,
+                          RefereesScreen.routeName,
+                          UserReportsScreen.routeName,
+                          FeedbacksScreen.routeName,
+                          ApproveUserScreen.routeName,
+                          ManageBalanceScreen.routeName,
+                          ServiceRequestScreen.routeName
+                        };
+
+                        if (specialRoutes.contains(currentRoute) ||
+                            (currentRoute != AdminDashboardScreen.routeName && previousRoute == AdminDashboardScreen.routeName)) {
                           NavigationHistoryObserver.instance.goToPreviousRoute();
-                        } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && Get.currentRoute != ProfileScreen.routeName) {
+                        } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && currentRoute != ProfileScreen.routeName) {
                           NavigationHistoryObserver.instance.goToPreviousRoute(popToProfile: true);
                         } else {
                           MainAppController.find.bottomNavIndex.value = 0;
-                          if (Get.currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);
+                          if (currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);
                         }
                       },
                     )

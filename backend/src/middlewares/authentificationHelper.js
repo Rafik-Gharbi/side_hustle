@@ -2,27 +2,38 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { User } = require("../models/user_model");
 const { decryptData } = require("../helper/encryption");
+const { verifyToken } = require("../helper/helpers");
 // const { loadTranslations } = require("./helpers");
 
-function tokenVerification(req, res, next) {
+async function tokenVerification(req, res, next) {
   let token = req.headers["authorization"];
   if (token) {
-    let checkBearer = "Bearer ";
-    if (token.startsWith(checkBearer)) {
-      token = token.slice(checkBearer.length, token.length);
+    const result = await verifyToken(token);
+    if (result) {
+      req.decoded = result;
+      next();
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "session_expired",
+      });
     }
+    // let checkBearer = "Bearer ";
+    // if (token.startsWith(checkBearer)) {
+    //   token = token.slice(checkBearer.length, token.length);
+    // }
 
-    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-      if (err) {
-        return res.status(403).json({
-          success: false,
-          message: "session_expired",
-        });
-      } else {
-        req.decoded = decoded;
-        next();
-      }
-    });
+    // jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+    //   if (err) {
+    //     return res.status(403).json({
+    //       success: false,
+    //       message: "session_expired",
+    //     });
+    //   } else {
+    //     req.decoded = decoded;
+    //     next();
+    //   }
+    // });
   } else {
     return res.status(403).json({
       message: "no_token_provided",

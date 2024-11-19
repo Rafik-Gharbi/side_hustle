@@ -31,7 +31,7 @@ class NavigationHistoryObserver extends NavigatorObserver {
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     if (route.settings.name == HomeScreen.routeName) history.clear();
-    if (history.isNotEmpty && previousRouteHistory == route.settings.name) history.removeLast();
+    if (history.isNotEmpty && previousRouteHistory == route.settings.name) _removeLastHistory();
   }
 
   @override
@@ -96,12 +96,12 @@ class NavigationHistoryObserver extends NavigatorObserver {
   void goToPreviousRoute({bool? result, bool popToProfile = false}) {
     if (popToProfile) {
       while (previousRouteHistory != ProfileScreen.routeName) {
-        history.removeLast();
+        _removeLastHistory();
       }
       Get.offNamedUntil(ProfileScreen.routeName, (route) => route.settings.name == ProfileScreen.routeName);
     } else if (result != null) {
       Get.back(result: result);
-      history.removeLast();
+      _removeLastHistory();
     } else if (history.length <= 1) {
       // get saved history and populate [history]
       // if (_fetchSavedHistoryRequired) {
@@ -119,15 +119,22 @@ class NavigationHistoryObserver extends NavigatorObserver {
       //       }
       //     }
       //     Get.toNamed(previousRoute);
-      //     history.removeLast();
+      //     _removeLastHistory();
       //   });
       // } else {
       Get.toNamed(previousRouteHistory);
       // }
     } else {
       Get.toNamed(previousRouteHistory);
-      history.removeLast();
+      _removeLastHistory();
     }
+  }
+
+  void _removeLastHistory() {
+    final historyLength = history.length;
+    do {
+      _removeLastHistory();
+    } while (history.length >= historyLength);
   }
 
   void _addRoute(Route<dynamic>? newRoute) {

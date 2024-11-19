@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
 import '../components/pie_chart.dart';
 import '../components/stats_scaffold.dart';
@@ -27,7 +28,7 @@ class FeedbacksStatsScreen extends StatelessWidget {
                 children: [
                   // Feedback: Total feedbacks, Feedbacks per feedbackEnum, Feedback's messages
                   ThreeStatsOverview(
-                    leftNumber: controller.totalFeedbacks,
+                    leftNumber: AdminDashboardController.totalFeedbacks.value,
                     leftLabel: 'total_feedback'.tr,
                   ),
                   const SizedBox(height: Paddings.large),

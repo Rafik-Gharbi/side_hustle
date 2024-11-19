@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
 import '../components/stats_scaffold.dart';
 import '../components/three_stats_overview.dart';
@@ -27,9 +28,9 @@ class ChatStatsScreen extends StatelessWidget {
                 children: [
                   // Chat: Total discussions, Active discussions per day
                   ThreeStatsOverview(
-                    leftNumber: controller.totalDiscussions,
+                    leftNumber: AdminDashboardController.totalDiscussions.value,
                     leftLabel: 'total_discussion'.tr,
-                    rightNumber: controller.activeDiscussions,
+                    rightNumber: AdminDashboardController.activeDiscussions.value,
                     rightLabel: 'active_discussion'.tr,
                   ),                  const SizedBox(height: Paddings.large),
                   BarChartWidget(

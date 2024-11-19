@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
 import '../components/pie_chart.dart';
 import '../components/stats_scaffold.dart';
@@ -28,9 +29,9 @@ class CoinsStatsScreen extends StatelessWidget {
                 children: [
                   // Coins: Total sold coins, Coin packs selling per day, Active coin packs, Coin packs sold per pack
                   ThreeStatsOverview(
-                    leftNumber: controller.totalCoinPacksSold,
+                    leftNumber: AdminDashboardController.totalCoinPacksSold.value,
                     leftLabel: 'total_coin_packs_sold'.tr,
-                    rightNumber: controller.totalActiveCoinPacks,
+                    rightNumber: AdminDashboardController.totalActiveCoinPacks.value,
                     rightLabel: 'total_active_coin_packs'.tr,
                   ),
                   const SizedBox(height: Paddings.large),

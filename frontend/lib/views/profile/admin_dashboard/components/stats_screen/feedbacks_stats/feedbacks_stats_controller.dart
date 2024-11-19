@@ -1,16 +1,16 @@
 import 'package:get/get.dart';
 
-import '../../../../../../constants/colors.dart';
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/extensions/date_time_extension.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/dto/feedback_dto.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
 import '../../../../../../widgets/feedback_bottomsheet.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class FeedbacksStatsController extends GetxController {
   bool isLoading = true;
-  int totalFeedbacks = 0;
   Map<DateTime, double> feedbacksPerDayData = {};
   List<PieChartModel> feedbacksPerCategoryData = [];
   int _pieChartTouchedIndex = -1;
@@ -23,18 +23,27 @@ class FeedbacksStatsController extends GetxController {
   }
 
   FeedbacksStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminFeedbackStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final feedbacksList = await AdminRepository.find.getFeedbackStatsData();
-    if (feedbacksList != null) {
-      _initChartPerDayData(feedbacksList);
-      _initPieChartData(feedbacksList);
-    }
-    totalFeedbacks = feedbacksList?.length ?? 0;
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminFeedbackStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminFeedbackStatsData', (data) async {
+        final feedbacksList = (data?['feedbackStats'] as List?)?.map((e) => FeedbackDTO.fromJson(e)).toList() ?? [];
+        if (feedbacksList.isNotEmpty) {
+          _initChartPerDayData(feedbacksList);
+          _initPieChartData(feedbacksList);
+        }
+        AdminDashboardController.totalFeedbacks.value = feedbacksList.length;
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initChartPerDayData(List<FeedbackDTO> feedbackList) {
@@ -60,7 +69,7 @@ class FeedbacksStatsController extends GetxController {
       feedbacksPerCategoryData.clear();
     }
     totalCategoriesUseMap.forEach((key, value) {
-      feedbacksPerCategoryData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      feedbacksPerCategoryData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < feedbacksPerCategoryData.length; i++) {

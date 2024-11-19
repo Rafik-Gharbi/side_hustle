@@ -1,13 +1,13 @@
 import 'package:get/get.dart';
 
-import '../../../../../../constants/colors.dart';
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/contract.dart';
 import '../../../../../../models/governorate.dart';
 import '../../../../../../models/store.dart';
 import '../../../../../../models/task.dart';
 import '../../../../../../models/user.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
 import '../components/pie_chart.dart';
 
 class GovernorateStatsController extends GetxController {
@@ -26,17 +26,29 @@ class GovernorateStatsController extends GetxController {
   }
 
   GovernorateStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminGovernorateStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final (storeList, userList, taskList, contractList) = await AdminRepository.find.getGovernorateStatsData();
-    if (storeList != null) _initPieChartStoreData(storeList);
-    if (userList != null) _initPieChartUserData(userList);
-    if (taskList != null) _initPieChartTaskData(taskList);
-    if (contractList != null) _initPieChartContractData(contractList);
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminGovernorateStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminGovernorateStatsData', (data) async {
+        final storeList = (data?['governorateStats']?['stores'] as List?)?.map((e) => Store.fromJson(e)).toList() ?? [];
+        final userList = (data?['governorateStats']?['users'] as List?)?.map((e) => User.fromJson(e)).toList() ?? [];
+        final taskList = (data?['governorateStats']?['tasks'] as List?)?.map((e) => Task.fromJson(e)).toList() ?? [];
+        final contractList = (data?['governorateStats']?['contracts'] as List?)?.map((e) => Contract.fromJson(e)).toList() ?? [];
+        if (storeList.isNotEmpty) _initPieChartStoreData(storeList);
+        if (userList.isNotEmpty) _initPieChartUserData(userList);
+        if (taskList.isNotEmpty) _initPieChartTaskData(taskList);
+        if (contractList.isNotEmpty) _initPieChartContractData(contractList);
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initPieChartStoreData(List<Store> favoriteList) {
@@ -49,7 +61,7 @@ class GovernorateStatsController extends GetxController {
       storesPerGovernorateData.clear();
     }
     totalCategoriesUseMap.forEach((key, value) {
-      storesPerGovernorateData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      storesPerGovernorateData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < storesPerGovernorateData.length; i++) {
@@ -68,7 +80,7 @@ class GovernorateStatsController extends GetxController {
       tasksPerGovernorateData.clear();
     }
     totalTasksUseMap.forEach((key, value) {
-      tasksPerGovernorateData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      tasksPerGovernorateData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < tasksPerGovernorateData.length; i++) {
@@ -87,7 +99,7 @@ class GovernorateStatsController extends GetxController {
       usersPerGovernorateData.clear();
     }
     totalUsersUseMap.forEach((key, value) {
-      usersPerGovernorateData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      usersPerGovernorateData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < usersPerGovernorateData.length; i++) {
@@ -106,7 +118,7 @@ class GovernorateStatsController extends GetxController {
       contractsPerGovernorateData.clear();
     }
     totalContractsUseMap.forEach((key, value) {
-      contractsPerGovernorateData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      contractsPerGovernorateData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < contractsPerGovernorateData.length; i++) {

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 import '../components/stats_scaffold.dart';
 import '../components/three_stats_overview.dart';
@@ -27,9 +28,9 @@ class ReferralsStatsScreen extends StatelessWidget {
                 children: [
                   // Referral: Total referrals, Referrals per status, Total successful referrals
                   ThreeStatsOverview(
-                    leftNumber: controller.totalReferrals,
+                    leftNumber: AdminDashboardController.totalReferrals.value,
                     leftLabel: 'total_referral'.tr,
-                    rightNumber: controller.totalSuccessfulReferrals,
+                    rightNumber: AdminDashboardController.totalSuccessReferrals.value,
                     rightLabel: 'total_successful_referral'.tr,
                   ),
                   const SizedBox(height: Paddings.large),

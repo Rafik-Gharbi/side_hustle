@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 import '../components/stats_scaffold.dart';
 import '../components/three_stats_overview.dart';
@@ -29,6 +30,10 @@ class FavoriteStatsScreen extends StatelessWidget {
                   ThreeStatsOverview(
                     leftNumber: controller.totalFavorites,
                     leftLabel: 'total_favorite'.tr,
+                    middleNumber: AdminDashboardController.totalStoresFavorite.value,
+                    middleLabel: 'total_stores_favorite'.tr,
+                    rightNumber: AdminDashboardController.totalTasksFavorite.value,
+                    rightLabel: 'total_tasks_favorite'.tr,
                   ),
                   const SizedBox(height: Paddings.large),
                   PieChartWidget(

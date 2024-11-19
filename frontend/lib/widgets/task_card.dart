@@ -89,7 +89,7 @@ class TaskCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(width: Get.width - 160, child: OverflowedTextWithTooltip(title: task.title, style: AppFonts.x14Bold, expand: false)),
+                  SizedBox(width: Get.width - (dense ? 180 : 160), child: OverflowedTextWithTooltip(title: task.title, style: AppFonts.x14Bold, expand: false)),
                   if (task.category != null && !dense) Text(task.category!.name, style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
                 ],
               ),

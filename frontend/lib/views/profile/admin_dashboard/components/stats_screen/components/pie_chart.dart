@@ -39,6 +39,7 @@ class _PieChartWidgetState extends State<PieChartWidget> {
     widgetHeight = widgetHeight < minHeight ? minHeight : widgetHeight;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 600),
+      constraints: const BoxConstraints(maxHeight: 600),
       curve: Curves.decelerate,
       height: widgetHeight,
       decoration: BoxDecoration(
@@ -134,12 +135,10 @@ class _PieChartWidgetState extends State<PieChartWidget> {
                                 children: [
                                   DecoratedBox(decoration: BoxDecoration(color: category.color), child: SizedBox(width: isTouched ? 12 : 10, height: isTouched ? 12 : 10)),
                                   const SizedBox(width: Paddings.regular),
-                                  SizedBox(
-                                    width: Get.width * 0.21,
-                                    child: FittedBox(
-                                        alignment: Alignment.centerLeft,
-                                        fit: BoxFit.scaleDown,
-                                        child: Text(category.name, style: AppFonts.x12Regular.copyWith(fontWeight: isTouched ? FontWeight.bold : FontWeight.normal))),
+                                  FittedBox(
+                                    alignment: Alignment.centerLeft,
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(category.name, style: AppFonts.x12Regular.copyWith(fontWeight: isTouched ? FontWeight.bold : FontWeight.normal)),
                                   ),
                                   const Spacer(),
                                   Text(

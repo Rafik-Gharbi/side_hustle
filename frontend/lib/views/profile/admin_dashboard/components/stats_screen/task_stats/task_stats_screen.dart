@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
 import '../components/pie_chart.dart';
 import '../components/stats_scaffold.dart';
@@ -27,9 +28,11 @@ class TaskStatsScreen extends StatelessWidget {
                 children: [
                   // Task: Tasks per day, Total active tasks, Total expired tasks (useful to list tasks), Tasks per category
                   ThreeStatsOverview(
-                    leftNumber: controller.activeTasks,
-                    leftLabel: 'active_tasks'.tr,
-                    rightNumber: controller.expiredTasks,
+                    leftNumber: AdminDashboardController.totalTasks.value,
+                    leftLabel: 'total_tasks'.tr,
+                    middleNumber: AdminDashboardController.activeTasks.value,
+                    middleLabel: 'active_tasks'.tr,
+                    rightNumber: AdminDashboardController.expiredTasks.value,
                     rightLabel: 'expired_tasks'.tr,
                   ),
                   const SizedBox(height: Paddings.large),

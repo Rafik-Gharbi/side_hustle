@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 import '../components/stats_scaffold.dart';
 import '../components/three_stats_overview.dart';
@@ -26,10 +27,12 @@ class CategoryStatsScreen extends StatelessWidget {
                 children: [
                   // Category: Subscription per category, Most useful categories
                   ThreeStatsOverview(
-                    leftNumber: controller.totalCategories,
+                    leftNumber: AdminDashboardController.totalCategories.value,
                     leftLabel: 'total_categories'.tr,
-                    rightNumber: controller.totalSubCategories,
-                    rightLabel: 'total_sub_categories'.tr,
+                    middleNumber: AdminDashboardController.totalSubCategories.value,
+                    middleLabel: 'total_sub_categories'.tr,
+                    rightNumber: AdminDashboardController.totalSubscription.value,
+                    rightLabel: 'total_subscription'.tr,
                   ),
                   const SizedBox(height: Paddings.large),
                   PieChartWidget(

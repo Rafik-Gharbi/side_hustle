@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
 
+import '../../../../../controllers/main_app_controller.dart';
 import '../../../../../helpers/helper.dart';
 import '../../../../../models/dto/user_approve_dto.dart';
 import '../../../../../models/user.dart';
-import '../../../../../repositories/admin_repository.dart';
+import '../../../../../networking/api_base_helper.dart';
 
 class ApproveUserController extends GetxController {
   bool isLoading = true;
@@ -11,47 +12,53 @@ class ApproveUserController extends GetxController {
   UserApproveDTO? highlightedUserApprove;
 
   ApproveUserController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminApproveUsers', {'jwt': ApiBaseHelper.find.getToken()});
+    });
+  }
+
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminApproveUsers');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminApproveUsers', (data) {
+        userApproveList = (data?['users'] as List?)?.map((e) => UserApproveDTO.fromJson(e)).toList() ?? [];
+        if (Get.arguments != null) {
+          highlightedUserApprove = userApproveList.cast<UserApproveDTO?>().singleWhere((element) => element?.user?.id == Get.arguments, orElse: () => null);
+        }
+        if (highlightedUserApprove != null) {
+          Future.delayed(const Duration(milliseconds: 1600), () {
+            highlightedUserApprove = null;
+            update();
+          });
+        }
+
+        isLoading = false;
+        update();
+      });
+      MainAppController.find.socket!.on(
+        'adminApproveStatus',
+        (data) => Helper.snackBar(message: data?['done'] == true ? 'user_updated_successfully'.tr : 'user_not_updated'.tr),
+      );
+    });
   }
 
   Future<void> approveUser(User? user) async {
     if (user == null) return;
-    final result = await AdminRepository.find.approveUser(user);
-    if (result) {
-      Helper.snackBar(message: 'user_approved_successfully'.tr);
-      userApproveList.removeWhere((element) => element.user?.id == user.id);
-      update();
-    } else {
-      Helper.snackBar(message: 'user_not_approved'.tr);
-    }
+    MainAppController.find.socket!.emit('approveUser', {
+      'jwt': ApiBaseHelper.find.getToken(),
+      'id': user.id!,
+    });
   }
 
   Future<void> couldNotApprove(User? user) async {
     if (user == null) return;
-    final result = await AdminRepository.find.notApprovableUser(user);
-    if (result) {
-      Helper.snackBar(message: 'user_rejected_successfully'.tr);
-      userApproveList.removeWhere((element) => element.user?.id == user.id);
-      update();
-    } else {
-      Helper.snackBar(message: 'user_not_rejected'.tr);
-    }
+    MainAppController.find.socket!.emit('couldNotApprove', {
+      'jwt': ApiBaseHelper.find.getToken(),
+      'id': user.id!,
+    });
   }
 
-  void callUser(User? user) =>
-      user?.phone != null && user!.phone!.isNotEmpty ? Helper.launchUrlHelper('tel:${user.phone}') : Helper.snackBar(message: 'could_not_call'.tr);
-
-  Future<void> _init() async {
-    userApproveList = await AdminRepository.find.listUsersApprove() ?? [];
-    if (Get.arguments != null) highlightedUserApprove = userApproveList.cast<UserApproveDTO?>().singleWhere((element) => element?.user?.id == Get.arguments, orElse: () => null);
-    if (highlightedUserApprove != null) {
-      Future.delayed(const Duration(milliseconds: 1600), () {
-        highlightedUserApprove = null;
-        update();
-      });
-    }
-
-    isLoading = false;
-    update();
-  }
+  void callUser(User? user) => user?.phone != null && user!.phone!.isNotEmpty ? Helper.launchUrlHelper('tel:${user.phone}') : Helper.snackBar(message: 'could_not_call'.tr);
 }

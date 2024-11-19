@@ -4,29 +4,45 @@ const { Chat } = require("./src/models/chat_model");
 const { User } = require("./src/models/user_model");
 const { Discussion } = require("./src/models/discussion_model");
 const { getChat, populateContract } = require("./src/sql/sql_request");
-const { sendMail } = require("./src/helper/email_service");
 const { NotificationType } = require("./src/helper/notification_service");
 const { Contract } = require("./src/models/contract_model");
-const { isUUID } = require("./src/helper/helpers");
-const { Task } = require("./src/models/task_model");
-const { Service } = require("./src/models/service_model");
+const { isUUID, verifyToken } = require("./src/helper/helpers");
 const { createContract } = require("./src/helper/pdfHelper");
+const {
+  getAdminData,
+  getAllReports,
+  getBalanceTransactions,
+  updateStatus,
+  usersForApproving,
+  getUsersFeedbacks,
+  getBalanceStatsData,
+  getCategoriesStatsData,
+  getChatStatsData,
+  getCoinPackStatsData,
+  getContractStatsData,
+  getFavoriteStatsData,
+  getFeedbackStatsData,
+  getGovernorateStatsData,
+  getReferralStatsData,
+  getReportStatsData,
+  getTaskStatsData,
+  getUserStatsData,
+  getStoreStatsData,
+  getReviewStatsData,
+} = require("./src/controllers/admin_controller");
 
 function initializeSocket(io) {
   // const io = socketIo(server);
 
   io.on("connection", async (socket) => {
     // console.log(`${socket.id} has connected`);
-
     socket.on("disconnect", () => {
       // console.log("User disconnected");
     });
-
     //mark as seen
     socket.on("markAsSeen", async ({ connected, sender, discussionId }) => {
       await markAsSeen(sender, connected, discussionId);
     });
-
     // When a user connects, fetch chat history or create a new room
     socket.on("join", async ({ connected, sender, discussionId }) => {
       try {
@@ -51,7 +67,6 @@ function initializeSocket(io) {
         console.error("Error fetching chat history:", error);
       }
     });
-
     // Connect user to standby room based on his ID for notifying him when outside messages screen
     socket.on("standBy", async ({ userId }) => {
       try {
@@ -61,7 +76,6 @@ function initializeSocket(io) {
         console.error("Error joining user to standby: ", error);
       }
     });
-
     socket.on("chatMessage", async (msg) => {
       let isNewBubble = false;
       try {
@@ -201,7 +215,7 @@ function initializeSocket(io) {
         let contract = await populateContract(ID);
         contract.isSigned = true;
         contract.save();
-        
+
         // Emit the message to all users in the room
         io.to(`${data.discussionId}`).emit("updateContract", {
           contract: contract,
@@ -239,9 +253,327 @@ function initializeSocket(io) {
         console.error("Error paying contract:", error);
       }
     });
-  });
+    // **************************** Admin Stats ****************************
+    // Get admin dashboard data
+    socket.on("getDashboardData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        socket.join(`${adminUser.id}-adminDashboard`);
 
-  return io;
+        const adminDashboard = await getAdminData();
+        io.emit("updateAdminDashboard", {
+          adminDashboard: adminDashboard,
+        });
+      } catch (error) {
+        console.error("Error getting admin data:", error);
+      }
+    });
+    socket.on("getAdminReport", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const reports = await getAllReports();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminReport", {
+          reports: reports,
+        });
+      } catch (error) {
+        console.error("Error getting admin reports:", error);
+      }
+    });
+    socket.on("getAdminFeedbacks", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const feedbacks = await getUsersFeedbacks();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminFeedbacks", {
+          feedbacks: feedbacks,
+        });
+      } catch (error) {
+        console.error("Error getting admin feedbacks:", error);
+      }
+    });
+    socket.on("getAdminBalance", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const transactions = await getBalanceTransactions();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminBalance", {
+          transactions: transactions,
+        });
+      } catch (error) {
+        console.error("Error getting admin feedbacks:", error);
+      }
+    });
+    socket.on("rejectBalanceRequest", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const done = await updateStatus(data.id, data.status);
+        if (done) {
+          const transactions = await getBalanceTransactions();
+          io.to(`${adminUser.id}-adminDashboard`).emit("adminBalance", {
+            transactions: transactions,
+          });
+        }
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminBalanceStatus", {
+          done: done,
+        });
+      } catch (error) {
+        console.error("Error getting admin feedbacks:", error);
+      }
+    });
+    socket.on("acceptBalanceRequest", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const done = await updateStatus(data.id, data.status);
+        if (done) {
+          const transactions = await getBalanceTransactions();
+          io.to(`${adminUser.id}-adminDashboard`).emit("adminBalance", {
+            transactions: transactions,
+          });
+        }
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminBalanceStatus", {
+          done: done,
+        });
+      } catch (error) {
+        console.error("Error getting admin feedbacks:", error);
+      }
+    });
+    socket.on("getAdminApproveUsers", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const users = await usersForApproving();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminApproveUsers", {
+          users: users,
+        });
+      } catch (error) {
+        console.error("Error getting admin approve users:", error);
+      }
+    });
+    socket.on("rejectApproveUser", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const done = await updateStatus(data.id, data.status);
+        if (done) {
+          const users = await usersForApproving();
+          io.to(`${adminUser.id}-adminDashboard`).emit("adminApproveUsers", {
+            users: users,
+          });
+        }
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminApproveStatus", {
+          done: done,
+        });
+      } catch (error) {
+        console.error("Error rejecting approve user:", error);
+      }
+    });
+    socket.on("acceptApproveUser", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const done = await updateStatus(data.id, data.status);
+        if (done) {
+          const users = await usersForApproving();
+          io.to(`${adminUser.id}-adminDashboard`).emit("adminApproveUsers", {
+            users: users,
+          });
+        }
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminApproveStatus", {
+          done: done,
+        });
+      } catch (error) {
+        console.error("Error accepting approve user:", error);
+      }
+    });
+    socket.on("getAdminBalanceStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const balanceStats = await getBalanceStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminBalanceStatsData", {
+          balanceStats: balanceStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin balance stats data:", error);
+      }
+    });
+    socket.on("getAdminCategoryStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const categoryStats = await getCategoriesStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminCategoryStatsData", {
+          categoryStats: categoryStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin categories stats data:", error);
+      }
+    });
+    socket.on("getAdminChatStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const chatStats = await getChatStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminChatStatsData", {
+          chatStats: chatStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin chat stats data:", error);
+      }
+    });
+    socket.on("getAdminCoinStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const coinStats = await getCoinPackStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminCoinStatsData", {
+          coinStats: coinStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin coin stats data:", error);
+      }
+    });
+    socket.on("getAdminContractStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const contractStats = await getContractStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminContractStatsData", {
+          contractStats: contractStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin contract stats data:", error);
+      }
+    });
+    socket.on("getAdminFavoriteStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const favoriteStats = await getFavoriteStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminFavoriteStatsData", {
+          favoriteStats: favoriteStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin favorite stats data:", error);
+      }
+    });
+    socket.on("getAdminFeedbackStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const feedbackStats = await getFeedbackStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminFeedbackStatsData", {
+          feedbackStats: feedbackStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin feedback stats data:", error);
+      }
+    });
+    socket.on("getAdminGovernorateStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const governorateStats = await getGovernorateStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit(
+          "adminGovernorateStatsData",
+          {
+            governorateStats: governorateStats,
+          }
+        );
+      } catch (error) {
+        console.error("Error getting admin governorate stats data:", error);
+      }
+    });
+    socket.on("getAdminReferralStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const referralStats = await getReferralStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminReferralStatsData", {
+          referralStats: referralStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin referral stats data:", error);
+      }
+    });
+    socket.on("getAdminReportStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const reportStats = await getReportStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminReportStatsData", {
+          reportStats: reportStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin report stats data:", error);
+      }
+    });
+    socket.on("getAdminReviewStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const reviewStats = await getReviewStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminReviewStatsData", {
+          reviewStats: reviewStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin review stats data:", error);
+      }
+    });
+    socket.on("getAdminStoreStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const storeStats = await getStoreStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminStoreStatsData", {
+          storeStats: storeStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin store stats data:", error);
+      }
+    });
+    socket.on("getAdminTaskStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const taskStats = await getTaskStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminTaskStatsData", {
+          taskStats: taskStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin task stats data:", error);
+      }
+    });
+    socket.on("getAdminUserStatsData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const userStats = await getUserStatsData();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminUserStatsData", {
+          userStats: userStats,
+        });
+      } catch (error) {
+        console.error("Error getting admin user stats data:", error);
+      }
+    });
+
+    return io;
+  });
+}
+
+// Helper function to validate admin
+async function validateAdmin(jwt) {
+  try {
+    const adminUser = await verifyToken(jwt);
+    return adminUser?.role === "admin" ? adminUser : null;
+  } catch (error) {
+    logger.error("Admin validation failed:", error);
+    return null;
+  }
 }
 
 async function markAsSeen(sender, connected, discussionId) {

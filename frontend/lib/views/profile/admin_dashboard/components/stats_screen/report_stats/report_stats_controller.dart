@@ -1,15 +1,15 @@
 import 'package:get/get.dart';
 
-import '../../../../../../constants/colors.dart';
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/dto/report_dto.dart';
 import '../../../../../../models/enum/report_reasons.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class ReportStatsController extends GetxController {
   bool isLoading = true;
-  int totalReports = 0;
   Map<DateTime, double> reportsPerDayData = {};
   List<PieChartModel> reportsPerCategoryData = [];
   int _pieChartTouchedIndex = -1;
@@ -22,17 +22,24 @@ class ReportStatsController extends GetxController {
   }
 
   ReportStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminReportStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final reportsList = await AdminRepository.find.getReportStatsData();
-    if (reportsList != null) {
-      _initPieChartData(reportsList);
-    }
-    totalReports = reportsList?.length ?? 0;
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminReportStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminReportStatsData', (data) async {
+        final reportsList = (data?['reportStats'] as List?)?.map((e) => ReportDTO.fromJson(e)).toList() ?? [];
+        if (reportsList.isNotEmpty) _initPieChartData(reportsList);
+        AdminDashboardController.totalReports.value = reportsList.length;
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initPieChartData(List<ReportDTO> reportList) {
@@ -45,7 +52,7 @@ class ReportStatsController extends GetxController {
       reportsPerCategoryData.clear();
     }
     totalCategoriesUseMap.forEach((key, value) {
-      reportsPerCategoryData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(baseColor: kPrimaryColor), value: value, amount: value));
+      reportsPerCategoryData.add(PieChartModel(name: key.name, color: Helper.getRandomColor(), value: value, amount: value));
     });
 
     for (int i = 0; i < reportsPerCategoryData.length; i++) {

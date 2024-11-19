@@ -48,6 +48,7 @@ String _lastRequestedUrl = '';
 
 class ApiBaseHelper extends GetxController {
   static ApiBaseHelper get find => Get.find<ApiBaseHelper>();
+  static bool _isBlockingRenew = false;
   // String baseUrl = baseUrlRemote;
   String baseUrl = kReleaseMode
       ? baseUrlRemote
@@ -204,14 +205,18 @@ class ApiBaseHelper extends GetxController {
         throw UnauthorisedException(response.body.toString());
       case 403:
         if (response.body.contains('session_expired')) {
-          if (kDebugMode) {
-            Helper.snackBar(message: 'session_expired', title: 'login_msg', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
-          }
-          if (SharedPreferencesService.find.get(refreshTokenKey) != null) {
-            final result = await AuthenticationService.find.renewToken();
-            return result ? await request(RequestTypeExtension.fromString(response.request!.method), response.request!.url.path, body: response.body, sendToken: true) : null;
-          } else {
-            AuthenticationService.find.logout();
+          if (!_isBlockingRenew) {
+            _isBlockingRenew = true;
+            if (kDebugMode) {
+              Helper.snackBar(message: 'session_expired', title: 'login_msg', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
+            }
+            if (SharedPreferencesService.find.get(refreshTokenKey) != null) {
+              final result = await AuthenticationService.find.renewToken();
+              return result ? await request(RequestTypeExtension.fromString(response.request!.method), response.request!.url.path, body: response.body, sendToken: true) : null;
+            } else {
+              AuthenticationService.find.logout();
+            }
+            Future.delayed(const Duration(seconds: 30), () => _isBlockingRenew = false);
           }
         } else if (kDebugMode) {
           Helper.snackBar(

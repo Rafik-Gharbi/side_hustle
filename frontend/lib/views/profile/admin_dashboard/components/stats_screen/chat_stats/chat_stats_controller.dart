@@ -1,15 +1,15 @@
 import 'package:get/get.dart';
 
+import '../../../../../../controllers/main_app_controller.dart';
 import '../../../../../../helpers/extensions/date_time_extension.dart';
 import '../../../../../../helpers/helper.dart';
 import '../../../../../../models/dto/discussion_dto.dart';
-import '../../../../../../repositories/admin_repository.dart';
+import '../../../../../../networking/api_base_helper.dart';
+import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class ChatStatsController extends GetxController {
   bool isLoading = true;
-  int totalDiscussions = 0;
-  int activeDiscussions = 0;
   Map<DateTime, double> discussionsPerDayData = {};
   List<PieChartModel> discussionsPerCategoryData = [];
   int _pieChartTouchedIndex = -1;
@@ -22,18 +22,25 @@ class ChatStatsController extends GetxController {
   }
 
   ChatStatsController() {
-    _init();
+    _initSocket();
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      MainAppController.find.socket!.emit('getAdminChatStatsData', {'jwt': ApiBaseHelper.find.getToken()});
+    });
   }
 
-  Future<void> _init() async {
-    final (discussionsList, activeCount) = await AdminRepository.find.getChatStatsData();
-    if (discussionsList != null) {
-      _initChartPerDayData(discussionsList);
-    }
-    totalDiscussions = discussionsList?.length ?? 0;
-    activeDiscussions = activeCount ?? 0;
-    isLoading = false;
-    update();
+  void _initSocket() {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+      final socketInitialized = MainAppController.find.socket!.hasListeners('adminChatStatsData');
+      if (socketInitialized) return;
+      MainAppController.find.socket!.on('adminChatStatsData', (data) async {
+        final discussionsList = (data?['chatStats']?['discussionsList'] as List?)?.map((e) => DiscussionDTO.fromJson(e)).toList() ?? [];
+        if (discussionsList.isNotEmpty) _initChartPerDayData(discussionsList);
+        AdminDashboardController.totalDiscussions.value = discussionsList.length;
+        AdminDashboardController.activeDiscussions.value = data?['chatStats']?['activeCount'] ?? 0;
+        isLoading = false;
+        update();
+      });
+    });
   }
 
   void _initChartPerDayData(List<DiscussionDTO> discussionList) {
