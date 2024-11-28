@@ -15,6 +15,8 @@ const Contract = sequelize.define(
     dueDate: { type: Sequelize.DATE, allowNull: true },
     isSigned: { type: Sequelize.BOOLEAN, defaultValue: false },
     isPayed: { type: Sequelize.BOOLEAN, defaultValue: false },
+    description: { type: Sequelize.STRING, allowNull: false },
+    delivrables: { type: Sequelize.STRING, allowNull: false },
   },
   {
     tableName: "contract",

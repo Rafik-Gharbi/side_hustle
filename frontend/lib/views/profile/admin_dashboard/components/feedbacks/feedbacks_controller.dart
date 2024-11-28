@@ -19,6 +19,12 @@ class FeedbacksController extends GetxController {
     );
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminFeedbacks');
+  }
+
   void _initSocket() {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       final socketInitialized = MainAppController.find.socket!.hasListeners('adminFeedbacks');

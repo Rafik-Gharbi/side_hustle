@@ -7,13 +7,19 @@ import '../../../../../models/user.dart';
 import '../../../../../networking/api_base_helper.dart';
 
 class ManageBalanceController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   List<BalanceTransaction> balanceTransactionList = [];
   BalanceTransaction? highlightedBalanceTransaction;
 
   ManageBalanceController() {
     _initSocket();
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () => MainAppController.find.socket!.emit('getAdminBalance', {'jwt': ApiBaseHelper.find.getToken()}));
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminBalance');
   }
 
   void _initSocket() {
@@ -31,7 +37,7 @@ class ManageBalanceController extends GetxController {
             update();
           });
         }
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
       MainAppController.find.socket!.on(
@@ -49,7 +55,7 @@ class ManageBalanceController extends GetxController {
     MainAppController.find.socket!.emit('rejectBalanceRequest', {
       'jwt': ApiBaseHelper.find.getToken(),
       'id': balanceTransaction.id!,
-      'status': BalanceTransactionStatus.failed,
+      'status': BalanceTransactionStatus.failed.name,
     });
   }
 
@@ -58,7 +64,7 @@ class ManageBalanceController extends GetxController {
     MainAppController.find.socket!.emit('acceptBalanceRequest', {
       'jwt': ApiBaseHelper.find.getToken(),
       'id': balanceTransaction.id!,
-      'status': BalanceTransactionStatus.completed,
+      'status': BalanceTransactionStatus.completed.name,
     });
   }
 }

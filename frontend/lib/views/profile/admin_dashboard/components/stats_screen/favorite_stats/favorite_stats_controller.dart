@@ -10,7 +10,7 @@ import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class FavoriteStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   int totalFavorites = 0;
   List<PieChartModel> favoritesPerStoreData = [];
   List<PieChartModel> favoritesPerTaskData = [];
@@ -30,6 +30,12 @@ class FavoriteStatsController extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminFavoriteStatsData');
+  }
+
   void _initSocket() {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       final socketInitialized = MainAppController.find.socket!.hasListeners('adminFavoriteStatsData');
@@ -42,7 +48,7 @@ class FavoriteStatsController extends GetxController {
         totalFavorites = (favoriteStoresList.length) + (favoriteTasksList.length);
         AdminDashboardController.totalStoresFavorite.value = favoriteStoresList.length;
         AdminDashboardController.totalTasksFavorite.value = favoriteTasksList.length;
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

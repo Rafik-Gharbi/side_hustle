@@ -85,10 +85,7 @@ class BuildChatMessages extends StatelessWidget {
                                               controller.messageController.text = 'reject_contract_msg'.tr;
                                               controller.sendMessage();
                                             },
-                                            onSignContract: () => contract.provider?.id == AuthenticationService.find.jwtUserData?.id
-                                                ? MainAppController.find.socket!
-                                                    .emit('signContract', {'contractId': contract.id, 'discussionId': controller.selectedChatBubble?.id})
-                                                : controller.payContract(contract),
+                                            onSignContract: () => controller.signContract(contract),
                                           ),
                                           closedBuilder: (_, openContainer) => ListTile(
                                             onTap: openContainer,

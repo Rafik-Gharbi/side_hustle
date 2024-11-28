@@ -9,6 +9,7 @@ import '../helpers/helper.dart';
 import '../models/coin_pack.dart';
 import '../repositories/params_repository.dart';
 import '../repositories/transaction_repository.dart';
+import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
 import 'custom_buttons.dart';
 import 'custom_scaffold_bottom_navigation.dart';
@@ -92,15 +93,18 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
                       const SizedBox(height: Paddings.small),
                       if (pack.bonusMsg != null) Text(pack.bonusMsg!, style: AppFonts.x12Bold.copyWith(color: kAccentColor)),
                       const SizedBox(height: Paddings.large),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: CustomButtons.elevatePrimary(
-                          width: 200,
-                          height: 40,
-                          title: 'buy_for_price'.trParams({'price': pack.price.toString()}),
-                          titleStyle: AppFonts.x14Bold.copyWith(color: kNeutralColor100),
-                          onPressed: () => _purchaseCoins(pack),
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('valid_for_x_days'.trParams({'days': (pack.validMonths * 30).toString()}), style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                          CustomButtons.elevatePrimary(
+                            width: 200,
+                            height: 40,
+                            title: 'buy_for_price'.trParams({'price': pack.price.toString()}),
+                            titleStyle: AppFonts.x14Bold.copyWith(color: kNeutralColor100),
+                            onPressed: () => _purchaseCoins(pack),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -127,8 +131,26 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
   void _purchaseCoins(CoinPack pack) => Helper.openConfirmationDialog(
       title: 'buy_coins_costs_msg'.trParams({'totalCoins': pack.totalCoins.toString(), 'price': pack.price.toString()}),
       onConfirm: () {
-        TransactionRepository.find.buyCoinPack(pack).then((value) {
-          if (value) controller.update();
-        });
+        Future.delayed(const Duration(milliseconds: 100)).then(
+          (value) => Get.bottomSheet(
+            isScrollControlled: true,
+            Buildables.buildPaymentOptionsBottomsheet(
+              onBankCardPressed: () {
+                Helper.goBack();
+                Helper.snackBar(message: 'bank_card_not_supported_yet'.tr); // TODO add bank card payment
+              },
+              onBalancePressed: () async {
+                Helper.goBack();
+                if ((AuthenticationService.find.jwtUserData?.balance ?? 0) < pack.price) {
+                  Helper.snackBar(message: 'not_enough_balance'.tr);
+                  return;
+                }
+                TransactionRepository.find.buyCoinPack(pack).then((value) {
+                  if (value) controller.update();
+                });
+              },
+            ),
+          ),
+        );
       });
 }

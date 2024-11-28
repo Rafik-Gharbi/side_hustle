@@ -8,7 +8,7 @@ import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class CategoryStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   // int totalCategories = 0;
   // int totalSubCategories = 0;
   List<PieChartModel> subscriptionsPerCategoryData = [];
@@ -29,6 +29,12 @@ class CategoryStatsController extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminCategoryStatsData');
+  }
+
   void _initSocket() {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       final socketInitialized = MainAppController.find.socket!.hasListeners('adminCategoryStatsData');
@@ -42,7 +48,7 @@ class CategoryStatsController extends GetxController {
         AdminDashboardController.totalCategories.value = categories.where((element) => element.parentId == -1).length;
         AdminDashboardController.totalSubCategories.value = categories.where((element) => element.parentId != -1).length;
         AdminDashboardController.totalSubscription.value = subscriptionList?.length ?? 0;
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

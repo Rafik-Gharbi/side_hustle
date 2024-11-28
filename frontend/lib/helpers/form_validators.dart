@@ -12,6 +12,9 @@ class FormValidators {
 
   static String? notEmptyOrNullFloatValidator(String? value) => notEmptyOrNullValidator(value) ?? (!isFloat(value!) ? 'must_be_number'.tr : null);
 
+  static String? requiredFloatLessThanValidator(String? value, double max) =>
+      notEmptyOrNullValidator(value) ?? (!isFloat(value!) ? 'must_be_number'.tr : null) ?? (double.parse(value!) > max ? 'max_value_is'.trParams({'value': max.toString()}) : null);
+
   static String? emailValidator(String? value) => (value?.isEmpty ?? true)
       ? 'email_required'.tr
       : isEmail(value!)

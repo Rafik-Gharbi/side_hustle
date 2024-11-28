@@ -6,7 +6,7 @@ import '../../../repositories/reservation_repository.dart';
 
 class TaskHistoryController extends GetxController {
   List<Reservation> _taskHistoryList = [];
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   Reservation? highlightedReservation;
 
   List<Reservation> get ongoingTasks => _taskHistoryList.where((element) => element.status == RequestStatus.confirmed).toList();
@@ -28,7 +28,7 @@ class TaskHistoryController extends GetxController {
         update();
       });
     }
-    isLoading = false;
+    isLoading.value = false;
     update();
   }
 }

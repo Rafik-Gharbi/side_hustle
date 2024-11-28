@@ -11,6 +11,7 @@ import '../../models/task.dart';
 import '../../networking/api_base_helper.dart';
 import '../../repositories/reservation_repository.dart';
 import '../../repositories/task_repository.dart';
+import '../review/add_review/add_review_bottomsheet.dart';
 import '../task/task_list/task_list_screen.dart';
 
 class HomeController extends GetxController {
@@ -91,6 +92,7 @@ class HomeController extends GetxController {
           Helper.goBack();
           init();
           MainAppController.find.resolveProfileActionRequired();
+          Get.bottomSheet(AddReviewBottomsheet(user: serviceReservation.provider), isScrollControlled: true);
         },
       );
 }

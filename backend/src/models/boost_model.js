@@ -21,7 +21,7 @@ const Boost = sequelize.define(
     },
     minAge: { type: Sequelize.INTEGER },
     maxAge: { type: Sequelize.INTEGER },
-    task_service_id: { type: Sequelize.INTEGER, allowNull: false },
+    task_service_id: { type: Sequelize.UUID, allowNull: false },
     isTask: { type: Sequelize.BOOLEAN, allowNull: false },
     isActive: { type: Sequelize.BOOLEAN, defaultValue: true },
   },

@@ -5,6 +5,8 @@ import 'user.dart';
 
 class Contract {
   final String? id;
+  final String description;
+  final String delivrables;
   final double finalPrice;
   final DateTime? dueDate;
   final Task? task;
@@ -17,6 +19,8 @@ class Contract {
 
   Contract({
     this.id,
+    required this.description,
+    required this.delivrables,
     required this.finalPrice,
     required this.dueDate,
     required this.task,
@@ -30,6 +34,8 @@ class Contract {
 
   factory Contract.fromJson(Map<String, dynamic> json) => Contract(
         id: json['id'],
+        description: json['description'],
+        delivrables: json['delivrables'],
         finalPrice: Helper.resolveDouble(json['finalPrice']),
         createdAt: DateTime.parse(json['createdAt']),
         dueDate: DateTime.parse(json['dueDate']),
@@ -44,6 +50,8 @@ class Contract {
   Map<String, dynamic> toJson({bool includeOwner = false}) {
     final Map<String, dynamic> data = {};
     if (id != null) data['id'] = id;
+    data['description'] = description;
+    data['delivrables'] = delivrables;
     data['createdAt'] = createdAt.toIso8601String();
     data['dueDate'] = dueDate?.toIso8601String();
     data['finalPrice'] = finalPrice;

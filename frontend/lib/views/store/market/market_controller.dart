@@ -85,6 +85,7 @@ class MarketController extends GetxController {
         date: DateTime.now(),
         totalPrice: service.price ?? 0,
         user: AuthenticationService.find.jwtUserData!,
+        provider: service.owner!,
         note: noteController.text,
         coins: service.coins,
         // coupon: coupon,

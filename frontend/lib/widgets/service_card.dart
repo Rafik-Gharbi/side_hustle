@@ -12,8 +12,6 @@ import '../helpers/helper.dart';
 import '../models/enum/request_status.dart';
 import '../models/service.dart';
 import '../models/store.dart';
-import '../models/user.dart';
-import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
 import '../views/store/service_details/service_details_screen.dart';
 import 'custom_buttons.dart';
@@ -115,11 +113,7 @@ class ServiceCard extends StatelessWidget {
                   backgroundColor: isOwner ? kErrorColor : Colors.transparent,
                   child: CustomButtons.icon(
                     icon: Icon(isOwner ? Icons.three_p_outlined : Icons.shopping_cart_outlined, size: 18),
-                    onPressed: () => AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.verified
-                        ? onBookService != null
-                            ? onBookService!()
-                            : {}
-                        : Helper.snackBar(message: 'verify_profile_msg'.tr),
+                    onPressed: () => onBookService != null ? onBookService!() : {},
                   ),
                 ),
             ],

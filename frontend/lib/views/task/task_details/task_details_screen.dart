@@ -12,7 +12,6 @@ import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/dto/image_dto.dart';
 import '../../../models/task.dart';
-import '../../../models/user.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/logger_service.dart';
 import '../../../services/theme/theme.dart';
@@ -246,18 +245,17 @@ class TaskDetailsScreen extends StatelessWidget {
                                     else
                                       CustomButtons.elevatePrimary(
                                         title: 'Im_interested'.tr,
-                                        onPressed: () => AuthenticationService.find.isUserLoggedIn.value
-                                            ? AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.verified
-                                                ? Buildables.requestBottomsheet(
-                                                    noteController: controller.noteController,
-                                                    proposedPriceController: controller.proposedPriceController,
-                                                    deliveryDateController: controller.deliveryDateController,
-                                                    onSubmit: () => controller.submitProposal(task),
-                                                    isTask: true,
-                                                    neededCoins: task.coins,
-                                                  ).then((value) => controller.clearFormFields())
-                                                : Helper.snackBar(message: 'verify_profile_msg'.tr)
-                                            : Helper.snackBar(message: 'login_express_interest_msg'.tr),
+                                        onPressed: () => Helper.verifyUser(
+                                          isVerified: true,
+                                          () => Buildables.requestBottomsheet(
+                                            noteController: controller.noteController,
+                                            proposedPriceController: controller.proposedPriceController,
+                                            deliveryDateController: controller.deliveryDateController,
+                                            onSubmit: () => controller.submitProposal(task),
+                                            isTask: true,
+                                            neededCoins: task.coins,
+                                          ).then((value) => controller.clearFormFields()),
+                                        ),
                                         width: Get.width,
                                       ),
                                     const SizedBox(height: Paddings.small),

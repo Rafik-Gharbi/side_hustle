@@ -5,7 +5,7 @@ import '../constants/shared_preferences_keys.dart';
 
 class SharedPreferencesService extends GetxService {
   SharedPreferences? _prefs;
-  bool isReady = false;
+  RxBool isReady = false.obs;
 
   static SharedPreferencesService get find => Get.find<SharedPreferencesService>();
 
@@ -23,7 +23,7 @@ class SharedPreferencesService extends GetxService {
   Future<void> _getSharedPreferencesInstance() async {
     _prefs ??= await SharedPreferences.getInstance();
     SharedPreferencesService.find.removeKey(baseUrlKey);
-    isReady = true;
+    isReady.value = true;
   }
 
   Future<void> clearAllSavedData() async {

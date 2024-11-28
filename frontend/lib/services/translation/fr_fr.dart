@@ -551,6 +551,8 @@ final Map<String, String> frFr = <String, String>{
   'deposit_slip_picture': 'Photo du bordereau de dépôt',
   'deposit_slip_picture_required': 'La photo du bordereau de dépôt est requise',
   // Validation messages
+  'max_value_is': 'La valeur maximale est @value !',
+  'valid_for_x_days': 'Valide pour @days jours',
   'field_not_empty': 'Le champ ne peut pas être vide !',
   'invalid_number': 'Numéro invalide !',
   'must_be_number': 'Doit être un numéro !',

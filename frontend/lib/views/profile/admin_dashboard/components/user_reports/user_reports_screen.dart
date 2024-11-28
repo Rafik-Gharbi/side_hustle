@@ -32,7 +32,7 @@ class UserReportsScreen extends StatelessWidget {
           appBarTitle: 'reports'.tr,
           onBack: () => ProfileController.find.init(),
           body: LoadingRequest(
-            isLoading: controller.isLoading.value,
+            isLoading: controller.isLoading,
             child: controller.userReportList.isEmpty
                 ? Center(child: Text('nothing_here_yet'.tr, style: AppFonts.x14Regular))
                 : ListView.builder(

@@ -18,6 +18,7 @@ class Reservation {
   final String note;
   final RequestStatus status;
   final User user;
+  final User provider;
   final DateTime? dueDate;
   final int coins;
 
@@ -26,6 +27,7 @@ class Reservation {
     required this.date,
     required this.totalPrice,
     required this.user,
+    required this.provider,
     required this.coins,
     this.task,
     this.service,
@@ -49,6 +51,7 @@ class Reservation {
         note: json['note'] ?? '',
         status: RequestStatus.values.singleWhere((element) => element.name == json['status']),
         user: User.fromJson(json['user']),
+        provider: User.fromJson(json['provider']),
       );
 
   Map<String, dynamic> toJson() {
@@ -62,6 +65,8 @@ class Reservation {
     data['coins'] = coins;
     data['coupon'] = coupon;
     data['note'] = note;
+    data['providerId'] = provider.id;
+    data['userId'] = user.id;
     data['status'] = status.name;
     if (dueDate != null) data['dueDate'] = dueDate!.toIso8601String();
     return data;
@@ -79,6 +84,7 @@ class Reservation {
         note: reservation.note.value,
         status: reservation.status.value,
         user: User(id: reservation.user.value),
+        provider: User(id: reservation.provider.value),
       );
 
   ReservationTableCompanion toReservationCompanion({RequestStatus? statusUpdate}) => ReservationTableCompanion(

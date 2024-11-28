@@ -13,7 +13,7 @@ class BalanceTransactionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDeposit = transaction.type == BalanceTransactionType.deposit; // TODO does system type is income?
+    final isDeposit = transaction.type == BalanceTransactionType.deposit || transaction.type == BalanceTransactionType.taskEarnings; // TODO does system type is income?
     return ListTile(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

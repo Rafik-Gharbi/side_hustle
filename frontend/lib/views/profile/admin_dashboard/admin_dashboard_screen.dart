@@ -5,6 +5,7 @@ import '../../../constants/colors.dart';
 import '../../../constants/constants.dart';
 import '../../../constants/sizes.dart';
 import '../../../controllers/main_app_controller.dart';
+import '../../../helpers/helper.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
@@ -27,6 +28,7 @@ class AdminDashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) => HoldInSafeArea(
         child: GetBuilder<AuthenticationService>(
           builder: (authService) => GetBuilder<AdminDashboardController>(
+            initState: (state) => Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()),
             autoRemove: false,
             builder: (controller) => PopScope(
               onPopInvokedWithResult: (didPop, result) => didPop
@@ -46,7 +48,7 @@ class AdminDashboardScreen extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: Paddings.extraLarge),
                       child: LoadingRequest(
-                        isLoading: controller.isLoading.value,
+                        isLoading: controller.isLoading,
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
@@ -91,25 +93,25 @@ class AdminDashboardScreen extends StatelessWidget {
                                           actionRequired: controller.approveUsersActionRequired.value,
                                           label: 'approve_users'.tr,
                                           icon: Icons.verified_user_outlined,
-                                          onTap: () => Get.toNamed(ApproveUserScreen.routeName),
+                                          onTap: () => Get.toNamed(ApproveUserScreen.routeName)?.then((value) => controller.init()),
                                         ),
                                         buildActionTile(
                                           actionRequired: controller.manageBalanceActionRequired.value,
                                           label: 'manage_balance'.tr,
                                           icon: Icons.attach_money_outlined,
-                                          onTap: () => Get.toNamed(ManageBalanceScreen.routeName),
+                                          onTap: () => Get.toNamed(ManageBalanceScreen.routeName)?.then((value) => controller.init()),
                                         ),
                                         buildActionTile(
                                           actionRequired: controller.reportsActionRequired.value,
                                           label: 'reports'.tr,
                                           icon: Icons.report_outlined,
-                                          onTap: () => Get.toNamed(UserReportsScreen.routeName),
+                                          onTap: () => Get.toNamed(UserReportsScreen.routeName)?.then((value) => controller.init()),
                                         ),
                                         buildActionTile(
                                           actionRequired: controller.feedbacksActionRequired.value,
                                           label: 'feedbacks'.tr,
                                           icon: Icons.feedback_outlined,
-                                          onTap: () => Get.toNamed(FeedbacksScreen.routeName),
+                                          onTap: () => Get.toNamed(FeedbacksScreen.routeName)?.then((value) => controller.init()),
                                         ),
                                       ],
                                     ),

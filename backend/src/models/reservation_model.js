@@ -29,7 +29,8 @@ Reservation.belongsTo(Service, {
   allowNull: true,
 });
 Reservation.belongsTo(Task, { foreignKey: "task_id", allowNull: true });
-Reservation.belongsTo(User, { foreignKey: "user_id", allowNull: false });
+Reservation.belongsTo(User, { as: "user", foreignKey: "user_id", allowNull: false });
+Reservation.belongsTo(User, { as: "provider", foreignKey: "provider_id", allowNull: false });
 
 module.exports = {
   Reservation,

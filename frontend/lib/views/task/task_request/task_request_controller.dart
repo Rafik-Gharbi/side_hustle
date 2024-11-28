@@ -13,7 +13,7 @@ import '../task_proposal/task_proposal_screen.dart';
 class TaskRequestController extends GetxController {
   final ScrollController scrollController = ScrollController();
   List<TaskRequestDTO> _taskRequestList = [];
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   List<Task> filteredTaskList = [];
   bool isEndList = false;
   int page = 0;
@@ -45,7 +45,7 @@ class TaskRequestController extends GetxController {
       });
     }
 
-    isLoading = false;
+    isLoading.value = false;
     update();
   }
 
@@ -61,7 +61,7 @@ class TaskRequestController extends GetxController {
     if (page == 1) {
       _taskRequestList = taskRequests;
       filteredTaskList = taskRequests.map((e) => e.task).toList();
-      isLoading = false;
+      isLoading.value = false;
     } else {
       _taskRequestList.addAll(taskRequests);
       filteredTaskList.addAll(taskRequests.map((e) => e.task).toList());

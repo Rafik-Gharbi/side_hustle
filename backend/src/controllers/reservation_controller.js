@@ -1,3 +1,4 @@
+const cron = require("node-cron");
 const {
   getDate,
   checkUnitDinar,
@@ -12,10 +13,6 @@ const { User } = require("../models/user_model");
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
 const { encryptData } = require("../helper/encryption");
-const {
-  emailReservationForCheckin,
-  sendNotificationReservation,
-} = require("../views/template_email");
 const {
   fetchUserReservation,
   populateOneTask,
@@ -36,6 +33,8 @@ const { Op } = require("sequelize");
 const { Store } = require("../models/store_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
 const { sequelize } = require("../../db.config");
+const { Contract } = require("../models/contract_model");
+const { BalanceTransaction } = require("../models/balance_transaction_model");
 
 exports.addTaskReservation = async (req, res) => {
   const {
@@ -60,8 +59,9 @@ exports.addTaskReservation = async (req, res) => {
   try {
     let userFound = await User.findByPk(req.decoded.id);
     let foundTask = await Task.findByPk(taskId);
+    let taskOwner = await User.findByPk(foundTask.owner_id);
 
-    if (!userFound) {
+    if (!userFound || !taskOwner) {
       await transaction.rollback();
       return res.status(404).json({ message: "user_not_found" });
     }
@@ -169,6 +169,7 @@ exports.addTaskReservation = async (req, res) => {
       {
         date,
         task_id: taskId,
+        provider_id: taskOwner.id,
         user_id: userFound.id,
         total_price: totalPrice,
         proposed_price: proposedPrice,
@@ -201,6 +202,7 @@ exports.addTaskReservation = async (req, res) => {
         date,
         task: reservationTask,
         user: userFound,
+        provider: taskOwner,
         total_price: totalPrice,
         proposed_price: proposedPrice,
         coins: coins,
@@ -495,16 +497,28 @@ exports.updateTaskReservationStatus = async (req, res) => {
         );
         break;
       case "finished":
-        notificationService.sendNotification(
-          reservationFound.user_id,
-          "Your Task Has Been Finished",
-          "The task owner has confirmed your work, good job!",
-          NotificationType.RESERVATION,
-          {
-            reservationId: reservationFound.id,
-            taskId: reservationFound.task_id,
-          }
-        );
+        const contract = await Contract.findOne({
+          where: { reservation_id: reservationFound.id },
+        });
+        if (contract.isSigned && contract.isPayed) {
+          await BalanceTransaction.create({
+            userId: contract.provider_id,
+            amount: contract.finalPrice,
+            type: "taskEarnings",
+            status: "pending",
+            description: `Earnings for contract ${contract.id}`,
+          });
+          notificationService.sendNotification(
+            reservationFound.user_id,
+            "Your Task Has Been Finished",
+            "The task owner has confirmed your work, good job!",
+            NotificationType.RESERVATION,
+            {
+              reservationId: reservationFound.id,
+              taskId: reservationFound.task_id,
+            }
+          );
+        }
         break;
       default:
     }
@@ -520,6 +534,8 @@ exports.updateTaskReservationStatus = async (req, res) => {
 exports.getServiceReservationDetails = async (req, res) => {
   try {
     const condidates = await getTaskCondidatesNumber(req.query.taskId);
+    if (typeof condidates === "string")
+      res.status(404).json({ message: condidates });
     const confirmedReservation = await Reservation.findOne({
       where: {
         task_id: req.query.taskId,
@@ -613,6 +629,9 @@ exports.addServiceReservation = async (req, res) => {
       await transaction.rollback();
       return res.status(400).json({ message: "cannot_book_your_own_service" });
     }
+    const storeOwner = await User.findOne({
+      where: { id: serviceStore.owner_id },
+    });
 
     const reservationService = await populateOneService(
       await Service.findOne({ where: { id: serviceId } })
@@ -700,6 +719,7 @@ exports.addServiceReservation = async (req, res) => {
         date,
         service_id: serviceId,
         user_id: userFound.id,
+        provider_id: storeOwner.id,
         total_price: totalPrice,
         coupon,
         note,
@@ -716,6 +736,7 @@ exports.addServiceReservation = async (req, res) => {
       where: { id: newReservation.id },
       include: [
         { model: User, as: "user" },
+        { model: User, as: "provider" },
         { model: Service, as: "service" },
       ],
     });
@@ -801,16 +822,23 @@ exports.getReservationByService = async (req, res) => {
     let serviceGallerys = await ServiceGalleryModel.findAll({
       where: { service_id: serviceFound.id },
     });
+    const owner = await User.findOne({
+      where: { id: foundStore.owner_id },
+    });
 
     const formattedList = await Promise.all(
       reservationList.map(async (row) => {
         let userFound = await User.findOne({
           where: { id: row.user_id },
         });
+        const serviceCondidatesNumber = await getServiceCondidatesNumber(
+          row.service_id
+        );
+        if (serviceCondidatesNumber == "service_not_found") {
+          res.status(404).json({ message: "service_not_found" });
+        }
         const requests =
-          req.decoded.id == foundStore.owner_id
-            ? await getServiceCondidatesNumber(row.id)
-            : -1;
+          req.decoded.id == foundStore.owner_id ? serviceCondidatesNumber : -1;
 
         return {
           id: row.id,
@@ -825,6 +853,7 @@ exports.getReservationByService = async (req, res) => {
             category_id: serviceFound.category_id,
             gallerys: serviceGallerys.length == 0 ? [] : serviceGallerys,
             isFavorite: false,
+            owner,
             requests,
           },
           totalPrice: row.total_price,
@@ -907,18 +936,32 @@ exports.updateServiceStatus = async (req, res) => {
         );
         break;
       case "finished":
-        const serviceOwner = await getServiceOwner(reservationFound.service_id);
-        notificationService.sendNotification(
-          serviceOwner.id,
-          "Your Service Has Been Finished",
-          "The service seeker has finished the reservation. Good job!",
-          NotificationType.BOOKING,
-          {
-            reservationId: reservationFound.id,
-            serviceId: reservationFound.service_id,
-            isOwner: true,
-          }
-        );
+        const contract = await Contract.findOne({
+          where: { reservation_id: reservationFound.id },
+        });
+        if (contract.isSigned && contract.isPayed) {
+          await BalanceTransaction.create({
+            userId: contract.provider_id,
+            amount: contract.finalPrice,
+            type: "taskEarnings",
+            status: "pending",
+            description: `Earnings for contract ${contract.id}`,
+          });
+          const serviceOwner = await getServiceOwner(
+            reservationFound.service_id
+          );
+          notificationService.sendNotification(
+            serviceOwner.id,
+            "Your Service Has Been Finished",
+            "The service seeker has finished the reservation. Good job!",
+            NotificationType.BOOKING,
+            {
+              reservationId: reservationFound.id,
+              serviceId: reservationFound.service_id,
+              isOwner: true,
+            }
+          );
+        }
         break;
       default:
     }
@@ -930,3 +973,45 @@ exports.updateServiceStatus = async (req, res) => {
     return res.status(500).json({ message: error });
   }
 };
+
+async function payFinishedReservations() {
+  const twelveHoursAgo = new Date(new Date() - 12 * 60 * 60 * 1000);
+  const reservations = await Reservation.findAll({
+    where: {
+      status: "finished",
+      updatedAt: {
+        [Op.gte]: twelveHoursAgo,
+      },
+    },
+  });
+  for (const reservation of reservations) {
+    const contract = await Contract.findOne({
+      where: { reservation_id: reservation.id },
+    });
+    // TODO check if a support ticket is submitted, if so block the earnings
+    if (contract.isSigned && contract.isPayed) {
+      const transaction = await BalanceTransaction.findOne({
+        where: {
+          type: "taskEarnings",
+          status: "pending",
+          description: {
+            [Op.like]: `%${contract.id}%`,
+          },
+        },
+      });
+      // send the provider's earnings to his balance
+      if (transaction) {
+        const provider = await User.findByPk(reservation.user_id);
+        provider.balance += contract.finalPrice;
+        provider.save();
+        transaction.status = "completed";
+        transaction.save();
+      }
+    }
+  }
+}
+
+cron.schedule("0 9,21 * * *", () => {
+  console.log("Running cron job to pay finished reservations");
+  payFinishedReservations();
+});

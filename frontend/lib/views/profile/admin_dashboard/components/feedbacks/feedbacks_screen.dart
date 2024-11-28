@@ -30,7 +30,7 @@ class FeedbacksScreen extends StatelessWidget {
           appBarTitle: 'feedbacks'.tr,
           onBack: () => ProfileController.find.init(),
           body: LoadingRequest(
-            isLoading: controller.isLoading.value,
+            isLoading: controller.isLoading,
             child: controller.feedbackList.isEmpty
                 ? Center(child: Text('nothing_here_yet'.tr, style: AppFonts.x14Regular))
                 : ListView.builder(

@@ -11,7 +11,7 @@ import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class StoreStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   Map<DateTime, double> servicesPerDayData = {};
   List<PieChartModel> servicesPerCategoryData = [];
   int _pieChartTouchedIndex = -1;
@@ -30,6 +30,12 @@ class StoreStatsController extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminStoreStatsData');
+  }
+
   void _initSocket() {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       final socketInitialized = MainAppController.find.socket!.hasListeners('adminStoreStatsData');
@@ -41,7 +47,7 @@ class StoreStatsController extends GetxController {
         if (storesList.isNotEmpty) _initPieChartData(storesList);
         AdminDashboardController.totalStores.value = storesList.length;
         AdminDashboardController.totalServices.value = storesList.isNotEmpty ? storesList.map((e) => e.services).reduce((value, element) => value! + element!)?.length ?? 0 : 0;
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

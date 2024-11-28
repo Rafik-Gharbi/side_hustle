@@ -32,7 +32,7 @@ class AddBankNumberBottomsheet extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(child: Text('add_bank_card'.tr, style: AppFonts.x15Bold)),
+                    Center(child: Text(isEdit ? 'edit_bank_card'.tr : 'add_bank_card'.tr, style: AppFonts.x15Bold)),
                     const SizedBox(height: Paddings.exceptional),
                     Text('${'bank_number_validation'.tr}:', style: AppFonts.x14Regular),
                     const SizedBox(height: Paddings.exceptional),

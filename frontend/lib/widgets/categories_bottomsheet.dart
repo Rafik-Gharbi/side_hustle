@@ -34,10 +34,15 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
   @override
   void initState() {
     super.initState();
-    parentCategories = MainAppController.find.categories.where((element) => element.parentId == -1).toList();
-    isExpandedParents = [for (var i = 0; i < parentCategories.length; i++) false];
-    filteredCategories = _initializeFilteredCategories();
-    selectedCategories = widget.selected ?? [];
+    MainAppController.find.updateCategories().then(
+      (value) {
+        parentCategories = MainAppController.find.categories.where((element) => element.parentId == -1).toList();
+        isExpandedParents = [for (var i = 0; i < parentCategories.length; i++) false];
+        filteredCategories = _initializeFilteredCategories();
+        selectedCategories = widget.selected ?? [];
+        setState(() {});
+      },
+    );
   }
 
   @override
@@ -72,6 +77,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => searchFocusNode.requestFocus());
     final canUpdate = widget.nextUpdate != null ? widget.nextUpdate!.isBefore(DateTime.now()) : true;
+    // TODO add shimmer when loading
     return SafeArea(
       minimum: const EdgeInsets.only(top: Paddings.exceptional),
       child: DecoratedBox(
@@ -172,6 +178,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                                               shrinkWrap: true,
                                               physics: const NeverScrollableScrollPhysics(),
                                               maxCrossAxisExtent: 140.0,
+                                              childAspectRatio: 0.85,
                                               mainAxisSpacing: Paddings.regular,
                                               crossAxisSpacing: Paddings.regular,
                                               padding: const EdgeInsets.all(Paddings.large),

@@ -206,14 +206,15 @@ class ServiceDetailsScreen extends StatelessWidget {
                     else if (bookingStatus == null && !isOwner)
                       CustomButtons.elevatePrimary(
                         title: 'book_service'.tr,
-                        onPressed: () => AuthenticationService.find.isUserLoggedIn.value
-                            ? Buildables.requestBottomsheet(
-                                noteController: controller.noteController,
-                                onSubmit: () => controller.bookService(service),
-                                neededCoins: service.coins,
-                              ).then((value) => controller.clearFormFields())
-                            : Helper.snackBar(message: 'login_express_interest_msg'.tr),
                         width: Get.width,
+                        onPressed: () => Helper.verifyUser(
+                          isVerified: true,
+                          () => Buildables.requestBottomsheet(
+                            noteController: controller.noteController,
+                            onSubmit: () => controller.bookService(service),
+                            neededCoins: service.coins,
+                          ).then((value) => controller.clearFormFields()),
+                        ),
                       )
                     else if (bookingStatus == RequestStatus.confirmed && onMarkDone != null)
                       CustomButtons.elevatePrimary(

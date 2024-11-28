@@ -540,6 +540,8 @@ async function populateOneService(service) {
   gallery = await ServiceGalleryModel.findAll({
     where: { service_id: service.id },
   });
+  const store = await Store.findOne({ where: { id: service.store_id } });
+  const owner = await User.findOne({ where: { id: store.owner_id } });
 
   const requests = await getServiceCondidatesNumber(service.id);
   return {
@@ -556,6 +558,7 @@ async function populateOneService(service) {
     timeEstimationFrom: service.timeEstimationFrom,
     timeEstimationTo: service.timeEstimationTo,
     coins: calculateTaskCoinsPrice(service.price),
+    owner: owner,
   };
 }
 

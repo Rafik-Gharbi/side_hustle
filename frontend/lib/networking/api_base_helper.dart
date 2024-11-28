@@ -92,7 +92,7 @@ class ApiBaseHelper extends GetxController {
     _lastRequestedUrl = url;
     late http.Response response;
     isLoading = true;
-    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () {
+    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () {
       _defaultHeader.addAll({'locale': SharedPreferencesService.find.get(languageCodeKey) ?? 'en'});
     });
     String? token;
@@ -266,7 +266,7 @@ class ApiBaseHelper extends GetxController {
     print('baseUrl: $baseUrl');
     void openIPAddressChanger() {
       Helper.waitAndExecute(
-        () => SharedPreferencesService.find.isReady,
+        () => SharedPreferencesService.find.isReady.value,
         () => Get.bottomSheet(
           Material(
             color: kNeutralColor100,

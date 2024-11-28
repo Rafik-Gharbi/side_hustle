@@ -9,7 +9,7 @@ import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class ChatStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   Map<DateTime, double> discussionsPerDayData = {};
   List<PieChartModel> discussionsPerCategoryData = [];
   int _pieChartTouchedIndex = -1;
@@ -28,6 +28,12 @@ class ChatStatsController extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminChatStatsData');
+  }
+
   void _initSocket() {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       final socketInitialized = MainAppController.find.socket!.hasListeners('adminChatStatsData');
@@ -37,7 +43,7 @@ class ChatStatsController extends GetxController {
         if (discussionsList.isNotEmpty) _initChartPerDayData(discussionsList);
         AdminDashboardController.totalDiscussions.value = discussionsList.length;
         AdminDashboardController.activeDiscussions.value = data?['chatStats']?['activeCount'] ?? 0;
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

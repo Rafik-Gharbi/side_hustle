@@ -6,8 +6,6 @@ import '../constants/colors.dart';
 import '../constants/sizes.dart';
 import '../controllers/main_app_controller.dart';
 import '../helpers/helper.dart';
-import '../models/user.dart';
-import '../services/authentication_service.dart';
 import '../services/navigation_history_observer.dart';
 import '../services/theme/theme.dart';
 import '../views/profile/admin_dashboard/admin_dashboard_screen.dart';
@@ -88,8 +86,7 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                           ServiceRequestScreen.routeName
                         };
 
-                        if (specialRoutes.contains(currentRoute) ||
-                            (currentRoute != AdminDashboardScreen.routeName && previousRoute == AdminDashboardScreen.routeName)) {
+                        if (specialRoutes.contains(currentRoute) || (currentRoute != AdminDashboardScreen.routeName && previousRoute == AdminDashboardScreen.routeName)) {
                           NavigationHistoryObserver.instance.goToPreviousRoute();
                         } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && currentRoute != ProfileScreen.routeName) {
                           NavigationHistoryObserver.instance.goToPreviousRoute(popToProfile: true);
@@ -146,11 +143,11 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
       floatingActionButton: hideBottomNavigation
           ? null
           : FloatingActionButton(
-              onPressed: () => AuthenticationService.find.isUserLoggedIn.value
-                  ? AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.verified
-                      ? Get.bottomSheet(const AddTaskBottomsheet(), isScrollControlled: true)
-                      : Helper.snackBar(message: 'verify_profile_msg'.tr)
-                  : Helper.snackBar(message: 'login_add_task_msg'.tr),
+              onPressed: () => Helper.verifyUser(
+                isVerified: true,
+                loginErrorMsg: 'login_add_task_msg'.tr,
+                () => Get.bottomSheet(const AddTaskBottomsheet(), isScrollControlled: true),
+              ),
               mini: true,
               shape: const CircleBorder(),
               child: const Icon(Icons.add, color: kNeutralColor100),

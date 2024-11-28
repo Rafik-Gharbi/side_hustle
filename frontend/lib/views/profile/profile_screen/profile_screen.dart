@@ -68,7 +68,7 @@ class ProfileScreen extends StatelessWidget {
                       child: LoadingRequest(
                         isLoading: controller.isLoading,
                         child: SingleChildScrollView(
-                          child: SharedPreferencesService.find.isReady && authService.jwtUserData == null
+                          child: SharedPreferencesService.find.isReady.value && authService.jwtUserData == null
                               ? SizedBox(height: Get.height - 300, child: Buildables.buildLoginRequest(onLogin: controller.init))
                               : controller.loggedInUser == null
                                   ? Buildables.buildLoadingWidget()
@@ -200,9 +200,10 @@ class ProfileScreen extends StatelessWidget {
                                                       children: [
                                                         if (AuthenticationService.find.jwtUserData?.role == Role.admin)
                                                           buildActionTile(
+                                                            actionRequired: controller.adminDashboardActionRequired,
                                                             label: 'admin_dashboard'.tr,
                                                             icon: Icons.dashboard_outlined,
-                                                            onTap: () => Get.toNamed(AdminDashboardScreen.routeName),
+                                                            onTap: () => Get.toNamed(AdminDashboardScreen.routeName)?.then((value) => controller.init()),
                                                           ),
                                                         buildActionTile(
                                                           label: 'edit_profile'.tr,

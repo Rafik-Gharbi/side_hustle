@@ -48,7 +48,7 @@ class HomeScreen extends StatelessWidget {
               displacement: 20,
               onRefresh: controller.onRefreshScreen,
               child: LoadingRequest(
-                isLoading: !SharedPreferencesService.find.isReady,
+                isLoading: (!SharedPreferencesService.find.isReady.value).obs,
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,7 +282,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          if (SharedPreferencesService.find.isReady)
+                          if (SharedPreferencesService.find.isReady.value)
                             Buildables.buildTitle(
                               '${'new_tasks'.tr} ${controller.nearbyTasks.any((element) => element.distance != null) ? 'nearby'.tr : '${'in'.tr} ${AuthenticationService.find.jwtUserData?.governorate?.name ?? 'all_tunisia'.tr}'}',
                               onSeeMore: () => Get.toNamed(TaskListScreen.routeName),

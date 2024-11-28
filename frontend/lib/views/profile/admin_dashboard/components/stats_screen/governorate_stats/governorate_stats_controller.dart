@@ -11,7 +11,7 @@ import '../../../../../../networking/api_base_helper.dart';
 import '../components/pie_chart.dart';
 
 class GovernorateStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   List<PieChartModel> storesPerGovernorateData = [];
   List<PieChartModel> tasksPerGovernorateData = [];
   List<PieChartModel> usersPerGovernorateData = [];
@@ -32,6 +32,12 @@ class GovernorateStatsController extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminGovernorateStatsData');
+  }
+
   void _initSocket() {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       final socketInitialized = MainAppController.find.socket!.hasListeners('adminGovernorateStatsData');
@@ -45,7 +51,7 @@ class GovernorateStatsController extends GetxController {
         if (userList.isNotEmpty) _initPieChartUserData(userList);
         if (taskList.isNotEmpty) _initPieChartTaskData(taskList);
         if (contractList.isNotEmpty) _initPieChartContractData(contractList);
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

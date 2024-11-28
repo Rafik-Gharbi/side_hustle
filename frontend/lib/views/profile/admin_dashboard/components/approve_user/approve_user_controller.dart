@@ -5,17 +5,24 @@ import '../../../../../helpers/helper.dart';
 import '../../../../../models/dto/user_approve_dto.dart';
 import '../../../../../models/user.dart';
 import '../../../../../networking/api_base_helper.dart';
+import '../../admin_dashboard_controller.dart';
 
 class ApproveUserController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   List<UserApproveDTO> userApproveList = [];
   UserApproveDTO? highlightedUserApprove;
 
   ApproveUserController() {
     _initSocket();
-    Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
+    Helper.waitAndExecute(() => MainAppController.find.socket != null && AdminDashboardController.find.isAdminSocketJoined.value, () {
       MainAppController.find.socket!.emit('getAdminApproveUsers', {'jwt': ApiBaseHelper.find.getToken()});
     });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminApproveUsers');
   }
 
   void _initSocket() {
@@ -34,7 +41,7 @@ class ApproveUserController extends GetxController {
           });
         }
 
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
       MainAppController.find.socket!.on(
@@ -46,7 +53,7 @@ class ApproveUserController extends GetxController {
 
   Future<void> approveUser(User? user) async {
     if (user == null) return;
-    MainAppController.find.socket!.emit('approveUser', {
+    MainAppController.find.socket!.emit('acceptApproveUser', {
       'jwt': ApiBaseHelper.find.getToken(),
       'id': user.id!,
     });
@@ -54,7 +61,7 @@ class ApproveUserController extends GetxController {
 
   Future<void> couldNotApprove(User? user) async {
     if (user == null) return;
-    MainAppController.find.socket!.emit('couldNotApprove', {
+    MainAppController.find.socket!.emit('rejectApproveUser', {
       'jwt': ApiBaseHelper.find.getToken(),
       'id': user.id!,
     });

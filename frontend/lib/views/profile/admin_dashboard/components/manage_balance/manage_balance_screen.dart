@@ -95,7 +95,7 @@ class ManageBalanceScreen extends StatelessWidget {
                                         ),
                                       ),
                                     )
-                                  else
+                                  else if (balanceTransaction.depositType == DepositType.installment)
                                     Padding(
                                       padding: const EdgeInsets.only(top: Paddings.regular),
                                       child: Text('document_not_available'.tr, style: AppFonts.x12Bold.copyWith(color: kErrorColor)),

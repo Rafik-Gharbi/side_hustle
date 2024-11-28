@@ -19,7 +19,7 @@ class ProfileController extends GetxController {
   /// not permanent use with caution
   static ProfileController get find => Get.find<ProfileController>();
   User? loggedInUser;
-  bool _isLoading = true;
+  RxBool _isLoading = true.obs;
   XFile? profilePicture;
   bool _isUpdatingProfile = false;
   List<Category> subscribedCategories = [];
@@ -29,9 +29,10 @@ class ProfileController extends GetxController {
   int myStoreActionRequired = 0;
   int approveUsersActionRequired = 0;
   int serviceHistoryActionRequired = 0;
+  int adminDashboardActionRequired = 0;
   bool userHasBoosts = false;
 
-  bool get isLoading => _isLoading;
+  RxBool get isLoading => _isLoading;
   bool get isUpdatingProfile => _isUpdatingProfile;
 
   set isUpdatingProfile(bool value) {
@@ -39,7 +40,7 @@ class ProfileController extends GetxController {
     update();
   }
 
-  set isLoading(bool value) {
+  set isLoading(RxBool value) {
     _isLoading = value;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) => update());
   }
@@ -58,12 +59,13 @@ class ProfileController extends GetxController {
       taskHistoryActionRequired = result.taskHistoryActionRequired;
       myStoreActionRequired = result.myStoreActionRequired;
       approveUsersActionRequired = result.approveUsersActionRequired;
-      serviceHistoryActionRequired = result.servieHistoryActionRequired;
+      serviceHistoryActionRequired = result.serviceHistoryActionRequired;
+      adminDashboardActionRequired = result.adminDashboardActionRequired;
       userHasBoosts = result.userHasBoosts;
       MainAppController.find.resolveProfileActionRequired();
     }
     if (!MainAppController.find.isBackReachable.value) ApiBaseHelper.find.isLoading = false;
-    isLoading = false;
+    isLoading.value = false;
   }
 
   Future<void> uploadFilePicture({GlobalKey<FormState>? formKey}) async {
@@ -104,8 +106,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> subscribeToCategories(List<Category> category) async {
-    subscribedCategories = category;
+  Future<void> subscribeToCategories(List<Category> categories) async {
     String? fcmToken;
     final permission = await FirebaseMessaging.instance.requestPermission();
     if (permission.authorizationStatus == AuthorizationStatus.authorized) {
@@ -117,10 +118,10 @@ class ProfileController extends GetxController {
     }
     Helper.openConfirmationDialog(
       title: 'confirm_category_subscription_msg'.trParams({
-        'categoriesName': subscribedCategories.map((e) => e.name + (subscribedCategories.indexOf(e) == subscribedCategories.length - 1 ? ', ' : '')).toString(),
+        'categoriesName': categories.map((e) => e.name).toString(),
         'nextUpdate': Helper.formatDate(DateTime.now().add(const Duration(days: 30))),
       }),
-      onConfirm: () async => await AuthenticationService.find.subscribeToCategories(subscribedCategories, fcmToken),
+      onConfirm: () async => await AuthenticationService.find.subscribeToCategories(categories, fcmToken),
     );
     init();
   }

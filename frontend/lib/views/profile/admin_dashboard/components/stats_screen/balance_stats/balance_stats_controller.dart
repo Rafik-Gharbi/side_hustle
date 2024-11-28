@@ -8,7 +8,7 @@ import '../../../../../../networking/api_base_helper.dart';
 import '../../../admin_dashboard_controller.dart';
 
 class BalanceStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   int totalUsersHasBalance = 0;
   Map<DateTime, double> depositsPerDayData = {};
   Map<DateTime, double> withdrawalsPerDayData = {};
@@ -18,6 +18,12 @@ class BalanceStatsController extends GetxController {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       MainAppController.find.socket!.emit('getAdminBalanceStatsData', {'jwt': ApiBaseHelper.find.getToken()});
     });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminBalanceStatsData');
   }
 
   void _initSocket() {
@@ -32,7 +38,7 @@ class BalanceStatsController extends GetxController {
         AdminDashboardController.totalWithdrawals.value = withdrawalList.length;
         AdminDashboardController.maxUserBalance.value = data?['balanceStats']?['maxBalance'] ?? 0;
         totalUsersHasBalance = data?['balanceStats']?['totalUsers'] ?? 0;
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

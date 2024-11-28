@@ -165,13 +165,14 @@ class MyStoreScreen extends StatelessWidget {
                                 requests: service.requests,
                                 onBookService: () => isOwner
                                     ? Get.toNamed(ServiceRequestScreen.routeName, arguments: service)
-                                    : AuthenticationService.find.isUserLoggedIn.value
-                                        ? Buildables.requestBottomsheet(
-                                            noteController: controller.noteController,
-                                            onSubmit: () => controller.bookService(service),
-                                            neededCoins: service.coins,
-                                          ).then((value) => controller.clearRequestFormFields())
-                                        : Helper.snackBar(message: 'login_express_interest_msg'.tr),
+                                    : Helper.verifyUser(
+                                        isVerified: true,
+                                        () => Buildables.requestBottomsheet(
+                                          noteController: controller.noteController,
+                                          onSubmit: () => controller.bookService(service),
+                                          neededCoins: service.coins,
+                                        ).then((value) => controller.clearRequestFormFields()),
+                                      ),
                                 isOwner: AuthenticationService.find.jwtUserData?.id == controller.currentStore?.owner?.id,
                                 onDeleteService: () => controller.deleteService(service),
                                 onEditService: () => controller.editService(service),

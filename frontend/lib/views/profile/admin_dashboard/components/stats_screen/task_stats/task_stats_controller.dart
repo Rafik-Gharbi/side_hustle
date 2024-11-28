@@ -10,7 +10,7 @@ import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class TaskStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   Map<DateTime, double> tasksPerDayData = {};
   List<PieChartModel> taskPerCategoryData = [];
   int _pieChartTouchedIndex = -1;
@@ -29,6 +29,12 @@ class TaskStatsController extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminTaskStatsData');
+  }
+
   void _initSocket() {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       final socketInitialized = MainAppController.find.socket!.hasListeners('adminTaskStatsData');
@@ -42,7 +48,7 @@ class TaskStatsController extends GetxController {
         AdminDashboardController.totalTasks.value = taskList.length;
         AdminDashboardController.activeTasks.value = data?['taskStats']?['activeCount'] ?? 0;
         AdminDashboardController.expiredTasks.value = data?['taskStats']?['expiredCount'] ?? 0;
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

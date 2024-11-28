@@ -73,7 +73,7 @@ class BalanceScreen extends StatelessWidget {
                                             children: [
                                               Image.asset(Assets.withdrawMoneyIcon, width: 20, color: kNeutralColor100),
                                               const SizedBox(width: Paddings.regular),
-                                              Text('widhdraw'.tr, style: AppFonts.x14Bold.copyWith(color: kNeutralColor100)),
+                                              Text('withdraw'.tr, style: AppFonts.x14Bold.copyWith(color: kNeutralColor100)),
                                             ],
                                           ),
                                         ),

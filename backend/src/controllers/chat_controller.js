@@ -85,13 +85,8 @@ exports.getUserDiscussions = async (req, res) => {
       where: { [Op.and]: conditions },
       include: [
         { model: User, as: "user" },
+        { model: User, as: "provider" },
         { model: Task, as: "task", include: [{ model: User, as: "user" }] },
-      ],
-    });
-    const existActiveBooking = await Reservation.findAll({
-      where: { [Op.and]: conditions },
-      include: [
-        { model: User, as: "user" },
         { model: Service, as: "service" },
       ],
     });
@@ -99,7 +94,6 @@ exports.getUserDiscussions = async (req, res) => {
     return res.status(200).json({
       result: result,
       reservations: existActiveReservation,
-      bookings: existActiveBooking,
     });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);

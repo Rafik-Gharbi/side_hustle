@@ -288,6 +288,7 @@ exports.addService = async (req, res) => {
         timeEstimationFrom: service.timeEstimationFrom,
         timeEstimationTo: service.timeEstimationTo,
         coins: calculateTaskCoinsPrice(service.price),
+        owner: user,
       },
     });
   } catch (error) {
@@ -386,6 +387,7 @@ exports.updateService = async (req, res) => {
         timeEstimationFrom: timeEstimationFrom,
         timeEstimationTo: timeEstimationTo,
         coins: calculateTaskCoinsPrice(service.price),
+        owner: user,
       },
     });
   } catch (error) {
@@ -486,6 +488,12 @@ exports.getUserStore = async (req, res) => {
         };
       })
     );
+    const storeOwnerRating =
+      reviews.length > 0
+        ? reviews
+            .map((review) => review.rating)
+            .reduce((total, rating) => total + rating, 0) / reviews.length
+        : 0;
 
     return res.status(200).json({
       store: {
@@ -497,6 +505,7 @@ exports.getUserStore = async (req, res) => {
         governorate_id: existStore.governorate_id,
         services,
         owner: user,
+        rating: storeOwnerRating,
       },
       reviews: reviews,
     });

@@ -8,7 +8,7 @@ import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class ReferralsStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   List<PieChartModel> referralsPerStatusData = [];
   int _pieChartTouchedIndex = -1;
 
@@ -26,6 +26,12 @@ class ReferralsStatsController extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminReferralStatsData');
+  }
+
   void _initSocket() {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       final socketInitialized = MainAppController.find.socket!.hasListeners('adminReferralStatsData');
@@ -35,7 +41,7 @@ class ReferralsStatsController extends GetxController {
         if (referralsList.isNotEmpty) _initPieChartData(referralsList);
         AdminDashboardController.totalReferrals.value = referralsList.length;
         AdminDashboardController.totalSuccessReferrals.value = data?['referralStats']?['successCount'] ?? 0;
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

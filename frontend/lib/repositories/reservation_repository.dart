@@ -55,7 +55,7 @@ class ReservationRepository extends GetxService {
     return null;
   }
 
-  Future<bool> updateReservationStatus(Reservation reservation, RequestStatus status) async {
+  Future<bool> updateTaskReservationStatus(Reservation reservation, RequestStatus status) async {
     try {
       final result = await ApiBaseHelper().request(
         RequestType.post,
@@ -66,8 +66,8 @@ class ReservationRepository extends GetxService {
       if (MainAppController.find.isConnected) ReservationDatabaseRepository.find.updateReservationStatus(reservation, status);
       return result?['done'] == true;
     } catch (e) {
-      Helper.snackBar(message: 'An error has occurred');
-      LoggerService.logger?.e('Error occured in updateReservationStatus:\n$e');
+      Helper.snackBar(message: 'error_occurred'.tr);
+      LoggerService.logger?.e('Error occured in updateTaskReservationStatus:\n$e');
       return false;
     }
   }
@@ -133,18 +133,20 @@ class ReservationRepository extends GetxService {
     return [];
   }
 
-  Future<void> updateServiceReservationStatus(Reservation serviceReservation, RequestStatus status) async {
+  Future<bool> updateServiceReservationStatus(Reservation serviceReservation, RequestStatus status) async {
     try {
-      await ApiBaseHelper().request(
+      final result = await ApiBaseHelper().request(
         RequestType.post,
         '/reservation/update-service-status',
         sendToken: true,
         body: {'reservation': serviceReservation.toJson(), 'status': status.name},
       );
       if (MainAppController.find.isConnected) ReservationDatabaseRepository.find.updateReservationStatus(serviceReservation, status);
+      return result?['done'] == true;
     } catch (e) {
-      Helper.snackBar(message: 'An error has occurred');
+      Helper.snackBar(message: 'error_occurred'.tr);
       LoggerService.logger?.e('Error occured in updateServiceReservationStatus:\n$e');
+      return false;
     }
   }
 

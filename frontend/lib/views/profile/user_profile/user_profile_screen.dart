@@ -148,7 +148,7 @@ class UserProfileScreen extends StatelessWidget {
                         ),
                       ],
                     )
-                  else if (requestStatus == RequestStatus.confirmed && onMarkDone != null)
+                  else if (requestStatus == RequestStatus.confirmed)
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -159,15 +159,17 @@ class UserProfileScreen extends StatelessWidget {
                           width: Get.width - 40,
                           onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: user),
                         ),
-                        const SizedBox(height: Paddings.regular),
-                        if (!isService)
-                          CustomButtons.elevatePrimary(
-                            title: 'mark_task_done'.tr,
-                            titleStyle: AppFonts.x14Regular,
-                            icon: const Icon(Icons.done, color: kNeutralColor100),
-                            width: Get.width - 40,
-                            onPressed: onMarkDone!,
-                          ),
+                        if (onMarkDone != null) ...[
+                          const SizedBox(height: Paddings.regular),
+                          if (!isService)
+                            CustomButtons.elevatePrimary(
+                              title: 'mark_task_done'.tr,
+                              titleStyle: AppFonts.x14Regular,
+                              icon: const Icon(Icons.done, color: kNeutralColor100),
+                              width: Get.width - 40,
+                              onPressed: onMarkDone!,
+                            ),
+                        ],
                       ],
                     ),
                   const SizedBox(height: Paddings.extraLarge * 2),

@@ -205,7 +205,7 @@ class MainAppController extends GetxController {
     await checkVersionRequired();
     hasInternetConnection.value = currentConnectivityStatus != ConnectivityResult.none;
     await Helper.waitAndExecute(
-      () => SharedPreferencesService.find.isReady,
+      () => SharedPreferencesService.find.isReady.value,
       () async {
         try {
           // Get user saved language
@@ -236,6 +236,13 @@ class MainAppController extends GetxController {
         ever(
           bottomNavIndex,
           (callback) {
+            if (!hasInternetConnection.value) {
+              checkConnectivity().then((value) {
+                currentConnectivityStatus = value;
+                hasInternetConnection.value = currentConnectivityStatus != ConnectivityResult.none;
+                if (!isBackReachable.value) checkVersionRequired();
+              });
+            }
             switch (bottomNavIndex.value) {
               case 0:
                 if (Get.currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);
@@ -281,8 +288,12 @@ class MainAppController extends GetxController {
       return decodedJson.map((category) => Category.fromJson(category)).toList();
     }
 
-    categories = await ParamsRepository.find.getAllCategories() ?? [];
+    await updateCategories();
     if (categories.isEmpty) categories = await loadCategories();
+  }
+
+  Future<void> updateCategories() async {
+    categories = await ParamsRepository.find.getAllCategories() ?? [];
   }
 
   Future<void> _initDefaultGovernorates() async {

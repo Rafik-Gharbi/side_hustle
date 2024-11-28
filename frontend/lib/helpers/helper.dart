@@ -18,13 +18,13 @@ import '../constants/shared_preferences_keys.dart';
 import '../constants/sizes.dart';
 import '../models/review.dart';
 import '../models/store.dart';
+import '../models/user.dart';
 import '../repositories/user_repository.dart';
 import '../services/authentication_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/translation/app_localization.dart';
 import '../services/logger_service.dart';
 import '../services/theme/theme.dart';
-import '../views/chat/chat_screen.dart';
 import '../views/notifications/notification_controller.dart';
 import '../views/profile/admin_dashboard/components/stats_screen/components/pie_chart.dart';
 import '../views/profile/verification_screen.dart';
@@ -307,7 +307,7 @@ class Helper {
         borderRadius: 10,
         dismissDirection: DismissDirection.up,
         icon: const Icon(Icons.notifications_active_outlined, color: kBlackColor),
-        onTap: (_) => Get.toNamed(ChatScreen.routeName),
+        onTap: (_) => NotificationsController.find.resolveNotificationAction(notification),
         maxWidth: 400,
         margin: isMobile ? const EdgeInsets.all(5) : EdgeInsets.only(left: Get.width / 2, right: 50, top: 10),
         backgroundColor: kNeutralColor100,
@@ -454,6 +454,18 @@ class Helper {
       );
 
   static int resolveBiggestIndex(List<PieChartModel> list) => list.indexWhere((element) => element.amount == Helper.getBiggestDouble(list.map((e) => e.amount).toList()));
+
+  static void verifyUser(void Function() callback, {bool isLoggedIn = true, bool isVerified = false, String? loginErrorMsg}) {
+    if (isLoggedIn && AuthenticationService.find.isUserLoggedIn.value || !isLoggedIn) {
+      if (isVerified && AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.verified || !isVerified) {
+        callback();
+      } else {
+        snackBar(message: 'verify_profile_msg'.tr);
+      }
+    } else {
+      snackBar(message: loginErrorMsg ?? 'login_express_interest_msg'.tr);
+    }
+  }
 }
 
 class ColorGenerator {

@@ -40,7 +40,7 @@ class NavigationHistoryObserver extends NavigatorObserver {
     if (route.settings.name == HomeScreen.routeName) {
       history.clear();
       history.add(_createRouteFromName(HomeScreen.routeName));
-      Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () => SharedPreferencesService.find.removeKey(navigationStackKey));
+      Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () => SharedPreferencesService.find.removeKey(navigationStackKey));
     }
     // save navigation history in shared preferences
     // if (history.length > 1 && route.settings.name != HomeScreen.routeName) {
@@ -125,15 +125,16 @@ class NavigationHistoryObserver extends NavigatorObserver {
       Get.toNamed(previousRouteHistory);
       // }
     } else {
-      Get.toNamed(previousRouteHistory);
       _removeLastHistory();
+      Get.back();
+      // Get.toNamed(history.last?.settings.name ?? HomeScreen.routeName);
     }
   }
 
   void _removeLastHistory() {
     final historyLength = history.length;
     do {
-      _removeLastHistory();
+      history.removeLast();
     } while (history.length >= historyLength);
   }
 

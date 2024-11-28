@@ -12,7 +12,7 @@ import '../../../repositories/boost_repository.dart';
 
 class ListBoostController extends GetxController {
   final ScrollController scrollController = ScrollController();
-  bool _isLoading = true;
+  RxBool _isLoading = true.obs;
   RxBool isLoadingMore = true.obs;
   bool isEndList = false;
   int page = 0;
@@ -20,9 +20,9 @@ class ListBoostController extends GetxController {
   List<BoostDTO> _boostDTOList = [];
   List<bool> _expandedTiles = [];
 
-  bool get isLoading => _isLoading;
+  RxBool get isLoading => _isLoading;
 
-  set isLoading(bool value) {
+  set isLoading(RxBool value) {
     _isLoading = value;
     update();
   }
@@ -64,14 +64,14 @@ class ListBoostController extends GetxController {
     if (page > 1) {
       isLoadingMore.value = true;
     } else {
-      isLoading = true;
+      isLoading.value = true;
     }
     final result = await BoostRepository.find.getUserBoosts(page: ++page);
     if ((boostList.isEmpty) || boostList.length < kLoadMoreLimit) isEndList = true;
     if (page == 1) {
       _boostDTOList = result;
       boostList = result.map((e) => e.boost).toList();
-      isLoading = false;
+      isLoading.value = false;
     } else {
       _boostDTOList.addAll(result);
       boostList.addAll(result.map((e) => e.boost).toList());

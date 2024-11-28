@@ -2652,8 +2652,12 @@ class $ReservationTableTable extends ReservationTable with TableInfo<$Reservatio
   @override
   late final GeneratedColumn<int> user = GeneratedColumn<int>('user', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('REFERENCES user_table (id)'));
+  static const VerificationMeta _providerMeta = const VerificationMeta('provider');
   @override
-  List<GeneratedColumn> get $columns => [id, task, service, date, totalPrice, proposedPrice, coupon, note, status, coins, user];
+  late final GeneratedColumn<int> provider = GeneratedColumn<int>('provider', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('REFERENCES user_table (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [id, task, service, date, totalPrice, proposedPrice, coupon, note, status, coins, user, provider];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2696,6 +2700,9 @@ class $ReservationTableTable extends ReservationTable with TableInfo<$Reservatio
     if (data.containsKey('user')) {
       context.handle(_userMeta, user.isAcceptableOrUnknown(data['user']!, _userMeta));
     }
+    if (data.containsKey('provider')) {
+      context.handle(_providerMeta, provider.isAcceptableOrUnknown(data['provider']!, _providerMeta));
+    }
     return context;
   }
 
@@ -2716,6 +2723,7 @@ class $ReservationTableTable extends ReservationTable with TableInfo<$Reservatio
       status: $ReservationTableTable.$converterstatus.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}status'])!),
       coins: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}coins'])!,
       user: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}user']),
+      provider: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}provider']),
     );
   }
 
@@ -2739,6 +2747,7 @@ class ReservationTableData extends DataClass implements Insertable<ReservationTa
   final RequestStatus status;
   final int coins;
   final int? user;
+  final int? provider;
   const ReservationTableData(
       {required this.id,
       this.task,
@@ -2750,7 +2759,8 @@ class ReservationTableData extends DataClass implements Insertable<ReservationTa
       required this.note,
       required this.status,
       required this.coins,
-      this.user});
+      this.user,
+      this.provider});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2775,6 +2785,9 @@ class ReservationTableData extends DataClass implements Insertable<ReservationTa
     if (!nullToAbsent || user != null) {
       map['user'] = Variable<int>(user);
     }
+    if (!nullToAbsent || provider != null) {
+      map['provider'] = Variable<int>(provider);
+    }
     return map;
   }
 
@@ -2791,6 +2804,7 @@ class ReservationTableData extends DataClass implements Insertable<ReservationTa
       status: Value(status),
       coins: Value(coins),
       user: user == null && nullToAbsent ? const Value.absent() : Value(user),
+      provider: provider == null && nullToAbsent ? const Value.absent() : Value(provider),
     );
   }
 
@@ -2808,6 +2822,7 @@ class ReservationTableData extends DataClass implements Insertable<ReservationTa
       status: $ReservationTableTable.$converterstatus.fromJson(serializer.fromJson<int>(json['status'])),
       coins: serializer.fromJson<int>(json['coins']),
       user: serializer.fromJson<int?>(json['user']),
+      provider: serializer.fromJson<int?>(json['provider']),
     );
   }
   @override
@@ -2825,6 +2840,7 @@ class ReservationTableData extends DataClass implements Insertable<ReservationTa
       'status': serializer.toJson<int>($ReservationTableTable.$converterstatus.toJson(status)),
       'coins': serializer.toJson<int>(coins),
       'user': serializer.toJson<int?>(user),
+      'provider': serializer.toJson<int?>(provider),
     };
   }
 
@@ -2839,7 +2855,8 @@ class ReservationTableData extends DataClass implements Insertable<ReservationTa
           String? note,
           RequestStatus? status,
           int? coins,
-          Value<int?> user = const Value.absent()}) =>
+          Value<int?> user = const Value.absent(),
+          Value<int?> provider = const Value.absent()}) =>
       ReservationTableData(
         id: id ?? this.id,
         task: task.present ? task.value : this.task,
@@ -2852,6 +2869,7 @@ class ReservationTableData extends DataClass implements Insertable<ReservationTa
         status: status ?? this.status,
         coins: coins ?? this.coins,
         user: user.present ? user.value : this.user,
+        provider: provider.present ? provider.value : this.provider,
       );
   ReservationTableData copyWithCompanion(ReservationTableCompanion data) {
     return ReservationTableData(
@@ -2866,6 +2884,7 @@ class ReservationTableData extends DataClass implements Insertable<ReservationTa
       status: data.status.present ? data.status.value : this.status,
       coins: data.coins.present ? data.coins.value : this.coins,
       user: data.user.present ? data.user.value : this.user,
+      provider: data.provider.present ? data.provider.value : this.provider,
     );
   }
 
@@ -2882,13 +2901,14 @@ class ReservationTableData extends DataClass implements Insertable<ReservationTa
           ..write('note: $note, ')
           ..write('status: $status, ')
           ..write('coins: $coins, ')
-          ..write('user: $user')
+          ..write('user: $user, ')
+          ..write('provider: $provider')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, task, service, date, totalPrice, proposedPrice, coupon, note, status, coins, user);
+  int get hashCode => Object.hash(id, task, service, date, totalPrice, proposedPrice, coupon, note, status, coins, user, provider);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2903,7 +2923,8 @@ class ReservationTableData extends DataClass implements Insertable<ReservationTa
           other.note == this.note &&
           other.status == this.status &&
           other.coins == this.coins &&
-          other.user == this.user);
+          other.user == this.user &&
+          other.provider == this.provider);
 }
 
 class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
@@ -2918,6 +2939,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
   final Value<RequestStatus> status;
   final Value<int> coins;
   final Value<int?> user;
+  final Value<int?> provider;
   final Value<int> rowid;
   const ReservationTableCompanion({
     this.id = const Value.absent(),
@@ -2931,6 +2953,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     this.status = const Value.absent(),
     this.coins = const Value.absent(),
     this.user = const Value.absent(),
+    this.provider = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ReservationTableCompanion.insert({
@@ -2945,6 +2968,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     this.status = const Value.absent(),
     this.coins = const Value.absent(),
     this.user = const Value.absent(),
+    this.provider = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id);
   static Insertable<ReservationTableData> custom({
@@ -2959,6 +2983,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     Expression<int>? status,
     Expression<int>? coins,
     Expression<int>? user,
+    Expression<int>? provider,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2973,6 +2998,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
       if (status != null) 'status': status,
       if (coins != null) 'coins': coins,
       if (user != null) 'user': user,
+      if (provider != null) 'provider': provider,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2989,6 +3015,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
       Value<RequestStatus>? status,
       Value<int>? coins,
       Value<int?>? user,
+      Value<int?>? provider,
       Value<int>? rowid}) {
     return ReservationTableCompanion(
       id: id ?? this.id,
@@ -3002,6 +3029,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
       status: status ?? this.status,
       coins: coins ?? this.coins,
       user: user ?? this.user,
+      provider: provider ?? this.provider,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3042,6 +3070,9 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
     if (user.present) {
       map['user'] = Variable<int>(user.value);
     }
+    if (provider.present) {
+      map['provider'] = Variable<int>(provider.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3062,6 +3093,7 @@ class ReservationTableCompanion extends UpdateCompanion<ReservationTableData> {
           ..write('status: $status, ')
           ..write('coins: $coins, ')
           ..write('user: $user, ')
+          ..write('provider: $provider, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3740,16 +3772,6 @@ final class $$UserTableTableReferences extends BaseReferences<_$Database, $UserT
     final cache = $_typedResult.readTableOrNull(_storeTableRefsTable($_db));
     return ProcessedTableManager(manager.$state.copyWith(prefetchedData: cache));
   }
-
-  static MultiTypedResultKey<$ReservationTableTable, List<ReservationTableData>> _reservationTableRefsTable(_$Database db) =>
-      MultiTypedResultKey.fromTable(db.reservationTable, aliasName: $_aliasNameGenerator(db.userTable.id, db.reservationTable.user));
-
-  $$ReservationTableTableProcessedTableManager get reservationTableRefs {
-    final manager = $$ReservationTableTableTableManager($_db, $_db.reservationTable).filter((f) => f.user.id($_item.id));
-
-    final cache = $_typedResult.readTableOrNull(_reservationTableRefsTable($_db));
-    return ProcessedTableManager(manager.$state.copyWith(prefetchedData: cache));
-  }
 }
 
 class $$UserTableTableFilterComposer extends Composer<_$Database, $UserTableTable> {
@@ -3834,22 +3856,6 @@ class $$UserTableTableFilterComposer extends Composer<_$Database, $UserTableTabl
         builder: (joinBuilder, {$addJoinBuilderToRootComposer, $removeJoinBuilderFromRootComposer}) => $$StoreTableTableFilterComposer(
               $db: $db,
               $table: $db.storeTable,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
-
-  Expression<bool> reservationTableRefs(Expression<bool> Function($$ReservationTableTableFilterComposer f) f) {
-    final $$ReservationTableTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $db.reservationTable,
-        getReferencedColumn: (t) => t.user,
-        builder: (joinBuilder, {$addJoinBuilderToRootComposer, $removeJoinBuilderFromRootComposer}) => $$ReservationTableTableFilterComposer(
-              $db: $db,
-              $table: $db.reservationTable,
               $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
               joinBuilder: joinBuilder,
               $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
@@ -4002,22 +4008,6 @@ class $$UserTableTableAnnotationComposer extends Composer<_$Database, $UserTable
             ));
     return f(composer);
   }
-
-  Expression<T> reservationTableRefs<T extends Object>(Expression<T> Function($$ReservationTableTableAnnotationComposer a) f) {
-    final $$ReservationTableTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $db.reservationTable,
-        getReferencedColumn: (t) => t.user,
-        builder: (joinBuilder, {$addJoinBuilderToRootComposer, $removeJoinBuilderFromRootComposer}) => $$ReservationTableTableAnnotationComposer(
-              $db: $db,
-              $table: $db.reservationTable,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
 }
 
 class $$UserTableTableTableManager extends RootTableManager<
@@ -4031,7 +4021,7 @@ class $$UserTableTableTableManager extends RootTableManager<
     $$UserTableTableUpdateCompanionBuilder,
     (UserTableData, $$UserTableTableReferences),
     UserTableData,
-    PrefetchHooks Function({bool governorate, bool taskTableRefs, bool storeTableRefs, bool reservationTableRefs})> {
+    PrefetchHooks Function({bool governorate, bool taskTableRefs, bool storeTableRefs})> {
   $$UserTableTableTableManager(_$Database db, $UserTableTable table)
       : super(TableManagerState(
           db: db,
@@ -4116,10 +4106,10 @@ class $$UserTableTableTableManager extends RootTableManager<
             availablePurchasedCoins: availablePurchasedCoins,
           ),
           withReferenceMapper: (p0) => p0.map((e) => (e.readTable(table), $$UserTableTableReferences(db, table, e))).toList(),
-          prefetchHooksCallback: ({governorate = false, taskTableRefs = false, storeTableRefs = false, reservationTableRefs = false}) {
+          prefetchHooksCallback: ({governorate = false, taskTableRefs = false, storeTableRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [if (taskTableRefs) db.taskTable, if (storeTableRefs) db.storeTable, if (reservationTableRefs) db.reservationTable],
+              explicitlyWatchedTables: [if (taskTableRefs) db.taskTable, if (storeTableRefs) db.storeTable],
               addJoins: <T extends TableManagerState<dynamic, dynamic, dynamic, dynamic, dynamic, dynamic, dynamic, dynamic, dynamic, dynamic, dynamic>>(state) {
                 if (governorate) {
                   state = state.withJoin(
@@ -4147,13 +4137,6 @@ class $$UserTableTableTableManager extends RootTableManager<
                         referencedTable: $$UserTableTableReferences._storeTableRefsTable(db),
                         managerFromTypedResult: (p0) => $$UserTableTableReferences(db, table, p0).storeTableRefs,
                         referencedItemsForCurrentItem: (item, referencedItems) => referencedItems.where((e) => e.owner == item.id),
-                        typedResults: items),
-                  if (reservationTableRefs)
-                    await $_getPrefetchedData(
-                        currentTable: table,
-                        referencedTable: $$UserTableTableReferences._reservationTableRefsTable(db),
-                        managerFromTypedResult: (p0) => $$UserTableTableReferences(db, table, p0).reservationTableRefs,
-                        referencedItemsForCurrentItem: (item, referencedItems) => referencedItems.where((e) => e.user == item.id),
                         typedResults: items)
                 ];
               },
@@ -4173,7 +4156,7 @@ typedef $$UserTableTableProcessedTableManager = ProcessedTableManager<
     $$UserTableTableUpdateCompanionBuilder,
     (UserTableData, $$UserTableTableReferences),
     UserTableData,
-    PrefetchHooks Function({bool governorate, bool taskTableRefs, bool storeTableRefs, bool reservationTableRefs})>;
+    PrefetchHooks Function({bool governorate, bool taskTableRefs, bool storeTableRefs})>;
 typedef $$TaskTableTableCreateCompanionBuilder = TaskTableCompanion Function({
   required String id,
   Value<double> price,
@@ -5731,6 +5714,7 @@ typedef $$ReservationTableTableCreateCompanionBuilder = ReservationTableCompanio
   Value<RequestStatus> status,
   Value<int> coins,
   Value<int?> user,
+  Value<int?> provider,
   Value<int> rowid,
 });
 typedef $$ReservationTableTableUpdateCompanionBuilder = ReservationTableCompanion Function({
@@ -5745,6 +5729,7 @@ typedef $$ReservationTableTableUpdateCompanionBuilder = ReservationTableCompanio
   Value<RequestStatus> status,
   Value<int> coins,
   Value<int?> user,
+  Value<int?> provider,
   Value<int> rowid,
 });
 
@@ -5777,6 +5762,16 @@ final class $$ReservationTableTableReferences extends BaseReferences<_$Database,
     if ($_item.user == null) return null;
     final manager = $$UserTableTableTableManager($_db, $_db.userTable).filter((f) => f.id($_item.user!));
     final item = $_typedResult.readTableOrNull(_userTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $UserTableTable _providerTable(_$Database db) => db.userTable.createAlias($_aliasNameGenerator(db.reservationTable.provider, db.userTable.id));
+
+  $$UserTableTableProcessedTableManager? get provider {
+    if ($_item.provider == null) return null;
+    final manager = $$UserTableTableTableManager($_db, $_db.userTable).filter((f) => f.id($_item.provider!));
+    final item = $_typedResult.readTableOrNull(_providerTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(manager.$state.copyWith(prefetchedData: [item]));
   }
@@ -5843,6 +5838,22 @@ class $$ReservationTableTableFilterComposer extends Composer<_$Database, $Reserv
     final $$UserTableTableFilterComposer composer = $composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.user,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, {$addJoinBuilderToRootComposer, $removeJoinBuilderFromRootComposer}) => $$UserTableTableFilterComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$UserTableTableFilterComposer get provider {
+    final $$UserTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.provider,
         referencedTable: $db.userTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, {$addJoinBuilderToRootComposer, $removeJoinBuilderFromRootComposer}) => $$UserTableTableFilterComposer(
@@ -5927,6 +5938,22 @@ class $$ReservationTableTableOrderingComposer extends Composer<_$Database, $Rese
             ));
     return composer;
   }
+
+  $$UserTableTableOrderingComposer get provider {
+    final $$UserTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.provider,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, {$addJoinBuilderToRootComposer, $removeJoinBuilderFromRootComposer}) => $$UserTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
 }
 
 class $$ReservationTableTableAnnotationComposer extends Composer<_$Database, $ReservationTableTable> {
@@ -6000,6 +6027,22 @@ class $$ReservationTableTableAnnotationComposer extends Composer<_$Database, $Re
             ));
     return composer;
   }
+
+  $$UserTableTableAnnotationComposer get provider {
+    final $$UserTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.provider,
+        referencedTable: $db.userTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, {$addJoinBuilderToRootComposer, $removeJoinBuilderFromRootComposer}) => $$UserTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.userTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
 }
 
 class $$ReservationTableTableTableManager extends RootTableManager<
@@ -6013,7 +6056,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
     $$ReservationTableTableUpdateCompanionBuilder,
     (ReservationTableData, $$ReservationTableTableReferences),
     ReservationTableData,
-    PrefetchHooks Function({bool task, bool service, bool user})> {
+    PrefetchHooks Function({bool task, bool service, bool user, bool provider})> {
   $$ReservationTableTableTableManager(_$Database db, $ReservationTableTable table)
       : super(TableManagerState(
           db: db,
@@ -6033,6 +6076,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
             Value<RequestStatus> status = const Value.absent(),
             Value<int> coins = const Value.absent(),
             Value<int?> user = const Value.absent(),
+            Value<int?> provider = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               ReservationTableCompanion(
@@ -6047,6 +6091,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
             status: status,
             coins: coins,
             user: user,
+            provider: provider,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -6061,6 +6106,7 @@ class $$ReservationTableTableTableManager extends RootTableManager<
             Value<RequestStatus> status = const Value.absent(),
             Value<int> coins = const Value.absent(),
             Value<int?> user = const Value.absent(),
+            Value<int?> provider = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               ReservationTableCompanion.insert(
@@ -6075,10 +6121,11 @@ class $$ReservationTableTableTableManager extends RootTableManager<
             status: status,
             coins: coins,
             user: user,
+            provider: provider,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0.map((e) => (e.readTable(table), $$ReservationTableTableReferences(db, table, e))).toList(),
-          prefetchHooksCallback: ({task = false, service = false, user = false}) {
+          prefetchHooksCallback: ({task = false, service = false, user = false, provider = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -6107,6 +6154,14 @@ class $$ReservationTableTableTableManager extends RootTableManager<
                     referencedColumn: $$ReservationTableTableReferences._userTable(db).id,
                   ) as T;
                 }
+                if (provider) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.provider,
+                    referencedTable: $$ReservationTableTableReferences._providerTable(db),
+                    referencedColumn: $$ReservationTableTableReferences._providerTable(db).id,
+                  ) as T;
+                }
 
                 return state;
               },
@@ -6129,7 +6184,7 @@ typedef $$ReservationTableTableProcessedTableManager = ProcessedTableManager<
     $$ReservationTableTableUpdateCompanionBuilder,
     (ReservationTableData, $$ReservationTableTableReferences),
     ReservationTableData,
-    PrefetchHooks Function({bool task, bool service, bool user})>;
+    PrefetchHooks Function({bool task, bool service, bool user, bool provider})>;
 
 class $DatabaseManager {
   final _$Database _db;

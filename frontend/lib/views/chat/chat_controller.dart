@@ -22,6 +22,7 @@ import '../../services/logger_service.dart';
 import '../../services/shared_preferences.dart';
 import '../../services/stream_socket.dart';
 import 'components/messages_screen.dart';
+import 'components/payment_dialog.dart';
 
 class ChatController extends GetxController {
   /// Not permanent, use with caution!
@@ -34,7 +35,7 @@ class ChatController extends GetxController {
   final FocusNode searchDiscussionsFocusNode = FocusNode();
   final StreamSocket streamSocket = StreamSocket();
   final ScrollController chatScrollController = ScrollController();
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   User? loggedInUser;
   bool isSearchingBubbles = false;
   List<DiscussionDTO> userChatPropertiesOriginal = [];
@@ -42,7 +43,7 @@ class ChatController extends GetxController {
   List<ChatModel> discussionHistory = [];
   List<ChatModel> searchChatResult = [];
   DiscussionDTO? _selectedChatBubble;
-  bool isLoadingNewChat = true;
+  RxBool isLoadingNewChat = true.obs;
   bool isSearchMode = false;
   int page = 1;
   bool openSearchInChat = false;
@@ -101,7 +102,7 @@ class ChatController extends GetxController {
           orElse: () => null);
       selectedChatBubble ??= DiscussionDTO(id: -1, ownerId: loggedInUser!.id, ownerName: loggedInUser!.name, userId: Get.arguments.id, userName: Get.arguments.name);
     }
-    isLoading = false;
+    isLoading.value = false;
     update();
   }
 
@@ -116,7 +117,7 @@ class ChatController extends GetxController {
   }
 
   Future<List<DiscussionDTO>> getUserChatHistory({String? search}) async {
-    return await Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () async {
+    return await Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () async {
       final (result, ongoingReservations) = await ChatRepository.find.getUserDiscussions(search: search);
       if (Get.arguments != null && Get.arguments is String) {
         selectedChatBubble =
@@ -126,8 +127,8 @@ class ChatController extends GetxController {
       hasOngoingReservation = (ongoingReservations?.isNotEmpty ?? false);
       // TODO fix this if there are more than one ongoing reservation the seeker needs to choose one
       currentReservation = hasOngoingReservation ? ongoingReservations?.first : null;
-      currentTasks = ongoingReservations != null ? ongoingReservations.where((element) => element.task != null).map((e) => e.task!).toList() : [];
-      currentServices = ongoingReservations != null ? ongoingReservations.where((element) => element.service != null).map((e) => e.service!).toList() : [];
+      currentTasks = hasOngoingReservation ? ongoingReservations!.where((element) => element.task != null).map((e) => e.task!).toList() : [];
+      currentServices = hasOngoingReservation ? ongoingReservations!.where((element) => element.service != null).map((e) => e.service!).toList() : [];
       update();
       return result ?? [];
     });
@@ -260,7 +261,7 @@ class ChatController extends GetxController {
       update();
       MainAppController.find.getNotSeenMessages();
     });
-    Future.delayed(const Duration(seconds: 1), () => isLoadingNewChat = false);
+    Future.delayed(const Duration(seconds: 1), () => isLoadingNewChat.value = false);
   }
 
   Future<void> _loadMoreMessages() async {
@@ -354,7 +355,7 @@ class ChatController extends GetxController {
     discussionHistory = [];
     searchChatResult = [];
     page = 1;
-    isLoadingNewChat = true;
+    isLoadingNewChat.value = true;
     isLoadingUser = true;
   }
 
@@ -376,6 +377,8 @@ class ChatController extends GetxController {
       Buildables.createContractBottomsheet(
         isTask: contractTask != null,
         contract: Contract(
+          description: contractTask?.description ?? contractService?.description ?? '',
+          delivrables: contractTask?.delivrables ?? contractService?.included ?? '',
           finalPrice: (contractTask != null ? contractTask.price : contractService?.price) ?? 0,
           dueDate: null,
           task: contractTask,
@@ -399,20 +402,47 @@ class ChatController extends GetxController {
   }
 
   void payContract(Contract contract) {
-    // TODO add payment service for contract.finalPrice
-    if (currentReservation != null && currentReservation?.status != RequestStatus.confirmed) {
+    if (currentReservation != null && currentReservation?.status != RequestStatus.confirmed && currentReservation?.task != null) {
       Future.delayed(
         Durations.medium1,
         () => Helper.openConfirmationDialog(
           title: 'pay_task_contract_msg'.tr,
           onConfirm: () async {
-            final result = await ReservationRepository.find.updateReservationStatus(currentReservation!, RequestStatus.confirmed);
-            if (result) MainAppController.find.socket!.emit('payContract', {'contractId': contract.id, 'discussionId': selectedChatBubble?.id});
+            final result = await ReservationRepository.find.updateTaskReservationStatus(currentReservation!, RequestStatus.confirmed);
+            if (result) _payContractProcess(contract);
           },
         ),
       );
     } else {
-      MainAppController.find.socket!.emit('payContract', {'contractId': contract.id, 'discussionId': selectedChatBubble?.id});
+      _payContractProcess(contract);
+    }
+  }
+
+  void _payContractProcess(Contract contract) {
+    Future.delayed(
+      Durations.medium1,
+      () => Get.dialog(PaymentDialog(contract: contract, discussionId: selectedChatBubble?.id)),
+    );
+  }
+
+  void signContract(Contract contract) {
+    if (contract.provider?.id == AuthenticationService.find.jwtUserData?.id) {
+      if (contract.service != null && currentReservation != null && currentReservation?.service?.id == contract.service?.id) {
+        Future.delayed(
+          Durations.medium1,
+          () => Helper.openConfirmationDialog(
+            title: 'pay_service_contract_msg'.tr,
+            onConfirm: () async {
+              final result = await ReservationRepository.find.updateServiceReservationStatus(currentReservation!, RequestStatus.confirmed);
+              if (result) MainAppController.find.socket!.emit('signContract', {'contractId': contract.id, 'discussionId': selectedChatBubble?.id});
+            },
+          ),
+        );
+      } else {
+        MainAppController.find.socket!.emit('signContract', {'contractId': contract.id, 'discussionId': selectedChatBubble?.id});
+      }
+    } else {
+      payContract(contract);
     }
   }
 }

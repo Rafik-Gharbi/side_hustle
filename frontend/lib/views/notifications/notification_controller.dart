@@ -11,6 +11,7 @@ import '../../models/notification.dart';
 import '../../models/user.dart';
 import '../../repositories/notification_repository.dart';
 import '../../services/authentication_service.dart';
+import '../profile/admin_dashboard/admin_dashboard_screen.dart';
 import '../profile/admin_dashboard/components/approve_user/approve_user_screen.dart';
 import '../profile/balance/balance_screen.dart';
 import '../profile/profile_screen/profile_controller.dart';
@@ -27,7 +28,7 @@ class NotificationsController extends GetxController {
   static NotificationsController get find => Get.find<NotificationsController>();
   final ScrollController scrollController = ScrollController();
   List<NotificationModel> notificationList = [];
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   bool isEndList = false;
   RxBool isLoadingMore = false.obs;
   int page = 0;
@@ -44,7 +45,7 @@ class NotificationsController extends GetxController {
     if ((list.isEmpty) || list.length < kLoadMoreLimit) isEndList = true;
     if (page == 1) {
       notificationList = list;
-      isLoading = false;
+      isLoading.value = false;
     } else {
       notificationList.addAll(list);
       isLoadingMore.value = false;
@@ -110,20 +111,21 @@ class NotificationsController extends GetxController {
           MainAppController.find.manageNavigation(ProfileScreen.routeName);
           break;
         case NotificationType.verification:
-          Future.delayed(const Duration(milliseconds: 600), () {
-            if (decodedAction['isAdmin'] != null && (decodedAction['isAdmin'] as bool)) {
-              Get.toNamed(ApproveUserScreen.routeName, arguments: decodedAction['userId']);
-            } else {
-              if (AuthenticationService.find.jwtUserData?.id == decodedAction['userId']) {
-                if (decodedAction['Approved'] != null && (decodedAction['Approved'] as bool)) {
-                  AuthenticationService.find.jwtUserData?.isVerified = VerifyIdentityStatus.verified;
-                } else if (decodedAction['Approved'] != null && !(decodedAction['Approved'] as bool)) {
-                  AuthenticationService.find.jwtUserData?.isVerified = VerifyIdentityStatus.none;
-                }
-                Get.toNamed(ProfileScreen.routeName);
-              }
+          if (AuthenticationService.find.jwtUserData?.id == decodedAction['userId']) {
+            if (decodedAction['Approved'] != null && (decodedAction['Approved'] as bool)) {
+              AuthenticationService.find.jwtUserData?.isVerified = VerifyIdentityStatus.verified;
+            } else if (decodedAction['Approved'] != null && !(decodedAction['Approved'] as bool)) {
+              AuthenticationService.find.jwtUserData?.isVerified = VerifyIdentityStatus.none;
             }
-          });
+          }
+          if (decodedAction['isAdmin'] != null && (decodedAction['isAdmin'] as bool)) {
+            Future.delayed(const Duration(milliseconds: 600), () {
+              Future.delayed(const Duration(milliseconds: 600), () {
+                Get.toNamed(ApproveUserScreen.routeName, arguments: decodedAction['userId']);
+              });
+              Get.toNamed(AdminDashboardScreen.routeName);
+            });
+          }
           MainAppController.find.manageNavigation(ProfileScreen.routeName);
           break;
         case NotificationType.review:

@@ -8,7 +8,7 @@ import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class ReviewStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   List<PieChartModel> reviewsPerRatingData = [];
   int _pieChartTouchedIndex = -1;
 
@@ -26,6 +26,12 @@ class ReviewStatsController extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminReviewStatsData');
+  }
+
   void _initSocket() {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       final socketInitialized = MainAppController.find.socket!.hasListeners('adminReviewStatsData');
@@ -34,7 +40,7 @@ class ReviewStatsController extends GetxController {
         final reviewsList = (data?['reviewStats'] as List?)?.map((e) => Review.fromJson(e)).toList() ?? [];
         if (reviewsList.isNotEmpty) _initPieChartData(reviewsList);
         AdminDashboardController.totalReviews.value = reviewsList.length;
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

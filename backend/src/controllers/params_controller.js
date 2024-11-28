@@ -44,13 +44,25 @@ exports.getAllCategories = async (req, res) => {
           where: { category_id: row.id },
         });
 
+        let subscribedCount = subscribedUsers.length;
+
+        if (row.parentId === -1) {
+          const childCategories = categories.filter(category => category.parentId === row.id);
+          for (const child of childCategories) {
+            let childSubscribedUsers = await CategorySubscriptionModel.findAll({
+              where: { category_id: child.id },
+            });
+            subscribedCount += childSubscribedUsers.length;
+          }
+        }
+
         return {
           id: row.id,
           name: row.name,
           description: row.description,
           icon: row.icon,
           parentId: row.parentId,
-          subscribed: subscribedUsers.length,
+          subscribed: subscribedCount,
         };
       })
     );

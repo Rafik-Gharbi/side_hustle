@@ -8,7 +8,7 @@ import '../../../../../../networking/api_base_helper.dart';
 import '../../../admin_dashboard_controller.dart';
 
 class UserStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   Map<DateTime, double> usersPerDayData = {};
 
   UserStatsController() {
@@ -16,6 +16,12 @@ class UserStatsController extends GetxController {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       MainAppController.find.socket!.emit('getAdminUserStatsData', {'jwt': ApiBaseHelper.find.getToken()});
     });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminUserStatsData');
   }
 
   void _initSocket() {
@@ -28,7 +34,7 @@ class UserStatsController extends GetxController {
         AdminDashboardController.totalUsers.value = userList.length;
         AdminDashboardController.activeUsers.value = data?['userStats']?['activeCount'] ?? 0;
         AdminDashboardController.verifiedUsers.value = userList.where((element) => element.isVerified == VerifyIdentityStatus.verified).length;
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

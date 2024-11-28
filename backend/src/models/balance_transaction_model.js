@@ -10,7 +10,15 @@ const BalanceTransaction = sequelize.define(
       primaryKey: true,
     },
     type: {
-      type: DataTypes.ENUM("taskPayment", "deposit", "withdrawal", "system"),
+      type: DataTypes.ENUM(
+        "taskPayment",
+        "taskEarnings",
+        "deposit",
+        "withdrawal",
+        "coinPurchase",
+        "boostPurchase",
+        "system"
+      ),
       allowNull: false,
     },
     amount: {

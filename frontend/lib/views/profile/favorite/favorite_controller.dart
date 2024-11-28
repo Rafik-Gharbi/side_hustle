@@ -5,7 +5,7 @@ import '../../../models/task.dart';
 import '../../../repositories/favorite_repository.dart';
 
 class FavoriteController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   List<Task> savedTaskList = [];
   List<Store> savedStoreList = [];
 
@@ -27,7 +27,7 @@ class FavoriteController extends GetxController {
     final result = await FavoriteRepository.find.listFavorite();
     savedTaskList = result?.savedTasks ?? [];
     savedStoreList = result?.savedStores ?? [];
-    isLoading = false;
+    isLoading.value = false;
     update();
   }
 }

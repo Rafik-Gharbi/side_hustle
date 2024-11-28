@@ -25,17 +25,10 @@ class BuildChatSearchResult extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final msg = controller.searchChatResult[index];
                     final isCurrentUser = msg.senderId == AuthenticationService.find.jwtUserData?.id;
-                    final isOwner = controller.loggedInUser?.isOwner ?? false;
                     return InkWell(
                       onTap: () => controller.goToMessageInChat(msg.id),
                       child: ListTile(
-                        title: Text(
-                          isCurrentUser
-                              ? 'you'.tr
-                              : isOwner
-                                  ? 'client'.tr
-                                  : 'host'.tr,
-                        ),
+                        title: Text(isCurrentUser ? 'you'.tr : 'client'.tr),
                         subtitle: RichText(
                           text: TextSpan(
                             style: AppFonts.x12Regular,

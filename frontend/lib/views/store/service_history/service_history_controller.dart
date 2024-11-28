@@ -5,10 +5,11 @@ import '../../../helpers/helper.dart';
 import '../../../models/enum/request_status.dart';
 import '../../../models/reservation.dart';
 import '../../../repositories/reservation_repository.dart';
+import '../../review/add_review/add_review_bottomsheet.dart';
 
 class ServiceHistoryController extends GetxController {
   List<Reservation> _taskHistoryList = [];
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   Reservation? highlightedReservation;
 
   List<Reservation> get ongoingServices => _taskHistoryList.where((element) => element.status == RequestStatus.confirmed).toList();
@@ -30,17 +31,18 @@ class ServiceHistoryController extends GetxController {
         update();
       });
     }
-    isLoading = false;
+    isLoading.value = false;
     update();
   }
 
   void markServiceReservationAsDone(Reservation booking) => Helper.openConfirmationDialog(
         title: 'mark_service_done_msg'.tr,
         onConfirm: () async {
-          await ReservationRepository.find.updateReservationStatus(booking, RequestStatus.finished);
+          await ReservationRepository.find.updateServiceReservationStatus(booking, RequestStatus.finished);
           Helper.goBack();
           init();
           MainAppController.find.resolveProfileActionRequired();
+          Get.bottomSheet(AddReviewBottomsheet(user: booking.provider), isScrollControlled: true);
         },
       );
 }

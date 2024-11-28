@@ -64,7 +64,7 @@ class MessagesScreen extends StatelessWidget {
                 isLoading: controller.isLoading,
                 child: controller.selectedChatBubble == null
                     ? Center(child: Text('select_discussion'.tr, style: AppFonts.x14Regular))
-                    : SharedPreferencesService.find.isReady && AuthenticationService.find.jwtUserData == null
+                    : SharedPreferencesService.find.isReady.value && AuthenticationService.find.jwtUserData == null
                         ? Buildables.buildLoginRequest(onLogin: controller.update)
                         : controller.loggedInUser == null
                             ? Buildables.buildLoadingWidget()
@@ -86,8 +86,8 @@ class MessagesScreen extends StatelessWidget {
                                           // Chat Messages
                                           EmptyAnimation(
                                             message: 'no_messages'.tr,
-                                            height: Get.height * 0.67,
                                             itemCount: controller.discussionHistory.length,
+                                            expandIfEmpty: true,
                                             child: const BuildChatMessages(),
                                           ),
                                         const SizedBox(height: Paddings.large),

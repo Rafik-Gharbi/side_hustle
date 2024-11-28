@@ -38,6 +38,26 @@ const { FavoriteTask } = require("../models/favorite_task_model");
 const { Review } = require("../models/review_model");
 const { getDate } = require("../helper/helpers");
 
+async function getAdminRequiredActionsCount() {
+  try {
+    let requiredActionsCount = 0;
+    const approveCount = await usersForApproving();
+    requiredActionsCount += approveCount.length;
+    const balanceTransactions = await getBalanceTransactions();
+    requiredActionsCount += balanceTransactions.length;
+    const userReports = await getAllReports();
+    requiredActionsCount += userReports.length;
+    const userFeedbacks = await getUsersFeedbacks();
+    requiredActionsCount += userFeedbacks.length;
+
+    return requiredActionsCount;
+  } catch (error) {
+    console.log(`Error at getAdminRequiredActionsCount`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return;
+  }
+}
+
 async function usersForApproving() {
   try {
     const approveUsers = await User.findAll({
@@ -67,7 +87,7 @@ async function approveUser(userId) {
 
     const userApprove = await User.findByPk(userForApproveId);
     if (!userApprove) {
-      return res.status(404).json({ message: "user_not_found" });
+      return "user_not_found";
     }
 
     userApprove.isVerified = "verified";
@@ -153,13 +173,13 @@ async function userNotApprovable(userId) {
 
     const userApprove = await User.findByPk(userForApproveId);
     if (!userApprove) {
-      return res.status(404).json({ message: "user_not_found" });
+      return "user_not_found";
     }
     const userDocument = await UserDocumentModel.findOne({
       where: { user_id: userForApproveId },
     });
     if (!userDocument) {
-      return res.status(404).json({ message: "user_document_not_found" });
+      return "user_document_not_found";
     }
 
     userDocument.destroy();
@@ -287,7 +307,7 @@ async function getAdminData() {
     const totalReports = reportList.length;
     // Categories stats
     const categoryStats = await getCategoriesStatsData();
-    const totalSubscrption = categoryStats.subscription.length;
+    const totalSubscription = categoryStats.subscription.length;
     const totalCategories = categoryStats.categories.filter((category) => {
       return category.parentId === -1;
     }).length;
@@ -335,7 +355,7 @@ async function getAdminData() {
       totalServices: totalServices,
       totalFeedbacks: totalFeedbacks,
       totalReports: totalReports,
-      totalSubscrption: totalSubscrption,
+      totalSubscription: totalSubscription,
       totalCategories: totalCategories,
       totalSubCategories: totalSubCategories,
       totalDiscussions: totalDiscussions,
@@ -719,15 +739,15 @@ async function getTaskStatsData() {
 async function updateStatus(id, status) {
   try {
     if (!id || !status) {
-      return res.status(400).json({ message: "missing" });
+      return "missing";
     }
     let transaction = await BalanceTransaction.findByPk(id);
     if (!transaction) {
-      return res.status(404).json({ message: "transaction_not_found" });
+      return "transaction_not_found";
     }
     const transactionUser = await User.findByPk(transaction.userId);
     if (!transactionUser) {
-      return res.status(404).json({ message: "user_not_found" });
+      return "user_not_found";
     }
 
     if (status === "completed") {
@@ -786,4 +806,5 @@ module.exports = {
   getCategoriesStatsData,
   getTaskStatsData,
   updateStatus,
+  getAdminRequiredActionsCount,
 };

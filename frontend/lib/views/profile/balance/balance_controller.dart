@@ -17,7 +17,7 @@ class BalanceController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController bankNumberController = TextEditingController();
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   int withdrawalsCount = 0;
   bool get hasBankNumber => loggedUser.bankNumber != null;
   User loggedUser;
@@ -50,7 +50,7 @@ class BalanceController extends GetxController {
     final (result, count) = await BalanceRepository.find.getBalanceTransactions();
     balanceTransactions = result ?? [];
     withdrawalsCount = count;
-    isLoading = false;
+    isLoading.value = false;
     update();
   }
 
@@ -72,6 +72,10 @@ class BalanceController extends GetxController {
 
   Future<void> requestDeposit(DepositType type) async {
     if ((formKey.currentState?.validate() ?? false) && (type == DepositType.installment ? depositSlip != null : true)) {
+      if (type == DepositType.bankCard) {
+        Helper.snackBar(message: 'bank_card_not_supported_yet'.tr);
+        return;
+      }
       Get.back(); // close bottomsheet
       hasValidatorError = false;
       hasValidatorErrorSlipDeposit = false;
@@ -134,5 +138,4 @@ class BalanceController extends GetxController {
     hasValidatorError = false;
     amountController.text = '';
   }
-
 }

@@ -38,7 +38,8 @@ class TaskDetailsController extends GetxController {
         note: noteController.text,
         coins: task.coins,
         // coupon: coupon,
-        user: AuthenticationService.find.jwtUserData!,
+        provider: AuthenticationService.find.jwtUserData!,
+        user: task.owner,
       ),
     );
     if (result) {
@@ -64,7 +65,7 @@ class TaskDetailsController extends GetxController {
       ? Helper.openConfirmationDialog(
           title: 'mark_task_done_msg'.tr,
           onConfirm: () async {
-            await ReservationRepository.find.updateReservationStatus(reservation!, RequestStatus.finished);
+            await ReservationRepository.find.updateTaskReservationStatus(reservation!, RequestStatus.finished);
             Helper.goBack();
             HomeController.find.init();
             MainAppController.find.resolveProfileActionRequired();

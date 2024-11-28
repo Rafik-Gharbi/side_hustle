@@ -85,13 +85,15 @@ class TaskCard extends StatelessWidget {
           onTap: openContainer,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(width: Get.width - (dense ? 180 : 160), child: OverflowedTextWithTooltip(title: task.title, style: AppFonts.x14Bold, expand: false)),
-                  if (task.category != null && !dense) Text(task.category!.name, style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
-                ],
+            children: [ 
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: Get.width - (dense ? 180 : 160), child: OverflowedTextWithTooltip(title: task.title, style: AppFonts.x14Bold, expand: false)),
+                    if (task.category != null && !dense) Text(task.category!.name, style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                  ],
+                ),
               ),
               // Bookmark task
               if (task.owner.id != AuthenticationService.find.jwtUserData?.id && !dense)

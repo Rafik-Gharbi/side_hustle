@@ -25,9 +25,7 @@ class CustomPopup extends CustomDialog {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(RadiusSize.regular)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(RadiusSize.regular))),
       backgroundColor: kNeutralColor100,
       insetPadding: const EdgeInsets.all(Paddings.small),
       elevation: 0,
@@ -41,11 +39,7 @@ class CustomPopup extends CustomDialog {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: Paddings.small),
-            Text(
-              content,
-              style: AppFonts.x16Regular,
-              textAlign: TextAlign.justify,
-            ),
+            Text(content, style: AppFonts.x16Regular, textAlign: TextAlign.justify),
             const SizedBox(height: Paddings.large),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,

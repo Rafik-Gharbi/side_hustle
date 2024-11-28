@@ -8,7 +8,7 @@ import '../../../repositories/referral_repository.dart';
 import '../../../services/authentication_service.dart';
 
 class ReferralController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   List<Referral> referredUsers = [];
 
   ReferralController() {
@@ -27,7 +27,7 @@ class ReferralController extends GetxController {
   Future<void> _init() async {
     final result = await ReferralRepository.find.listReferral();
     referredUsers = result ?? [];
-    isLoading = false;
+    isLoading.value = false;
     update();
   }
 

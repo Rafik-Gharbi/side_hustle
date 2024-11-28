@@ -15,7 +15,7 @@ class ThemeService {
 
   Future<void> init() async {
     await Helper.waitAndExecute(
-      () => SharedPreferencesService.find.isReady,
+      () => SharedPreferencesService.find.isReady.value,
       () => setTheme(ThemeMode.values
               .cast<ThemeMode?>()
               .singleWhere((element) => element?.name != null && element?.name == SharedPreferencesService.find.get(currentThemeKey), orElse: () => null) ??

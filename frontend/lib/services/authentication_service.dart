@@ -20,6 +20,7 @@ import '../models/user.dart';
 import '../repositories/user_repository.dart';
 import '../views/chat/chat_controller.dart';
 import '../views/chat/chat_screen.dart';
+import '../views/chat/components/messages_screen.dart';
 import '../views/profile/profile_screen/profile_controller.dart';
 import '../views/profile/profile_screen/profile_screen.dart';
 import 'logger_service.dart';
@@ -150,7 +151,7 @@ class AuthenticationService extends GetxController {
       scopes: ['email', 'openid', 'profile'],
     );
     // Check if exist a saved token and relogin the user
-    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady && MainAppController.find.isReady, () async {
+    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value && MainAppController.find.isReady, () async {
       final savedToken = SharedPreferencesService.find.get(jwtKey);
       if (savedToken != null) {
         final jwtPayload = JwtDecoder.decode(savedToken);
@@ -178,7 +179,7 @@ class AuthenticationService extends GetxController {
 
   Future<ProfileDTO?> fetchUserData() async {
     return await Helper.waitAndExecute(
-      () => SharedPreferencesService.find.isReady,
+      () => SharedPreferencesService.find.isReady.value,
       () async {
         final loggedInUser = await UserRepository.find.getLoggedInUser();
         if (loggedInUser?.user.id != null) {
@@ -400,6 +401,7 @@ class AuthenticationService extends GetxController {
         jwtUserData?.role = userFromToken.role;
         jwtUserData?.governorate = userFromToken.governorate;
         jwtUserData?.name = userFromToken.name;
+        jwtUserData?.balance = userFromToken.balance;
         jwtUserData?.baseCoins = userFromToken.baseCoins;
         jwtUserData?.availableCoins = userFromToken.availableCoins;
         jwtUserData?.availablePurchasedCoins = userFromToken.availablePurchasedCoins;
@@ -531,9 +533,9 @@ class AuthenticationService extends GetxController {
     MainAppController.find.socket!.on('notification', (data) {
       // Show a notification to the user if not in the chat tab
       final notification = NotificationModel.fromJson(data);
-      if (Get.currentRoute != ChatScreen.routeName) {
+      if (Get.currentRoute != ChatScreen.routeName && Get.currentRoute != MessagesScreen.routeName) {
         Helper.showNotification(notification);
-      } else if (Get.currentRoute == ChatScreen.routeName) {
+      } else if (Get.currentRoute == ChatScreen.routeName || Get.currentRoute == MessagesScreen.routeName) {
         ChatController.find.getUserChatHistory();
       }
       MainAppController.find.getNotSeenNotifications();

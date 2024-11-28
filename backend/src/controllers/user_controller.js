@@ -48,8 +48,7 @@ const { Service } = require("../models/service_model");
 const { Boost } = require("../models/boost_model");
 const { Transaction } = require("../models/transaction_model");
 const { Referral } = require("../models/referral_model");
-const { CoinPackPurchase } = require("../models/coin_pack_purchase_model");
-const { CoinPack } = require("../models/coin_pack_model");
+const { getAdminRequiredActionsCount } = require("./admin_controller");
 
 exports.renewJWT = async (req, res) => {
   try {
@@ -376,7 +375,7 @@ exports.profile = async (req, res) => {
     let taskHistoryActionRequired = await getTaskHistoryRequiredActionsCount(
       userId
     );
-    let servieHistoryActionRequired =
+    let serviceHistoryActionRequired =
       await getServiceHistoryRequiredActionsCount(userId);
     let myStoreActionRequired = await getMyStoreRequiredActionsCount(userId);
     let approveUsersActionRequired = await getApproveUsersRequiredActionsCount(
@@ -390,6 +389,11 @@ exports.profile = async (req, res) => {
     userHasBoosts = userBoosts.length > 0;
     const jwt = await generateJWT(userFound);
 
+    let adminDashboardActionRequired = 0;
+    if (userFound.role == "admin") {
+      adminDashboardActionRequired = await getAdminRequiredActionsCount();
+    }
+
     return res.status(200).json({
       token: jwt,
       user: userFound,
@@ -398,8 +402,9 @@ exports.profile = async (req, res) => {
       taskHistoryActionRequired,
       myStoreActionRequired,
       approveUsersActionRequired,
-      servieHistoryActionRequired,
+      serviceHistoryActionRequired,
       userHasBoosts,
+      adminDashboardActionRequired,
     });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -802,7 +807,7 @@ exports.updateProfile = async (req, res) => {
       coordinates,
       keepPrivacy,
       bankNumber,
-      balance
+      balance,
       // bio,
     });
     req.files?.gallery?.forEach(async (image) => {
@@ -915,17 +920,19 @@ exports.userActionsRequiredCount = async (req, res) => {
     let myStoreActionRequired = await getMyStoreRequiredActionsCount(
       userFound.id
     );
-    let servieHistoryActionRequired =
+    let serviceHistoryActionRequired =
       await getServiceHistoryRequiredActionsCount(userFound.id);
     const categories = await CategorySubscriptionModel.findAll({
       where: { user_id: userFound.id },
     });
+    const adminDashboardActionRequired = userFound.role === "admin" ? await getAdminRequiredActionsCount() : 0;
 
     let count =
       myRequestActionRequired +
       taskHistoryActionRequired +
       myStoreActionRequired +
-      servieHistoryActionRequired;
+      serviceHistoryActionRequired +
+      adminDashboardActionRequired;
     if (categories.length == 0) count++;
     return res.status(200).json({ count });
   } catch (error) {

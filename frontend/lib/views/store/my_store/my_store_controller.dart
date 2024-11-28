@@ -15,7 +15,6 @@ import '../../../models/reservation.dart';
 import '../../../models/review.dart';
 import '../../../models/service.dart';
 import '../../../models/store.dart';
-import '../../../models/user.dart';
 import '../../../repositories/reservation_repository.dart';
 import '../../../repositories/store_repository.dart';
 import '../../../services/authentication_service.dart';
@@ -40,7 +39,7 @@ class MyStoreController extends GetxController {
   final TextEditingController serviceTimeToController = TextEditingController();
   XFile? storePicture;
   Store? currentStore;
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   Governorate? _governorate;
   Category? _category;
   String? updateServiceId;
@@ -99,13 +98,14 @@ class MyStoreController extends GetxController {
       });
     }
 
-    isLoading = false;
+    isLoading.value = false;
     update();
   }
 
-  void createStore({bool update = false}) => AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.verified
-      ? Get.bottomSheet(AddStoreBottomsheet(isUpdate: update), isScrollControlled: true).then((value) => _clearStoreFields())
-      : Helper.snackBar(message: 'verify_profile_msg'.tr);
+  void createStore({bool update = false}) => Helper.verifyUser(
+        isVerified: true,
+        () => Get.bottomSheet(AddStoreBottomsheet(isUpdate: update), isScrollControlled: true).then((value) => _clearStoreFields()),
+      );
 
   void addService({bool update = false}) => Get.bottomSheet(AddServiceBottomsheet(isUpdate: update), isScrollControlled: true).then((value) => _clearServiceFields());
 
@@ -226,6 +226,7 @@ class MyStoreController extends GetxController {
         date: DateTime.now(),
         totalPrice: service.price ?? 0,
         user: AuthenticationService.find.jwtUserData!,
+        provider: service.owner!,
         note: noteController.text,
         coins: service.coins,
         // coupon: coupon,

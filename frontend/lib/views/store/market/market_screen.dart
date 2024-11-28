@@ -99,13 +99,14 @@ class MarketScreen extends StatelessWidget {
                                         store: controller.getServiceStore(service),
                                         onBookService: () => controller.getServiceStore(service).owner?.id == AuthenticationService.find.jwtUserData?.id
                                             ? Get.toNamed(ServiceRequestScreen.routeName, arguments: service)
-                                            : AuthenticationService.find.isUserLoggedIn.value
-                                                ? Buildables.requestBottomsheet(
-                                                    noteController: controller.noteController,
-                                                    onSubmit: () => controller.bookService(service),
-                                                    neededCoins: service.coins,
-                                                  ).then((value) => controller.clearRequestFormFields())
-                                                : Helper.snackBar(message: 'login_express_interest_msg'.tr),
+                                            : Helper.verifyUser(
+                                                isVerified: true,
+                                                () => Buildables.requestBottomsheet(
+                                                  noteController: controller.noteController,
+                                                  onSubmit: () => controller.bookService(service),
+                                                  neededCoins: service.coins,
+                                                ).then((value) => controller.clearRequestFormFields()),
+                                              ),
                                         isOwner: AuthenticationService.find.jwtUserData?.id == controller.getServiceStore(service).owner?.id,
                                       ),
                                     );

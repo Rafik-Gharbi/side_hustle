@@ -25,6 +25,10 @@ class TaskRepository extends GetxService {
         if (result['ongoingReservation'] != null) {
           tasks.putIfAbsent('ongoingReservation', () => (result['ongoingReservation'] as List).map((e) => Reservation.fromJson(e)).toList());
         }
+        if (result['booking'] != null) tasks.putIfAbsent('booking', () => (result['booking'] as List).map((e) => Reservation.fromJson(e)).toList());
+        if (result['ongoingBooking'] != null) {
+          tasks.putIfAbsent('ongoingBooking', () => (result['ongoingBooking'] as List).map((e) => Reservation.fromJson(e)).toList());
+        }
       } else {
         tasks = await TaskDatabaseRepository.find.getHomeTasks();
       }
@@ -37,7 +41,7 @@ class TaskRepository extends GetxService {
   }
 
   Future<List<Task>?> filterTasks(
-      {int page = 0, int limit = kLoadMoreLimit, String searchQuery = '', FilterModel? filter, int? taskId, bool withCoordinates = false, bool boosted = false}) async {
+      {int page = 0, int limit = kLoadMoreLimit, String searchQuery = '', FilterModel? filter, String? taskId, bool withCoordinates = false, bool boosted = false}) async {
     try {
       List<Task>? tasks;
       if (MainAppController.find.isConnected) {

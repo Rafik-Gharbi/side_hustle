@@ -29,7 +29,12 @@ const {
   getUserStatsData,
   getStoreStatsData,
   getReviewStatsData,
+  approveUser,
+  userNotApprovable,
 } = require("./src/controllers/admin_controller");
+const {
+  BalanceTransaction,
+} = require("./src/models/balance_transaction_model");
 
 function initializeSocket(io) {
   // const io = socketIo(server);
@@ -150,16 +155,20 @@ function initializeSocket(io) {
                 },
               });
         if (!discussion) throw new Error("discussion not found");
+        if (!data.contract.task && !data.contract.service)
+          throw new Error("a task or service is required");
 
         // Create a new chat message entry in the database
         let contract = await Contract.create({
           finalPrice: data.contract.finalPrice,
           dueDate: data.contract.dueDate.split("T")[0],
+          description: data.contract.description,
+          delivrables: data.contract.delivrables,
           service_id: data.contract.service?.id,
           task_id: data.contract.task?.id,
           reservation_id: data.reservationId,
-          seeker_id: data.sender,
-          provider_id: data.reciever,
+          seeker_id: data.contract.task ? data.sender : data.reciever,
+          provider_id: data.contract.task ? data.reciever : data.sender,
         });
 
         // Create the pdf contract with the given data
@@ -168,8 +177,8 @@ function initializeSocket(io) {
           date: new Date().toLocaleDateString(),
           seekerName: sender.name,
           providerName: reciever.name,
-          taskDescription: data.contract.task.description,
-          deliverables: data.contract.task.delivrables,
+          taskDescription: data.contract.description,
+          deliverables: data.contract.delivrables,
           deliveryDate: contract.dueDate,
           price: contract.finalPrice,
           language: "fr",
@@ -230,7 +239,7 @@ function initializeSocket(io) {
         console.error("Error signing contract:", error);
       }
     });
-    // Pay a contract
+    // Pay a contract from balance
     socket.on("payContract", async (data) => {
       try {
         const ID = data.contractId;
@@ -238,6 +247,18 @@ function initializeSocket(io) {
         let contract = await populateContract(ID);
         contract.isPayed = true;
         contract.save();
+
+        const seeker = await User.findByPk(contract.seeker_id);
+        seeker.balance -= contract.finalPrice + contract.finalPrice * 0.1;
+        await seeker.save();
+
+        BalanceTransaction.create({
+          userId: seeker.id,
+          amount: contract.finalPrice + contract.finalPrice * 0.1,
+          type: "taskPayment",
+          status: "completed",
+          description: `Payment for contract ${contract.id}`,
+        });
 
         // Emit the message to all users in the room
         io.to(`${data.discussionId}`).emit("updateContract", {
@@ -357,16 +378,18 @@ function initializeSocket(io) {
       try {
         const adminUser = await validateAdmin(data.jwt);
         if (!adminUser) return;
-        const done = await updateStatus(data.id, data.status);
-        if (done) {
+        const done = await userNotApprovable(data.id, data.status);
+        if (typeof done !== "string") {
           const users = await usersForApproving();
           io.to(`${adminUser.id}-adminDashboard`).emit("adminApproveUsers", {
             users: users,
           });
+          io.to(`${adminUser.id}-adminDashboard`).emit("adminApproveStatus", {
+            done: done,
+          });
+        } else {
+          throw new Error(done);
         }
-        io.to(`${adminUser.id}-adminDashboard`).emit("adminApproveStatus", {
-          done: done,
-        });
       } catch (error) {
         console.error("Error rejecting approve user:", error);
       }
@@ -375,16 +398,18 @@ function initializeSocket(io) {
       try {
         const adminUser = await validateAdmin(data.jwt);
         if (!adminUser) return;
-        const done = await updateStatus(data.id, data.status);
-        if (done) {
+        const done = await approveUser(data.id, data.status);
+        if (typeof done !== "string") {
           const users = await usersForApproving();
           io.to(`${adminUser.id}-adminDashboard`).emit("adminApproveUsers", {
             users: users,
           });
+          io.to(`${adminUser.id}-adminDashboard`).emit("adminApproveStatus", {
+            done: done,
+          });
+        } else {
+          throw new Error(done);
         }
-        io.to(`${adminUser.id}-adminDashboard`).emit("adminApproveStatus", {
-          done: done,
-        });
       } catch (error) {
         console.error("Error accepting approve user:", error);
       }
@@ -563,6 +588,8 @@ function initializeSocket(io) {
 
     return io;
   });
+
+  return io;
 }
 
 // Helper function to validate admin

@@ -6,7 +6,7 @@ import '../views/profile/balance/balance_controller.dart';
 import 'dto/image_dto.dart';
 import 'user.dart';
 
-enum BalanceTransactionType { taskPayment, deposit, withdrawal, system }
+enum BalanceTransactionType { taskPayment, taskEarnings, deposit, withdrawal, coinPurchase, boostPurchase, system }
 
 enum BalanceTransactionStatus { pending, completed, failed }
 

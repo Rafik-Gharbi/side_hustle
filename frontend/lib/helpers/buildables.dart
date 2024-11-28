@@ -255,8 +255,8 @@ class Buildables {
     final GlobalKey<FormState> formKey = GlobalKey();
     final TextEditingController finalPriceController = TextEditingController(text: Helper.formatAmount(contract.finalPrice));
     final TextEditingController dueDateController = TextEditingController(text: contract.dueDate != null ? Helper.formatDate(contract.dueDate!) : '');
-    final TextEditingController descriptionController = TextEditingController(text: isTask ? contract.task!.description : contract.service!.description);
-    final TextEditingController delivrablesController = TextEditingController(text: isTask ? contract.task!.delivrables : contract.service!.included);
+    final TextEditingController descriptionController = TextEditingController(text: isTask ? contract.task!.description : contract.service?.description ?? '');
+    final TextEditingController delivrablesController = TextEditingController(text: isTask ? contract.task!.delivrables : contract.service?.included ?? '');
     await Get.bottomSheet(
       SizedBox(
         height: 600,
@@ -320,6 +320,8 @@ class Buildables {
                             Contract(
                               finalPrice: double.tryParse(finalPriceController.text) ?? 0,
                               dueDate: Helper.parseDisplayedDate(dueDateController.text),
+                              description: descriptionController.text,
+                              delivrables: delivrablesController.text,
                               task: contract.task,
                               service: contract.service,
                               createdAt: DateTime.now(),
@@ -410,5 +412,32 @@ class Buildables {
           debugPrint('Error getting category icon: $error\n$stackTrace');
           return const Icon(Icons.error);
         },
+      );
+
+  static Widget buildPaymentOptionsBottomsheet({required void Function() onBankCardPressed, required void Function() onBalancePressed}) => Material(
+        color: kNeutralColor100,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        child: SizedBox(
+          height: 160,
+          child: Padding(
+            padding: const EdgeInsets.all(Paddings.large),
+            child: Column(
+              children: [
+                ListTile(
+                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                  title: Text('bank_card'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                  leading: const Icon(Icons.payment_outlined),
+                  onTap: onBankCardPressed,
+                ),
+                ListTile(
+                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                  title: Text('pay_with_balance'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                  leading: const Icon(Icons.attach_money_outlined),
+                  onTap: onBalancePressed,
+                ),
+              ],
+            ),
+          ),
+        ),
       );
 }

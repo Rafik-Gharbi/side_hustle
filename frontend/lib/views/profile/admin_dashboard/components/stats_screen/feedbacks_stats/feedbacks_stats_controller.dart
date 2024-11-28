@@ -10,7 +10,7 @@ import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
 
 class FeedbacksStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   Map<DateTime, double> feedbacksPerDayData = {};
   List<PieChartModel> feedbacksPerCategoryData = [];
   int _pieChartTouchedIndex = -1;
@@ -29,6 +29,12 @@ class FeedbacksStatsController extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminFeedbackStatsData');
+  }
+
   void _initSocket() {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       final socketInitialized = MainAppController.find.socket!.hasListeners('adminFeedbackStatsData');
@@ -40,7 +46,7 @@ class FeedbacksStatsController extends GetxController {
           _initPieChartData(feedbacksList);
         }
         AdminDashboardController.totalFeedbacks.value = feedbacksList.length;
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

@@ -20,7 +20,7 @@ class TaskListScreen extends StatelessWidget {
   static const String routeName = '/tasks';
   final FilterModel? filterModel;
   final String? searchQuery;
-  final int? taskId;
+  final String? taskId;
   final bool boosted;
 
   const TaskListScreen({super.key, this.filterModel, this.searchQuery, this.taskId, this.boosted = false});

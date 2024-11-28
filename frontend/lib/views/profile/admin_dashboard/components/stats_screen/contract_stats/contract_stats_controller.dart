@@ -7,7 +7,7 @@ import '../../../../../../networking/api_base_helper.dart';
 import '../../../admin_dashboard_controller.dart';
 
 class ContractStatsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   Map<DateTime, double> contractsPerDayData = {};
 
   ContractStatsController() {
@@ -15,6 +15,12 @@ class ContractStatsController extends GetxController {
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       MainAppController.find.socket!.emit('getAdminContractStatsData', {'jwt': ApiBaseHelper.find.getToken()});
     });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('adminContractStatsData');
   }
 
   void _initSocket() {
@@ -27,7 +33,7 @@ class ContractStatsController extends GetxController {
         AdminDashboardController.totalContract.value = contractList.length;
         AdminDashboardController.totalPayedContract.value = contractList.where((element) => element.isPayed).length;
         AdminDashboardController.activeContract.value = contractList.where((element) => element.dueDate!.isAfter(DateTime.now())).length;
-        isLoading = false;
+        isLoading.value = false;
         update();
       });
     });

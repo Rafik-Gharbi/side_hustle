@@ -545,6 +545,8 @@ final Map<String, String> arTN = <String, String>{
   'deposit_slip_picture': 'صورة إيصال الإيداع',
   'deposit_slip_picture_required': 'صورة إيصال الإيداع مطلوبة',
   // Validation messages
+  'valid_for_x_days': 'متاح ل@days أيام',
+'max_value_is': 'القيمة القصوى هي @value!',
   'field_not_empty': 'لا يمكن أن يكون الحقل فارغًا!',
   'invalid_number': 'رقم غير صالح!',
   'must_be_number': 'يجب أن يكون رقمًا!',

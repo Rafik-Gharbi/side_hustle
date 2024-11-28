@@ -85,13 +85,12 @@ class User {
     this.createdAt,
   });
 
-  bool get isOwner => role != null && role != Role.user; // TODO delete this
-
   int get totalCoins => availableCoins + availablePurchasedCoins;
 
   factory User.fromToken(Map<String, dynamic> payload) => User(
         id: payload['id'],
         name: payload['name'],
+        balance: Helper.resolveDouble(payload['balance'] ?? '0'),
         baseCoins: payload['coins'],
         availableCoins: payload['availableCoins'],
         availablePurchasedCoins: payload['availablePurchasedCoins'],

@@ -161,6 +161,7 @@ class AddServiceBottomsheet extends StatelessWidget {
                           width: Get.width,
                           onPressed: () => controller.upsertService(isUpdate: isUpdate),
                         ),
+                        const SizedBox(height: Paddings.exceptional),
                       ],
                     ),
                   ),

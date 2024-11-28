@@ -22,10 +22,10 @@ import 'components/stats_screen/task_stats/task_stats_screen.dart';
 import 'components/stats_screen/user_stats/user_stats_screen.dart';
 
 class AdminDashboardController extends GetxController {
-  
   /// not permanent use with caution
   static AdminDashboardController get find => Get.find<AdminDashboardController>();
   RxBool isLoading = true.obs;
+  RxBool isAdminSocketJoined = false.obs;
   RxInt approveUsersActionRequired = 0.obs;
   RxInt manageBalanceActionRequired = 0.obs;
   RxInt reportsActionRequired = 0.obs;
@@ -233,6 +233,17 @@ class AdminDashboardController extends GetxController {
   factory AdminDashboardController() => _singleton;
 
   AdminDashboardController._internal() {
+    init();
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    MainAppController.find.socket?.off('getDashboardData');
+    isAdminSocketJoined.value = false;
+  }
+
+  void init() {
     _initSocket();
     Helper.waitAndExecute(() => MainAppController.find.socket != null, () {
       MainAppController.find.socket!.emit('getDashboardData', {'jwt': ApiBaseHelper.find.getToken()});
@@ -244,6 +255,7 @@ class AdminDashboardController extends GetxController {
       final socketInitialized = MainAppController.find.socket!.hasListeners('updateAdminDashboard');
       if (socketInitialized) return;
       MainAppController.find.socket!.on('updateAdminDashboard', (data) {
+        isAdminSocketJoined.value = true;
         approveUsersActionRequired.value = data?['adminDashboard']?['approveCount'] as int? ?? 0;
         manageBalanceActionRequired.value = data?['adminDashboard']?['balanceCount'] as int? ?? 0;
         reportsActionRequired.value = data?['adminDashboard']?['reportsCount'] as int? ?? 0;

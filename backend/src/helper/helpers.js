@@ -87,7 +87,7 @@ function addAuthentication(body, targetProperty) {
 async function getTaskCondidatesNumber(taskId) {
   let taskFound = await Task.findByPk(taskId);
   if (!taskFound) {
-    return res.status(404).json({ message: "task_not_found" });
+    return "task_not_found";
   }
   let confirmedReservation = await Reservation.findOne({
     where: {
@@ -118,7 +118,7 @@ async function getTaskCondidatesNumber(taskId) {
 async function getServiceCondidatesNumber(serviceId) {
   let serviceFound = await Service.findByPk(serviceId);
   if (!serviceFound) {
-    return res.status(404).json({ message: "service_not_found" });
+    return "service_not_found";
   }
   let bookingList = await Reservation.findAll({
     where: {
@@ -396,6 +396,7 @@ async function generateJWT(response, isRefresh) {
       picture: response.picture,
       name: response.name,
       role: response.role,
+      balance: response.balance,
       coins: response.coins,
       availableCoins: response.availableCoins,
       referral_code: response.referral_code,

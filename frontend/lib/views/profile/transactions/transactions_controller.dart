@@ -5,7 +5,7 @@ import '../../../models/transaction.dart';
 import '../../../repositories/transaction_repository.dart';
 
 class TransactionsController extends GetxController {
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   List<Transaction> transactions = [];
   List<CoinPackPurchase> availableCoinPacks = [];
 
@@ -27,7 +27,7 @@ class TransactionsController extends GetxController {
         : a.createdAt.isAfter(b.createdAt)
             ? -1
             : 0);
-    isLoading = false;
+    isLoading.value = false;
     update();
   }
 }

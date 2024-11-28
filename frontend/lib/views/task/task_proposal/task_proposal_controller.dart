@@ -11,7 +11,7 @@ import '../../review/add_review/add_review_bottomsheet.dart';
 
 class TaskProposalController extends GetxController {
   List<Reservation> reservationList = [];
-  bool isLoading = true;
+  RxBool isLoading = true.obs;
   Task? task;
 
   TaskProposalController() {
@@ -23,14 +23,14 @@ class TaskProposalController extends GetxController {
     if (task?.id != null) {
       reservationList = await ReservationRepository.find.getReservationByTaskId(task!.id!);
     }
-    isLoading = false;
+    isLoading.value = false;
     update();
   }
 
   void acceptProposal(Reservation reservation) => Helper.openConfirmationDialog(
         title: 'accept_proposal_msg'.tr,
         onConfirm: () async {
-          await ReservationRepository.find.updateReservationStatus(reservation, RequestStatus.confirmed);
+          await ReservationRepository.find.updateTaskReservationStatus(reservation, RequestStatus.confirmed);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
         },
       );
@@ -38,7 +38,7 @@ class TaskProposalController extends GetxController {
   void rejectProposals(Reservation reservation) => Helper.openConfirmationDialog(
         title: 'reject_proposal_msg'.tr,
         onConfirm: () async {
-          await ReservationRepository.find.updateReservationStatus(reservation, RequestStatus.rejected);
+          await ReservationRepository.find.updateTaskReservationStatus(reservation, RequestStatus.rejected);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
         },
       );
@@ -46,7 +46,7 @@ class TaskProposalController extends GetxController {
   void markDoneProposals(Reservation reservation) => Helper.openConfirmationDialog(
         title: 'mark_task_done_msg'.tr,
         onConfirm: () async {
-          await ReservationRepository.find.updateReservationStatus(reservation, RequestStatus.finished);
+          await ReservationRepository.find.updateTaskReservationStatus(reservation, RequestStatus.finished);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
           MainAppController.find.resolveProfileActionRequired();
           Get.bottomSheet(AddReviewBottomsheet(user: reservation.user), isScrollControlled: true);

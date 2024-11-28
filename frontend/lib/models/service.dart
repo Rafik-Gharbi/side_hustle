@@ -2,8 +2,10 @@ import 'package:drift/drift.dart';
 
 import '../controllers/main_app_controller.dart';
 import '../database/database.dart';
+import '../helpers/helper.dart';
 import 'category.dart';
 import 'dto/image_dto.dart';
+import 'user.dart';
 
 class Service {
   final String? id;
@@ -20,10 +22,12 @@ class Service {
   final int requests;
   final int coins;
   final DateTime? createdAt;
+  final User? owner;
 
   Service({
     this.id,
     this.name,
+    this.owner,
     this.description,
     this.category,
     this.gallery,
@@ -41,16 +45,15 @@ class Service {
   factory Service.fromJson(Map<String, dynamic> json, {dynamic gallery}) => Service(
         id: json['id'],
         name: json['name'],
+        owner: json['owner'] != null ? User.fromJson(json['owner']) : null,
         description: json['description'],
         gallery: json['gallery'] != null || gallery != null ? ((gallery ?? json['gallery']) as List).map((e) => ImageDTO.fromJson(e, isStoreImage: true)).toList() : null,
         category:
             json['category_id'] != null ? MainAppController.find.getCategoryById(json['category_id'] is String ? int.tryParse(json['category_id']) : json['category_id']) : null,
         price: json['price'] is int ? (json['price'] as int).toDouble() : double.tryParse((json['price']).toString()),
         requests: json['requests'] ?? 0,
-        timeEstimationFrom:
-            json['timeEstimationFrom'] == null ? null : double.tryParse(json['timeEstimationFrom'] is int ? json['timeEstimationFrom'].toString() : json['timeEstimationFrom']),
-        timeEstimationTo:
-            json['timeEstimationTo'] == null ? null : double.tryParse(json['timeEstimationTo'] is int ? json['timeEstimationTo'].toString() : json['timeEstimationTo']),
+        timeEstimationFrom: Helper.resolveDouble(json['timeEstimationFrom']),
+        timeEstimationTo: Helper.resolveDouble(json['timeEstimationTo']),
         included: json['included'],
         notIncluded: json['notIncluded'],
         notes: json['notes'],
@@ -63,6 +66,7 @@ class Service {
     if (id != null) data['id'] = id;
     data['name'] = name;
     data['description'] = description;
+    data['owner'] = owner?.toJson();
     data['category_id'] = category?.id;
     data['gallery'] = gallery?.map((e) => e.toJson()).toList();
     data['price'] = price;
