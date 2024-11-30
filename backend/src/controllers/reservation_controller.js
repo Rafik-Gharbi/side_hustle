@@ -330,10 +330,14 @@ exports.userTaskReservationsHistory = async (req, res) => {
         let taskAttachments = await TaskAttachmentModel.findAll({
           where: { task_id: row.task_id },
         });
+        const providerFound = await User.findOne({
+          where: { id: row.provider_id },
+        });
 
         return {
           id: row.id,
           user: userFound,
+          provider: providerFound,
           date: row.createdAt,
           task: {
             id: foundTask.id,
@@ -383,13 +387,17 @@ exports.getReservationByTask = async (req, res) => {
 
     const formattedList = await Promise.all(
       reservationList.map(async (row) => {
-        let userFound = await User.findOne({
+        const userFound = await User.findOne({
           where: { id: row.user_id },
+        });
+        const providerFound = await User.findOne({
+          where: { id: row.provider_id },
         });
 
         return {
           id: row.id,
           user: userFound,
+          provider: providerFound,
           date: row.createdAt,
           task: populatedTask,
           totalPrice: row.total_price,
@@ -778,10 +786,14 @@ exports.userServicesHistory = async (req, res) => {
         const serviceGallerys = await ServiceGalleryModel.findAll({
           where: { service_id: row.service_id },
         });
+        const providerFound = await User.findOne({
+          where: { id: row.provider_id },
+        }); 
 
         return {
           id: row.id,
           user: userFound,
+          provider: providerFound,
           date: row.createdAt,
           service: populatedService,
           totalPrice: row.total_price,
@@ -831,6 +843,9 @@ exports.getReservationByService = async (req, res) => {
         let userFound = await User.findOne({
           where: { id: row.user_id },
         });
+        const providerFound = await User.findOne({
+          where: { id: row.provider_id },
+        });
         const serviceCondidatesNumber = await getServiceCondidatesNumber(
           row.service_id
         );
@@ -843,6 +858,7 @@ exports.getReservationByService = async (req, res) => {
         return {
           id: row.id,
           user: userFound,
+          provider: providerFound,
           date: row.createdAt,
           service: {
             id: serviceFound.id,
