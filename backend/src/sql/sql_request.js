@@ -225,6 +225,9 @@ async function fetchUserBooking(userId) {
       let serviceAttachments = await ServiceGalleryModel.findAll({
         where: { service_id: row.service_id },
       });
+      const providerFound = await User.findOne({
+        where: { id: row.provider_id },
+      });
 
       return {
         id: row.id,
@@ -236,6 +239,7 @@ async function fetchUserBooking(userId) {
         note: row.note,
         status: row.status,
         serviceAttachments,
+        provider: providerFound,
       };
     })
   );
@@ -275,6 +279,9 @@ async function fetchUserOngoingBooking(userId) {
                 let serviceAttachments = await ServiceGalleryModel.findAll({
                   where: { service_id: row.service_id },
                 });
+                const providerFound = await User.findOne({
+                  where: { id: row.provider_id },
+                });
 
                 return {
                   id: row.id,
@@ -286,6 +293,7 @@ async function fetchUserOngoingBooking(userId) {
                   note: row.note,
                   status: row.status,
                   serviceAttachments,
+                  provider: providerFound,
                 };
               })
             );
@@ -322,6 +330,9 @@ async function fetchUserOngoingReservation(userId) {
               let taskAttachments = await TaskAttachmentModel.findAll({
                 where: { task_id: row.task_id },
               });
+              const providerFound = await User.findOne({
+                where: { id: row.provider_id },
+              });
 
               return {
                 id: row.id,
@@ -333,6 +344,7 @@ async function fetchUserOngoingReservation(userId) {
                 coupon: row.coupon,
                 note: row.note,
                 status: row.status,
+                provider: providerFound,
                 taskAttachments,
               };
             })
@@ -373,6 +385,9 @@ async function fetchUserReservation(userId) {
       //   const foundService = await Service.findByPk(row.service_id);
       //   service = await populateOneService(foundService, userFound.id);
       // }
+      const providerFound = await User.findOne({
+        where: { id: row.provider_id },
+      }); 
 
       return {
         id: row.id,
@@ -386,6 +401,7 @@ async function fetchUserReservation(userId) {
         note: row.note,
         status: row.status,
         taskAttachments,
+        provider: providerFound,
       };
     })
   );
