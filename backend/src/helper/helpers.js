@@ -61,14 +61,21 @@ async function verifyToken(token) {
   }
 
   return await new Promise((resolve, reject) => {
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (err) {
-        console.error(`Error in verifyToken: ${err}`);
-        reject(err);
-      } else {
-        resolve(decoded);
-      }
-    });
+    try {
+      jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+          console.error(`Error in verifyToken: ${err}`);
+          reject(err);
+        } else {
+          resolve(decoded);
+        }
+      });
+    } catch (error) {
+      console.error(
+        `Catched error in verifyToken. Token: ${token}\nError: ${error}`
+      );
+      reject(error);
+    }
   });
 }
 
