@@ -5,7 +5,7 @@ import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
 import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
-import '../components/stats_scaffold.dart';
+import '../../../../../../widgets/custom_standard_scaffold.dart';
 import '../components/three_stats_overview.dart';
 import 'favorite_stats_controller.dart';
 
@@ -17,7 +17,7 @@ class FavoriteStatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Favorite: Total favorites, Stores per favorites, Users per favorites
     return GetBuilder<FavoriteStatsController>(
-      builder: (controller) => StatsScaffold(
+      builder: (controller) => CustomStandardScaffold(
         title: 'favorite'.tr,
         body: SingleChildScrollView(
           child: Padding(

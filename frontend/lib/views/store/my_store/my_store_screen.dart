@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constants/colors.dart';
+import '../../../constants/constants.dart';
 import '../../../constants/sizes.dart';
+import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/store.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/theme/theme.dart';
+import '../../../widgets/custom_button_with_overlay.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
@@ -38,23 +41,57 @@ class MyStoreScreen extends StatelessWidget {
                 : CustomScaffoldBottomNavigation(
                     appBarTitle: 'my_store'.tr,
                     onBack: () => ProfileController.find.init(),
-                    appBarActions: [
-                      if (isOwner && controller.currentStore != null)
-                        CustomButtons.icon(
-                          icon: const Icon(Icons.edit_outlined),
-                          onPressed: controller.editStore,
-                        ),
-                      if (controller.currentStore?.coordinates != null)
-                        CustomButtons.icon(
-                          icon: const Icon(Icons.near_me_outlined),
-                          onPressed: controller.openStoreItinerary,
-                        )
-                    ],
+                    appBarActions: [buildMoreButton(isOwner, controller)],
                     body: buildStoreContent(controller, isOwner),
                   );
           },
         ),
       );
+
+  CustomButtonWithOverlay buildMoreButton(bool isOwner, MyStoreController controller) {
+    return CustomButtonWithOverlay(
+      offset: const Offset(-170, 30),
+      buttonWidth: 50,
+      button: const Icon(Icons.more_vert_outlined),
+      menu: DecoratedBox(
+        decoration: BoxDecoration(borderRadius: smallRadius, color: kNeutralColor100),
+        child: SizedBox(
+          width: 200,
+          height: isOwner && controller.currentStore?.coordinates != null ? 180 : 120,
+          child: Column(
+            children: [
+              ListTile(
+                shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                title: Text('bookmark'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                leading: Icon(store?.isFavorite ?? false ? Icons.bookmark_outlined : Icons.bookmark_add_outlined),
+                onTap: () {
+                  Helper.goBack();
+                  Helper.verifyUser(() async {
+                    await MainAppController.find.toggleFavoriteStore(store!);
+                    controller.update();
+                  });
+                },
+              ),
+              if (controller.currentStore?.coordinates != null)
+                ListTile(
+                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                  title: Text('get_directions'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                  leading: const Icon(Icons.near_me_outlined),
+                  onTap: controller.openStoreItinerary,
+                ),
+              if (isOwner)
+                ListTile(
+                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                  title: Text('edit'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                  leading: const Icon(Icons.edit_outlined),
+                  onTap: controller.editStore,
+                )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget buildStoreContent(MyStoreController controller, bool isOwner) {
     return LoadingRequest(
@@ -92,13 +129,7 @@ class MyStoreScreen extends StatelessWidget {
                         children: [
                           CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: () => Helper.goBack()),
                           Text('store'.tr, style: AppFonts.x15Bold),
-                          if (controller.currentStore?.coordinates != null)
-                            CustomButtons.icon(
-                              icon: const Icon(Icons.near_me_outlined),
-                              onPressed: controller.openStoreItinerary,
-                            )
-                          else
-                            const SizedBox(width: 40)
+                          buildMoreButton(isOwner, controller),
                         ],
                       ),
                     ),

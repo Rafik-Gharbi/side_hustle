@@ -63,7 +63,7 @@ class TaskDetailsController extends GetxController {
 
   void markDoneProposals() => reservation != null
       ? Helper.openConfirmationDialog(
-          title: 'mark_task_done_msg'.tr,
+          content: 'mark_task_done_msg'.tr,
           onConfirm: () async {
             await ReservationRepository.find.updateTaskReservationStatus(reservation!, RequestStatus.finished);
             Helper.goBack();

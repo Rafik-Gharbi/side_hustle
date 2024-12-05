@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
 import '../components/pie_chart.dart';
-import '../components/stats_scaffold.dart';
+import '../../../../../../widgets/custom_standard_scaffold.dart';
 import 'governorate_stats_controller.dart';
 
 class GovernorateStatsScreen extends StatelessWidget {
@@ -14,7 +14,7 @@ class GovernorateStatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<GovernorateStatsController>(
-      builder: (controller) => StatsScaffold(
+      builder: (controller) => CustomStandardScaffold(
         title: 'governorate'.tr,
         body: SingleChildScrollView(
           child: Padding(

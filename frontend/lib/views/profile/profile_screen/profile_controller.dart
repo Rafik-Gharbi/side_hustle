@@ -117,18 +117,22 @@ class ProfileController extends GetxController {
       }
     }
     Helper.openConfirmationDialog(
-      title: 'confirm_category_subscription_msg'.trParams({
+      content: 'confirm_category_subscription_msg'.trParams({
         'categoriesName': categories.map((e) => e.name).toString(),
         'nextUpdate': Helper.formatDate(DateTime.now().add(const Duration(days: 30))),
       }),
-      onConfirm: () async => await AuthenticationService.find.subscribeToCategories(categories, fcmToken),
+      onConfirm: () async {
+        final result = await AuthenticationService.find.subscribeToCategories(categories, fcmToken);
+        if (result) init();
+      },
     );
     init();
   }
 
   void manageCategoriesSubscription() => subscribedCategories.isEmpty
       ? Helper.openConfirmationDialog(
-          title: 'subscribe_categories_msg'.tr,
+          title: 'subscribe_to_categories'.tr,
+          content: 'subscribe_categories_msg'.tr,
           onConfirm: () async {
             NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(criticalAlert: true);
             debugPrint('User granted permission: ${settings.authorizationStatus}');

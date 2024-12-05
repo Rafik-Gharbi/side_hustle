@@ -14,6 +14,8 @@ import '../../widgets/feedback_bottomsheet.dart';
 import 'components/animated_list_tile.dart';
 import 'components/animated_title.dart';
 import 'components/language_selector.dart';
+import 'components/privacy_policy_screen.dart';
+import 'components/terms_condition_screen.dart';
 import 'settings_controller.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -77,6 +79,13 @@ class SettingsScreen extends StatelessWidget {
                       leading: const Icon(Icons.privacy_tip_outlined),
                       subtitle: 'msg_check_our_privacy'.tr,
                       title: 'privacy_policy'.tr,
+                      onTap: () => Get.toNamed(PrivacyPolicyScreen.routeName),
+                    ),
+                    AnimatedListTile(
+                      leading: const Icon(Icons.assignment_outlined),
+                      subtitle: 'msg_check_our_terms_condition'.tr,
+                      title: 'terms_condition'.tr,
+                      onTap: () => Get.toNamed(TermsConditionScreen.routeName),
                     ),
                     Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
                     AnimatedTitle(title: 'notifications'.tr),

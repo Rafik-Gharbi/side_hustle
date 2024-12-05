@@ -5,7 +5,7 @@ import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
 import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
-import '../components/stats_scaffold.dart';
+import '../../../../../../widgets/custom_standard_scaffold.dart';
 import '../components/three_stats_overview.dart';
 import 'report_stats_controller.dart';
 
@@ -16,7 +16,7 @@ class ReportStatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ReportStatsController>(
-      builder: (controller) => StatsScaffold(
+      builder: (controller) => CustomStandardScaffold(
         title: 'report'.tr,
         body: SingleChildScrollView(
           child: Padding(

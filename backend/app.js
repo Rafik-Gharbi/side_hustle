@@ -68,6 +68,16 @@ app.get("/public/images/category/:id", (req, res) => {
     console.log(`Error getting category image ${error}`);
   }
 });
+app.get("/terms-condition", async (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "./public/data/Side Hustle - Terms & Conditions.pdf")
+  );
+});
+app.get("/privacy-policy", async (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "./public/data/Side Hustle - Privacy Policy.pdf")
+  );
+});
 // API for uploads file (photo, galleries)
 app.get("/public/css/:id", (req, res) => {
   res.sendFile(path.join(__dirname, `./public/css/${req.params.id}`));

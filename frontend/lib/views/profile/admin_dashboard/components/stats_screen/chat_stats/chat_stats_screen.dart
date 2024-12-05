@@ -5,7 +5,7 @@ import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
 import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
-import '../components/stats_scaffold.dart';
+import '../../../../../../widgets/custom_standard_scaffold.dart';
 import '../components/three_stats_overview.dart';
 import 'chat_stats_controller.dart';
 
@@ -17,7 +17,7 @@ class ChatStatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Chat: Total discussions, Active discussions per day
     return GetBuilder<ChatStatsController>(
-      builder: (controller) => StatsScaffold(
+      builder: (controller) => CustomStandardScaffold(
         title: 'chat'.tr,
         body: SingleChildScrollView(
           child: Padding(
@@ -32,7 +32,8 @@ class ChatStatsScreen extends StatelessWidget {
                     leftLabel: 'total_discussion'.tr,
                     rightNumber: AdminDashboardController.activeDiscussions.value,
                     rightLabel: 'active_discussion'.tr,
-                  ),                  const SizedBox(height: Paddings.large),
+                  ),
+                  const SizedBox(height: Paddings.large),
                   BarChartWidget(
                     title: 'discussions_per_day'.tr,
                     dataPerDay: controller.discussionsPerDayData,

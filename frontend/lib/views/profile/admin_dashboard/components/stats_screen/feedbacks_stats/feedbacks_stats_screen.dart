@@ -6,7 +6,7 @@ import '../../../../../../widgets/loading_request.dart';
 import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
 import '../components/pie_chart.dart';
-import '../components/stats_scaffold.dart';
+import '../../../../../../widgets/custom_standard_scaffold.dart';
 import '../components/three_stats_overview.dart';
 import 'feedbacks_stats_controller.dart';
 
@@ -17,7 +17,7 @@ class FeedbacksStatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<FeedbacksStatsController>(
-      builder: (controller) => StatsScaffold(
+      builder: (controller) => CustomStandardScaffold(
         title: 'feedbacks'.tr,
         body: SingleChildScrollView(
           child: Padding(

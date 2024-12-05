@@ -5,7 +5,7 @@ import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
 import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
-import '../components/stats_scaffold.dart';
+import '../../../../../../widgets/custom_standard_scaffold.dart';
 import '../components/three_stats_overview.dart';
 import 'review_stats_controller.dart';
 
@@ -17,7 +17,7 @@ class ReviewStatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Review: Total reviews, Reviews per review (with details if available), Review's messages
     return GetBuilder<ReviewStatsController>(
-      builder: (controller) => StatsScaffold(
+      builder: (controller) => CustomStandardScaffold(
         title: 'review'.tr,
         body: SingleChildScrollView(
           child: Padding(

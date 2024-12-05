@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 import '../controllers/main_app_controller.dart';
 import '../database/database_repository/category_database_repository.dart';
@@ -91,6 +95,40 @@ class ParamsRepository extends GetxService {
       return coins;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getCoinsPack:\n$e');
+    }
+    return null;
+  }
+
+  Future<File?> getTermsCondition() async {
+    try {
+      final response = await ApiBaseHelper().request(RequestType.get, '/terms-condition');
+      if (response != null) {
+        final bytes = response.bodyBytes;
+        final dir = await getApplicationDocumentsDirectory();
+        final file = File(path.join(dir.path, 'terms & condition.pdf'));
+        await file.writeAsBytes(bytes);
+        return file;
+      }
+      return null;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getTermsCondition:\n$e');
+    }
+    return null;
+  }
+
+  Future<File?> getPrivacyPolicy() async {
+    try {
+      final response = await ApiBaseHelper().request(RequestType.get, '/privacy-policy');
+      if (response != null) {
+        final bytes = response.bodyBytes;
+        final dir = await getApplicationDocumentsDirectory();
+        final file = File(path.join(dir.path, 'terms & condition.pdf'));
+        await file.writeAsBytes(bytes);
+        return file;
+      }
+      return null;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getPrivacyPolicy:\n$e');
     }
     return null;
   }

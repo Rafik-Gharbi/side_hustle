@@ -6,7 +6,7 @@ import '../../../../../../widgets/loading_request.dart';
 import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
 import '../components/pie_chart.dart';
-import '../components/stats_scaffold.dart';
+import '../../../../../../widgets/custom_standard_scaffold.dart';
 import '../components/three_stats_overview.dart';
 import 'coins_stats_controller.dart';
 
@@ -18,7 +18,7 @@ class CoinsStatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Coins: Coin packs selling per day, Active coin packs, Coin packs sold per pack
     return GetBuilder<CoinsStatsController>(
-      builder: (controller) => StatsScaffold(
+      builder: (controller) => CustomStandardScaffold(
         title: 'coins'.tr,
         body: SingleChildScrollView(
           child: Padding(

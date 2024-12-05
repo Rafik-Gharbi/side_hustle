@@ -197,8 +197,8 @@ class Helper {
 
   static String formatAmount(double amount) => amount == amount.roundToDouble() ? amount.toInt().toString() : amount.toStringAsFixed(1);
 
-  static void openConfirmationDialog({required String title, required void Function() onConfirm, void Function()? onCancel, Color? barrierColor}) => Get.dialog(
-        CustomPopup(content: title, onPressed: onConfirm, onCancel: onCancel),
+  static void openConfirmationDialog({String? title, required String content, required void Function() onConfirm, void Function()? onCancel, Color? barrierColor}) => Get.dialog(
+        CustomPopup(title: title ?? 'are_you_sure'.tr, content: content, onPressed: onConfirm, onCancel: onCancel),
         barrierColor: barrierColor?.withOpacity(0.3),
       );
 

@@ -211,7 +211,7 @@ class MyStoreController extends GetxController {
   }
 
   void deleteService(Service service) => Helper.openConfirmationDialog(
-        title: 'delete_service_msg'.trParams({'serviceName': service.name!}),
+        content: 'delete_service_msg'.trParams({'serviceName': service.name!}),
         onConfirm: () async {
           final result = await StoreRepository.find.deleteService(service);
           if (result) currentStore!.services!.removeWhere((element) => element.id == service.id);

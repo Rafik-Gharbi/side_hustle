@@ -5,7 +5,7 @@ import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
 import '../../../admin_dashboard_controller.dart';
 import '../components/pie_chart.dart';
-import '../components/stats_scaffold.dart';
+import '../../../../../../widgets/custom_standard_scaffold.dart';
 import '../components/three_stats_overview.dart';
 import 'referrals_stats_controller.dart';
 
@@ -17,7 +17,7 @@ class ReferralsStatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Referral: Total referrals, Referrals per status, Total successful referrals
     return GetBuilder<ReferralsStatsController>(
-      builder: (controller) => StatsScaffold(
+      builder: (controller) => CustomStandardScaffold(
         title: 'referrals'.tr,
         body: SingleChildScrollView(
           child: Padding(

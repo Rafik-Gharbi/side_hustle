@@ -28,7 +28,7 @@ class TaskProposalController extends GetxController {
   }
 
   void acceptProposal(Reservation reservation) => Helper.openConfirmationDialog(
-        title: 'accept_proposal_msg'.tr,
+        content: 'accept_proposal_msg'.tr,
         onConfirm: () async {
           await ReservationRepository.find.updateTaskReservationStatus(reservation, RequestStatus.confirmed);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
@@ -36,7 +36,7 @@ class TaskProposalController extends GetxController {
       );
 
   void rejectProposals(Reservation reservation) => Helper.openConfirmationDialog(
-        title: 'reject_proposal_msg'.tr,
+        content: 'reject_proposal_msg'.tr,
         onConfirm: () async {
           await ReservationRepository.find.updateTaskReservationStatus(reservation, RequestStatus.rejected);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
@@ -44,7 +44,7 @@ class TaskProposalController extends GetxController {
       );
 
   void markDoneProposals(Reservation reservation) => Helper.openConfirmationDialog(
-        title: 'mark_task_done_msg'.tr,
+        content: 'mark_task_done_msg'.tr,
         onConfirm: () async {
           await ReservationRepository.find.updateTaskReservationStatus(reservation, RequestStatus.finished);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);

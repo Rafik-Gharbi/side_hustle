@@ -160,7 +160,7 @@ class MainAppController extends GetxController {
       cancelButton: const Icon(Icons.close, color: kNeutralColor100),
       deleteButton: const Icon(Icons.backspace_outlined, color: kNeutralColor100, size: 22),
       customizedButtonTap: () => Helper.openConfirmationDialog(
-        title: 'disable_authentication_question'.tr,
+        content: 'disable_authentication_question'.tr,
         onConfirm: () {
           isAuthenticationRequired.value = false;
           SharedPreferencesService.find.removeKey(userSecretKey);

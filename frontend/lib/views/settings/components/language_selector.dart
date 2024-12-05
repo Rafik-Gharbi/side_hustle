@@ -38,6 +38,7 @@ class LanguageSelectorState extends State<LanguageSelector> {
           trailing: _current == locale ? const Icon(Icons.check, color: Colors.green) : null,
           selected: _current == locale,
           onTap: () {
+            Get.back();
             _current = locale;
             MainAppController.find.changeLanguage(lang: _current);
             setState(() {});

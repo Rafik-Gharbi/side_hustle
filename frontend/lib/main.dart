@@ -80,6 +80,8 @@ import 'views/profile/referral/referral_controller.dart';
 import 'views/profile/referral/referral_screen.dart';
 import 'views/profile/transactions/transactions_controller.dart';
 import 'views/profile/transactions/transactions_screen.dart';
+import 'views/settings/components/privacy_policy_screen.dart';
+import 'views/settings/components/terms_condition_screen.dart';
 import 'views/store/service_history/service_history_controller.dart';
 import 'views/store/service_history/service_history_screen.dart';
 import 'views/task/add_task/add_task_bottomsheet.dart';
@@ -392,6 +394,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             name: FeedbacksScreen.routeName,
             page: () => const FeedbacksScreen(),
             binding: BindingsBuilder.put(() => FeedbacksController()),
+          ),
+          GetPage(
+            name: PrivacyPolicyScreen.routeName,
+            page: () => const PrivacyPolicyScreen(),
+          ),
+          GetPage(
+            name: TermsConditionScreen.routeName,
+            page: () => const TermsConditionScreen(),
           ),
         ],
       );

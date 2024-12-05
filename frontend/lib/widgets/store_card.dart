@@ -107,7 +107,7 @@ class StoreCard extends StatelessWidget {
                               padding: const EdgeInsets.only(left: Paddings.regular),
                               child: CustomButtons.icon(
                                 icon: Icon(store.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined, size: 18),
-                                onPressed: () => AuthenticationService.find.isUserLoggedIn.value ? toggleFavorite() : Helper.snackBar(message: 'login_save_store_msg'.tr),
+                                onPressed: () => Helper.verifyUser(() async => toggleFavorite(), loginErrorMsg: 'login_save_store_msg'.tr),
                               ),
                             );
                           })

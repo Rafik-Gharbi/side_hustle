@@ -5,7 +5,7 @@ import '../../../../../../constants/sizes.dart';
 import '../../../../../../widgets/loading_request.dart';
 import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
-import '../components/stats_scaffold.dart';
+import '../../../../../../widgets/custom_standard_scaffold.dart';
 import '../components/three_stats_overview.dart';
 import 'balance_stats_controller.dart';
 
@@ -16,7 +16,7 @@ class BalanceStatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<BalanceStatsController>(
-      builder: (controller) => StatsScaffold(
+      builder: (controller) => CustomStandardScaffold(
         title: 'balance'.tr,
         body: Padding(
           padding: const EdgeInsets.all(Paddings.large),

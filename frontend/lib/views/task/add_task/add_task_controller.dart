@@ -126,7 +126,7 @@ class AddTaskController extends GetxController {
       if (task?.id == null) {
         if (newtask.price != null && newtask.price! > 0) {
           Helper.openConfirmationDialog(
-            title: 'creating_task_coins_msg'.trParams({
+            content: 'creating_task_coins_msg'.trParams({
               'coins': (Helper.calculateTaskCoinsPrice(newtask.price!)).toString(),
               'baseCoins': (AuthenticationService.find.jwtUserData?.totalCoins ?? 0).toString(),
             }),
@@ -144,7 +144,7 @@ class AddTaskController extends GetxController {
       } else {
         if (newtask.price != null && newtask.price! > 0 && newtask.price! > (task!.price ?? 0)) {
           Helper.openConfirmationDialog(
-            title: 'update_task_coins_msg'.trParams({
+            content: 'update_task_coins_msg'.trParams({
               'coins': (Helper.calculateTaskCoinsPrice(newtask.price!) - task!.deductedCoins).toString(),
               'baseCoins': (AuthenticationService.find.jwtUserData?.totalCoins ?? 0).toString(),
             }),
@@ -185,7 +185,7 @@ class AddTaskController extends GetxController {
   }
 
   void deleteTask(Task task) => Helper.openConfirmationDialog(
-        title: 'delete_task_msg'.trParams({'taskTitle': task.title}),
+        content: 'delete_task_msg'.trParams({'taskTitle': task.title}),
         onConfirm: () async => await TaskRepository.find.deleteTask(task, withBack: true),
       );
 

@@ -502,12 +502,14 @@ class AuthenticationService extends GetxController {
     }
   }
 
-  Future<void> subscribeToCategories(List<Category> category, String? fcmToken) async {
+  Future<bool> subscribeToCategories(List<Category> category, String? fcmToken) async {
     final result = await UserRepository.find.subscribeToCategories(category, fcmToken);
     if (result) {
       Helper.snackBar(message: 'categories_subscription_updated'.tr);
+      return true;
     } else {
       Helper.snackBar(message: 'categories_subscription_failed'.tr);
+      return false;
     }
   }
 

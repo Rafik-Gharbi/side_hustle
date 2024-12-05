@@ -129,7 +129,7 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
       );
 
   void _purchaseCoins(CoinPack pack) => Helper.openConfirmationDialog(
-      title: 'buy_coins_costs_msg'.trParams({'totalCoins': pack.totalCoins.toString(), 'price': pack.price.toString()}),
+      content: 'buy_coins_costs_msg'.trParams({'totalCoins': pack.totalCoins.toString(), 'price': pack.price.toString()}),
       onConfirm: () {
         Future.delayed(const Duration(milliseconds: 100)).then(
           (value) => Get.bottomSheet(

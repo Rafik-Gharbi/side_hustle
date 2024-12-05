@@ -27,7 +27,7 @@ class ServiceRequestController extends GetxController {
   }
 
   void acceptProposal(Reservation reservation) => Helper.openConfirmationDialog(
-        title: 'accept_request_msg'.tr,
+        content: 'accept_request_msg'.tr,
         onConfirm: () async {
           await ReservationRepository.find.updateServiceReservationStatus(reservation, RequestStatus.confirmed);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
@@ -36,7 +36,7 @@ class ServiceRequestController extends GetxController {
       );
 
   void rejectProposals(Reservation reservation) => Helper.openConfirmationDialog(
-        title: 'reject_request_msg'.tr,
+        content: 'reject_request_msg'.tr,
         onConfirm: () async {
           await ReservationRepository.find.updateServiceReservationStatus(reservation, RequestStatus.rejected);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);

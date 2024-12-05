@@ -56,7 +56,7 @@ class NotificationsController extends GetxController {
   void markAllAsRead() {
     if (notificationList.any((element) => !element.seen)) {
       Helper.openConfirmationDialog(
-        title: 'mark_notifications_read'.tr,
+        content: 'mark_notifications_read'.tr,
         onConfirm: () async {
           await NotificationRepository.find.markAsReadAllNotification(notifications: notificationList.where((element) => !element.seen).toList()).then((value) => _refreshScreen());
           MainAppController.find.getNotSeenNotifications();

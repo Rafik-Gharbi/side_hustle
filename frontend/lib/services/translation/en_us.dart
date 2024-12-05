@@ -633,6 +633,12 @@ final Map<String, String> enUs = <String, String>{
   'pay_service_contract_msg': 'Buy signing this contract you accept to serve this user. This will automatically accept the user\'s proposal?',
   'taskEarnings': 'Task Earnings',
   'coinPurchase': 'Coin Purchase',
+  'subscribe_to_categories': 'Subscribe to categories',
+  'are_you_sure': 'Are you sure?',
+  'login_save_store_msg': 'Please login to save store',
+  'get_directions': 'Get directions',
+  'terms_condition': 'Terms & Conditions',
+  'msg_check_our_terms_condition': 'Check our Terms & Conditions',
   // Validation messages
   'max_value_is': 'Max value is @value !',
   'valid_for_x_days': 'Valid for @days days',

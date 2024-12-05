@@ -302,7 +302,7 @@ class ProfileScreen extends StatelessWidget {
                                                           label: 'logout'.tr,
                                                           icon: Icons.logout_outlined,
                                                           onTap: () => Helper.openConfirmationDialog(
-                                                            title: 'logout_msg'.tr,
+                                                            content: 'logout_msg'.tr,
                                                             onConfirm: AuthenticationService.find.logout,
                                                           ),
                                                         ),

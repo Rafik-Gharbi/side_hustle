@@ -6,7 +6,7 @@ import '../../../../../../widgets/loading_request.dart';
 import '../../../admin_dashboard_controller.dart';
 import '../components/bar_chart.dart';
 import '../components/three_stats_overview.dart';
-import '../components/stats_scaffold.dart';
+import '../../../../../../widgets/custom_standard_scaffold.dart';
 import 'user_stats_controller.dart';
 
 class UserStatsScreen extends StatelessWidget {
@@ -16,7 +16,7 @@ class UserStatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<UserStatsController>(
-      builder: (controller) => StatsScaffold(
+      builder: (controller) => CustomStandardScaffold(
         title: 'user'.tr,
         body: Padding(
           padding: const EdgeInsets.all(Paddings.large),

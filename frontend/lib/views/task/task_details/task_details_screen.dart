@@ -69,10 +69,12 @@ class TaskDetailsScreen extends StatelessWidget {
                                         shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
                                         title: Text('bookmark'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
                                         leading: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined),
-                                        onTap: () async {
+                                        onTap: () {
                                           Helper.goBack();
-                                          await MainAppController.find.toggleFavoriteTask(task);
-                                          controller.update();
+                                          Helper.verifyUser(() async {
+                                            await MainAppController.find.toggleFavoriteTask(task);
+                                            controller.update();
+                                          });
                                         },
                                       ),
                                       if (isOwner)

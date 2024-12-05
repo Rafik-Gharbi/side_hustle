@@ -406,7 +406,7 @@ class ChatController extends GetxController {
       Future.delayed(
         Durations.medium1,
         () => Helper.openConfirmationDialog(
-          title: 'pay_task_contract_msg'.tr,
+          content: 'pay_task_contract_msg'.tr,
           onConfirm: () async {
             final result = await ReservationRepository.find.updateTaskReservationStatus(currentReservation!, RequestStatus.confirmed);
             if (result) _payContractProcess(contract);
@@ -431,7 +431,7 @@ class ChatController extends GetxController {
         Future.delayed(
           Durations.medium1,
           () => Helper.openConfirmationDialog(
-            title: 'pay_service_contract_msg'.tr,
+            content: 'pay_service_contract_msg'.tr,
             onConfirm: () async {
               final result = await ReservationRepository.find.updateServiceReservationStatus(currentReservation!, RequestStatus.confirmed);
               if (result) MainAppController.find.socket!.emit('signContract', {'contractId': contract.id, 'discussionId': selectedChatBubble?.id});
