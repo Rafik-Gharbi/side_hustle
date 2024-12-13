@@ -20,6 +20,7 @@ const {
   generateJWT,
   adjustString,
   generateUniqueReferralCode,
+  getFileType,
 } = require("../helper/helpers");
 const {
   downloadImage,
@@ -41,6 +42,8 @@ const {
   getMyStoreRequiredActionsCount,
   getApproveUsersRequiredActionsCount,
   getServiceHistoryRequiredActionsCount,
+  populateSupportTickets,
+  populateSupportMessages,
 } = require("../sql/sql_request");
 const { Reservation } = require("../models/reservation_model");
 const { Task } = require("../models/task_model");
@@ -49,6 +52,11 @@ const { Boost } = require("../models/boost_model");
 const { Transaction } = require("../models/transaction_model");
 const { Referral } = require("../models/referral_model");
 const { getAdminRequiredActionsCount } = require("./admin_controller");
+const { SupportTicket } = require("../models/support_ticket");
+const { SupportMessage } = require("../models/support_message");
+const {
+  SupportAttachmentModel,
+} = require("../models/support_attachment_model");
 
 exports.renewJWT = async (req, res) => {
   try {
@@ -556,6 +564,226 @@ exports.checkVerificationUser = async (req, res) => {
   }
 };
 
+exports.deleteProfile = async (req, res) => {
+  try {
+    const userId = req.decoded.id;
+    const userFound = await User.findByPk(userId);
+    if (!userFound) {
+      return res.status(404).json({ message: "account_not_found" });
+    }
+    let openedSupportTicket = await SupportTicket.findOne({
+      where: { user_id: userId, category: "profileDeletion", status: "open" },
+    });
+    if (openedSupportTicket) {
+      return res.status(400).json({ message: "already_exist" });
+    }
+    await SupportTicket.create({
+      user_id: userId,
+      category: "profileDeletion",
+      subject: "Request to Delete Profile",
+      description: "User has requested to delete their profile.",
+    });
+
+    return res.status(200).json({ done: true });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.profileDeletionFeedback = async (req, res) => {
+  try {
+    const userId = req.decoded.id;
+    const { reasons, thoughts } = req.body;
+    const userFound = await User.findByPk(userId);
+    if (!userFound) {
+      return res.status(404).json({ message: "account_not_found" });
+    }
+
+    let openedSupportTicket = await SupportTicket.findOne({
+      where: { user_id: userId, category: "profileDeletion", status: "open" },
+    });
+    if (openedSupportTicket) {
+      openedSupportTicket.description +=
+        `\nReasons: ${reasons}` + `\nThoughts: ${thoughts}`;
+      openedSupportTicket.save();
+    }
+
+    return res.status(200).json({ done: openedSupportTicket !== undefined });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.getSupportTickets = async (req, res) => {
+  try {
+    const userId = req.decoded.id;
+    const userFound = await User.findByPk(userId);
+    if (!userFound) {
+      return res.status(404).json({ message: "account_not_found" });
+    }
+
+    let openedSupportTicket = await SupportTicket.findAll({
+      where: { user_id: userId },
+      include: [{ model: User, as: "user" }],
+    });
+
+    openedSupportTicket = await populateSupportTickets(openedSupportTicket);
+
+    return res.status(200).json({ tickets: openedSupportTicket });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.addSupportTicket = async (req, res) => {
+  try {
+    const userId = req.decoded.id;
+    const { category, priority, description, subject } = req.body;
+    const userFound = await User.findByPk(userId);
+    if (!userFound) {
+      return res.status(404).json({ message: "account_not_found" });
+    }
+    if (!category || !description || !subject) {
+      return res.status(400).json({ message: "missing" });
+    }
+
+    const ticket = await SupportTicket.create({
+      user_id: userId,
+      category: category,
+      subject: subject,
+      description: description,
+      priority: priority,
+    });
+
+    let pictures = req.files?.photo ?? req.files?.gallery;
+    if (pictures && pictures.length > 0) {
+      await Promise.all(
+        pictures.map(async (file) => {
+          await SupportAttachmentModel.create({
+            ticket_id: ticket.id,
+            url: file.filename,
+            type: getFileType(file),
+          });
+        })
+      );
+    }
+    const logFile = req.files?.logFile?.[0];
+    if (logFile) {
+      await SupportAttachmentModel.create({
+        ticket_id: ticket.id,
+        url: logFile.filename,
+        type: getFileType(logFile),
+      });
+    }
+
+    return res.status(200).json({ done: true });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.updateSupportTicket = async (req, res) => {
+  try {
+    const userId = req.decoded.id;
+    const { status, priority, id } = req.body;
+    const userFound = await User.findByPk(userId);
+    if (!userFound) {
+      return res.status(404).json({ message: "account_not_found" });
+    }
+    if (!id || !status || !priority) {
+      return res.status(400).json({ message: "missing" });
+    }
+    const ticketFound = await SupportTicket.findOne({
+      where: { id: id },
+      include: [{ model: User, as: "user" }],
+    });
+    if (!ticketFound) {
+      return res.status(404).json({ message: "ticket_not_found" });
+    }
+
+    ticketFound.status = status;
+    ticketFound.priority = priority;
+    ticketFound.save();
+
+    return res.status(200).json({ ticket: ticketFound });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.getSupportMessages = async (req, res) => {
+  try {
+    const userId = req.decoded.id;
+    const ticketId = req.params.id;
+    const userFound = await User.findByPk(userId);
+    if (!userFound) {
+      return res.status(404).json({ message: "account_not_found" });
+    }
+    const ticketFound = await SupportTicket.findByPk(ticketId);
+    if (!ticketFound) {
+      return res.status(404).json({ message: "ticket_not_found" });
+    }
+
+    let ticketMessages = await SupportMessage.findAll({
+      where: { ticket_id: ticketId },
+      include: [{ model: User, as: "user" }],
+      order: [["createdAt", "ASC"]],
+    });
+    ticketMessages = await populateSupportMessages(ticketMessages);
+
+    return res.status(200).json({ messages: ticketMessages });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.sendSupportMessage = async (req, res) => {
+  try {
+    const userId = req.decoded.id;
+    const { message, attachment, ticketId } = req.body;
+    const userFound = await User.findByPk(userId);
+    if (!userFound) {
+      return res.status(404).json({ message: "account_not_found" });
+    }
+    if (!message) {
+      return res.status(400).json({ message: "missing" });
+    }
+
+    const msg = await SupportMessage.create({
+      sender_id: userId,
+      message: message,
+      attachment: attachment,
+      ticket_id: ticketId,
+    });
+    const file = req.files?.photo?.[0] ?? req.files?.logFile?.[0];
+    if (file) {
+      await SupportAttachmentModel.create({
+        message_id: msg.id,
+        url: file.filename,
+        type: getFileType(file),
+      });
+    }
+
+    return res.status(200).json({ done: true });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
 //verify mail by userId
 exports.verifyMail = async (req, res) => {
   try {
@@ -689,12 +917,7 @@ exports.forgotPassword = async (req, res) => {
         code: code,
         type: "forgotPassword",
       },
-      include: [
-        {
-          model: User,
-          as: "user",
-        },
-      ],
+      include: [{ model: User, as: "user" }],
     });
     if (!foundCode) {
       return res.status(401).json({ message: "code_not_found" });
@@ -925,7 +1148,8 @@ exports.userActionsRequiredCount = async (req, res) => {
     const categories = await CategorySubscriptionModel.findAll({
       where: { user_id: userFound.id },
     });
-    const adminDashboardActionRequired = userFound.role === "admin" ? await getAdminRequiredActionsCount() : 0;
+    const adminDashboardActionRequired =
+      userFound.role === "admin" ? await getAdminRequiredActionsCount() : 0;
 
     let count =
       myRequestActionRequired +

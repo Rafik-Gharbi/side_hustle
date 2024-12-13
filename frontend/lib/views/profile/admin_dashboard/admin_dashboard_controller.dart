@@ -30,6 +30,7 @@ class AdminDashboardController extends GetxController {
   RxInt manageBalanceActionRequired = 0.obs;
   RxInt reportsActionRequired = 0.obs;
   RxInt feedbacksActionRequired = 0.obs;
+  RxInt supportActionRequired = 0.obs;
   static RxInt totalUsers = 0.obs;
   static RxInt activeUsers = 0.obs;
   static RxInt verifiedUsers = 0.obs;
@@ -260,6 +261,7 @@ class AdminDashboardController extends GetxController {
         manageBalanceActionRequired.value = data?['adminDashboard']?['balanceCount'] as int? ?? 0;
         reportsActionRequired.value = data?['adminDashboard']?['reportsCount'] as int? ?? 0;
         feedbacksActionRequired.value = data?['adminDashboard']?['feedbackCount'] as int? ?? 0;
+        supportActionRequired.value = data?['adminDashboard']?['supportCount'] as int? ?? 0;
         totalUsers.value = data?['adminDashboard']?['totalUsers'] as int? ?? 0;
         activeUsers.value = data?['adminDashboard']?['activeUsers'] as int? ?? 0;
         verifiedUsers.value = data?['adminDashboard']?['verifiedUsers'] as int? ?? 0;

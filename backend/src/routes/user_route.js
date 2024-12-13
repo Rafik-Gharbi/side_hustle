@@ -1,11 +1,11 @@
 const { fileUpload } = require("../middlewares/multer");
+const { fileUploadSupport } = require("../middlewares/multer-support");
 
 module.exports = (app) => {
   const userController = require("../controllers/user_controller");
   const {
     tokenVerification,
     tokenMail,
-    roleMiddleware,
     refreshTokenVerification,
   } = require("../middlewares/authentificationHelper");
   var router = require("express").Router();
@@ -20,16 +20,50 @@ module.exports = (app) => {
 
   // get profile by token
   router.get("/profile", tokenVerification, userController.profile);
-  
+
+  router.delete("/delete", tokenVerification, userController.deleteProfile);
+  router.post(
+    "/leave-feedback",
+    tokenVerification,
+    userController.profileDeletionFeedback
+  );
+  router.get(
+    "/support-tickets",
+    tokenVerification,
+    userController.getSupportTickets
+  );
+  router.post(
+    "/support-ticket",
+    tokenVerification,
+    fileUploadSupport,
+    userController.addSupportTicket
+  );
+  router.put(
+    "/support-ticket",
+    tokenVerification,
+    userController.updateSupportTicket
+  );
+  router.get(
+    "/support-messages/:id",
+    tokenVerification,
+    userController.getSupportMessages
+  );
+  router.post(
+    "/support-message",
+    tokenVerification,
+    fileUploadSupport,
+    userController.sendSupportMessage
+  );
+
   // get user required actions count
-  router.get("/required-actions", tokenVerification, userController.userActionsRequiredCount);
+  router.get(
+    "/required-actions",
+    tokenVerification,
+    userController.userActionsRequiredCount
+  );
 
   // get user by id, available only for owners
-  router.get(
-    "/user-id",
-    tokenVerification,
-    userController.getUserById
-  );
+  router.get("/user-id", tokenVerification, userController.getUserById);
 
   // endpoint that generate html of contract
   // router.get("/show-contract", checkOrigin, userController.showContract);

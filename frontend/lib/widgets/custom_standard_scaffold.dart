@@ -9,8 +9,9 @@ import 'custom_buttons.dart';
 class CustomStandardScaffold extends StatelessWidget {
   final String title;
   final Widget body;
+  final Widget? actionButton;
 
-  const CustomStandardScaffold({super.key, required this.title, required this.body});
+  const CustomStandardScaffold({super.key, required this.title, required this.body, this.actionButton});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class CustomStandardScaffold extends StatelessWidget {
           icon: const Icon(Icons.chevron_left, size: 28),
           onPressed: () => NavigationHistoryObserver.instance.goToPreviousRoute(),
         ),
+        actions: actionButton != null ? [actionButton!] : null,
       ),
       body: SizedBox(
         width: Get.width,

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -23,7 +24,7 @@ class LoggerService extends GetxService {
   static Future<String> get logHistory async => await Get.find<LoggerService>()._logOutput?.getLog() ?? '';
 
   LoggerService() {
-    init();
+    init(fileOutput: true);
   }
 
   Future<LoggerService> init({bool fileOutput = false}) async {
@@ -50,6 +51,61 @@ class LoggerService extends GetxService {
       ),
     );
     return this;
+  }
+
+  Future<XFile?> getLogFile({bool filterByDate = true}) async {
+    if (!kIsWeb && _logOutput is FileOutput) {
+      final logFile = (_logOutput as FileOutput).file;
+
+      if (!filterByDate) {
+        // Return the full log file if no filtering is required
+        return XFile.fromData(logFile.readAsBytesSync(), name: 'log.txt', mimeType: 'txt', path: logFile.path);
+      }
+
+      // Read the log file content
+      final lines = await logFile.readAsLines();
+      final now = DateTime.now();
+
+      // Find the index of the first line within the last 2 days
+      int startIndex = 0;
+      for (int i = 0; i < lines.length; i++) {
+        final timestamp = _extractTimestamp(lines[i]);
+        if (timestamp != null) {
+          final difference = now.difference(timestamp);
+          if (difference.inDays <= 2) {
+            startIndex = i;
+            break;
+          }
+        }
+      }
+
+      // Take all lines from the found index onward
+      final filteredLogs = lines.sublist(startIndex).join('\n');
+
+      // Write the filtered logs to a temporary file
+      final tempDir = await getTemporaryDirectory();
+      final tempFile = File('${tempDir.path}/filtered_log.txt');
+      await tempFile.writeAsString(filteredLogs);
+
+      // Return the filtered log file
+      return XFile.fromData(tempFile.readAsBytesSync(), name: 'log.txt', mimeType: 'txt', path: '${tempDir.path}/filtered_log.txt');
+    }
+    return null;
+  }
+
+  DateTime? _extractTimestamp(String logLine) {
+    try {
+      // Adjust the pattern to match your log's timestamp format
+      final timestampPattern = RegExp(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}');
+      final match = timestampPattern.firstMatch(logLine);
+
+      if (match != null) {
+        return DateTime.parse(match.group(0)!);
+      }
+    } catch (e) {
+      // Ignore parsing errors
+    }
+    return null;
   }
 }
 

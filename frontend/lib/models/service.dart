@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import '../controllers/main_app_controller.dart';
 import '../database/database.dart';
 import '../helpers/helper.dart';
+import '../networking/api_base_helper.dart';
 import 'category.dart';
 import 'dto/image_dto.dart';
 import 'user.dart';
@@ -47,7 +48,9 @@ class Service {
         name: json['name'],
         owner: json['owner'] != null ? User.fromJson(json['owner']) : null,
         description: json['description'],
-        gallery: json['gallery'] != null || gallery != null ? ((gallery ?? json['gallery']) as List).map((e) => ImageDTO.fromJson(e, isStoreImage: true)).toList() : null,
+        gallery: json['gallery'] != null || gallery != null
+            ? ((gallery ?? json['gallery']) as List).map((e) => ImageDTO.fromJson(e, path: ApiBaseHelper.find.getImageStore(e['url']))).toList()
+            : null,
         category:
             json['category_id'] != null ? MainAppController.find.getCategoryById(json['category_id'] is String ? int.tryParse(json['category_id']) : json['category_id']) : null,
         price: json['price'] is int ? (json['price'] as int).toDouble() : double.tryParse((json['price']).toString()),

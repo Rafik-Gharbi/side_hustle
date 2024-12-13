@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../database/database.dart';
+import '../../helpers/helper.dart';
 import '../../networking/api_base_helper.dart';
 
 enum ImageType { image, file }
@@ -12,9 +13,18 @@ class ImageDTO {
 
   ImageDTO({required this.file, required this.type});
 
-  factory ImageDTO.fromJson(Map<String, dynamic> json, {bool isStoreImage = false}) => ImageDTO(
-        file: XFile(isStoreImage ? ApiBaseHelper.find.getImageStore(json['url'])  : ApiBaseHelper.find.getImageTask(json['url'])),
+  factory ImageDTO.fromJson(Map<String, dynamic> json, {String? path}) => ImageDTO(
+        file: XFile(path ?? ApiBaseHelper.find.getUserImage(json['url'])),
         type: ImageType.values.singleWhere((element) => element.name == json['type']),
+      );
+
+  factory ImageDTO.fromXFile(XFile file) => ImageDTO(
+        file: file,
+        type: file.mimeType != null
+            ? ImageType.values.singleWhere((element) => element.name == file.mimeType)
+            : Helper.isImage(file.name)
+                ? ImageType.image
+                : ImageType.file,
       );
 
   Map<String, dynamic> toJson() {

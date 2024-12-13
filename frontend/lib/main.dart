@@ -72,6 +72,9 @@ import 'views/profile/admin_dashboard/components/stats_screen/task_stats/task_st
 import 'views/profile/admin_dashboard/components/stats_screen/task_stats/task_stats_screen.dart';
 import 'views/profile/admin_dashboard/components/stats_screen/user_stats/user_stats_controller.dart';
 import 'views/profile/admin_dashboard/components/stats_screen/user_stats/user_stats_screen.dart';
+import 'views/support/components/ticket_details.dart';
+import 'views/profile/admin_dashboard/components/support_system/support_controller.dart';
+import 'views/profile/admin_dashboard/components/support_system/support_screen.dart';
 import 'views/profile/admin_dashboard/components/user_reports/user_reports_controller.dart';
 import 'views/profile/admin_dashboard/components/user_reports/user_reports_screen.dart';
 import 'views/profile/balance/balance_screen.dart';
@@ -80,6 +83,8 @@ import 'views/profile/referral/referral_controller.dart';
 import 'views/profile/referral/referral_screen.dart';
 import 'views/profile/transactions/transactions_controller.dart';
 import 'views/profile/transactions/transactions_screen.dart';
+import 'views/support/customer_support.dart';
+import 'views/settings/components/delete_profile.dart';
 import 'views/settings/components/privacy_policy_screen.dart';
 import 'views/settings/components/terms_condition_screen.dart';
 import 'views/store/service_history/service_history_controller.dart';
@@ -396,12 +401,29 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             binding: BindingsBuilder.put(() => FeedbacksController()),
           ),
           GetPage(
+            name: SupportScreen.routeName,
+            page: () => const SupportScreen(),
+            binding: BindingsBuilder.put(() => SupportController()),
+          ),
+          GetPage(
             name: PrivacyPolicyScreen.routeName,
             page: () => const PrivacyPolicyScreen(),
           ),
           GetPage(
             name: TermsConditionScreen.routeName,
             page: () => const TermsConditionScreen(),
+          ),
+          GetPage(
+            name: DeleteProfile.routeName,
+            page: () => const DeleteProfile(),
+          ),
+          GetPage(
+            name: CustomerSupport.routeName,
+            page: () => const CustomerSupport(),
+          ),
+          GetPage(
+            name: TicketDetails.routeName,
+            page: () => TicketDetails(ticket: Get.arguments),
           ),
         ],
       );

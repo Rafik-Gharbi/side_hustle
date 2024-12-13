@@ -24,6 +24,7 @@ class ThemeService {
   }
 
   void toggleTheme() {
+    Helper.snackBar(message: 'feature_not_available_yet'.tr);
     if (currentTheme.value == ThemeMode.dark) {
       setTheme(ThemeMode.light);
     } else {

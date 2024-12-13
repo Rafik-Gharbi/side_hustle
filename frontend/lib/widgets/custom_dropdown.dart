@@ -121,43 +121,38 @@ class CustomDropDownMenu<T> extends StatelessWidget {
                   : width! / 2,
           // height: buttonHeight,
           child: labelIncluded
-              ? _WrapWithBorder(
+              ? _BuildDropDownButton(
+                  itemHeight: itemHeight,
                   dropDownWithDecoration: dropDownWithDecoration,
-                  // buttonHeight: buttonHeight,
+                  items: items,
+                  isMenuOpen: isMenuOpen,
+                  dropdownScrollPadding: dropdownScrollPadding,
+                  onChanged: onChanged,
+                  buttonHeight: buttonHeight,
                   buttonWidth: width,
-                  child: _BuildDropDownButton(
-                    itemHeight: itemHeight,
-                    dropDownWithDecoration: dropDownWithDecoration,
-                    items: items,
-                    isMenuOpen: isMenuOpen,
-                    dropdownScrollPadding: dropdownScrollPadding,
-                    onChanged: onChanged,
-                    buttonHeight: buttonHeight,
-                    buttonWidth: width,
-                    maxWidth: maxWidth,
-                    customButton: customButton,
-                    dropdownMaxHeight: dropdownMaxHeight,
-                    dropdownWidth: dropdownWidth,
-                    elevation: elevation,
-                    hint: hint,
-                    isDisabled: isDisabled,
-                    icon: icon,
-                    includeScrollbar: includeScrollbar,
-                    isRequired: isRequired,
-                    itemPadding: itemPadding,
-                    label: label,
-                    labelAlongside: labelAlongside,
-                    labelIncluded: labelIncluded,
-                    offset: offset,
-                    flexLabel: flexLabel,
-                    searchMatchFn: searchMatchFn,
-                    overlayColor: overlayColor,
-                    selectedItem: selectedItem,
-                    valueFrom: valueFrom,
-                    withClearItem: withClearItem,
-                    validator: validator,
-                    outlinedBorderColor: outlinedBorderColor,
-                  ),
+                  maxWidth: maxWidth,
+                  customButton: customButton,
+                  dropdownMaxHeight: dropdownMaxHeight,
+                  dropdownWidth: dropdownWidth,
+                  elevation: elevation,
+                  hint: hint,
+                  isDisabled: isDisabled,
+                  icon: icon,
+                  includeScrollbar: includeScrollbar,
+                  isRequired: isRequired,
+                  itemPadding: itemPadding,
+                  label: label,
+                  labelAlongside: labelAlongside,
+                  labelIncluded: labelIncluded,
+                  offset: offset,
+                  flexLabel: flexLabel,
+                  searchMatchFn: searchMatchFn,
+                  overlayColor: overlayColor,
+                  selectedItem: selectedItem,
+                  valueFrom: valueFrom,
+                  withClearItem: withClearItem,
+                  validator: validator,
+                  outlinedBorderColor: outlinedBorderColor,
                 )
               : _BuildDropDownButton(
                   itemHeight: itemHeight,
@@ -268,7 +263,7 @@ class _BuildDropDownButton<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final searchController = TextEditingController();
     return DecoratedBox(
-      decoration: const BoxDecoration(color: kNeutralColor100),
+      decoration: BoxDecoration(color: kNeutralColor100, borderRadius: smallRadius),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -279,172 +274,173 @@ class _BuildDropDownButton<T> extends StatelessWidget {
             ),
           Flexible(
             fit: maxWidth ? FlexFit.tight : FlexFit.loose,
-            child: _WrapWithBorder(
-              // buttonHeight: buttonHeight,
-              dropDownWithDecoration: dropDownWithDecoration,
-              buttonWidth: maxWidth ? null : (buttonWidth ?? 100) / 2,
-              child: SizedBox(
-                // height: buttonHeight,
-                width: maxWidth ? null : (buttonWidth ?? 100) / 2,
-                child: Theme(
-                  data: Theme.of(context).copyWith(
-                    scrollbarTheme: const ScrollbarThemeData().copyWith(thumbColor: WidgetStateProperty.all(kPrimaryColor)),
-                    hoverColor: Colors.transparent,
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButtonFormField2<T>(
-                      dropdownStyleData: DropdownStyleData(
-                        offset: offset ?? const Offset(0, -1),
-                        elevation: elevation ?? 8,
-                        scrollPadding: dropdownScrollPadding,
-                        maxHeight: dropdownMaxHeight,
-                        width: dropdownWidth,
-                        padding: EdgeInsets.zero,
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(RadiusSize.regular), color: Colors.white),
-                        scrollbarTheme: ScrollbarThemeData(
-                          radius: const Radius.circular(1.5),
-                          thickness: const WidgetStatePropertyAll(3),
-                          thumbVisibility: WidgetStatePropertyAll(includeScrollbar),
-                        ),
+            child: SizedBox(
+              width: maxWidth ? null : (buttonWidth ?? 100) / 2,
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  scrollbarTheme: const ScrollbarThemeData().copyWith(thumbColor: WidgetStateProperty.all(kPrimaryColor)),
+                  hoverColor: Colors.transparent,
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButtonFormField2<T>(
+                    dropdownStyleData: DropdownStyleData(
+                      offset: offset ?? const Offset(0, -1),
+                      elevation: elevation ?? 8,
+                      scrollPadding: dropdownScrollPadding,
+                      maxHeight: dropdownMaxHeight,
+                      width: dropdownWidth,
+                      padding: EdgeInsets.zero,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(RadiusSize.regular), color: Colors.white),
+                      scrollbarTheme: ScrollbarThemeData(
+                        radius: const Radius.circular(1.5),
+                        thickness: const WidgetStatePropertyAll(3),
+                        thumbVisibility: WidgetStatePropertyAll(includeScrollbar),
                       ),
-                      customButton: customButton,
-                      isExpanded: true,
-                      validator: validator,
-                      selectedItemBuilder: (context) => [
-                        for (int i = 0; i < items.length; i++)
-                          Center(
-                            widthFactor: 1,
-                            child: Text(
-                              selectedItem != null && valueFrom != null ? valueFrom!.call(selectedItem as T) : selectedItem?.toString() ?? hint ?? '',
-                              style: AppFonts.x14Regular.copyWith(color: selectedItem != null ? kBlackColor : kNeutralColor.withAlpha(150)),
-                            ),
+                    ),
+                    customButton: customButton,
+                    isExpanded: true,
+                    validator: validator,
+                    selectedItemBuilder: (context) => [
+                      for (int i = 0; i < items.length; i++)
+                        Center(
+                          widthFactor: 1,
+                          child: Text(
+                            selectedItem != null && valueFrom != null ? valueFrom!.call(selectedItem as T) : selectedItem?.toString() ?? hint ?? '',
+                            style: AppFonts.x14Regular.copyWith(color: selectedItem != null ? kBlackColor : kNeutralColor.withAlpha(150)),
                           ),
-                      ],
-                      items: isDisabled
-                          ? []
-                          : items
-                              .map<DropdownMenuItem<T>>(
-                                (value) => DropdownMenuItem<T>(
-                                  value: value,
-                                  child: OnHover(
-                                    builder: (isHovered) => DecoratedBox(
-                                      decoration: BoxDecoration(
-                                        color: isHovered
-                                            ? kNeutralLightColor.withAlpha(150)
-                                            : selectedItem != null && selectedItem == value
-                                                ? kPrimaryColor
-                                                : null,
-                                        borderRadius: smallRadius,
-                                      ),
-                                      child: Center(
-                                        child: Text(valueFrom?.call(value) ?? value.toString(), style: AppFonts.x14Regular),
-                                      ),
+                        ),
+                    ],
+                    items: isDisabled
+                        ? []
+                        : items
+                            .map<DropdownMenuItem<T>>(
+                              (value) => DropdownMenuItem<T>(
+                                value: value,
+                                child: OnHover(
+                                  builder: (isHovered) => DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      color: isHovered
+                                          ? kNeutralLightColor.withAlpha(150)
+                                          : selectedItem != null && selectedItem == value
+                                              ? kPrimaryColor
+                                              : null,
+                                      borderRadius: smallRadius,
+                                    ),
+                                    child: Center(
+                                      child: Text(valueFrom?.call(value) ?? value.toString(), style: AppFonts.x14Regular),
                                     ),
                                   ),
                                 ),
-                              )
-                              .toList(),
-                      onChanged: isDisabled ? (value) {} : onChanged,
-                      iconStyleData: IconStyleData(
-                        icon: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: icon ?? Icon(Icons.expand_more, size: 25, color: kNeutralColor),
-                        ),
-                        openMenuIcon: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: icon ?? Icon(Icons.expand_less, size: 25, color: kNeutralColor),
-                        ),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: isDisabled ? (value) {} : onChanged,
+                    iconStyleData: IconStyleData(
+                      icon: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: icon ?? Icon(Icons.expand_more, size: 25, color: kNeutralColor),
                       ),
-                      hint: labelIncluded
-                          ? Row(
-                              children: [
-                                if (labelIncluded) ...[
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    flex: flexLabel,
-                                    child: Center(child: Text(label ?? '', style: AppFonts.x14Regular)),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  SizedBox(
-                                    width: .6,
-                                    height: 50,
-                                    child: DecoratedBox(decoration: BoxDecoration(color: kNeutralColor)),
-                                  ),
-                                ],
+                      openMenuIcon: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: icon ?? Icon(Icons.expand_less, size: 25, color: kNeutralColor),
+                      ),
+                    ),
+                    hint: labelIncluded
+                        ? Row(
+                            children: [
+                              if (labelIncluded) ...[
+                                const SizedBox(width: 5),
                                 Expanded(
-                                  flex: 3,
-                                  child: Center(
-                                    child: Text(
-                                      hint ?? '',
-                                      style: AppFonts.x14Regular.copyWith(color: selectedItem != null ? kBlackColor : kNeutralColor.withAlpha(150)),
-                                    ),
-                                  ),
+                                  flex: flexLabel,
+                                  child: Center(child: Text(label ?? '', style: AppFonts.x14Regular)),
+                                ),
+                                const SizedBox(width: 10),
+                                SizedBox(
+                                  width: .6,
+                                  height: 50,
+                                  child: DecoratedBox(decoration: BoxDecoration(color: kNeutralColor)),
                                 ),
                               ],
-                            )
-                          : SizedBox(
-                              // height: buttonHeight,
-                              child: Center(
-                                widthFactor: 1,
-                                child: Text(
-                                  selectedItem != null && valueFrom != null ? valueFrom!.call(selectedItem as T) : selectedItem?.toString() ?? hint ?? '',
-                                  style: AppFonts.x14Regular.copyWith(color: selectedItem != null ? kBlackColor : kNeutralColor.withAlpha(150)),
-                                ),
-                              ),
-                            ),
-                      buttonStyleData: ButtonStyleData(
-                        // height: buttonHeight,
-                        width: maxWidth ? null : buttonWidth,
-                        decoration: isDisabled
-                            ? BoxDecoration(
-                                color: kNeutralColor,
-                                border: Border.all(color: kNeutralColor, width: .6),
-                                borderRadius: const BorderRadius.all(Radius.circular(RadiusSize.regular)),
-                              )
-                            : null,
-                        overlayColor: overlayColor != null ? WidgetStatePropertyAll(overlayColor) : null,
-                      ),
-                      menuItemStyleData: MenuItemStyleData(height: itemHeight!, padding: itemPadding ?? const EdgeInsets.all(Paddings.small)),
-                      onMenuStateChange: (isOpen) {
-                        isMenuOpen?.call(isOpen);
-                        if (!isOpen) searchController.clear();
-                      },
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular, vertical: Paddings.large),
-                        alignLabelWithHint: true,
-                        constraints: BoxConstraints(minHeight: buttonHeight ?? 40),
-                        errorStyle: AppFonts.x12Regular.copyWith(color: kErrorColor, height: 0.05),
-                        border: UnderlineInputBorder(borderSide: BorderSide(color: outlinedBorderColor ?? kNeutralLightColor)),
-                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: outlinedBorderColor ?? kNeutralLightColor)),
-                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: outlinedBorderColor ?? kNeutralLightColor)),
-                        floatingLabelStyle: AppFonts.x14Regular.copyWith(height: 0.2),
-                        hintStyle: AppFonts.x14Regular.copyWith(color: kNeutralColor.withAlpha(150)),
-                      ),
-                      dropdownSearchData: searchMatchFn == null
-                          ? null
-                          : DropdownSearchData(
-                              searchController: searchController,
-                              searchMatchFn: searchMatchFn,
-                              searchInnerWidgetHeight: 50,
-                              searchInnerWidget: Container(
-                                height: 50,
-                                padding: const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.small),
-                                child: TextFormField(
-                                  expands: true,
-                                  maxLines: null,
-                                  controller: searchController,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                                    hintText: 'search_item'.tr,
-                                    hintStyle: AppFonts.x14Regular.copyWith(color: kNeutralColor),
-                                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: kNeutralColor)),
-                                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: kNeutralColor)),
+                              Expanded(
+                                flex: 3,
+                                child: Center(
+                                  child: Text(
+                                    hint ?? '',
+                                    style: AppFonts.x14Regular.copyWith(color: selectedItem != null ? kBlackColor : kNeutralColor.withAlpha(150)),
                                   ),
                                 ),
                               ),
+                            ],
+                          )
+                        : SizedBox(
+                            height: buttonHeight,
+                            child: Center(
+                              widthFactor: 1,
+                              child: Text(
+                                selectedItem != null && valueFrom != null ? valueFrom!.call(selectedItem as T) : selectedItem?.toString() ?? hint ?? '',
+                                style: AppFonts.x14Regular.copyWith(color: selectedItem != null ? kBlackColor : kNeutralColor.withAlpha(150)),
+                              ),
                             ),
+                          ),
+                    buttonStyleData: ButtonStyleData(
+                      // height: buttonHeight,
+                      width: maxWidth ? null : buttonWidth,
+                      decoration: isDisabled
+                          ? BoxDecoration(
+                              color: kNeutralColor,
+                              border: Border.all(color: kNeutralColor, width: .6),
+                              borderRadius: const BorderRadius.all(Radius.circular(RadiusSize.regular)),
+                            )
+                          : null,
+                      overlayColor: overlayColor != null ? WidgetStatePropertyAll(overlayColor) : null,
                     ),
+                    menuItemStyleData: MenuItemStyleData(height: itemHeight!, padding: itemPadding ?? const EdgeInsets.all(Paddings.small)),
+                    onMenuStateChange: (isOpen) {
+                      isMenuOpen?.call(isOpen);
+                      if (!isOpen) searchController.clear();
+                    },
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
+                      alignLabelWithHint: true,
+                      border: dropDownWithDecoration
+                          ? OutlineInputBorder(borderSide: BorderSide(color: outlinedBorderColor ?? kNeutralLightColor), borderRadius: smallRadius)
+                          : UnderlineInputBorder(borderSide: BorderSide(color: outlinedBorderColor ?? kNeutralLightColor), borderRadius: smallRadius),
+                      errorBorder: dropDownWithDecoration
+                          ? OutlineInputBorder(borderSide: const BorderSide(color: kErrorColor), borderRadius: smallRadius)
+                          : UnderlineInputBorder(borderSide: const BorderSide(color: kErrorColor), borderRadius: smallRadius),
+                      enabledBorder: dropDownWithDecoration
+                          ? OutlineInputBorder(borderSide: BorderSide(color: outlinedBorderColor ?? kNeutralLightColor), borderRadius: smallRadius)
+                          : UnderlineInputBorder(borderSide: BorderSide(color: outlinedBorderColor ?? kNeutralLightColor), borderRadius: smallRadius),
+                      focusedBorder: dropDownWithDecoration
+                          ? OutlineInputBorder(borderSide: BorderSide(color: outlinedBorderColor ?? kNeutralLightColor), borderRadius: smallRadius)
+                          : UnderlineInputBorder(borderSide: BorderSide(color: outlinedBorderColor ?? kNeutralLightColor), borderRadius: smallRadius),
+                      floatingLabelStyle: AppFonts.x14Regular.copyWith(height: 0.2),
+                      hintStyle: AppFonts.x14Regular.copyWith(color: kNeutralColor.withAlpha(150)),
+                    ),
+                    dropdownSearchData: searchMatchFn == null
+                        ? null
+                        : DropdownSearchData(
+                            searchController: searchController,
+                            searchMatchFn: searchMatchFn,
+                            searchInnerWidgetHeight: 50,
+                            searchInnerWidget: Container(
+                              height: 50,
+                              padding: const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.small),
+                              child: TextFormField(
+                                expands: true,
+                                maxLines: null,
+                                controller: searchController,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                  hintText: 'search_item'.tr,
+                                  hintStyle: AppFonts.x14Regular.copyWith(color: kNeutralColor),
+                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: kNeutralColor)),
+                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: kNeutralColor)),
+                                ),
+                              ),
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -454,31 +450,4 @@ class _BuildDropDownButton<T> extends StatelessWidget {
       ),
     );
   }
-}
-
-class _WrapWithBorder extends StatelessWidget {
-  final Widget child;
-  final double? buttonWidth;
-  final bool? dropDownWithDecoration;
-
-  const _WrapWithBorder({
-    required this.child,
-    this.buttonWidth = 100,
-    this.dropDownWithDecoration,
-  });
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-        width: buttonWidth,
-        // height: buttonHeight,
-        child: DecoratedBox(
-          decoration: dropDownWithDecoration!
-              ? BoxDecoration(
-                  border: Border.all(color: kNeutralColor, width: 0.6),
-                  borderRadius: const BorderRadius.all(Radius.circular(RadiusSize.regular)),
-                )
-              : const BoxDecoration(),
-          child: child,
-        ),
-      );
 }

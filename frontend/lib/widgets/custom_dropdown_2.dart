@@ -448,7 +448,7 @@ class _WrapWithBorder extends StatelessWidget {
         child: DecoratedBox(
           decoration: dropDownWithDecoration!
               ? BoxDecoration(
-                  border: Border.all(color: kNeutralColor, width: 0.6),
+                  border: Border.all(color: kNeutralLightColor),
                   borderRadius: const BorderRadius.all(Radius.circular(RadiusSize.regular)),
                 )
               : const BoxDecoration(),

@@ -208,7 +208,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                               width: attachmentSize,
                                               height: attachmentSize,
                                               child: Center(
-                                                child: controller.isImage(xFile.name.toLowerCase())
+                                                child: Helper.isImage(xFile.name.toLowerCase())
                                                     ? ClipRRect(borderRadius: smallRadius, child: Image.file(File(xFile.path), fit: BoxFit.cover))
                                                     : Padding(
                                                         padding: const EdgeInsets.all(Paddings.small),

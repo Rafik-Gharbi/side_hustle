@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,7 +11,6 @@ import '../../../models/governorate.dart';
 import '../../../models/task.dart';
 import '../../../repositories/task_repository.dart';
 import '../../../services/authentication_service.dart';
-import '../../../services/logger_service.dart';
 
 class AddTaskController extends GetxController {
   final Task? task;
@@ -60,12 +58,6 @@ class AddTaskController extends GetxController {
 
   AddTaskController({this.task}) {
     if (task != null) _loadTaskData();
-  }
-
-  bool isImage(String fileName) {
-    if (!fileName.contains('.')) return false;
-    fileName = fileName.substring(fileName.lastIndexOf('.'));
-    return fileName.contains('jpg') || fileName.contains('jpeg') || fileName.contains('png');
   }
 
   void setCreatedDate({bool next = false, bool previous = false}) {
@@ -118,7 +110,7 @@ class AddTaskController extends GetxController {
         governorate: governorate,
         delivrables: delivrablesController.text,
         price: double.tryParse(priceController.text),
-        attachments: attachments?.map((e) => ImageDTO(file: e, type: isImage(e.name.toLowerCase()) ? ImageType.image : ImageType.file)).toList(),
+        attachments: attachments?.map((e) => ImageDTO(file: e, type: Helper.isImage(e.name.toLowerCase()) ? ImageType.image : ImageType.file)).toList(),
         owner: AuthenticationService.find.jwtUserData!,
         coordinates: coordinates,
         dueDate: _createdDate,
@@ -165,22 +157,14 @@ class AddTaskController extends GetxController {
   }
 
   Future<void> uploadAttachments() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowMultiple: true,
-        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-      );
-      if (result != null) {
-        if (attachments == null) {
-          attachments = result.xFiles;
-        } else {
-          attachments!.addAll(result.xFiles.where((element) => !attachments!.map((e) => e.name).contains(element.name)));
-        }
-        update();
+    final files = await Helper.pickFiles();
+    if (files != null) {
+      if (attachments == null) {
+        attachments = files;
+      } else {
+        attachments!.addAll(files.where((element) => !attachments!.map((e) => e.name).contains(element.name)));
       }
-    } catch (e) {
-      LoggerService.logger?.e('Error occured in uploadAttachments:\n$e');
+      update();
     }
   }
 

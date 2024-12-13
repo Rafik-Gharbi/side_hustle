@@ -15,7 +15,7 @@ var storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname).toLowerCase();
-    if (![".jpg", ".jpeg", ".png", ".gif", ".webp"].includes(ext)) {
+    if (![".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp"].includes(ext)) {
       const error = new Error("Only images are allowed");
       error.status = 415;
       return cb(error);

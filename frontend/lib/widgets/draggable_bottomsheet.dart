@@ -14,24 +14,22 @@ class DraggableBottomsheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SolidBottomSheet(
-        maxHeight: overrideMaxHeight ?? Get.height * 0.95,
+        maxHeight: overrideMaxHeight ?? Get.height * 0.90,
         minHeight: overrideMinHeight ?? Get.height * 0.5,
         draggableBody: true,
-        headerBar: const SizedBox(),
-        body: Stack(
-          children: [
-            child,
-            Positioned(
-              top: dragHandlerPadding,
-              width: Get.width,
-              child: Center(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(color: kNeutralColor, borderRadius: BorderRadius.circular(10)),
-                  child: const SizedBox(width: 60, height: 5),
-                ),
+        headerBar: Material(
+          color: kNeutralColor100,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+          child: SizedBox(
+            height: dragHandlerPadding,
+            child: Center(
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: kNeutralColor, borderRadius: BorderRadius.circular(10)),
+                child: const SizedBox(width: 60, height: 5),
               ),
-            )
-          ],
+            ),
+          ),
         ),
+        body: child,
       );
 }

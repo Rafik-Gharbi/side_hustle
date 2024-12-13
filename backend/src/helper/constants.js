@@ -44,133 +44,133 @@ const constantId = {
       role: "subscribed",
     },
   ],
-  LanguageType: [
-    {
-      id: "1",
-      language_code: "en",
-      name: "English",
-    },
-    {
-      id: "2",
-      language_code: "de",
-      name: "German",
-    },
-    {
-      id: "3",
-      language_code: "pl",
-      name: "Polish",
-    },
-    {
-      id: "4",
-      language_code: "fr",
-      name: "Fbabynch",
-    },
-    {
-      id: "5",
-      language_code: "es",
-      name: "Spanish",
-    },
-    {
-      id: "6",
-      language_code: "it",
-      name: "Italian",
-    },
-    {
-      id: "7",
-      language_code: "sv",
-      name: "Swedish",
-    },
-    {
-      id: "8",
-      language_code: "da",
-      name: "Danish",
-    },
-    {
-      id: "9",
-      language_code: "pt",
-      name: "Portuguese",
-    },
-    {
-      id: "10",
-      language_code: "cs",
-      name: "Czech",
-    },
-    {
-      id: "11",
-      language_code: "nl",
-      name: "Dutch",
-    },
-    {
-      id: "12",
-      language_code: "fi",
-      name: "Finnish",
-    },
-    {
-      id: "13",
-      language_code: "ru",
-      name: "Russian",
-    },
-    {
-      id: "14",
-      language_code: "lv",
-      name: "Latvian",
-    },
-    {
-      id: "15",
-      language_code: "lt",
-      name: "Lithuanian",
-    },
-    {
-      id: "16",
-      language_code: "ee",
-      name: "Estonian",
-    },
-    {
-      id: "17",
-      language_code: "sk",
-      name: "Slovak",
-    },
-    {
-      id: "18",
-      language_code: "hu",
-      name: "Hungarian",
-    },
-    {
-      id: "19",
-      language_code: "jp",
-      name: "Japanese",
-    },
-    {
-      id: "22",
-      language_code: "bg",
-      name: "Bulgarian",
-    },
-    {
-      id: "23",
-      language_code: "tk",
-      name: "Turkish",
-    },
-    {
-      id: "24",
-      language_code: "gr",
-      name: "Greek",
-    },
-    {
-      id: "25",
-      language_code: "ro",
-      name: "Romanian",
-    },
-    {
-      id: "26",
-      language_code: "zh",
-      name: "Chinese",
-    },
-    {
-      id: "27",
-      language_code: "ca",
-      name: "Catalan",
-    },
-  ],
+  // LanguageType: [
+  //   {
+  //     id: "1",
+  //     language_code: "en",
+  //     name: "English",
+  //   },
+  //   {
+  //     id: "2",
+  //     language_code: "de",
+  //     name: "German",
+  //   },
+  //   {
+  //     id: "3",
+  //     language_code: "pl",
+  //     name: "Polish",
+  //   },
+  //   {
+  //     id: "4",
+  //     language_code: "fr",
+  //     name: "Fbabynch",
+  //   },
+  //   {
+  //     id: "5",
+  //     language_code: "es",
+  //     name: "Spanish",
+  //   },
+  //   {
+  //     id: "6",
+  //     language_code: "it",
+  //     name: "Italian",
+  //   },
+  //   {
+  //     id: "7",
+  //     language_code: "sv",
+  //     name: "Swedish",
+  //   },
+  //   {
+  //     id: "8",
+  //     language_code: "da",
+  //     name: "Danish",
+  //   },
+  //   {
+  //     id: "9",
+  //     language_code: "pt",
+  //     name: "Portuguese",
+  //   },
+  //   {
+  //     id: "10",
+  //     language_code: "cs",
+  //     name: "Czech",
+  //   },
+  //   {
+  //     id: "11",
+  //     language_code: "nl",
+  //     name: "Dutch",
+  //   },
+  //   {
+  //     id: "12",
+  //     language_code: "fi",
+  //     name: "Finnish",
+  //   },
+  //   {
+  //     id: "13",
+  //     language_code: "ru",
+  //     name: "Russian",
+  //   },
+  //   {
+  //     id: "14",
+  //     language_code: "lv",
+  //     name: "Latvian",
+  //   },
+  //   {
+  //     id: "15",
+  //     language_code: "lt",
+  //     name: "Lithuanian",
+  //   },
+  //   {
+  //     id: "16",
+  //     language_code: "ee",
+  //     name: "Estonian",
+  //   },
+  //   {
+  //     id: "17",
+  //     language_code: "sk",
+  //     name: "Slovak",
+  //   },
+  //   {
+  //     id: "18",
+  //     language_code: "hu",
+  //     name: "Hungarian",
+  //   },
+  //   {
+  //     id: "19",
+  //     language_code: "jp",
+  //     name: "Japanese",
+  //   },
+  //   {
+  //     id: "22",
+  //     language_code: "bg",
+  //     name: "Bulgarian",
+  //   },
+  //   {
+  //     id: "23",
+  //     language_code: "tk",
+  //     name: "Turkish",
+  //   },
+  //   {
+  //     id: "24",
+  //     language_code: "gr",
+  //     name: "Greek",
+  //   },
+  //   {
+  //     id: "25",
+  //     language_code: "ro",
+  //     name: "Romanian",
+  //   },
+  //   {
+  //     id: "26",
+  //     language_code: "zh",
+  //     name: "Chinese",
+  //   },
+  //   {
+  //     id: "27",
+  //     language_code: "ca",
+  //     name: "Catalan",
+  //   },
+  // ],
   categories: [
     {
       id: 1,

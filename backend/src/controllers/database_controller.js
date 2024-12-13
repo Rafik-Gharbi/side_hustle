@@ -20,7 +20,7 @@ const { CoinPack } = require("../models/coin_pack_model");
 exports.insert = async (req, res) => {
   try {
     const users = constantId.Users;
-    const languageType = constantId.LanguageType;
+    // const languageType = constantId.LanguageType;
     const categories = constantId.categories;
     const governorates = constantId.governorates;
     const tasks = constantId.tasks;
@@ -35,7 +35,7 @@ exports.insert = async (req, res) => {
       user.password = hashedPassword;
     }
 
-    const createdLanguageType = await LanguageType.bulkCreate(languageType);
+    // const createdLanguageType = await LanguageType.bulkCreate(languageType);
     const createdGovernorates = await Governorate.bulkCreate(governorates);
     const createdCategories = await Category.bulkCreate(categories);
     const createdUsers = await User.bulkCreate(users);
@@ -58,7 +58,7 @@ exports.insert = async (req, res) => {
 
     const result = {
       createdUsers,
-      createdLanguageType,
+      // createdLanguageType,
       createdGovernorates,
       createdCategories,
       createdTasks,

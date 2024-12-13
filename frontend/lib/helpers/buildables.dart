@@ -132,9 +132,9 @@ class Buildables {
     return CircleAvatar(radius: size! / 2, backgroundColor: kPrimaryColor, child: buildPicture(fontSize: size * 0.3));
   }
 
-  static Widget lightDivider({EdgeInsets? padding}) => Padding(
+  static Widget lightDivider({EdgeInsets? padding, Color? color}) => Padding(
         padding: padding ?? EdgeInsets.zero,
-        child: Divider(thickness: 0.4, color: kNeutralColor),
+        child: Divider(thickness: 0.4, color: color ?? kNeutralColor),
       );
 
   static Widget buildProfileInfoRow(String label, String value, {Widget? extraWidget}) => SizedBox(
@@ -438,6 +438,25 @@ class Buildables {
               ],
             ),
           ),
+        ),
+      );
+
+  static Widget buildActionTile({required String label, required IconData icon, required void Function() onTap, int actionRequired = 0}) => CustomButtons.text(
+        onPressed: onTap,
+        child: ListTile(
+          title: Text(label, style: AppFonts.x14Bold),
+          contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
+          leading: Badge(
+            offset: const Offset(5, -5),
+            largeSize: 18,
+            isLabelVisible: actionRequired > 0,
+            label: Text(
+              actionRequired.toString(),
+              style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
+            ),
+            child: CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: Icon(icon, size: 24)),
+          ),
+          trailing: const Icon(Icons.chevron_right_rounded),
         ),
       );
 }

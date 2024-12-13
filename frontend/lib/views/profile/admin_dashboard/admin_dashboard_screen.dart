@@ -5,10 +5,10 @@ import '../../../constants/colors.dart';
 import '../../../constants/constants.dart';
 import '../../../constants/sizes.dart';
 import '../../../controllers/main_app_controller.dart';
+import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/theme/theme.dart';
-import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
@@ -17,6 +17,7 @@ import '../../home/home_controller.dart';
 import 'admin_dashboard_controller.dart';
 import 'components/feedbacks/feedbacks_screen.dart';
 import 'components/manage_balance/manage_balance_screen.dart';
+import 'components/support_system/support_screen.dart';
 import 'components/user_reports/user_reports_screen.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
@@ -89,29 +90,35 @@ class AdminDashboardScreen extends StatelessWidget {
                                     width: Get.width,
                                     child: Column(
                                       children: [
-                                        buildActionTile(
+                                        Buildables.buildActionTile(
                                           actionRequired: controller.approveUsersActionRequired.value,
                                           label: 'approve_users'.tr,
                                           icon: Icons.verified_user_outlined,
                                           onTap: () => Get.toNamed(ApproveUserScreen.routeName)?.then((value) => controller.init()),
                                         ),
-                                        buildActionTile(
+                                        Buildables.buildActionTile(
                                           actionRequired: controller.manageBalanceActionRequired.value,
                                           label: 'manage_balance'.tr,
                                           icon: Icons.attach_money_outlined,
                                           onTap: () => Get.toNamed(ManageBalanceScreen.routeName)?.then((value) => controller.init()),
                                         ),
-                                        buildActionTile(
+                                        Buildables.buildActionTile(
                                           actionRequired: controller.reportsActionRequired.value,
                                           label: 'reports'.tr,
                                           icon: Icons.report_outlined,
                                           onTap: () => Get.toNamed(UserReportsScreen.routeName)?.then((value) => controller.init()),
                                         ),
-                                        buildActionTile(
+                                        Buildables.buildActionTile(
                                           actionRequired: controller.feedbacksActionRequired.value,
                                           label: 'feedbacks'.tr,
                                           icon: Icons.feedback_outlined,
                                           onTap: () => Get.toNamed(FeedbacksScreen.routeName)?.then((value) => controller.init()),
+                                        ),
+                                        Buildables.buildActionTile(
+                                          actionRequired: controller.supportActionRequired.value,
+                                          label: 'support_system'.tr,
+                                          icon: Icons.support_outlined,
+                                          onTap: () => Get.toNamed(SupportScreen.routeName)?.then((value) => controller.init()),
                                         ),
                                       ],
                                     ),
@@ -127,25 +134,6 @@ class AdminDashboardScreen extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        ),
-      );
-
-  Widget buildActionTile({required String label, required IconData icon, required void Function() onTap, int actionRequired = 0}) => Badge(
-        offset: const Offset(-45, 19),
-        largeSize: 18,
-        isLabelVisible: actionRequired > 0,
-        label: Text(
-          actionRequired.toString(),
-          style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
-        ),
-        child: CustomButtons.text(
-          onPressed: onTap,
-          child: ListTile(
-            title: Text(label, style: AppFonts.x14Bold),
-            contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
-            leading: CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: Icon(icon, size: 24)),
-            trailing: const Icon(Icons.chevron_right_rounded),
           ),
         ),
       );

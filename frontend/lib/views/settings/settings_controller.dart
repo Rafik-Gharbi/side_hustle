@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../../constants/shared_preferences_keys.dart';
+import '../../helpers/helper.dart';
 import '../../services/shared_preferences.dart';
 
 class SettingsController extends GetxController {
@@ -26,10 +27,12 @@ class SettingsController extends GetxController {
 
   Future<void> deleteCache() async {
     // TODO delete all cache
+    Helper.snackBar(message: 'feature_not_available_yet'.tr);
     await SharedPreferencesService.find.clearAllSavedData();
   }
 
   void toggleCategorySectionPreferences() {
+    Helper.snackBar(message: 'feature_not_available_yet'.tr);
     if (categoryPreferences == 'show_popular_categories'.tr) {
       categoryPreferences = 'show_most_searched_categories'.tr;
     } else {

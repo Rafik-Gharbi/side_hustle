@@ -12,9 +12,20 @@ class AnimatedListTile extends StatefulWidget {
   final Widget? leading;
   final Widget? trailing;
   final Widget? widget;
+  final Decoration? tileDecoration;
   final void Function()? onTap;
 
-  const AnimatedListTile({super.key, this.title, this.subtitle, this.leading, this.onTap, this.trailing, this.widget, this.titleStyle});
+  const AnimatedListTile({
+    super.key,
+    this.title,
+    this.subtitle,
+    this.leading,
+    this.onTap,
+    this.trailing,
+    this.widget,
+    this.titleStyle,
+    this.tileDecoration,
+  });
 
   @override
   AnimatedListTileState createState() => AnimatedListTileState();
@@ -55,7 +66,7 @@ class AnimatedListTileState extends State<AnimatedListTile> with SingleTickerPro
         child: SlideTransition(
           position: _animation,
           child: DecoratedBox(
-            decoration: BoxDecoration(borderRadius: smallRadius, color: kNeutralLightOpacityColor),
+            decoration: widget.tileDecoration ?? BoxDecoration(borderRadius: smallRadius, color: kNeutralLightOpacityColor),
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
               minVerticalPadding: 0,

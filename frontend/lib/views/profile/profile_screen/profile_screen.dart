@@ -11,7 +11,6 @@ import '../../../models/user.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/shared_preferences.dart';
 import '../../../services/theme/theme.dart';
-import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
@@ -199,13 +198,13 @@ class ProfileScreen extends StatelessWidget {
                                                     child: Column(
                                                       children: [
                                                         if (AuthenticationService.find.jwtUserData?.role == Role.admin)
-                                                          buildActionTile(
+                                                          Buildables.buildActionTile(
                                                             actionRequired: controller.adminDashboardActionRequired,
                                                             label: 'admin_dashboard'.tr,
                                                             icon: Icons.dashboard_outlined,
                                                             onTap: () => Get.toNamed(AdminDashboardScreen.routeName)?.then((value) => controller.init()),
                                                           ),
-                                                        buildActionTile(
+                                                        Buildables.buildActionTile(
                                                           label: 'edit_profile'.tr,
                                                           icon: Icons.edit_outlined,
                                                           onTap: () {
@@ -228,13 +227,13 @@ class ProfileScreen extends StatelessWidget {
                                                           },
                                                         ),
                                                         if (AuthenticationService.find.jwtUserData?.isVerified != VerifyIdentityStatus.verified)
-                                                          buildActionTile(
+                                                          Buildables.buildActionTile(
                                                             actionRequired: AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.pending ? 0 : 1,
                                                             label: 'verify_profile'.tr,
                                                             icon: Icons.verified_outlined,
                                                             onTap: () => Get.toNamed(VerifyUserScreen.routeName),
                                                           ),
-                                                        buildActionTile(
+                                                        Buildables.buildActionTile(
                                                           label: 'change_password'.tr,
                                                           icon: Icons.password_outlined,
                                                           onTap: () {
@@ -252,53 +251,53 @@ class ProfileScreen extends StatelessWidget {
                                                             ).then((_) => controller.init());
                                                           },
                                                         ),
-                                                        buildActionTile(
+                                                        Buildables.buildActionTile(
                                                           label: 'my_bookmarks'.tr,
                                                           icon: Icons.bookmark_add_outlined,
                                                           onTap: () => Get.toNamed(FavoriteScreen.routeName),
                                                         ),
-                                                        buildActionTile(
+                                                        Buildables.buildActionTile(
                                                           actionRequired: controller.subscribedCategories.isEmpty ? 1 : 0,
                                                           label: 'subscribe_categories'.tr,
                                                           icon: Icons.loyalty_outlined,
                                                           onTap: controller.manageCategoriesSubscription,
                                                         ),
-                                                        buildActionTile(
+                                                        Buildables.buildActionTile(
                                                           actionRequired: controller.myRequestActionRequired,
                                                           label: 'my_request'.tr,
                                                           icon: Icons.campaign_outlined,
                                                           onTap: () => Get.toNamed(TaskRequestScreen.routeName),
                                                         ),
-                                                        buildActionTile(
+                                                        Buildables.buildActionTile(
                                                           actionRequired: controller.taskHistoryActionRequired,
                                                           label: 'tasks_history'.tr,
                                                           icon: Icons.history_outlined,
                                                           onTap: () => Get.toNamed(TaskHistoryScreen.routeName),
                                                         ),
-                                                        buildActionTile(
+                                                        Buildables.buildActionTile(
                                                           actionRequired: controller.serviceHistoryActionRequired,
                                                           label: 'booked_services'.tr,
                                                           icon: Icons.library_books_outlined,
                                                           onTap: () => Get.toNamed(ServiceHistoryScreen.routeName),
                                                         ),
-                                                        buildActionTile(
+                                                        Buildables.buildActionTile(
                                                           actionRequired: controller.myStoreActionRequired,
                                                           label: 'my_store'.tr,
                                                           icon: Icons.store_outlined,
                                                           onTap: () => Get.toNamed(MyStoreScreen.routeName),
                                                         ),
                                                         if (controller.userHasBoosts)
-                                                          buildActionTile(
+                                                          Buildables.buildActionTile(
                                                             label: 'my_boosts'.tr,
                                                             icon: Icons.rocket_launch_outlined,
                                                             onTap: () => Get.toNamed(ListBoostScreen.routeName),
                                                           ),
-                                                        buildActionTile(
+                                                        Buildables.buildActionTile(
                                                           label: 'refer_friend'.tr,
                                                           icon: Icons.group_add_outlined,
                                                           onTap: () => Get.toNamed(ReferralScreen.routeName),
                                                         ),
-                                                        buildActionTile(
+                                                        Buildables.buildActionTile(
                                                           label: 'logout'.tr,
                                                           icon: Icons.logout_outlined,
                                                           onTap: () => Helper.openConfirmationDialog(
@@ -323,25 +322,6 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        ),
-      );
-
-  Widget buildActionTile({required String label, required IconData icon, required void Function() onTap, int actionRequired = 0}) => Badge(
-        offset: const Offset(-45, 19),
-        largeSize: 18,
-        isLabelVisible: actionRequired > 0,
-        label: Text(
-          actionRequired.toString(),
-          style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
-        ),
-        child: CustomButtons.text(
-          onPressed: onTap,
-          child: ListTile(
-            title: Text(label, style: AppFonts.x14Bold),
-            contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
-            leading: CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: Icon(icon, size: 24)),
-            trailing: const Icon(Icons.chevron_right_rounded),
           ),
         ),
       );

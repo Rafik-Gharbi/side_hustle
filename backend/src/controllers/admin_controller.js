@@ -19,6 +19,8 @@ const {
   populateStores,
   populateOneTask,
   populateOneService,
+  getUserSupportRequiredActionsCount,
+  populateSupportTickets,
 } = require("../sql/sql_request");
 const { Sequelize, sequelize } = require("../../db.config");
 const { Op } = require("sequelize");
@@ -37,6 +39,7 @@ const { FavoriteStore } = require("../models/favorite_store_model");
 const { FavoriteTask } = require("../models/favorite_task_model");
 const { Review } = require("../models/review_model");
 const { getDate } = require("../helper/helpers");
+const { SupportTicket } = require("../models/support_ticket");
 
 async function getAdminRequiredActionsCount() {
   try {
@@ -49,6 +52,8 @@ async function getAdminRequiredActionsCount() {
     requiredActionsCount += userReports.length;
     const userFeedbacks = await getUsersFeedbacks();
     requiredActionsCount += userFeedbacks.length;
+    const userSupport = await getUsersSupport();
+    requiredActionsCount += userSupport.length;
 
     return requiredActionsCount;
   } catch (error) {
@@ -255,6 +260,26 @@ async function getUsersFeedbacks() {
   }
 }
 
+async function getUsersSupport() {
+  try {
+    // TODO group feedback by user
+    let tickets = await SupportTicket.findAll({
+      where: { status: { [Op.not]: "closed" } },
+      include: [
+        { model: User, as: "user" },
+        { model: User, as: "assigned" },
+      ],
+    });
+    tickets = await populateSupportTickets(tickets);
+
+    return tickets;
+  } catch (error) {
+    console.log(`Error at getUsersSupport`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return;
+  }
+}
+
 async function getAdminData() {
   try {
     const approveUsersActionRequired =
@@ -265,6 +290,8 @@ async function getAdminData() {
       await getUserReportsRequiredActionsCount();
     const userFeedbacksActionRequired =
       await getUserFeedbacksRequiredActionsCount();
+    const userSupportActionRequired =
+      await getUserSupportRequiredActionsCount();
     // User stats
     const userStat = await getUserStatsData();
     const totalUsers = userStat.users.length;
@@ -339,6 +366,7 @@ async function getAdminData() {
       balanceCount: balanceTransactionsActionRequired,
       reportsCount: userReportsActionRequired,
       feedbackCount: userFeedbacksActionRequired,
+      supportCount: userSupportActionRequired,
       totalUsers: totalUsers,
       activeUsers: activeUsers,
       verifiedUsers: verifiedUsers,
@@ -790,6 +818,7 @@ module.exports = {
   getBalanceTransactions,
   getAllReports,
   getUsersFeedbacks,
+  getUsersSupport,
   getAdminData,
   getUserStatsData,
   getBalanceStatsData,

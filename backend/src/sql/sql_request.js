@@ -18,6 +18,10 @@ const { Contract } = require("../models/contract_model");
 const { BalanceTransaction } = require("../models/balance_transaction_model");
 const { Report } = require("../models/report_model");
 const { Feedback } = require("../models/feedback_model");
+const { SupportTicket } = require("../models/support_ticket");
+const {
+  SupportAttachmentModel,
+} = require("../models/support_attachment_model");
 
 //function to get name and id from a given ids and table
 const fetchNames = async (ids, tableName) => {
@@ -205,6 +209,14 @@ const getUserFeedbacksRequiredActionsCount = async () => {
   return feedbacks.length;
 };
 
+const getUserSupportRequiredActionsCount = async () => {
+  const tickets = await SupportTicket.findAll({
+    where: { status: { [Op.not]: "closed" } },
+  });
+
+  return tickets.length;
+};
+
 async function fetchUserBooking(userId) {
   let userFound = await User.findByPk(userId);
   if (!userFound) {
@@ -387,7 +399,7 @@ async function fetchUserReservation(userId) {
       // }
       const providerFound = await User.findOne({
         where: { id: row.provider_id },
-      }); 
+      });
 
       return {
         id: row.id,
@@ -575,6 +587,78 @@ async function populateOneService(service) {
     timeEstimationTo: service.timeEstimationTo,
     coins: calculateTaskCoinsPrice(service.price),
     owner: owner,
+  };
+}
+
+async function populateSupportTickets(fetchedTickets) {
+  const tickets = await Promise.all(
+    fetchedTickets.map(async (row) => {
+      return await populateOneSupportTicket(row);
+    })
+  );
+
+  return tickets;
+}
+
+async function populateOneSupportTicket(ticket) {
+  let attachments = [];
+  attachments = await SupportAttachmentModel.findAll({
+    where: { ticket_id: ticket.id },
+  });
+  let logFile;
+  if (attachments && attachments.length > 0) {
+    logFile =
+      attachments.find(
+        (attachment) =>
+          attachment.type === "file" && attachment.url.endsWith(".txt")
+      ) || null;
+    attachments = attachments.filter(
+      (attachment) => attachment.id !== logFile.id
+    );
+  }
+
+  return {
+    id: ticket.id,
+    category: ticket.category,
+    subject: ticket.subject,
+    description: ticket.description,
+    status: ticket.status,
+    priority: ticket.priority,
+    user: ticket.user,
+    user_id: ticket.user_id,
+    assigned: ticket.assigned,
+    assigned_to: ticket.assigned_to,
+    attachments,
+    logFile,
+    createdAt: ticket.createdAt,
+    updatedAt: ticket.updatedAt,
+  };
+}
+
+async function populateSupportMessages(fetchedMessagess) {
+  const messages = await Promise.all(
+    fetchedMessagess.map(async (row) => {
+      return await populateOneSupportMessage(row);
+    })
+  );
+
+  return messages;
+}
+
+async function populateOneSupportMessage(message) {
+  let attachment;
+  attachment = await SupportAttachmentModel.findOne({
+    where: { message_id: message.id },
+  });
+
+  return {
+    id: message.id,
+    message: message.message,
+    attachment: attachment,
+    user: message.user,
+    sender_id: message.sender_id,
+    ticket_id: message.ticket_id,
+    createdAt: message.createdAt,
   };
 }
 
@@ -874,4 +958,9 @@ module.exports = {
   getUserReportsRequiredActionsCount,
   getUserFeedbacksRequiredActionsCount,
   populateStores,
+  getUserSupportRequiredActionsCount,
+  populateSupportTickets,
+  populateOneSupportTicket,
+  populateSupportMessages,
+  populateOneSupportMessage,
 };

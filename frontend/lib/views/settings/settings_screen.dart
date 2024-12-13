@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:currency_picker/currency_picker.dart';
 
 import '../../constants/colors.dart';
+import '../../constants/constants.dart';
 import '../../constants/sizes.dart';
 import '../../controllers/main_app_controller.dart';
 import '../../helpers/buildables.dart';
 import '../../helpers/helper.dart';
+import '../../services/authentication_service.dart';
 import '../../services/theme/theme.dart';
 import '../../services/theme/theme_service.dart';
 import '../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../widgets/feedback_bottomsheet.dart';
 import 'components/animated_list_tile.dart';
 import 'components/animated_title.dart';
+import '../support/customer_support.dart';
+import 'components/delete_profile.dart';
 import 'components/language_selector.dart';
 import 'components/privacy_policy_screen.dart';
 import 'components/terms_condition_screen.dart';
@@ -39,25 +42,26 @@ class SettingsScreen extends StatelessWidget {
                           subtitle: '${'current_theme'.tr}: ${ThemeService.find.currentTheme.value.name.tr}',
                           title: 'theme'.tr,
                           onTap: () => ThemeService.find.toggleTheme(),
+                          // onTap: () => ThemeService.find.toggleTheme(),
                         )),
-                    Obx(() => AnimatedListTile(
-                          leading: const Icon(Icons.currency_exchange_outlined),
-                          subtitle: '${'current_currency'.tr}: ${MainAppController.find.currency.value}',
-                          title: 'currency'.tr,
-                          onTap: () => showCurrencyPicker(
-                            context: context,
-                            theme: CurrencyPickerThemeData(
-                              backgroundColor: kNeutralColor100,
-                              titleTextStyle: AppFonts.x14Bold,
-                              subtitleTextStyle: AppFonts.x14Regular,
-                              currencySignTextStyle: AppFonts.x14Bold,
-                            ),
-                            showFlag: true,
-                            showCurrencyName: true,
-                            showCurrencyCode: true,
-                            onSelect: (Currency currency) => MainAppController.find.currency.value = currency.code,
-                          ),
-                        )),
+                    // Obx(() => AnimatedListTile(
+                    //       leading: const Icon(Icons.currency_exchange_outlined),
+                    //       subtitle: '${'current_currency'.tr}: ${MainAppController.find.currency.value}',
+                    //       title: 'currency'.tr,
+                    //       onTap: () => showCurrencyPicker(
+                    //         context: context,
+                    //         theme: CurrencyPickerThemeData(
+                    //           backgroundColor: kNeutralColor100,
+                    //           titleTextStyle: AppFonts.x14Bold,
+                    //           subtitleTextStyle: AppFonts.x14Regular,
+                    //           currencySignTextStyle: AppFonts.x14Bold,
+                    //         ),
+                    //         showFlag: true,
+                    //         showCurrencyName: true,
+                    //         showCurrencyCode: true,
+                    //         onSelect: (Currency currency) => MainAppController.find.currency.value = currency.code,
+                    //       ),
+                    //     )),
                     AnimatedListTile(
                       leading: const Icon(Icons.translate_outlined),
                       subtitle: '${'current_language'.tr}: ${Helper.getReadableLanguage(Get.locale?.languageCode ?? 'en')}',
@@ -65,6 +69,7 @@ class SettingsScreen extends StatelessWidget {
                       onTap: () => Get.bottomSheet(const LanguageSelector()),
                     ),
                     AnimatedListTile(
+                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
                       leading: const Icon(Icons.favorite_border),
                       subtitle: 'msg_rate_review_us'.tr,
                       title: 'rate_us'.tr,
@@ -90,12 +95,14 @@ class SettingsScreen extends StatelessWidget {
                     Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
                     AnimatedTitle(title: 'notifications'.tr),
                     AnimatedListTile(
+                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
                       leading: const Icon(Icons.notifications_none_outlined),
                       subtitle: 'enable_notifications'.tr,
                       title: 'msg_push_notifications'.tr,
                       trailing: const Icon(Icons.expand_less),
                     ),
                     AnimatedListTile(
+                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
                       widget: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
@@ -107,6 +114,7 @@ class SettingsScreen extends StatelessWidget {
                     Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
                     AnimatedTitle(title: 'preferences'.tr),
                     AnimatedListTile(
+                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
                       title: 'switch_24_hour_format'.tr,
                       titleStyle: AppFonts.x16Regular,
                       trailing: Switch(
@@ -136,6 +144,7 @@ class SettingsScreen extends StatelessWidget {
                     Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
                     AnimatedTitle(title: 'data_management'.tr),
                     AnimatedListTile(
+                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
                       widget: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
@@ -157,15 +166,26 @@ class SettingsScreen extends StatelessWidget {
                     AnimatedListTile(
                       title: 'support'.tr,
                       trailing: const Icon(Icons.chevron_right),
+                      onTap: () => Get.toNamed(CustomerSupport.routeName),
                     ),
                     AnimatedListTile(
                       title: 'help'.tr,
                       trailing: const Icon(Icons.chevron_right),
+                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
                     ),
                     AnimatedListTile(
                       title: 'faq'.tr,
                       trailing: const Icon(Icons.chevron_right),
+                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
                     ),
+                    if (AuthenticationService.find.isLoggingIn)
+                      AnimatedListTile(
+                        title: 'delete_profile'.tr,
+                        titleStyle: AppFonts.x14Bold.copyWith(color: kErrorColor),
+                        tileDecoration: BoxDecoration(color: kErrorColor.withOpacity(0.1), borderRadius: smallRadius),
+                        trailing: const Icon(Icons.chevron_right, color: kErrorColor),
+                        onTap: () => Get.toNamed(DeleteProfile.routeName),
+                      ),
                     const SizedBox(height: Paddings.exceptional),
                   ],
                 ),

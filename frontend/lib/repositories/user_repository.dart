@@ -8,6 +8,8 @@ import '../models/category.dart';
 import '../models/dto/login_dto.dart';
 import '../models/dto/profile_dto.dart';
 import '../models/dto/user_review_dto.dart';
+import '../models/support_message.dart';
+import '../models/support_ticket.dart';
 import '../models/user.dart';
 import '../networking/api_base_helper.dart';
 import '../networking/api_exceptions.dart';
@@ -297,5 +299,84 @@ class UserRepository extends GetxService {
       LoggerService.logger?.e('Error occured in getRequiredActionsCount:\n$e');
     }
     return 0;
+  }
+
+  Future<bool> deleteProfile() async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.delete, '/user/delete', sendToken: true);
+      return result['done'];
+    } catch (e) {
+      if (e.toString().contains('already_exist')) {
+        Helper.snackBar(title: 'error'.tr, message: 'request_already_sent'.tr);
+      }
+      LoggerService.logger?.e('Error occured in deleteProfile:\n$e');
+    }
+    return false;
+  }
+
+  Future<void> submitLeaveFeedback(Map<String, String> data) async {
+    try {
+      await ApiBaseHelper().request(RequestType.post, '/user/leave-feedback', body: data, sendToken: true);
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in submitLeaveFeedback:\n$e');
+    }
+  }
+
+  Future<List<SupportTicket>?> getUserSupportTickets() async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.get, '/user/support-tickets', sendToken: true);
+      final tickets = (result['tickets'] as List).map((e) => SupportTicket.fromJson(e)).toList();
+      return tickets;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getUserSupportTickets:\n$e');
+    }
+    return null;
+  }
+
+  Future<List<SupportMessage>?> getTicketMessages(String ticketId) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.get, '/user/support-messages/$ticketId', sendToken: true);
+      final tickets = (result['messages'] as List).map((e) => SupportMessage.fromJson(e)).toList();
+      return tickets;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getTicketMessages:\n$e');
+    }
+    return null;
+  }
+
+  Future<void> sendSupportMessage(SupportMessage supportMessage) async {
+    try {
+      await ApiBaseHelper().request(
+        RequestType.post,
+        '/user/support-message',
+        body: supportMessage.toJson(),
+        files: supportMessage.attachment != null ? [supportMessage.attachment!.file] : null,
+        sendToken: true,
+      );
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in sendSupportMessage:\n$e');
+    }
+  }
+
+  Future<bool> submitSupportTicket(SupportTicket supportTicket, List<XFile>? attachments) async {
+    try {
+      final List<XFile?> files = supportTicket.logs != null ? [supportTicket.logs] : [];
+      if (attachments != null && attachments.isNotEmpty) files.addAll(attachments);
+      final result = await ApiBaseHelper().request(RequestType.post, '/user/support-ticket', body: supportTicket.toJson(), files: files, sendToken: true);
+      return result['done'];
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in submitSupportTicket:\n$e');
+    }
+    return false;
+  }
+
+  Future<SupportTicket?> updateSupportTicket(SupportTicket supportTicket) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.put, '/user/support-ticket', body: supportTicket.toJson(), sendToken: true);
+      return result['ticket'] != null ? SupportTicket.fromJson(result['ticket']) : null;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in submitSupportTicket:\n$e');
+    }
+    return null;
   }
 }

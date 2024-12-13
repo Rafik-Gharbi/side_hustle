@@ -71,69 +71,7 @@ class BuildChatMessages extends StatelessWidget {
                                   ),
                                 ),
                               if (contract != null)
-                                Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(Paddings.small),
-                                      child: Center(
-                                        child: OpenContainer(
-                                          closedElevation: 0,
-                                          transitionDuration: const Duration(milliseconds: 600),
-                                          openBuilder: (_, __) => ContractDialog(
-                                            contract: contract,
-                                            onRejectContract: () {
-                                              controller.messageController.text = 'reject_contract_msg'.tr;
-                                              controller.sendMessage();
-                                            },
-                                            onSignContract: () => controller.signContract(contract),
-                                          ),
-                                          closedBuilder: (_, openContainer) => ListTile(
-                                            onTap: openContainer,
-                                            contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                                            shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
-                                            title: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text('new_contract'.tr, style: AppFonts.x15Bold),
-                                                if (contract.isSigned && contract.isPayed)
-                                                  Tooltip(
-                                                    margin: const EdgeInsets.symmetric(horizontal: Paddings.large),
-                                                    message: 'contract_signed_payed_msg'.tr,
-                                                    child: Image.asset(Assets.signedContract, width: 30, height: 30, color: kConfirmedColor),
-                                                  ),
-                                              ],
-                                            ),
-                                            subtitle: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                if (contract.task != null) ...[
-                                                  Text('${'task'.tr}: ${contract.task!.title}', style: AppFonts.x12Regular),
-                                                  Text('${'description'.tr}: ${contract.task!.description}', style: AppFonts.x12Regular),
-                                                  Text('${'expected_delivrables'.tr}: ${contract.task!.delivrables ?? 'not_provided'.tr}', style: AppFonts.x12Regular),
-                                                  Text('${'price'.tr}: ${Helper.formatAmount(contract.finalPrice)} ${MainAppController.find.currency.value}',
-                                                      style: AppFonts.x12Regular),
-                                                  Text('${'due_date'.tr}: ${Helper.formatDate(contract.dueDate!)}', style: AppFonts.x12Regular),
-                                                ] else if (contract.service != null) ...[
-                                                  Text('${'service'.tr}: ${contract.service!.name}', style: AppFonts.x12Regular),
-                                                  Text('${'description'.tr}: ${contract.service!.description}', style: AppFonts.x12Regular),
-                                                  Text('${'expected_delivrables'.tr}: ${contract.service!.included ?? 'not_provided'.tr}', style: AppFonts.x12Regular),
-                                                  Text('${'price'.tr}: ${Helper.formatAmount(contract.finalPrice)} ${MainAppController.find.currency.value}',
-                                                      style: AppFonts.x12Regular),
-                                                  Text('${'due_date'.tr}: ${Helper.formatDate(contract.dueDate!)}', style: AppFonts.x12Regular),
-                                                ],
-                                              ],
-                                            ),
-                                            leading: Icon(Icons.assignment_outlined, color: kNeutralColor),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    if (!contract.isSigned)
-                                      Text('${contract.provider?.name ?? 'provider'.tr} ${'sign_contract_msg'.tr}', style: AppFonts.x14Regular.copyWith(color: kErrorColor))
-                                    else if (!contract.isPayed)
-                                      Text('${contract.seeker?.name ?? 'seeker'.tr} ${'pay_contract_msg'.tr}', style: AppFonts.x14Regular.copyWith(color: kErrorColor)),
-                                  ],
-                                )
+                                buildContract(contract, controller)
                               else
                                 MessageBubble(
                                   date: msg.createdAt,
@@ -171,4 +109,70 @@ class BuildChatMessages extends StatelessWidget {
           ),
         ),
       );
+
+  Column buildContract(Contract contract, ChatController controller) {
+    return Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(Paddings.small),
+                                    child: Center(
+                                      child: OpenContainer(
+                                        closedElevation: 0,
+                                        transitionDuration: const Duration(milliseconds: 600),
+                                        openBuilder: (_, __) => ContractDialog(
+                                          contract: contract,
+                                          onRejectContract: () {
+                                            controller.messageController.text = 'reject_contract_msg'.tr;
+                                            controller.sendMessage();
+                                          },
+                                          onSignContract: () => controller.signContract(contract),
+                                        ),
+                                        closedBuilder: (_, openContainer) => ListTile(
+                                          onTap: openContainer,
+                                          contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                                          shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
+                                          title: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text('new_contract'.tr, style: AppFonts.x15Bold),
+                                              if (contract.isSigned && contract.isPayed)
+                                                Tooltip(
+                                                  margin: const EdgeInsets.symmetric(horizontal: Paddings.large),
+                                                  message: 'contract_signed_payed_msg'.tr,
+                                                  child: Image.asset(Assets.signedContract, width: 30, height: 30, color: kConfirmedColor),
+                                                ),
+                                            ],
+                                          ),
+                                          subtitle: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              if (contract.task != null) ...[
+                                                Text('${'task'.tr}: ${contract.task!.title}', style: AppFonts.x12Regular),
+                                                Text('${'description'.tr}: ${contract.task!.description}', style: AppFonts.x12Regular),
+                                                Text('${'expected_delivrables'.tr}: ${contract.task!.delivrables ?? 'not_provided'.tr}', style: AppFonts.x12Regular),
+                                                Text('${'price'.tr}: ${Helper.formatAmount(contract.finalPrice)} ${MainAppController.find.currency.value}',
+                                                    style: AppFonts.x12Regular),
+                                                Text('${'due_date'.tr}: ${Helper.formatDate(contract.dueDate!)}', style: AppFonts.x12Regular),
+                                              ] else if (contract.service != null) ...[
+                                                Text('${'service'.tr}: ${contract.service!.name}', style: AppFonts.x12Regular),
+                                                Text('${'description'.tr}: ${contract.service!.description}', style: AppFonts.x12Regular),
+                                                Text('${'expected_delivrables'.tr}: ${contract.service!.included ?? 'not_provided'.tr}', style: AppFonts.x12Regular),
+                                                Text('${'price'.tr}: ${Helper.formatAmount(contract.finalPrice)} ${MainAppController.find.currency.value}',
+                                                    style: AppFonts.x12Regular),
+                                                Text('${'due_date'.tr}: ${Helper.formatDate(contract.dueDate!)}', style: AppFonts.x12Regular),
+                                              ],
+                                            ],
+                                          ),
+                                          leading: Icon(Icons.assignment_outlined, color: kNeutralColor),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  if (!contract.isSigned)
+                                    Text('${contract.provider?.name ?? 'provider'.tr} ${'sign_contract_msg'.tr}', style: AppFonts.x14Regular.copyWith(color: kErrorColor))
+                                  else if (!contract.isPayed)
+                                    Text('${contract.seeker?.name ?? 'seeker'.tr} ${'pay_contract_msg'.tr}', style: AppFonts.x14Regular.copyWith(color: kErrorColor)),
+                                ],
+                              );
+  }
 }

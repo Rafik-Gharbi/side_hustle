@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -49,7 +51,7 @@ class Helper {
         borderColor: kSecondaryColor,
         borderWidth: 2,
         borderRadius: 10,
-        margin: isMobile ? EdgeInsets.zero : EdgeInsets.only(left: (Get.width / 3) * 2, right: 50, bottom: 10),
+        margin: isMobile ? const EdgeInsets.symmetric(horizontal: 2).copyWith(bottom: 10) : EdgeInsets.only(left: (Get.width / 3) * 2, right: 50, bottom: 10),
         backgroundColor: kNeutralColor100,
         snackPosition: SnackPosition.BOTTOM,
         mainButton: overrideButton ?? (includeDismiss ? TextButton(onPressed: () => Helper.goBack(), child: Text('dismiss'.tr)) : null),
@@ -464,6 +466,27 @@ class Helper {
       }
     } else {
       snackBar(message: loginErrorMsg ?? 'login_express_interest_msg'.tr);
+    }
+  }
+
+  static bool isImage(String fileName) {
+    if (!fileName.contains('.')) return false;
+    fileName = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+    return imageExtensions.contains(fileName);
+  }
+
+  static Future<List<XFile>?> pickFiles({List<String>? allowedExtensions, bool multiple = true, FileType type = FileType.custom}) async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: type,
+        allowMultiple: multiple,
+        allowedExtensions: allowedExtensions ?? ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+      );
+      return result?.xFiles;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in pickFiles:\n$e');
+      return null;
     }
   }
 }

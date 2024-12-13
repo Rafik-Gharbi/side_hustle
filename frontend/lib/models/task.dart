@@ -6,6 +6,7 @@ import '../database/database.dart';
 import '../helpers/extensions/date_time_extension.dart';
 import '../helpers/extensions/lat_lon_extension.dart';
 import '../helpers/helper.dart';
+import '../networking/api_base_helper.dart';
 import 'category.dart';
 import 'dto/image_dto.dart';
 import 'governorate.dart';
@@ -64,9 +65,9 @@ class Task {
         coordinates: json['coordinates'] != null ? (json['coordinates'] as String).fromString() : null,
         distance: json['distance'] != null ? Helper.degreesToMeters(json['distance']).toStringAsFixed(1) : null,
         attachments: json['attachments'] != null && (json['attachments'] as List).isNotEmpty
-            ? (json['attachments'] as List).map((e) => ImageDTO.fromJson(e)).toList()
+            ? (json['attachments'] as List).map((e) => ImageDTO.fromJson(e, path: ApiBaseHelper.find.getImageTask(e['url']))).toList()
             : attachments != null
-                ? (attachments as List).map((e) => ImageDTO.fromJson(e)).toList()
+                ? (attachments as List).map((e) => ImageDTO.fromJson(e, path: ApiBaseHelper.find.getImageTask(e['url']))).toList()
                 : null,
         dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate']) : DateTime.now().toOneMinuteBeforeMidnight(),
         createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,

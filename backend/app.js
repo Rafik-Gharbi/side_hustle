@@ -68,6 +68,24 @@ app.get("/public/images/category/:id", (req, res) => {
     console.log(`Error getting category image ${error}`);
   }
 });
+app.get("/public/support_attachments/logs/:id", async (req, res) => {
+  res.sendFile(
+    path.join(__dirname, `./public/support_attachments/logs/${req.params.id}`)
+  );
+});
+app.get("/public/support_attachments/images/:id", async (req, res) => {
+  res.sendFile(
+    path.join(__dirname, `./public/support_attachments/images/${req.params.id}`)
+  );
+});
+app.get("/public/support_attachments/documents/:id", async (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      `./public/support_attachments/documents/${req.params.id}`
+    )
+  );
+});
 app.get("/terms-condition", async (req, res) => {
   res.sendFile(
     path.join(__dirname, "./public/data/Side Hustle - Terms & Conditions.pdf")

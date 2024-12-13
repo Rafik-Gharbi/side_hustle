@@ -106,12 +106,17 @@ class ApiBaseHelper extends GetxController {
     final requestUrl = Uri.parse('$baseUrl$url');
 
     if (files != null && files.isNotEmpty) {
-      final keyImage = imageName ?? (files.length > 1 ? 'gallery' : 'photo');
       LoggerService.logger!.i('API uploadFile, url $url');
       final imageUploadRequest = http.MultipartRequest(requestType.name.toUpperCase(), requestUrl);
       if (sendToken) imageUploadRequest.headers['Authorization'] = 'Bearer $token';
 
       for (var file in files) {
+        String keyImage = imageName ??
+            (file?.mimeType == 'txt'
+                ? 'logFile'
+                : files.length > 1
+                    ? 'gallery'
+                    : 'photo');
         Uint8List fileBytes;
         // if file is loaded from user device it should work just fine,
         // else if the file has came from the server it should get loaded by getImageBytesFromNetwork method
@@ -131,17 +136,21 @@ class ApiBaseHelper extends GetxController {
       } else {
         LoggerService.logger!.w('uploadFile body is not a Map<String, dynamic>');
       }
-      final streamedResponse = await imageUploadRequest.send();
-      final responseData = await streamedResponse.stream.bytesToString();
-      response = http.Response(
-        responseData,
-        streamedResponse.statusCode,
-        headers: streamedResponse.headers,
-        isRedirect: streamedResponse.isRedirect,
-        persistentConnection: streamedResponse.persistentConnection,
-        reasonPhrase: streamedResponse.reasonPhrase,
-        request: streamedResponse.request,
-      );
+      try {
+        final streamedResponse = await imageUploadRequest.send();
+        final responseData = await streamedResponse.stream.bytesToString();
+        response = http.Response(
+          responseData,
+          streamedResponse.statusCode,
+          headers: streamedResponse.headers,
+          isRedirect: streamedResponse.isRedirect,
+          persistentConnection: streamedResponse.persistentConnection,
+          reasonPhrase: streamedResponse.reasonPhrase,
+          request: streamedResponse.request,
+        );
+      } catch (e) {
+        LoggerService.logger!.w('Error occured in uploadFile request:\n$e');
+      }
     } else {
       switch (requestType) {
         case RequestType.get:
@@ -186,6 +195,7 @@ class ApiBaseHelper extends GetxController {
   String getImageStore(String pictureName) => '$baseUrl/public/store/$pictureName';
   String getImageLocal(String pictureName) => pictureName;
   String getUserImage(String pictureName) => '$baseUrl/public/images/user/$pictureName';
+  String getLogs(String pictureName, String type) => '$baseUrl/public/support_attachments/${type == 'log' ? 'logs' : type == 'image' ? 'images' : 'documents'}/$pictureName';
   String getCategoryImage(String pictureName) => '$baseUrl/public/images/category/$pictureName';
 
   dynamic _returnResponse(http.Response response) async {

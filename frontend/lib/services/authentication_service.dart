@@ -158,7 +158,7 @@ class AuthenticationService extends GetxController {
         final isTokenExpired = JwtDecoder.isExpired(savedToken);
         isUserMailVerified = jwtPayload['isMailVerified'];
         if ((isUserMailVerified ?? false) && !isTokenExpired) {
-          _jwtUserData = User.fromToken(jwtPayload);
+          initiateCurrentUser(savedToken);
           // init chat messages standBy room
           _initChatStandByRoom();
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) => update());
@@ -248,6 +248,7 @@ class AuthenticationService extends GetxController {
     SharedPreferencesService.find.removeKey(refreshTokenKey);
     _jwtUserData = null;
     _chatRoomInitiated = false;
+    _isLoggingIn = false;
     update();
   }
 
@@ -411,6 +412,7 @@ class AuthenticationService extends GetxController {
         jwtUserData?.isMailVerified = userFromToken.isMailVerified;
         jwtUserData?.hasSharedPosition = userFromToken.hasSharedPosition;
         jwtUserData?.password = null;
+        _isLoggingIn = true;
       }
       // init chat messages standBy room
       if (!silent) {

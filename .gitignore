@@ -9,6 +9,7 @@ backend/public/task/*
 backend/public/store/*
 backend/public/deposit/*
 backend/public/contracts/*
+backend/public/support_attachments/*
 backend/*.DS_Store
 backend/*firebase-admin*
 

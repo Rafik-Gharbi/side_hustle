@@ -31,6 +31,7 @@ const {
   getReviewStatsData,
   approveUser,
   userNotApprovable,
+  getUsersSupport,
 } = require("./src/controllers/admin_controller");
 const {
   BalanceTransaction,
@@ -312,6 +313,18 @@ function initializeSocket(io) {
         });
       } catch (error) {
         console.error("Error getting admin feedbacks:", error);
+      }
+    });
+    socket.on("getAdminSupport", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const tickets = await getUsersSupport();
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminSupport", {
+          tickets: tickets,
+        });
+      } catch (error) {
+        console.error("Error getting admin support tickets:", error);
       }
     });
     socket.on("getAdminBalance", async (data) => {
