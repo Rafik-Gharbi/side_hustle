@@ -4,17 +4,18 @@ import 'package:get/get.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/sizes.dart';
 import '../../../controllers/main_app_controller.dart';
+import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/contract.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 
-class PaymentDialog extends StatelessWidget {
+class ContractPaymentDialog extends StatelessWidget {
   final Contract contract;
   final int? discussionId;
 
-  const PaymentDialog({super.key, required this.contract, this.discussionId});
+  const ContractPaymentDialog({super.key, required this.contract, this.discussionId});
 
   @override
   Widget build(BuildContext context) {
@@ -63,31 +64,25 @@ class PaymentDialog extends StatelessWidget {
           const SizedBox(height: Paddings.large),
           Divider(color: kNeutralLightColor),
           const SizedBox(height: Paddings.regular),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomButtons.elevateSecondary(
-                onPressed: () => Helper.snackBar(message: 'bank_card_not_supported_yet'.tr), // TODO add bank card payment
-                title: 'bank_card'.tr,
-                titleStyle: AppFonts.x14Bold,
-                height: 45,
-                padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-              ),
-              CustomButtons.elevatePrimary(
-                onPressed: () async {
-                  if ((AuthenticationService.find.jwtUserData?.balance ?? 0) < contract.finalPrice) {
-                    Helper.snackBar(message: 'not_enough_balance'.tr);
-                    return;
-                  }
-                  MainAppController.find.socket!.emit('payContract', {'contractId': contract.id, 'discussionId': discussionId});
-                  Helper.goBack();
-                },
-                title: 'pay_with_balance'.tr,
-                titleStyle: AppFonts.x14Bold.copyWith(color: kPrimaryColor),
-                height: 45,
-                padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-              ),
-            ],
+          Center(
+            child: CustomButtons.elevatePrimary(
+              title: 'pay_contract'.tr,
+              width: 150,
+              disabled: !contract.isSigned,
+              onPressed: () {
+                Get.bottomSheet(
+                  isScrollControlled: true,
+                  Buildables.buildPaymentOptionsBottomsheet(
+                    totalPrice: contract.finalPrice,
+                    contractId: contract.id,
+                    onSuccessPayment: () {
+                      MainAppController.find.socket!.emit('payContract', {'contractId': contract.id, 'discussionId': discussionId});
+                      Helper.goBack();
+                    },
+                  ),
+                );
+              },
+            ),
           ),
           const SizedBox(height: Paddings.small),
           Align(

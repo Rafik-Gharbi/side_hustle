@@ -77,7 +77,7 @@ class NotificationsController extends GetxController {
           Future.delayed(const Duration(milliseconds: 600), () {
             Get.toNamed(BalanceScreen.routeName, arguments: ProfileController.find.loggedInUser);
           });
-          MainAppController.find.manageNavigation(ProfileScreen.routeName);
+          MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
           break;
         case NotificationType.rewards:
           if (decodedAction['coinPack'] != null) {
@@ -85,7 +85,7 @@ class NotificationsController extends GetxController {
               Get.toNamed(TransactionsScreen.routeName, arguments: decodedAction['coinPack']);
             });
           }
-          MainAppController.find.manageNavigation(ProfileScreen.routeName);
+          MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
           break;
         case NotificationType.booking:
           Future.delayed(const Duration(milliseconds: 600), () {
@@ -95,7 +95,7 @@ class NotificationsController extends GetxController {
               Get.toNamed(ServiceHistoryScreen.routeName, arguments: decodedAction['bookingId']);
             }
           });
-          MainAppController.find.manageNavigation(ProfileScreen.routeName);
+          MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
           break;
         case NotificationType.newTask:
           Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(taskId: decodedAction['taskId']));
@@ -108,7 +108,7 @@ class NotificationsController extends GetxController {
               Get.toNamed(TaskHistoryScreen.routeName, arguments: decodedAction['reservationId']);
             }
           });
-          MainAppController.find.manageNavigation(ProfileScreen.routeName);
+          MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
           break;
         case NotificationType.verification:
           if (AuthenticationService.find.jwtUserData?.id == decodedAction['userId']) {
@@ -126,7 +126,7 @@ class NotificationsController extends GetxController {
               Get.toNamed(AdminDashboardScreen.routeName);
             });
           }
-          MainAppController.find.manageNavigation(ProfileScreen.routeName);
+          MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
           break;
         case NotificationType.review:
           if (decodedAction['userId'] != null) {

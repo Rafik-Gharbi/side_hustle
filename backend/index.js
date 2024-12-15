@@ -24,6 +24,7 @@ require("./src/routes/transaction_route")(app);
 require("./src/routes/referral_route")(app);
 require("./src/routes/balance_route")(app);
 require("./src/routes/admin_route")(app);
+require("./src/routes/payment_route")(app);
 
 // Create HTTP server
 

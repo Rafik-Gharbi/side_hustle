@@ -9,7 +9,6 @@ import '../helpers/helper.dart';
 import '../models/coin_pack.dart';
 import '../repositories/params_repository.dart';
 import '../repositories/transaction_repository.dart';
-import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
 import 'custom_buttons.dart';
 import 'custom_scaffold_bottom_navigation.dart';
@@ -135,16 +134,9 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
           (value) => Get.bottomSheet(
             isScrollControlled: true,
             Buildables.buildPaymentOptionsBottomsheet(
-              onBankCardPressed: () {
-                Helper.goBack();
-                Helper.snackBar(message: 'bank_card_not_supported_yet'.tr); // TODO add bank card payment
-              },
-              onBalancePressed: () async {
-                Helper.goBack();
-                if ((AuthenticationService.find.jwtUserData?.balance ?? 0) < pack.price) {
-                  Helper.snackBar(message: 'not_enough_balance'.tr);
-                  return;
-                }
+              totalPrice: pack.price.toDouble(),
+              coinPackId: pack.id,
+              onSuccessPayment: () {
                 TransactionRepository.find.buyCoinPack(pack).then((value) {
                   if (value) controller.update();
                 });

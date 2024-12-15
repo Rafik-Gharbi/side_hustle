@@ -221,84 +221,6 @@ exports.addTaskReservation = async (req, res) => {
   }
 };
 
-exports.initPaiement = async (req, res) => {
-  try {
-    const {
-      description,
-      taskId,
-      date,
-      dateTo,
-      guests,
-      totalPrice,
-      deviseName,
-      ruPrice,
-      id,
-      coupon,
-    } = req.body;
-    if (!taskId || !date || !dateTo || !guests || !totalPrice) {
-      return res.status(400).json({ message: "missing_element" });
-    }
-
-    let userFound = await User.findByPk(req.decoded.id);
-    token = jwt.sign(
-      {
-        taskId: taskId,
-        date: date,
-        dateTo: dateTo,
-        ruPrice: ruPrice,
-        guests: guests,
-        totalPrice: totalPrice,
-        coupon: coupon,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_RESERVATION_EXPIRATION }
-    );
-    const priceToPay = checkUnitDinar(totalPrice);
-    if (!priceToPay) {
-      return res.status(401).json({ message: "wrong_unit_money" });
-    }
-    const body = {
-      receiverWalletId: process.env.KONNECT_WALLET_KEY,
-      token: deviseName ? deviseName : "TND",
-      amount: priceToPay,
-      type: "immediate",
-      description: description,
-      acceptedPaymentMethods: ["wallet", "bank_card", "e-DINAR"],
-      lifespan: 20,
-      checkoutForm: false,
-      addPaymentFeesToAmount: true,
-      orderId: `${taskId}-${id}-${getDate()}`,
-      firstName: userFound.name,
-      lastName: userFound.name,
-      phoneNumber: userFound.phone_number,
-      email: userFound.email,
-      silentWebhook: true,
-      successUrl: `${
-        process.env.LANDLORD_WEB
-      }/payment-success?res=${encryptData(token)}`,
-      failUrl: `${process.env.LANDLORD_WEB}/payment-failed`,
-      theme: "light",
-    };
-    const responseKonnect = await axios.post(
-      `${process.env.KONNECT_URL}/payments/init-payment`,
-      body,
-      {
-        headers: {
-          "x-api-key": process.env.KONNECT_API_KEY,
-        },
-      }
-    );
-    return res.status(200).json({
-      refPaiement: responseKonnect.data.paymentRef,
-      payUrl: responseKonnect.data.payUrl,
-    });
-  } catch (error) {
-    console.log(`Error at ${req.route.path}`);
-    console.error("\x1b[31m%s\x1b[0m", error);
-    return res.status(500).json({ message: error });
-  }
-};
-
 exports.listTaskReservation = async (req, res) => {
   try {
     const formattedList = await fetchUserReservation(req.decoded.id);
@@ -788,7 +710,7 @@ exports.userServicesHistory = async (req, res) => {
         });
         const providerFound = await User.findOne({
           where: { id: row.provider_id },
-        }); 
+        });
 
         return {
           id: row.id,

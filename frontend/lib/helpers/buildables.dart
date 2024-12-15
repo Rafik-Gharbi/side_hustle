@@ -7,9 +7,11 @@ import '../constants/assets.dart';
 import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
+import '../controllers/main_app_controller.dart';
 import '../models/contract.dart';
 import '../models/user.dart';
 import '../services/authentication_service.dart';
+import '../services/payment_service.dart';
 import '../services/theme/theme.dart';
 import '../views/profile/account/login_dialog.dart';
 import '../views/home/home_controller.dart';
@@ -414,26 +416,66 @@ class Buildables {
         },
       );
 
-  static Widget buildPaymentOptionsBottomsheet({required void Function() onBankCardPressed, required void Function() onBalancePressed}) => Material(
+  static Widget buildPaymentOptionsBottomsheet({
+    required void Function() onSuccessPayment,
+    required double totalPrice,
+    String? contractId,
+    String? taskId,
+    String? serviceId,
+    int? coinPackId,
+  }) =>
+      Material(
         color: kNeutralColor100,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         child: SizedBox(
-          height: 160,
+          height: 270,
           child: Padding(
             padding: const EdgeInsets.all(Paddings.large),
             child: Column(
               children: [
+                Text('payment_options'.tr, style: AppFonts.x16Bold.copyWith(color: kBlackColor)),
+                const SizedBox(height: Paddings.regular),
                 ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                  dense: true,
                   shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                  title: Text('bank_card'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
-                  leading: const Icon(Icons.payment_outlined),
-                  onTap: onBankCardPressed,
+                  title: Text('flouci'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                  subtitle: Text('flouci_option'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                  leading: Image.asset(Assets.flouciIcon, width: 25, height: 25),
+                  onTap: () async {
+                    Helper.goBack();
+                    final result = await PaymentService.find.initFlouciPayment(totalPrice, taskId: taskId, serviceId: serviceId, coinPackId: coinPackId, contractId: contractId);
+                    if (result ?? false) onSuccessPayment.call();
+                  },
                 ),
                 ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                  dense: true,
+                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                  title: Text('bank_card'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                  subtitle: Text('bank_card_option'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                  leading: const Icon(Icons.payment_outlined),
+                  onTap: () async {
+                    Helper.goBack();
+                    final result = await PaymentService.find.payWithBankCard(totalPrice, taskId: taskId, serviceId: serviceId, coinPackId: coinPackId, contractId: contractId);
+                    if (result) onSuccessPayment.call();
+                  },
+                ),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                  dense: true,
                   shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
                   title: Text('pay_with_balance'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                  subtitle: Text(
+                    '${'balance_option'.tr}${Helper.formatAmount(AuthenticationService.find.jwtUserData?.balance ?? 0)} ${MainAppController.find.currency.value}',
+                    style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
+                  ),
                   leading: const Icon(Icons.attach_money_outlined),
-                  onTap: onBalancePressed,
+                  onTap: () async {
+                    Helper.goBack();
+                    final result = await PaymentService.find.payWithBalance(totalPrice, taskId: taskId, serviceId: serviceId, coinPackId: coinPackId, contractId: contractId);
+                    if (result) onSuccessPayment.call();
+                  },
                 ),
               ],
             ),

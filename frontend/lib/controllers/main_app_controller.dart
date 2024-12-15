@@ -115,14 +115,31 @@ class MainAppController extends GetxController {
     }
   }
 
-  void manageNavigation(String routeName) {
-    switch (routeName) {
+  void manageNavigation({int? screenIndex, String? routeName}) {
+    assert(screenIndex != null || routeName != null, 'screenIndex or routeName is required!');
+    switch (routeName ?? screenIndex) {
+      case 0:
+      case HomeScreen.routeName:
+        bottomNavIndex.value = 0;
+        if (Get.currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);
+        break;
+      case 1:
+      case MarketScreen.routeName:
+        bottomNavIndex.value = 1;
+        if (Get.currentRoute != MarketScreen.routeName) Get.offAllNamed(MarketScreen.routeName);
+        break;
+      case 2:
+      case ChatScreen.routeName:
+        bottomNavIndex.value = 2;
+        if (Get.currentRoute != ChatScreen.routeName) Get.offAllNamed(ChatScreen.routeName);
+        break;
+      case 3:
       case ProfileScreen.routeName:
         bottomNavIndex.value = 3;
-        if (Get.currentRoute != ProfileScreen.routeName) Get.offNamed(ProfileScreen.routeName);
+        if (Get.currentRoute != ProfileScreen.routeName) Navigator.of(Get.context!).popUntil((route) => route.settings.name == ProfileScreen.routeName);
         break;
       default:
-        bottomNavIndex.value = 0;
+        bottomNavIndex.value = screenIndex ?? 0;
     }
   }
 
@@ -245,7 +262,7 @@ class MainAppController extends GetxController {
             }
             switch (bottomNavIndex.value) {
               case 0:
-                if (Get.currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);
+                Get.offAllNamed(HomeScreen.routeName);
                 break;
               case 1:
                 Get.toNamed(MarketScreen.routeName);

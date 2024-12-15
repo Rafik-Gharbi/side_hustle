@@ -4,7 +4,6 @@ import '../helpers/helper.dart';
 import '../models/boost.dart';
 import '../models/dto/boost_dto.dart';
 import '../networking/api_base_helper.dart';
-import '../services/authentication_service.dart';
 import '../services/logger_service.dart';
 
 class BoostRepository extends GetxService {
@@ -14,7 +13,6 @@ class BoostRepository extends GetxService {
   Future<bool> addBoost({required Boost boost, required String taskServiceId, required bool isTask}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/boost/add', body: boost.toJson(taskServiceId: taskServiceId, isTask: isTask), sendToken: true);
-      AuthenticationService.find.initiateCurrentUser(result['token'], silent: true);
       return result['boost'] != null && result['boost'].toString().isNotEmpty;
     } catch (e) {
       if (e.toString().contains('boost_already_exist')) {
@@ -26,17 +24,6 @@ class BoostRepository extends GetxService {
     }
     return false;
   }
-
-  // Future<List<Boost>> listBoost() async {
-  //   try {
-  //     final result = await ApiBaseHelper().request(RequestType.get, '/boost/list', sendToken: true);
-  //     final services = (result['formattedList'] as List).map((e) => Boost.fromJson(e)).toList();
-  //     return services;
-  //   } catch (e) {
-  //     LoggerService.logger?.e('Error occured in listBoost:\n$e');
-  //   }
-  //   return [];
-  // }
 
   Future<Boost?> getBoostByServiceId(int serviceId) async {
     try {

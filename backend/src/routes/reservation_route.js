@@ -53,21 +53,6 @@ module.exports = (app) => {
     reservationController.getServiceReservationDetails
   );
 
-  // // list all reservation for admin
-  // router.get(
-  //   "/list-all",
-  //   tokenVerification,
-  //   roleMiddleware(["admin"]),
-  //   reservationController.getAllReservation
-  // );
-
-  router.post(
-    "/paiement",
-    tokenVerification,
-    clientIsVerified,
-    reservationController.initPaiement
-  );
-
   // create booking
   router.post(
     "/add-service",

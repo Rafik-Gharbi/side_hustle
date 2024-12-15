@@ -120,7 +120,6 @@ exports.add = async (req, res) => {
     return res.status(400).json({ message: "missing" });
   }
   try {
-    // TODO this is only working from balance for now, add bank card payment later
     let userFound = await User.findByPk(req.decoded.id);
     if (!userFound) {
       return res.status(404).json({ message: "user_not_found" });
@@ -140,9 +139,6 @@ exports.add = async (req, res) => {
       const governorate = await Governorate.findByPk(governorate_id);
       if (!governorate)
         return res.status(404).json({ message: "governorate_not_found" });
-    }
-    if (budget > userFound.balance) {
-      return res.status(400).json({ message: "not_enough_balance" });
     }
 
     const existActiveBoost = await Boost.findOne({
@@ -168,19 +164,7 @@ exports.add = async (req, res) => {
       governorate_id: governorate_id,
     });
 
-    BalanceTransaction.create({
-      userId: userFound.id,
-      amount: budget,
-      type: "boostPurchase",
-      status: "completed",
-      description: `Boost of ${isTask ? "task" : "service"} ${foundTaskService.id}`,
-    });
-
-    userFound.balance -= coinPack.price;
-    userFound.save();
-    const token = await generateJWT(userFound);
-
-    return res.status(200).json({ boost, token });
+    return res.status(200).json({ boost });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

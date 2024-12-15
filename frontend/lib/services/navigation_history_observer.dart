@@ -21,6 +21,7 @@ class NavigationHistoryObserver extends NavigatorObserver {
   factory NavigationHistoryObserver() => instance;
 
   NavigationHistoryObserver._() {
+    // history.map((e) => e?.settings.name).toList()
     history.add(_createRouteFromName(HomeScreen.routeName));
   }
 
@@ -131,17 +132,19 @@ class NavigationHistoryObserver extends NavigatorObserver {
     }
   }
 
-  void _removeLastHistory() {
+  void _removeLastHistory({String? untilRouteName}) {
     final historyLength = history.length;
     do {
       history.removeLast();
-    } while (history.length >= historyLength);
+    } while (untilRouteName != null && history.isNotEmpty ? history.last?.settings.name == untilRouteName : history.length >= historyLength);
   }
 
   void _addRoute(Route<dynamic>? newRoute) {
-    if (newRoute == null || newRoute.settings.name == null) return;
+    if (newRoute?.settings.name == null) return;
     _currentRoute = newRoute;
-    if (history.isNotEmpty && newRoute.settings.name != history.last?.settings.name || history.isEmpty) {
+    if (history.any((element) => element?.settings.name == newRoute!.settings.name) && history.last?.settings.name != newRoute!.settings.name) {
+      _removeLastHistory(untilRouteName: newRoute.settings.name);
+    } else if (history.isNotEmpty && newRoute!.settings.name != history.last?.settings.name || history.isEmpty) {
       history.add(newRoute);
     }
     if (history.length > _maxHistoryLength) {

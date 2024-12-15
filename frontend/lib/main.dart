@@ -25,6 +25,7 @@ import 'repositories/chat_repository.dart';
 import 'repositories/favorite_repository.dart';
 import 'repositories/notification_repository.dart';
 import 'repositories/params_repository.dart';
+import 'repositories/payment_repository.dart';
 import 'repositories/referral_repository.dart';
 import 'repositories/reservation_repository.dart';
 import 'repositories/review_repository.dart';
@@ -33,6 +34,7 @@ import 'repositories/task_repository.dart';
 import 'repositories/transaction_repository.dart';
 import 'repositories/user_repository.dart';
 import 'services/authentication_service.dart';
+import 'services/payment_service.dart';
 import 'services/theme/theme_service.dart';
 import 'views/boost/list_boost/list_boost_controller.dart';
 import 'views/boost/list_boost/list_boost_screen.dart';
@@ -218,7 +220,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) => GetMaterialApp(
         navigatorKey: MyApp.navigatorKey,
         debugShowCheckedModeBanner: false,
-        title: 'Abid Concept',
+        title: 'Dootify',
         logWriterCallback: (text, {isError = false}) => isError ? LoggerService.logger?.e(text) : LoggerService.logger?.i(text),
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus},
@@ -440,6 +442,7 @@ class InitialBindings implements Bindings {
     Get.put(ApiBaseHelper(), permanent: true);
     Get.put(ThemeService(), permanent: true);
     Get.put(NotificationsController(), permanent: true);
+    Get.put(PaymentService(), permanent: true);
     // Repositories
     Get.put(ChatRepository(), permanent: true);
     Get.put(UserRepository(), permanent: true);
@@ -454,6 +457,7 @@ class InitialBindings implements Bindings {
     Get.put(TransactionRepository(), permanent: true);
     Get.put(ReferralRepository(), permanent: true);
     Get.put(BalanceRepository(), permanent: true);
+    Get.put(PaymentRepository(), permanent: true);
     // Database repositories
     Get.put(UserDatabaseRepository(), permanent: true);
     Get.put(TaskDatabaseRepository(), permanent: true);

@@ -40,7 +40,7 @@ class VerificationScreen extends StatelessWidget {
                 const SizedBox(height: Paddings.regular),
                 CustomButtons.text(
                   title: 'go_profile'.tr,
-                  onPressed: () => MainAppController.find.manageNavigation(ProfileScreen.routeName),
+                  onPressed: () => MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName),
                 ),
               ],
             ),

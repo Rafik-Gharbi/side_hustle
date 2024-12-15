@@ -16,4 +16,5 @@ class Assets {
   static const String signedContract = 'assets/images/signed.png';
   static const String withdrawMoneyIcon = 'assets/images/withdraw_money.png';
   static const String depositMoneyIcon = 'assets/images/deposit_money.png';
+  static const String flouciIcon = 'assets/images/flouci_logo_round.png';
 }

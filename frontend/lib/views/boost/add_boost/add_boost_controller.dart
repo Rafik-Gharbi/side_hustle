@@ -8,7 +8,6 @@ import '../../../models/governorate.dart';
 import '../../../models/user.dart';
 import '../../../repositories/boost_repository.dart';
 import '../../../repositories/params_repository.dart';
-import '../../../services/authentication_service.dart';
 
 class AddBoostController extends GetxController {
   Boost? boost;
@@ -85,16 +84,10 @@ class AddBoostController extends GetxController {
     Get.bottomSheet(
       isScrollControlled: true,
       Buildables.buildPaymentOptionsBottomsheet(
-        onBankCardPressed: () {
-          Helper.goBack();
-          Helper.snackBar(message: 'bank_card_not_supported_yet'.tr); // TODO add bank card payment
-        },
-        onBalancePressed: () async {
-          Helper.goBack();
-          if ((AuthenticationService.find.jwtUserData?.balance ?? 0) < newBoost.budget) {
-            Helper.snackBar(message: 'not_enough_balance'.tr);
-            return;
-          }
+        totalPrice: newBoost.budget,
+        taskId: taskId,
+        serviceId: serviceId,
+        onSuccessPayment: () async {
           bool? result;
           if (boost?.id != null) {
             result = await BoostRepository.find.updateBoost(boost: newBoost);
@@ -102,7 +95,7 @@ class AddBoostController extends GetxController {
             result = await BoostRepository.find.addBoost(boost: newBoost, taskServiceId: taskId ?? serviceId!, isTask: taskId != null);
           }
           if (result) {
-            Helper.goBack();
+            // Helper.goBack();
             Helper.snackBar(message: 'boost_status_successfully'.trParams({'status': boost?.id != null ? 'updated' : 'added'}));
           }
         },

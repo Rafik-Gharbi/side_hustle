@@ -402,6 +402,7 @@ class ChatController extends GetxController {
   }
 
   void payContract(Contract contract) {
+    // Confirm reservation before proceeding to payment
     if (currentReservation != null && currentReservation?.status != RequestStatus.confirmed && currentReservation?.task != null) {
       Future.delayed(
         Durations.medium1,
@@ -421,7 +422,7 @@ class ChatController extends GetxController {
   void _payContractProcess(Contract contract) {
     Future.delayed(
       Durations.medium1,
-      () => Get.dialog(PaymentDialog(contract: contract, discussionId: selectedChatBubble?.id)),
+      () => Get.dialog(ContractPaymentDialog(contract: contract, discussionId: selectedChatBubble?.id)),
     );
   }
 

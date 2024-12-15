@@ -61,15 +61,11 @@ exports.listTransaction = async (req, res) => {
 
 exports.buyCoins = async (req, res) => {
   try {
-    // TODO this is only working from balance for now, add bank card payment later
     let userFound = await User.findByPk(req.decoded.id);
     if (!userFound) {
       return res.status(404).json({ message: "user_not_found" });
     }
     const coinPack = await CoinPack.findByPk(req.params.id);
-    if (coinPack.price > userFound.balance) {
-      return res.status(400).json({ message: "not_enough_balance" });
-    }
     const coinPurchase = await CoinPackPurchase.create({
       user_id: userFound.id,
       coin_pack_id: coinPack.id,
@@ -82,16 +78,6 @@ exports.buyCoins = async (req, res) => {
       status: "completed",
       type: "purchase",
     });
-    BalanceTransaction.create({
-      userId: userFound.id,
-      amount: coinPack.price,
-      type: "coinPurchase",
-      status: "completed",
-      description: `Purchase of ${coinPack.totalCoins} coins`,
-    });
-
-    userFound.balance -= coinPack.price;
-    userFound.save();
     const token = await generateJWT(userFound);
 
     return res.status(200).json({ done: true, token: token });

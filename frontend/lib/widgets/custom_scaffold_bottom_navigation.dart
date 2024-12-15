@@ -70,31 +70,7 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
               leading: isNotMainRoute
                   ? CustomButtons.icon(
                       icon: const Icon(Icons.chevron_left, size: 28),
-                      onPressed: () {
-                        onBack?.call();
-                        final currentRoute = Get.currentRoute;
-                        final previousRoute = NavigationHistoryObserver.instance.previousRouteHistory;
-                        final specialRoutes = {
-                          TaskProposalScreen.routeName,
-                          MessagesScreen.routeName,
-                          CoinsMarket.routeName,
-                          RefereesScreen.routeName,
-                          UserReportsScreen.routeName,
-                          FeedbacksScreen.routeName,
-                          ApproveUserScreen.routeName,
-                          ManageBalanceScreen.routeName,
-                          ServiceRequestScreen.routeName
-                        };
-
-                        if (specialRoutes.contains(currentRoute) || (currentRoute != AdminDashboardScreen.routeName && previousRoute == AdminDashboardScreen.routeName)) {
-                          NavigationHistoryObserver.instance.goToPreviousRoute();
-                        } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && currentRoute != ProfileScreen.routeName) {
-                          NavigationHistoryObserver.instance.goToPreviousRoute(popToProfile: true);
-                        } else {
-                          MainAppController.find.bottomNavIndex.value = 0;
-                          if (currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);
-                        }
-                      },
+                      onPressed: () => onBackButtonPressed(),
                     )
                   : const SizedBox(),
             )
@@ -191,10 +167,36 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                 notchSmoothness: NotchSmoothness.defaultEdge,
                 borderColor: kNeutralLightColor,
                 splashColor: kPrimaryColor,
-                onTap: (index) => MainAppController.find.bottomNavIndex.value = index,
+                onTap: (index) => MainAppController.find.manageNavigation(screenIndex: index),
                 activeColor: kPrimaryColor,
               ),
             ),
     );
+  }
+
+  void onBackButtonPressed() {
+    onBack?.call();
+    final currentRoute = Get.currentRoute;
+    final previousRoute = NavigationHistoryObserver.instance.previousRouteHistory;
+    final specialRoutes = {
+      TaskProposalScreen.routeName,
+      MessagesScreen.routeName,
+      CoinsMarket.routeName,
+      RefereesScreen.routeName,
+      UserReportsScreen.routeName,
+      FeedbacksScreen.routeName,
+      ApproveUserScreen.routeName,
+      ManageBalanceScreen.routeName,
+      ServiceRequestScreen.routeName
+    };
+
+    if (specialRoutes.contains(currentRoute) || (currentRoute != AdminDashboardScreen.routeName && previousRoute == AdminDashboardScreen.routeName)) {
+      NavigationHistoryObserver.instance.goToPreviousRoute();
+    } else if (NavigationHistoryObserver.instance.isStackHasProfileScreen && currentRoute != ProfileScreen.routeName) {
+      NavigationHistoryObserver.instance.goToPreviousRoute(popToProfile: true);
+    } else {
+      MainAppController.find.bottomNavIndex.value = 0;
+      if (currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);
+    }
   }
 }
