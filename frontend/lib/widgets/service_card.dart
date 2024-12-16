@@ -89,7 +89,7 @@ class ServiceCard extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
           shape: dense
               ? const OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
-              : RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
+              : RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
           tileColor: highlighted ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
           splashColor: kPrimaryOpacityColor,
           title: Row(

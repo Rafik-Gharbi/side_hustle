@@ -13,4 +13,6 @@ const String favoriteTasksKey = 'favorite_tasks';
 const String favoriteStoresKey = 'favorite_stores';
 const String hourPreferencesKey = 'hour_preferences';
 const String userSecretKey = 'user_secret';
+const String searchModeKey = 'search_mode';
+const String governorateKey = 'governorate';
 const String baseUrlKey = 'base_url';

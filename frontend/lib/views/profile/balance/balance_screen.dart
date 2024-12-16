@@ -33,7 +33,7 @@ class BalanceScreen extends StatelessWidget {
         builder: (controller) => CustomScaffoldBottomNavigation(
           appBarTitle: 'my_balance'.tr,
           body: DecoratedBox(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(colors: [kNeutralColor, kNeutralColor100], begin: Alignment.topCenter, end: Alignment.bottomCenter),
             ),
             child: SizedBox(

@@ -13,6 +13,7 @@ const {
   fetchUserOngoingBooking,
   getRandomHotTasks,
   populateOneTask,
+  fetchAndSortGovernorateTasks,
 } = require("../sql/sql_request");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
 const {
@@ -35,6 +36,9 @@ const { Transaction } = require("../models/transaction_model");
 exports.getHomeTasks = async (req, res) => {
   try {
     const currentUserId = req.decoded?.id;
+    const governorateId = req.query.governorateId;
+    const searchMode = req.query.searchMode;
+
     let foundUser;
     if (currentUserId) {
       foundUser = await User.findOne({ where: { id: currentUserId } });
@@ -42,10 +46,27 @@ exports.getHomeTasks = async (req, res) => {
 
     // get nearby tasks or user governorate tasks
     let nearbyTasks = [];
-    nearbyTasks = await fetchAndSortNearbyTasks(foundUser, (limit = 3));
+    if (searchMode === "nearby")
+      nearbyTasks = await fetchAndSortNearbyTasks(
+        foundUser,
+        governorateId,
+        (limit = 3)
+      );
+
+    let governorateTasks = [];
+    if (searchMode !== "nearby")
+      governorateTasks = await fetchAndSortGovernorateTasks(
+        foundUser,
+        governorateId,
+        (limit = 3)
+      );
 
     // get hot tasks
-    const hotTasks = await getRandomHotTasks(foundUser, (limit = 3));
+    const hotTasks = await getRandomHotTasks(
+      foundUser,
+      governorateId,
+      (limit = 3)
+    );
 
     // get user's reservation (pending and ongoing tasks)
     let reservation = [];
@@ -85,6 +106,7 @@ exports.getHomeTasks = async (req, res) => {
     return res.status(200).json({
       hotTasks,
       nearbyTasks,
+      governorateTasks,
       reservation,
       booking,
       ongoingReservation,
@@ -102,89 +124,57 @@ exports.filterTasks = async (req, res) => {
   try {
     const withCoordinates = req.query.withCoordinates;
     const boosted = req.query.boosted == "true";
-    const searchQuery = req.query.searchQuery ?? "";
-    const priceMin = req.query.priceMin;
-    const priceMax = req.query.priceMax;
+    const querySearch = req.query.searchQuery ?? "";
+    let governorateId = req.query.governorateId;
+    const searchMode = req.query.searchMode;
+    const minPrice = req.query.priceMin;
+    const maxPrice = req.query.priceMax;
     const page = req.query.page;
-    const limit = req.query.limit;
+    const limitEntry = req.query.limit;
     const currentUserId = req.decoded?.id;
-    let categoryId = req.query.categoryId;
+    let categoryIdFilter = req.query.categoryId;
     let nearby = req.query.nearby;
-    let taskId = req.query.taskId;
+    let taskIdFilter = req.query.taskId;
 
     const pageQuery = !page || page === "0" ? 1 : page;
-    const limitQuery = limit ? parseInt(limit) : 9;
-    const offset = (pageQuery - 1) * limit;
+    const limitQuery = limitEntry ? parseInt(limitEntry) : 9;
+    const offsetQuery = (pageQuery - 1) * limitQuery;
+    if (typeof governorateId === "string") {
+      governorateId = parseInt(governorateId, 10);
+    }
 
-    if (categoryId == -1) categoryId = undefined;
+    if (categoryIdFilter == -1) categoryIdFilter = undefined;
     if (nearby <= 1) nearby = undefined;
 
     let user;
     if (currentUserId) user = await User.findByPk(currentUserId);
 
-    const queryCoordinates = `SELECT task.*, 
-      user.id AS user_id,
-      user.name,
-      user.email,
-      user.gender,
-      user.birthdate,
-      user.picture,
-      user.governorate_id as user_governorate_id,
-      user.phone_number,
-      user.role FROM task JOIN user ON task.owner_id = user.id 
-      WHERE (task.title LIKE :searchQuery OR task.description LIKE :searchQuery)
-      AND task.coordinates IS NOT NULL
-      ${categoryId ? `AND task.category_id = :categoryId` : ``}
-      ${
-        priceMin && priceMax
-          ? `AND task.price >= :priceMin AND task.price <= :priceMax`
-          : ``
-      }
-    ;`;
-    const query = `SELECT task.*, 
-      user.id AS user_id,
-      user.name,
-      user.email,
-      user.gender,
-      user.birthdate,
-      user.picture,
-      user.governorate_id as user_governorate_id,
-      user.phone_number,
-      user.role 
-      FROM task 
-      JOIN user ON task.owner_id = user.id 
-      WHERE (task.title LIKE :searchQuery OR task.description LIKE :searchQuery)
-      AND task.archived = false 
-      AND task.governorate_id = :userGovernorateId
-      ${categoryId ? `AND task.category_id = :categoryId` : ``}
-      ${taskId ? `AND task.id = :taskId` : ``}
-      ${
-        priceMin && priceMax
-          ? `AND task.price >= :priceMin AND task.price <= :priceMax`
-          : ``
-      }
-      LIMIT :limit OFFSET :offset
-    ;`;
     let tasks;
     if (boosted) {
-      tasks = await getRandomHotTasks(user, limitQuery, offset);
+      tasks = await getRandomHotTasks(user, limitQuery, offsetQuery);
+    } else if (withCoordinates) {
+      tasks = await fetchAndSortNearbyTasks(
+        user,
+        governorateId,
+        (limit = limitQuery),
+        (offset = offsetQuery),
+        (searchQuery = `%${querySearch}%`),
+        (categoryId = categoryIdFilter),
+        (priceMin = minPrice),
+        (priceMax = maxPrice),
+        (taskId = taskIdFilter)
+      );
     } else {
-      tasks = await sequelize.query(
-        withCoordinates ? queryCoordinates : query,
-        {
-          type: sequelize.QueryTypes.SELECT,
-          replacements: {
-            searchQuery: `%${searchQuery}%`,
-            categoryId: categoryId,
-            priceMin: priceMin,
-            priceMax: priceMax,
-            taskId: taskId,
-            userGovernorateId:
-              user && user.governorate_id ? user.governorate_id : 1,
-            limit: limitQuery,
-            offset: offset,
-          },
-        }
+      tasks = await fetchAndSortGovernorateTasks(
+        user,
+        governorateId,
+        (limit = limitQuery),
+        (offset = offsetQuery),
+        (searchQuery = `%${querySearch}%`),
+        (categoryId = categoryIdFilter),
+        (priceMin = minPrice),
+        (priceMax = maxPrice),
+        (taskId = taskIdFilter)
       );
     }
     const formattedList = await populateTasks(tasks, currentUserId);

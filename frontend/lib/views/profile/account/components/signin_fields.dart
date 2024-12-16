@@ -74,7 +74,7 @@ class SignInFields extends StatelessWidget {
               if (Helper.isMobile) const SizedBox(height: Paddings.exceptional) else const Spacer(),
               CustomButtons.elevateSecondary(
                 onPressed: controller.facebookLogin,
-                borderSide: BorderSide(color: kNeutralColor),
+                borderSide: const BorderSide(color: kNeutralColor),
                 icon: Icon(Icons.facebook_rounded, color: kBlackColor.withOpacity(.9)),
                 title: 'continue_facebook'.tr,
               ),
@@ -82,7 +82,7 @@ class SignInFields extends StatelessWidget {
               CustomButtons.elevateSecondary(
                 onPressed: controller.signInWithGoogle,
                 buttonColor: kNeutralColor100,
-                borderSide: BorderSide(color: kNeutralColor),
+                borderSide: const BorderSide(color: kNeutralColor),
                 icon: Icon(Icons.g_mobiledata_outlined, color: kBlackColor.withOpacity(.9)),
                 title: 'continue_google'.tr,
               ),
@@ -90,7 +90,7 @@ class SignInFields extends StatelessWidget {
               CustomButtons.elevateSecondary(
                 onPressed: () => controller.isPhoneInput = !controller.isPhoneInput,
                 buttonColor: kNeutralColor100,
-                borderSide: BorderSide(color: kNeutralColor, width: 0.7),
+                borderSide: const BorderSide(color: kNeutralColor, width: 0.7),
                 icon: Icon(controller.isPhoneInput ? Icons.email_outlined : Icons.phone_outlined, color: kBlackColor.withOpacity(.9)),
                 title: '${'continue_with'.tr} ${controller.isPhoneInput ? 'email'.tr : 'phone'.tr}',
               ),

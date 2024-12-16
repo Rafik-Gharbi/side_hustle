@@ -53,7 +53,7 @@ class ProfileScreen extends StatelessWidget {
                 appBarColor: kNeutralLightColor,
                 appBarTitle: 'profile'.tr,
                 body: DecoratedBox(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       colors: [kNeutralLightColor, kNeutralColor100],
                       begin: Alignment.topCenter,

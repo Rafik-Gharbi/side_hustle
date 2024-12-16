@@ -420,10 +420,23 @@ async function fetchUserReservation(userId) {
   return formattedList;
 }
 
-async function fetchAndSortNearbyTasks(user, limit = 10, offset = 0) {
+async function fetchAndSortNearbyTasks(
+  user,
+  governorateId,
+  limit = 10,
+  offset = 0,
+  searchQuery = "",
+  categoryId = undefined,
+  priceMin = undefined,
+  priceMax = undefined,
+  taskId = undefined
+) {
   let userLongitude, userLatitude;
   if (user && user.coordinates) {
     [userLongitude, userLatitude] = user?.coordinates?.split(",").map(Number);
+  }
+  if (typeof governorateId === "string") {
+    governorateId = parseInt(governorateId, 10);
   }
   const query = `SELECT
         id,
@@ -454,22 +467,37 @@ async function fetchAndSortNearbyTasks(user, limit = 10, offset = 0) {
         FROM
         task
         WHERE
-        task.archived = false 
+        task.archived = false AND (task.title LIKE :searchQuery OR task.description LIKE :searchQuery) 
+        ${userLongitude && userLatitude ? ` AND coordinates IS NOT NULL` : ""}
         ${
-          userLongitude && userLatitude
-            ? `AND coordinates IS NOT NULL`
-            : user && user.governorate_id && user.governorate_id !== 1
-            ? `AND governorate_id = :userGovernorateId`
+          governorateId && governorateId === 1
+            ? ""
+            : governorateId ||
+              (user && user.governorate_id && user.governorate_id !== 1)
+            ? ` AND governorate_id = :userGovernorateId`
             : ``
         }
-        ${userLongitude && userLatitude ? `ORDER BY distance ASC` : ``}
+        ${categoryId ? ` AND task.category_id = :categoryId` : ``}
+        ${
+          priceMin && priceMax
+            ? ` AND task.price >= :priceMin AND task.price <= :priceMax`
+            : ``
+        }
+        ${userLongitude && userLatitude ? ` ORDER BY distance ASC` : ``}
       `;
   const tasks = await sequelize.query(query, {
     type: sequelize.QueryTypes.SELECT,
     replacements: {
+      searchQuery: `%${searchQuery}%`,
+      categoryId: categoryId,
+      priceMin: priceMin,
+      priceMax: priceMax,
+      taskId: taskId,
       userLongitude,
       userLatitude,
-      userGovernorateId: user && user.governorate_id ? user.governorate_id : 1,
+      userGovernorateId:
+        (governorateId && governorateId !== 1 ? governorateId : undefined) ??
+        (user && user.governorate_id ? user.governorate_id : 1),
     },
   });
 
@@ -484,7 +512,80 @@ async function fetchAndSortNearbyTasks(user, limit = 10, offset = 0) {
   return nearbyTasks;
 }
 
-async function getRandomHotTasks(user, limit = 10, offset = 0) {
+async function fetchAndSortGovernorateTasks(
+  user,
+  governorateId,
+  limit = 10,
+  offset = 0,
+  searchQuery = "",
+  categoryId = undefined,
+  priceMin = undefined,
+  priceMax = undefined,
+  taskId = undefined
+) {
+  if (typeof governorateId === "string") {
+    governorateId = parseInt(governorateId, 10);
+  }
+  const query = `SELECT
+        id,
+        title,
+        description,
+        price,
+        delivrables,
+        coordinates,
+        due_date,
+        owner_id,
+        governorate_id,
+        category_id
+        FROM
+        task
+        WHERE
+        task.archived = false AND (task.title LIKE :searchQuery OR task.description LIKE :searchQuery)
+        ${
+          governorateId && governorateId === 1
+            ? ""
+            : governorateId ||
+              (user && user.governorate_id && user.governorate_id !== 1)
+            ? ` AND governorate_id = :userGovernorateId`
+            : ``
+        }
+        ${categoryId ? `AND task.category_id = :categoryId` : ``}
+        ${taskId ? `AND task.id = :taskId` : ``}
+        ${
+          priceMin && priceMax
+            ? `AND task.price >= :priceMin AND task.price <= :priceMax`
+            : ``
+        }
+      `;
+  const tasks = await sequelize.query(query, {
+    type: sequelize.QueryTypes.SELECT,
+    replacements: {
+      searchQuery: `%${searchQuery}%`,
+      categoryId: categoryId,
+      priceMin: priceMin,
+      priceMax: priceMax,
+      taskId: taskId,
+      userGovernorateId:
+        (governorateId && governorateId !== 1 ? governorateId : undefined) ??
+        (user && user.governorate_id ? user.governorate_id : 1),
+    },
+  });
+
+  // Shuffle the tasks array
+  shuffleArray(tasks);
+
+  // Apply limit and offset to the shuffled array
+  const limitedTasks = tasks.slice(offset, offset + limit);
+
+  const nearbyTasks = await populateTasks(limitedTasks, user?.id);
+
+  return nearbyTasks;
+}
+
+async function getRandomHotTasks(user, governorateId, limit = 10, offset = 0) {
+  if (typeof governorateId === "string") {
+    governorateId = parseInt(governorateId, 10);
+  }
   // get hot tasks
   const activeBoost = await Boost.findAll({
     where: {
@@ -500,11 +601,21 @@ async function getRandomHotTasks(user, limit = 10, offset = 0) {
     })
   );
 
+  // Filter tasks by governorateId if available, else by user governorate
+  const filteredTasks = tasks.filter((task) => {
+    if (governorateId) {
+      return task.governorate_id === governorateId;
+    } else if (user && user.governorate_id) {
+      return task.governorate_id === user.governorate_id;
+    }
+    return true;
+  });
+
   // Shuffle the tasks array
-  shuffleArray(tasks);
+  shuffleArray(filteredTasks);
 
   // Apply limit and offset to the shuffled array
-  const hotTasks = tasks.slice(offset, offset + limit);
+  const hotTasks = filteredTasks.slice(offset, offset + limit);
 
   return hotTasks;
 }
@@ -963,4 +1074,5 @@ module.exports = {
   populateOneSupportTicket,
   populateSupportMessages,
   populateOneSupportMessage,
+  fetchAndSortGovernorateTasks,
 };

@@ -14,13 +14,18 @@ import '../services/logger_service.dart';
 class TaskRepository extends GetxService {
   static TaskRepository get find => Get.find<TaskRepository>();
 
-  Future<Map<String, List<dynamic>>?> getHomeTasks() async {
+  Future<Map<String, List<dynamic>>?> getHomeTasks({int? governorateId, String? searchMode}) async {
     try {
       Map<String, List<dynamic>>? tasks = {};
       if (MainAppController.find.isConnected) {
-        final result = await ApiBaseHelper().request(RequestType.get, '/task/home-tasks', sendToken: true);
+        final result = await ApiBaseHelper().request(
+          RequestType.get,
+          '/task/home-tasks${searchMode != null ? '?searchMode=$searchMode' : ''}${governorateId != null ? '&governorateId=$governorateId' : ''}',
+          sendToken: true,
+        );
         tasks.putIfAbsent('hotTasks', () => (result['hotTasks'] as List).map((e) => Task.fromJson(e)).toList());
         tasks.putIfAbsent('nearbyTasks', () => (result['nearbyTasks'] as List).map((e) => Task.fromJson(e)).toList());
+        tasks.putIfAbsent('governorateTasks', () => (result['governorateTasks'] as List).map((e) => Task.fromJson(e)).toList());
         if (result['reservation'] != null) tasks.putIfAbsent('reservation', () => (result['reservation'] as List).map((e) => Reservation.fromJson(e)).toList());
         if (result['ongoingReservation'] != null) {
           tasks.putIfAbsent('ongoingReservation', () => (result['ongoingReservation'] as List).map((e) => Reservation.fromJson(e)).toList());
@@ -49,8 +54,8 @@ class TaskRepository extends GetxService {
           RequestType.get,
           sendToken: true,
           withCoordinates
-              ? '/task/filter?withCoordinates=$withCoordinates${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}&boosted=$boosted'
-              : '/task/filter?page=$page&limit=$limit&searchQuery=$searchQuery${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}${taskId != null ? '&taskId=$taskId' : ''}&boosted=$boosted',
+              ? '/task/filter?withCoordinates=$withCoordinates${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}${filter?.governorate != null ? '&governorateId=${filter?.governorate?.id}' : ''}${filter?.searchMode != null ? '&searchMode=${filter?.searchMode?.name}' : ''}&boosted=$boosted'
+              : '/task/filter?page=$page&limit=$limit&searchQuery=$searchQuery${filter?.category != null ? '&categoryId=${filter?.category!.id}' : ''}${filter?.minPrice != null ? '&priceMin=${filter?.minPrice}' : ''}${filter?.maxPrice != null ? '&priceMax=${filter?.maxPrice}' : ''}${filter?.nearby != null ? '&nearby=${filter?.nearby}' : ''}${filter?.governorate != null ? '&governorateId=${filter?.governorate?.id}' : ''}${filter?.searchMode != null ? '&searchMode=${filter?.searchMode?.name}' : ''}${taskId != null ? '&taskId=$taskId' : ''}&boosted=$boosted',
         );
         tasks = (result['formattedList'] as List).map((e) => Task.fromJson(e)).toList();
       } else {

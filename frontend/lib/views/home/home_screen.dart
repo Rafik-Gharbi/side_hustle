@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../constants/assets.dart';
 import '../../constants/colors.dart';
 import '../../constants/constants.dart';
 import '../../constants/sizes.dart';
@@ -14,8 +15,10 @@ import '../../services/theme/theme.dart';
 import '../../widgets/booking_card.dart';
 import '../../widgets/categories_bottomsheet.dart';
 import '../../widgets/catgory_card.dart';
+import '../../widgets/custom_button_with_overlay.dart';
 import '../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../widgets/draggable_bottomsheet.dart';
+import '../../widgets/governorates_bottomsheet.dart';
 import '../../widgets/loading_card_effect.dart';
 import '../../widgets/loading_request.dart';
 import '../../widgets/reservation_card.dart';
@@ -57,16 +60,7 @@ class HomeScreen extends StatelessWidget {
                         () => Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('${'hello'.tr},', style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
-                                if (AuthenticationService.find.isUserLoggedIn.value)
-                                  Text(AuthenticationService.find.jwtUserData?.name ?? 'user'.tr, style: AppFonts.x16Bold)
-                                else
-                                  Text('guest_user'.tr, style: AppFonts.x16Bold)
-                              ],
-                            ),
+                            Image.asset(Assets.dootifyLogo, width: 100),
                             Padding(
                               padding: const EdgeInsets.only(left: Paddings.regular),
                               child: Row(
@@ -108,6 +102,91 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ],
                         ),
+                      ),
+                      const SizedBox(height: Paddings.regular),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('${'hello'.tr},', style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
+                              if (AuthenticationService.find.isUserLoggedIn.value)
+                                Text(AuthenticationService.find.jwtUserData?.name ?? 'user'.tr, style: AppFonts.x16Bold)
+                              else
+                                Text('guest_user'.tr, style: AppFonts.x16Bold)
+                            ],
+                          ),
+                          CustomButtonWithOverlay(
+                            buttonWidth: 140,
+                            offset: const Offset(-30, 35),
+                            button: Align(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: Paddings.regular, vertical: Paddings.small),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    const Icon(Icons.location_on_outlined),
+                                    const SizedBox(width: Paddings.regular),
+                                    Text(controller.searchMode?.name.tr ?? '', style: AppFonts.x14Bold),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            menu: DecoratedBox(
+                              decoration: BoxDecoration(borderRadius: smallRadius, color: kNeutralColor100),
+                              child: SizedBox(
+                                width: 140,
+                                height: 230,
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                      title: Text(
+                                        SearchMode.nearby.name.tr,
+                                        style: AppFonts.x14Bold.copyWith(color: AuthenticationService.find.jwtUserData?.coordinates != null ? kBlackColor : kDisabledColor),
+                                      ),
+                                      onTap: () {
+                                        Helper.goBack();
+                                        if (AuthenticationService.find.jwtUserData?.coordinates == null) {
+                                          Helper.snackBar(message: 'share_your_location'.tr);
+                                          return;
+                                        }
+                                        controller.searchMode = SearchMode.nearby;
+                                      },
+                                    ),
+                                    ListTile(
+                                      shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                      title: Text(SearchMode.regional.name.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                      onTap: () async {
+                                        Helper.goBack();
+                                        controller.searchMode = SearchMode.regional;
+                                      },
+                                    ),
+                                    ListTile(
+                                      shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                      title: Text(SearchMode.national.name.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                      onTap: () async {
+                                        Helper.goBack();
+                                        controller.searchMode = SearchMode.national;
+                                      },
+                                    ),
+                                    ListTile(
+                                      shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                      title: Text(SearchMode.worldwide.name.tr, style: AppFonts.x14Bold.copyWith(color: kDisabledColor)),
+                                      onTap: () async {
+                                        Helper.snackBar(message: 'feature_not_available_yet'.tr);
+                                        Helper.goBack();
+                                        // controller.searchMode = SearchMode.worldwide;
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: Paddings.exceptional),
                       Row(
@@ -247,7 +326,7 @@ class HomeScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: Paddings.large),
                               child: DecoratedBox(
-                                decoration: BoxDecoration(color: kAccentColor.shade100, borderRadius: smallRadius),
+                                decoration: BoxDecoration(color: kAccentColor.withOpacity(0.4), borderRadius: smallRadius),
                                 child: SizedBox(
                                   height: 90,
                                   child: Padding(
@@ -282,23 +361,46 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          if (SharedPreferencesService.find.isReady.value)
-                            Buildables.buildTitle(
-                              '${'new_tasks'.tr} ${controller.nearbyTasks.any((element) => element.distance != null) ? 'nearby'.tr : '${'in'.tr} ${AuthenticationService.find.jwtUserData?.governorate?.name ?? 'all_tunisia'.tr}'}',
-                              onSeeMore: () => Get.toNamed(TaskListScreen.routeName),
-                            ),
-                          LoadingCardEffect(
-                            isLoading: controller.isLoading,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: controller.nearbyTasks.length,
-                              itemBuilder: (context, index) => Padding(
-                                padding: const EdgeInsets.only(bottom: Paddings.small),
-                                child: TaskCard(task: controller.nearbyTasks[index]),
+                          if (controller.filterModel.searchMode == SearchMode.nearby) ...[
+                            if (SharedPreferencesService.find.isReady.value)
+                              Buildables.buildTitle(
+                                '${'new_tasks'.tr} ${'nearby'.tr}',
+                                onSeeMore: () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: controller.filterModel)),
+                              ),
+                            LoadingCardEffect(
+                              isLoading: controller.isLoading,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: controller.nearbyTasks.length,
+                                itemBuilder: (context, index) => Padding(
+                                  padding: const EdgeInsets.only(bottom: Paddings.small),
+                                  child: TaskCard(task: controller.nearbyTasks[index]),
+                                ),
                               ),
                             ),
-                          ),
+                            const SizedBox(height: Paddings.large),
+                          ] else ...[
+                            if (SharedPreferencesService.find.isReady.value)
+                              Buildables.buildTitle(
+                                '',
+                                overrideTitle: buildCitySelector(controller),
+                                onSeeMore: () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: controller.filterModel)),
+                              ),
+                            LoadingCardEffect(
+                              isLoading: controller.isLoading,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: controller.governorateTasks.length,
+                                itemBuilder: (context, index) => Padding(
+                                  padding: const EdgeInsets.only(bottom: Paddings.small),
+                                  child: TaskCard(task: controller.governorateTasks[index]),
+                                ),
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: Paddings.extraLarge),
                         ],
                       ),
                     ],
@@ -311,4 +413,30 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+
+  RichText buildCitySelector(HomeController controller) => RichText(
+        text: TextSpan(
+          style: AppFonts.x16Bold,
+          text: '${'new_tasks'.tr} ',
+          children: [
+            TextSpan(text: '${'in'.tr} '),
+            WidgetSpan(
+              alignment: PlaceholderAlignment.baseline,
+              baseline: TextBaseline.alphabetic,
+              child: InkWell(
+                onTap: () => Get.bottomSheet(
+                  GovernorateBottomsheet(
+                    selectedItem: controller.selectedGovernorate,
+                    onSelect: (governorate) => controller.selectedGovernorate = governorate,
+                  ),
+                ),
+                child: Text(
+                  controller.selectedGovernorate?.name ?? 'all_tunisia'.tr,
+                  style: AppFonts.x16Bold.copyWith(decoration: TextDecoration.underline, decorationColor: kAccentColor, color: kAccentColor),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
 }

@@ -14,7 +14,7 @@ class BuildChatHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<ChatController>(
         builder: (controller) => DecoratedBox(
-          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: kNeutralLightColor))),
+          decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: kNeutralLightColor))),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: Helper.isMobile ? 0 : Paddings.exceptional, vertical: Paddings.large).copyWith(top: Helper.isMobile ? 0 : Paddings.large),
             child: Padding(

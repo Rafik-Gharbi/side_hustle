@@ -52,9 +52,9 @@ class Buildables {
               contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
               alignLabelWithHint: true,
               errorStyle: AppFonts.x12Regular.copyWith(color: kErrorColor),
-              border: UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
+              border: const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
+              enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
+              focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
               floatingLabelStyle: AppFonts.x14Regular.copyWith(height: 0.2),
               hintStyle: AppFonts.x14Regular.copyWith(color: kNeutralColor.withAlpha(150)),
             ),
@@ -344,12 +344,12 @@ class Buildables {
     );
   }
 
-  static Widget buildTitle(String title, {void Function()? onSeeMore}) => Padding(
+  static Widget buildTitle(String title, {void Function()? onSeeMore, Widget? overrideTitle}) => Padding(
         padding: const EdgeInsets.only(bottom: Paddings.regular),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: AppFonts.x16Bold),
+            overrideTitle ?? Text(title, style: AppFonts.x16Bold),
             if (onSeeMore != null)
               Padding(
                 padding: const EdgeInsets.only(left: Paddings.regular),

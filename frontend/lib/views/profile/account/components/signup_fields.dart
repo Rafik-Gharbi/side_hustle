@@ -147,17 +147,17 @@ class SignUpFields extends StatelessWidget {
     final buildOrDivider = Helper.isMobile
         ? Row(
             children: [
-              Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralColor), child: const SizedBox(height: 1))),
+              const Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralColor), child: SizedBox(height: 1))),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
                 child: Text('or'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
               ),
-              Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralColor), child: const SizedBox(height: 1))),
+              const Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralColor), child: SizedBox(height: 1))),
             ],
           )
         : Column(
             children: [
-              Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralLightColor), child: const SizedBox(width: 1))),
+              const Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralLightColor), child: SizedBox(width: 1))),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: Paddings.large),
                 child: RotatedBox(
@@ -165,7 +165,7 @@ class SignUpFields extends StatelessWidget {
                   child: Text('or'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralLightColor)),
                 ),
               ),
-              Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralLightColor), child: const SizedBox(width: 1))),
+              const Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralLightColor), child: SizedBox(width: 1))),
             ],
           );
     final buildSignUpWithSocial = GetBuilder<AuthenticationService>(
@@ -178,7 +178,7 @@ class SignUpFields extends StatelessWidget {
           ],
           CustomButtons.elevateSecondary(
             onPressed: () => controller.facebookLogin(isSignUp: true),
-            borderSide: BorderSide(color: kNeutralColor),
+            borderSide: const BorderSide(color: kNeutralColor),
             icon: Icon(Icons.facebook_rounded, color: kBlackColor.withOpacity(.9)),
             title: 'continue_facebook'.tr,
           ),
@@ -186,7 +186,7 @@ class SignUpFields extends StatelessWidget {
           CustomButtons.elevateSecondary(
             onPressed: () => controller.signInWithGoogle(isSignUp: true),
             buttonColor: kNeutralColor100,
-            borderSide: BorderSide(color: kNeutralColor),
+            borderSide: const BorderSide(color: kNeutralColor),
             icon: Icon(Icons.g_mobiledata_outlined, color: kBlackColor.withOpacity(.9)),
             title: 'continue_google'.tr,
           ),

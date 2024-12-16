@@ -25,7 +25,7 @@ class TaskMapCard extends StatelessWidget {
       transitionDuration: const Duration(milliseconds: 600),
       openBuilder: (_, __) => TaskDetailsScreen(task: task),
       closedBuilder: (_, openContainer) => DecoratedBox(
-        decoration: BoxDecoration(color: kNeutralLightColor),
+        decoration: const BoxDecoration(color: kNeutralLightColor),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
           child: Row(

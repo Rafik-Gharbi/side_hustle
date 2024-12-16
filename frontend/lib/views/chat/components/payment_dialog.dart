@@ -33,7 +33,7 @@ class ContractPaymentDialog extends StatelessWidget {
           const SizedBox(height: Paddings.regular),
           Text('proceed_with_payment'.tr, style: AppFonts.x16Bold),
           const SizedBox(height: Paddings.regular),
-          Divider(color: kNeutralLightColor),
+          const Divider(color: kNeutralLightColor),
           const SizedBox(height: Paddings.regular),
           Text('payment_msg'.tr, style: AppFonts.x14Regular, textAlign: TextAlign.justify),
           const SizedBox(height: Paddings.large),
@@ -62,7 +62,7 @@ class ContractPaymentDialog extends StatelessWidget {
             ],
           ),
           const SizedBox(height: Paddings.large),
-          Divider(color: kNeutralLightColor),
+          const Divider(color: kNeutralLightColor),
           const SizedBox(height: Paddings.regular),
           Center(
             child: CustomButtons.elevatePrimary(

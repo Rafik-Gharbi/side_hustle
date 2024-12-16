@@ -51,7 +51,7 @@ class AddStoreBottomsheet extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.camera_alt_outlined, size: 24, color: kNeutralColor),
+                            const Icon(Icons.camera_alt_outlined, size: 24, color: kNeutralColor),
                             const SizedBox(height: Paddings.small),
                             Text('add_store_cover'.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
                           ],

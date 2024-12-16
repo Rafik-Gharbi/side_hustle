@@ -79,7 +79,7 @@ class TaskCard extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
           shape: dense
               ? const OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
-              : RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
+              : RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
           tileColor: highlightTile ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
           splashColor: kPrimaryOpacityColor,
           onTap: openContainer,

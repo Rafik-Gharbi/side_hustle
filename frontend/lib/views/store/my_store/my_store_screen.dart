@@ -103,7 +103,7 @@ class MyStoreScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Spacer(),
-                  CircleAvatar(radius: 40, backgroundColor: kNeutralLightColor, child: const Icon(Icons.store_outlined, size: 48)),
+                  const CircleAvatar(radius: 40, backgroundColor: kNeutralLightColor, child: Icon(Icons.store_outlined, size: 48)),
                   const SizedBox(height: Paddings.extraLarge),
                   Text('have_no_store'.tr, style: AppFonts.x14Regular),
                   const Spacer(),
@@ -151,7 +151,7 @@ class MyStoreScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.camera_alt_outlined, size: 24, color: kNeutralColor),
+                              const Icon(Icons.camera_alt_outlined, size: 24, color: kNeutralColor),
                               const SizedBox(height: Paddings.small),
                               Text('add_store_cover'.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
                             ],

@@ -57,7 +57,7 @@ class NotificationScreen extends StatelessWidget {
                           child: ListTile(
                             onTap: () => controller.resolveNotificationAction(notification),
                             contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                            shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
+                            shape: RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
                             tileColor: notification.seen ? kNeutralLightOpacityColor : kPrimaryOpacityColor,
                             splashColor: notification.seen ? kPrimaryOpacityColor : kPrimaryDark,
                             title: Text(notification.title, style: AppFonts.x15Bold),

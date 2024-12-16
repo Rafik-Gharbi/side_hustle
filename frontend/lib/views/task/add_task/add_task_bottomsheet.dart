@@ -113,7 +113,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            leading: Icon(Icons.location_on_outlined, color: kNeutralColor),
+                            leading: const Icon(Icons.location_on_outlined, color: kNeutralColor),
                           ),
                           Buildables.lightDivider(),
                           ListTile(
@@ -135,7 +135,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            leading: Icon(Icons.calendar_today_outlined, color: kNeutralColor),
+                            leading: const Icon(Icons.calendar_today_outlined, color: kNeutralColor),
                             trailing: SizedBox(
                               width: 96,
                               child: Padding(
@@ -143,11 +143,11 @@ class AddTaskBottomsheet extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     CustomButtons.icon(
-                                      icon: Icon(Icons.chevron_left, color: kNeutralColor),
+                                      icon: const Icon(Icons.chevron_left, color: kNeutralColor),
                                       onPressed: () => controller.setCreatedDate(previous: true),
                                     ),
                                     CustomButtons.icon(
-                                      icon: Icon(Icons.chevron_right, color: kNeutralColor),
+                                      icon: const Icon(Icons.chevron_right, color: kNeutralColor),
                                       onPressed: () => controller.setCreatedDate(next: true),
                                     ),
                                   ],
@@ -188,7 +188,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            leading: Icon(Icons.attach_file_outlined, color: kNeutralColor),
+                            leading: const Icon(Icons.attach_file_outlined, color: kNeutralColor),
                           ),
                           if (controller.attachments != null)
                             SingleChildScrollView(

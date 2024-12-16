@@ -544,7 +544,6 @@ final Map<String, String> enUs = <String, String>{
   'balance_history': 'Balance history',
   'deposit_slip_picture': 'Deposit slip picture',
   'deposit_slip_picture_required': 'Deposit slip picture is required',
-  // new
   'admin_dashboard': 'Admin dashboard',
   'manage_balance': 'Manage balance',
   'reports': 'Reports',
@@ -701,6 +700,9 @@ final Map<String, String> enUs = <String, String>{
   'bank_card_option': 'You have a bank card? Pay with your bank account!',
   'balance_option': 'Pay with your balance, available balance is ',
   'flouci_option': 'Pay with your Flouci wallet or your bank card.',
+  'regional': 'Regional',
+  'national': 'National',
+  'worldwide': 'Worldwide',
   // Validation messages
   'max_value_is': 'Max value is @value !',
   'valid_for_x_days': 'Valid for @days days',

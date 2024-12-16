@@ -31,7 +31,7 @@ class CustomStandardScaffold extends StatelessWidget {
         width: Get.width,
         height: Get.height,
         child: DecoratedBox(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [kNeutralLightColor, kNeutralColor100],
               begin: Alignment.topCenter,

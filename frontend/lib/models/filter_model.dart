@@ -1,21 +1,27 @@
+import '../views/home/home_controller.dart';
 import 'category.dart';
+import 'governorate.dart';
 
 class FilterModel {
-  final Category? category;
-  final double? minPrice;
-  final double? maxPrice;
-  final double? nearby;
+  Category? category;
+  double? minPrice;
+  double? maxPrice;
+  double? nearby;
+  Governorate? governorate;
+  SearchMode? searchMode;
 
-  FilterModel({this.category, this.minPrice, this.maxPrice, this.nearby});
+  FilterModel({this.governorate, this.searchMode, this.category, this.minPrice, this.maxPrice, this.nearby});
 
   bool get isNotEmpty => category != null || minPrice != null || maxPrice != null || nearby != null;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['categoryId'] = category?.id;
-    data['minPrice'] = minPrice;
-    data['maxPrice'] = maxPrice;
-    data['nearby'] = nearby;
+    if(category != null) data['categoryId'] = category!.id;
+    if (minPrice != null) data['minPrice'] = minPrice;
+    if (maxPrice != null) data['maxPrice'] = maxPrice;
+    if (nearby != null) data['nearby'] = nearby;
+    if (governorate != null) data['governorateId'] = governorate!.id;
+    if (searchMode != null) data['searchMode'] = searchMode!.name;
     return data;
   }
 

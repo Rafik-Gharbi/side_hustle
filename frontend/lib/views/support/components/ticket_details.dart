@@ -238,7 +238,7 @@ class TicketDetails extends StatelessWidget {
                     ),
                     suffixIcon: CustomButtons.icon(
                       onPressed: () => sendMessage(currentTicket.id!),
-                      icon: Icon(Icons.send, color: kNeutralColor),
+                      icon: const Icon(Icons.send, color: kNeutralColor),
                       disabled: currentTicket.status == TicketStatus.closed,
                     ),
                   ),

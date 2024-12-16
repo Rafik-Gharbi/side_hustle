@@ -30,7 +30,7 @@ class BookingCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 2),
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-          shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
+          shape: RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
           tileColor: highlighted ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
           splashColor: kPrimaryOpacityColor,
           title: ServiceCard(service: reservation.service!, store: store, bookingStatus: reservation.status, onMarkDone: onMarkDone, dense: true),

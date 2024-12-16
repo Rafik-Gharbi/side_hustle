@@ -12,6 +12,7 @@ class Assets {
   static const String pictureLoading = 'assets/lottie/picture_loading.json';
   static const String emptyAnimation = 'assets/lottie/empty_animation.json';
   // Pictures
+  static const String dootifyLogo = 'assets/images/dootify_logo.png';
   static const String noImage = 'assets/images/no_image.jpg';
   static const String signedContract = 'assets/images/signed.png';
   static const String withdrawMoneyIcon = 'assets/images/withdraw_money.png';

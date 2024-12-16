@@ -110,6 +110,7 @@ class _CustomButtonWithOverlayState extends State<CustomButtonWithOverlay> {
         child: CompositedTransformTarget(
           link: _layerLink,
           child: InkWell(
+            borderRadius: smallRadius,
             onTap: () => toggleOverlay(context),
             child: widget.button,
           ),

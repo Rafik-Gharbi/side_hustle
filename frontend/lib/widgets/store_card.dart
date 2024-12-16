@@ -31,7 +31,7 @@ class StoreCard extends StatelessWidget {
         padding: EdgeInsets.only(bottom: isDense ? 0 : Paddings.regular),
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-          shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
+          shape: RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
           tileColor: isDense ? kNeutralLightColor : kNeutralLightOpacityColor,
           splashColor: kPrimaryOpacityColor,
           onTap: openContainer,
@@ -47,7 +47,7 @@ class StoreCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: smallRadius,
                   child: DecoratedBox(
-                    decoration: BoxDecoration(color: kNeutralColor),
+                    decoration: const BoxDecoration(color: kNeutralColor),
                     child: store.picture?.file.path != null
                         ? Image.network(
                             store.picture!.file.path,
@@ -77,7 +77,7 @@ class StoreCard extends StatelessWidget {
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.pin_drop_outlined, size: 14, color: kNeutralColor),
+                                  const Icon(Icons.pin_drop_outlined, size: 14, color: kNeutralColor),
                                   const SizedBox(width: Paddings.regular),
                                   Text(store.governorate!.name, style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
                                 ],

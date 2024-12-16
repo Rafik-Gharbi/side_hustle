@@ -62,7 +62,7 @@ class MainAppController extends GetxController {
 
   Category? getCategoryById(id) => categories.cast<Category?>().singleWhere((element) => element?.id == id, orElse: () => null);
 
-  Governorate? getGovernorateById(id) => governorates.cast<Governorate?>().singleWhere((element) => element?.id == id, orElse: () => null);
+  Governorate? getGovernorateById(id) => id == null ? null : governorates.cast<Governorate?>().singleWhere((element) => element?.id == id, orElse: () => null);
 
   MainAppController() {
     ever(hasVersionUpdate, (_) {

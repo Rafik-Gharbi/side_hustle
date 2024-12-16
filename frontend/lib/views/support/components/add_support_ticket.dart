@@ -163,7 +163,7 @@ class AddSupportTicket extends StatelessWidget {
                               ),
                             ],
                           ),
-                          leading: Icon(Icons.attach_file_outlined, color: kNeutralColor),
+                          leading: const Icon(Icons.attach_file_outlined, color: kNeutralColor),
                         ),
                         if (attachments != null)
                           SingleChildScrollView(

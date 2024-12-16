@@ -115,22 +115,22 @@ class ReferralScreen extends StatelessWidget {
                 ListTile(
                   title: Text('how_it_works_step1'.tr, style: AppFonts.x14Bold),
                   subtitle: Text('how_it_works_step1_subtitle'.tr, softWrap: true, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-                  leading: CircleAvatar(backgroundColor: kNeutralLightColor, child: const Center(child: Text('1', style: AppFonts.x18Bold))),
+                  leading: const CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('1', style: AppFonts.x18Bold))),
                 ),
                 ListTile(
                   title: Text('how_it_works_step2'.tr, style: AppFonts.x14Bold),
                   subtitle: Text('how_it_works_step2_subtitle'.tr, softWrap: true, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-                  leading: CircleAvatar(backgroundColor: kNeutralLightColor, child: const Center(child: Text('2', style: AppFonts.x18Bold))),
+                  leading: const CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('2', style: AppFonts.x18Bold))),
                 ),
                 ListTile(
                   title: Text('how_it_works_step3'.tr, style: AppFonts.x14Bold),
                   subtitle: Text('how_it_works_step3_subtitle'.tr, softWrap: true, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-                  leading: CircleAvatar(backgroundColor: kNeutralLightColor, child: const Center(child: Text('3', style: AppFonts.x18Bold))),
+                  leading: const CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('3', style: AppFonts.x18Bold))),
                 ),
                 ListTile(
                   title: Text('how_it_works_step4'.tr, style: AppFonts.x14Bold),
                   subtitle: Text('how_it_works_step4_subtitle'.tr, softWrap: true, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-                  leading: CircleAvatar(backgroundColor: kNeutralLightColor, child: const Center(child: Text('4', style: AppFonts.x18Bold))),
+                  leading: const CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('4', style: AppFonts.x18Bold))),
                 ),
                 const SizedBox(height: Paddings.small),
                 CustomButtons.text(

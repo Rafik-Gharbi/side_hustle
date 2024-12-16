@@ -89,13 +89,13 @@ class BoostCard extends StatelessWidget {
                       text: TextSpan(
                         style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
                         children: [
-                          WidgetSpan(child: Icon(Icons.location_city_outlined, size: 16, color: kNeutralColor)),
+                          const WidgetSpan(child: Icon(Icons.location_city_outlined, size: 16, color: kNeutralColor)),
                           TextSpan(text: ' ${boost.governorate != null ? boost.governorate!.name : 'all_tunisia'.tr}'),
                           const TextSpan(text: ' ⦿ '),
-                          WidgetSpan(child: Icon(Icons.people_alt_outlined, size: 16, color: kNeutralColor)),
+                          const WidgetSpan(child: Icon(Icons.people_alt_outlined, size: 16, color: kNeutralColor)),
                           TextSpan(text: ' ${boost.minAge != null && boost.maxAge != null ? '${boost.minAge} - ${boost.maxAge}' : '18 - 65+'}'),
                           const TextSpan(text: ' ⦿ '),
-                          WidgetSpan(child: Icon(Icons.male_outlined, size: 16, color: kNeutralColor)),
+                          const WidgetSpan(child: Icon(Icons.male_outlined, size: 16, color: kNeutralColor)),
                           TextSpan(text: ' ${boost.gender != null ? boost.gender!.name : 'all_genders'.tr}'),
                         ],
                       ),

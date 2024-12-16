@@ -47,7 +47,7 @@ class LoginDialog extends StatelessWidget {
                 children: [
                   // Header
                   DecoratedBox(
-                    decoration: BoxDecoration(border: Border(bottom: BorderSide(color: kNeutralLightColor, width: 0.7))),
+                    decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: kNeutralLightColor, width: 0.7))),
                     child: Padding(
                       padding: const EdgeInsets.all(Paddings.regular),
                       child: Row(
@@ -88,7 +88,7 @@ class LoginDialog extends StatelessWidget {
                     ),
                   ),
                   DecoratedBox(
-                    decoration: BoxDecoration(border: Border(top: BorderSide(color: kNeutralLightColor, width: 0.7))),
+                    decoration: const BoxDecoration(border: Border(top: BorderSide(color: kNeutralLightColor, width: 0.7))),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: Paddings.exceptional, vertical: Paddings.regular),
                       child: Row(

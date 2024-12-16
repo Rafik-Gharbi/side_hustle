@@ -221,7 +221,7 @@ class CustomButtons extends StatelessWidget {
               shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                   borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  side: borderSide ?? BorderSide(color: kNeutralLightColor),
+                  side: borderSide ?? const BorderSide(color: kNeutralLightColor),
                 ),
               ),
               padding: WidgetStateProperty.all(padding ?? EdgeInsets.zero),

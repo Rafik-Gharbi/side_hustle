@@ -16,7 +16,7 @@ class SharedPreferencesService extends GetxService {
 
   void add(String key, String value) => _prefs!.setString(key, value);
 
-  String? get(String key) => _prefs!.getString(key);
+  String? get(String key) => _prefs?.getString(key);
 
   void removeKey(String key) => _prefs!.remove(key);
 

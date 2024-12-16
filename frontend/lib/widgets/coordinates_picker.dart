@@ -141,7 +141,7 @@ class _CoordinatesPickerState extends State<CoordinatesPicker> {
                   children: [
                     Text('keep_location_privacy'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                     const SizedBox(width: Paddings.small),
-                    Tooltip(message: 'keep_location_privacy_msg'.tr, child: Icon(Icons.info_outline, size: 14, color: kNeutralColor)),
+                    Tooltip(message: 'keep_location_privacy_msg'.tr, child: const Icon(Icons.info_outline, size: 14, color: kNeutralColor)),
                   ],
                 ),
                 Transform.scale(

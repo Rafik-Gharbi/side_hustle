@@ -108,7 +108,7 @@ class AppFonts {
           dragHandleColor: kPrimaryColor,
           backgroundColor: kNeutralColor100,
         ),
-        scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStatePropertyAll(kNeutralColor)),
+        scrollbarTheme: const ScrollbarThemeData(thumbColor: WidgetStatePropertyAll(kNeutralColor)),
         colorScheme: ColorScheme(
           brightness: Brightness.light,
           primary: kPrimaryColor,

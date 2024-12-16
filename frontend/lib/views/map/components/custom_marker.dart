@@ -31,7 +31,7 @@ class _BuildCustomMarkerState extends State<BuildCustomMarker> {
         ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
           child: DecoratedBox(
-            decoration: BoxDecoration(color: kNeutralLightColor),
+            decoration: const BoxDecoration(color: kNeutralLightColor),
             child: SizedBox(
               height: marker.isTask ? 150 : 200,
               child: Padding(

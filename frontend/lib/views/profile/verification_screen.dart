@@ -24,7 +24,7 @@ class VerificationScreen extends StatelessWidget {
       child: CustomScaffoldBottomNavigation(
         backgroundColor: kNeutralColor100,
         body: DecoratedBox(
-          decoration: BoxDecoration(border: Border(top: BorderSide(color: kNeutralLightColor, width: 0.5))),
+          decoration: const BoxDecoration(border: Border(top: BorderSide(color: kNeutralLightColor, width: 0.5))),
           child: LoadingRequest(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -108,7 +108,7 @@ class MessagesScreen extends StatelessWidget {
                                           ),
                                           suffixIcon: CustomButtons.icon(
                                             onPressed: controller.sendMessage,
-                                            icon: Icon(Icons.send, color: kNeutralColor),
+                                            icon: const Icon(Icons.send, color: kNeutralColor),
                                             disabled: controller.selectedChatBubble == null,
                                           ),
                                         ),

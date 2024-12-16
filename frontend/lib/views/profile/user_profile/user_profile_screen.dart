@@ -45,7 +45,7 @@ class UserProfileScreen extends StatelessWidget {
           height: controller.showAllReviews ? Get.height * 0.9 : 550,
           child: HoldInSafeArea(
             child: DecoratedBox(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [kNeutralLightColor, kNeutralColor100],
                   begin: Alignment.topCenter,

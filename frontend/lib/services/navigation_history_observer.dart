@@ -32,7 +32,7 @@ class NavigationHistoryObserver extends NavigatorObserver {
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     if (route.settings.name == HomeScreen.routeName) history.clear();
-    if (history.isNotEmpty && previousRouteHistory == route.settings.name) _removeLastHistory();
+    if (history.isNotEmpty && (previousRouteHistory == route.settings.name || previousRouteHistory == previousRoute?.settings.name)) _removeLastHistory();
   }
 
   @override
