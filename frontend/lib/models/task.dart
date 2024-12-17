@@ -19,6 +19,7 @@ class Task {
   Category? category;
   Governorate? governorate;
   double? price;
+  double? priceMax;
   String? delivrables;
   User owner;
   DateTime? dueDate;
@@ -38,6 +39,7 @@ class Task {
     required this.owner,
     this.id,
     this.price,
+    this.priceMax,
     this.delivrables,
     this.dueDate,
     this.attachments,
@@ -56,14 +58,11 @@ class Task {
         category: MainAppController.find.getCategoryById(json['category_id']),
         governorate: MainAppController.find.getGovernorateById(json['governorate_id']),
         owner: User.fromJson(json['owner'] ?? json['user']),
-        price: json['price'] is int
-            ? (json['price'] as int).toDouble()
-            : json['price'] is String
-                ? double.parse(json['price'])
-                : json['price'],
+        price: Helper.resolveDouble(json['price']),
+        priceMax: json['priceMax'] != null ? Helper.resolveDouble(json['priceMax']) : null,
         delivrables: json['delivrables'],
         coordinates: json['coordinates'] != null ? (json['coordinates'] as String).fromString() : null,
-        distance: json['distance'] != null ? Helper.degreesToMeters(json['distance']).toStringAsFixed(1) : null,
+        distance: json['distance'] != null ? Helper.metersToKilometers(json['distance']).toStringAsFixed(1) : null,
         attachments: json['attachments'] != null && (json['attachments'] as List).isNotEmpty
             ? (json['attachments'] as List).map((e) => ImageDTO.fromJson(e, path: ApiBaseHelper.find.getImageTask(e['url']))).toList()
             : attachments != null
@@ -82,6 +81,7 @@ class Task {
     data['title'] = title;
     data['description'] = description;
     data['price'] = price;
+    data['priceMax'] = priceMax;
     data['category_id'] = category?.id;
     data['governorate_id'] = governorate?.id;
     data['delivrables'] = delivrables;
@@ -96,6 +96,7 @@ class Task {
   TaskTableCompanion toTaskCompanion({bool? isFavoriteUpdate}) => TaskTableCompanion(
         id: id == null ? const Value.absent() : Value(id!),
         price: price == null ? const Value.absent() : Value(price!),
+        priceMax: priceMax == null ? const Value.absent() : Value(priceMax!),
         category: category?.id == null ? const Value.absent() : Value(category!.id),
         governorate: governorate?.id == null ? const Value.absent() : Value(governorate!.id),
         dueDate: dueDate == null ? const Value.absent() : Value(dueDate!),
@@ -113,6 +114,7 @@ class Task {
         delivrables: task.delivrables.value,
         dueDate: task.dueDate.value,
         price: task.price.value,
+        priceMax: task.priceMax.value,
         isFavorite: task.isfavorite.value,
         category: MainAppController.find.getCategoryById(task.category.value),
         governorate: MainAppController.find.getGovernorateById(task.governorate.value),

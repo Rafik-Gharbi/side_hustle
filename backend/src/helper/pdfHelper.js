@@ -179,7 +179,7 @@ Date: ${data.date}
 1. Parties Involved
 Seeker Name: ${data.seekerName}
 Provider Name: ${data.providerName}
-Platform: Ekhdemli
+Platform: Dootify
 
 2. Scope of Service
 Task Description: ${data.taskDescription}
@@ -200,7 +200,7 @@ Date : ${data.date}
 1. Parties Concernées
 Nom du Demandeur : ${data.seekerName}
 Nom du Prestataire : ${data.providerName}
-Plateforme : Ekhdemli
+Plateforme : Dootify
 
 2. Champ d'Application du Service
 Description du Service : ${data.taskDescription}
@@ -221,7 +221,7 @@ Signature du Prestataire : __________________
 1. الأطراف المعنية
 اسم الطالب: ${data.seekerName}
 اسم المزود: ${data.providerName}
-المنصة: Ekhdemli
+المنصة: Dootify
 
 2. نطاق الخدمة
 وصف الخدمة: ${data.taskDescription}

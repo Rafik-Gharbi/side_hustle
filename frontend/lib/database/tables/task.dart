@@ -7,6 +7,7 @@ import 'user.dart';
 
 class TaskTable extends Table with AutoIncrementingStringPrimaryKey {
   RealColumn get price => real().withDefault(const Constant(0))();
+  RealColumn get priceMax => real().nullable()();
   TextColumn get title => text().withDefault(const Constant(''))();
   TextColumn get description => text().withDefault(const Constant(''))();
   IntColumn get category => integer().references(CategoryTable, #id)();

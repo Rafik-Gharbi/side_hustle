@@ -78,7 +78,7 @@ class TaskMapCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           if (task.distance != null && task.distance!.isNotEmpty)
-                            Text('${'distance'.tr}: ${task.distance} ${'meters'.tr}', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
+                            Text('${'distance'.tr}: ${Helper.formatAmount(double.parse(task.distance!))} ${'kilometers'.tr}', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
                           else
                             const SizedBox(),
                           Text(

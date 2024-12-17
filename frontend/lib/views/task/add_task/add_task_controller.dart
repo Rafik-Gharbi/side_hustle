@@ -19,14 +19,26 @@ class AddTaskController extends GetxController {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
+  final TextEditingController priceMaxController = TextEditingController();
   final TextEditingController delivrablesController = TextEditingController();
   Category? _category = MainAppController.find.categories.firstWhere((element) => element.parentId != -1);
   DateTime _createdDate = DateTime.now();
   LatLng? _coordinates;
+  Governorate? _governorate = AuthenticationService.find.jwtUserData?.governorate;
+  RxBool isAdding = false.obs;
+  List<XFile>? attachments;
+  bool _isPriceRange = false;
 
   DateTime get createdDate => _createdDate;
 
   LatLng? get coordinates => _coordinates;
+
+  bool get isPriceRange => _isPriceRange;
+
+  set isPriceRange(bool value) {
+    _isPriceRange = value;
+    update();
+  }
 
   set coordinates(LatLng? value) {
     _coordinates = value;
@@ -37,10 +49,6 @@ class AddTaskController extends GetxController {
     _createdDate = value;
     update();
   }
-
-  Governorate? _governorate = AuthenticationService.find.jwtUserData?.governorate;
-  RxBool isAdding = false.obs;
-  List<XFile>? attachments;
 
   Governorate? get governorate => _governorate;
 
@@ -84,6 +92,7 @@ class AddTaskController extends GetxController {
     titleController.text = task!.title;
     descriptionController.text = task!.description;
     priceController.text = task!.price?.toString() ?? '';
+    priceMaxController.text = task!.priceMax?.toString() ?? '';
     delivrablesController.text = task!.delivrables ?? '';
     _governorate = task!.governorate;
     _category = task!.category;
@@ -95,6 +104,7 @@ class AddTaskController extends GetxController {
     titleController.text = '';
     descriptionController.text = '';
     priceController.text = '';
+    priceMaxController.text = '';
     _category = MainAppController.find.categories.firstWhere((element) => element.parentId != -1);
     _createdDate = DateTime.now();
   }
@@ -110,6 +120,7 @@ class AddTaskController extends GetxController {
         governorate: governorate,
         delivrables: delivrablesController.text,
         price: double.tryParse(priceController.text),
+        priceMax: double.tryParse(priceMaxController.text),
         attachments: attachments?.map((e) => ImageDTO(file: e, type: Helper.isImage(e.name.toLowerCase()) ? ImageType.image : ImageType.file)).toList(),
         owner: AuthenticationService.find.jwtUserData!,
         coordinates: coordinates,

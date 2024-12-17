@@ -411,7 +411,7 @@ async function generateJWT(response, isRefresh) {
       governorate_id: response.governorate_id,
       isVerified: response.isVerified,
       isMailVerified: response.isMailVerified,
-      hasSharedPosition: response.hasSharedPosition,
+      hasSharedPosition: response.coordinates != undefined,
       isArchived: response.isArchived,
     },
     process.env.JWT_SECRET,

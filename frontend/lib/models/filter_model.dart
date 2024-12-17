@@ -16,7 +16,7 @@ class FilterModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    if(category != null) data['categoryId'] = category!.id;
+    if (category != null) data['categoryId'] = category!.id;
     if (minPrice != null) data['minPrice'] = minPrice;
     if (maxPrice != null) data['maxPrice'] = maxPrice;
     if (nearby != null) data['nearby'] = nearby;
@@ -27,4 +27,13 @@ class FilterModel {
 
   @override
   String toString() => 'FilterModel(category: ${category?.name}, minPrice: $minPrice, maxPrice: $maxPrice, nearby: $nearby)';
+
+  FilterModel copyWith({Category? category}) => FilterModel(
+        governorate: governorate,
+        searchMode: searchMode,
+        category: category ?? this.category,
+        maxPrice: maxPrice,
+        minPrice: minPrice,
+        nearby: nearby,
+      );
 }

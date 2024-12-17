@@ -298,6 +298,7 @@ class AuthenticationService extends GetxController {
         // } else {
         // Email verification Dialog
         clearFormFields();
+        initiateCurrentUser(jwt);
         await Helper.mobileEmailVerification(user.email);
       }
     }

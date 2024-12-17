@@ -36,12 +36,15 @@ const { Transaction } = require("../models/transaction_model");
 exports.getHomeTasks = async (req, res) => {
   try {
     const currentUserId = req.decoded?.id;
-    const governorateId = req.query.governorateId;
     const searchMode = req.query.searchMode;
+    let governorateId = req.query.governorateId;
 
     let foundUser;
     if (currentUserId) {
       foundUser = await User.findOne({ where: { id: currentUserId } });
+    }
+    if (typeof governorateId === "string") {
+      governorateId = parseInt(governorateId, 10);
     }
 
     // get nearby tasks or user governorate tasks
@@ -54,7 +57,7 @@ exports.getHomeTasks = async (req, res) => {
       );
 
     let governorateTasks = [];
-    if (searchMode !== "nearby")
+    if (searchMode !== "nearby" || nearbyTasks.length == 0)
       governorateTasks = await fetchAndSortGovernorateTasks(
         foundUser,
         governorateId,
@@ -141,6 +144,9 @@ exports.filterTasks = async (req, res) => {
     const offsetQuery = (pageQuery - 1) * limitQuery;
     if (typeof governorateId === "string") {
       governorateId = parseInt(governorateId, 10);
+    }
+    if (typeof categoryIdFilter === "string") {
+      categoryIdFilter = parseInt(categoryIdFilter, 10);
     }
 
     if (categoryIdFilter == -1) categoryIdFilter = undefined;
@@ -254,6 +260,7 @@ exports.taskRequest = async (req, res) => {
           task: {
             id: row.id,
             price: row.price,
+            priceMax: row.priceMax,
             deducted_coins: row.deducted_coins,
             title: row.title,
             description: row.description,
@@ -284,6 +291,7 @@ exports.addTask = async (req, res) => {
     title,
     description,
     price,
+    priceMax,
     category_id,
     governorate_id,
     delivrables,
@@ -321,6 +329,7 @@ exports.addTask = async (req, res) => {
         title,
         description,
         price,
+        priceMax,
         category_id,
         governorate_id,
         delivrables,
@@ -438,6 +447,7 @@ exports.addTask = async (req, res) => {
     const task = {
       id: result.id,
       price: result.price,
+      priceMax: result.priceMax,
       title: result.title,
       description: result.description,
       delivrables: result.delivrables,
@@ -490,6 +500,7 @@ exports.updateTask = async (req, res) => {
       title,
       description,
       price,
+      priceMax,
       category_id,
       governorate_id,
       delivrables,
@@ -606,6 +617,7 @@ exports.updateTask = async (req, res) => {
         title,
         description,
         price,
+        priceMax,
         category_id,
         governorate_id,
         delivrables,
@@ -664,6 +676,7 @@ exports.updateTask = async (req, res) => {
       task: {
         id: updatedTask.id,
         price: updatedTask.price,
+        priceMax: updatedTask.priceMax,
         title: updatedTask.title,
         description: updatedTask.description,
         delivrables: updatedTask.delivrables,

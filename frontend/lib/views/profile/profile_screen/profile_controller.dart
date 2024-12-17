@@ -14,6 +14,7 @@ import '../../../repositories/user_repository.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/logger_service.dart';
 import '../../../widgets/categories_bottomsheet.dart';
+import '../../../widgets/draggable_bottomsheet.dart';
 
 class ProfileController extends GetxController {
   /// not permanent use with caution
@@ -129,32 +130,9 @@ class ProfileController extends GetxController {
     init();
   }
 
-  void manageCategoriesSubscription() => subscribedCategories.isEmpty
-      ? Helper.openConfirmationDialog(
-          title: 'subscribe_to_categories'.tr,
-          content: 'subscribe_categories_msg'.tr,
-          onConfirm: () async {
-            NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(criticalAlert: true);
-            debugPrint('User granted permission: ${settings.authorizationStatus}');
-            if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-              Get.bottomSheet(
-                SizedBox(
-                  height: Get.height * 0.8,
-                  child: CategoriesBottomsheet(
-                    maxSelect: 3,
-                    nextUpdate: nextUpdateGategory,
-                    selected: subscribedCategories,
-                    onSelectCategory: (category) => subscribeToCategories(category),
-                  ),
-                ),
-                isScrollControlled: true,
-              );
-            }
-          },
-        )
-      : Get.bottomSheet(
-          SizedBox(
-            height: Get.height * 0.8,
+  void manageCategoriesSubscription() {
+    void openCategoriesBottomsheet() => Get.bottomSheet(
+          DraggableBottomsheet(
             child: CategoriesBottomsheet(
               maxSelect: 3,
               nextUpdate: nextUpdateGategory,
@@ -164,4 +142,18 @@ class ProfileController extends GetxController {
           ),
           isScrollControlled: true,
         );
+    subscribedCategories.isEmpty
+        ? Helper.openConfirmationDialog(
+            title: 'subscribe_to_categories'.tr,
+            content: 'subscribe_categories_msg'.tr,
+            onConfirm: () async {
+              NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(criticalAlert: true);
+              debugPrint('User granted permission: ${settings.authorizationStatus}');
+              if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+                openCategoriesBottomsheet();
+              }
+            },
+          )
+        : openCategoriesBottomsheet();
+  }
 }

@@ -150,7 +150,7 @@ async function approveUser(userId) {
         notificationService.sendNotification(
           referral.referrer_id,
           "🎉 You Earned a Referral Reward!",
-          "Your friend joined Ekhdemli! You've earned more base coins. Thanks for helping grow our community!",
+          "Your friend joined Dootify! You've earned more base coins. Thanks for helping grow our community!",
           NotificationType.REWARDS,
           { baseCoins: referrer.coins }
         );

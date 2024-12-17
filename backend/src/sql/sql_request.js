@@ -22,6 +22,7 @@ const { SupportTicket } = require("../models/support_ticket");
 const {
   SupportAttachmentModel,
 } = require("../models/support_attachment_model");
+const { Category } = require("../models/category_model");
 
 //function to get name and id from a given ids and table
 const fetchNames = async (ids, tableName) => {
@@ -435,14 +436,24 @@ async function fetchAndSortNearbyTasks(
   if (user && user.coordinates) {
     [userLongitude, userLatitude] = user?.coordinates?.split(",").map(Number);
   }
-  if (typeof governorateId === "string") {
-    governorateId = parseInt(governorateId, 10);
+  let childCategoryIds;
+  if (categoryId) {
+    const foundCategory = await Category.findByPk(categoryId);
+    // if is parent category fetch all child categories id to compare with it
+    if (foundCategory.parentId == -1) {
+      const childCategories = await Category.findAll({
+        where: { parentId: categoryId },
+        attributes: ["id"],
+      });
+      childCategoryIds = childCategories.map((category) => category.id);
+    }
   }
   const query = `SELECT
         id,
         title,
         description,
         price,
+        priceMax,
         delivrables,
         coordinates,
         due_date,
@@ -451,17 +462,22 @@ async function fetchAndSortNearbyTasks(
         category_id
         ${
           userLongitude && userLatitude
-            ? `, (ST_Distance(
-                ST_GeomFromText(
-                    CONCAT('POINT(',
-                        CAST(SUBSTRING_INDEX(coordinates, ',', 1) AS DECIMAL(10, 6)), ' ',
-                        CAST(SUBSTRING_INDEX(coordinates, ',', -1) AS DECIMAL(10, 6)), 
-                    ')'), 4326
-                ),
-                ST_GeomFromText(
-                    CONCAT('POINT(', :userLongitude, ' ', :userLatitude, ')'), 4326
+            ? `, (
+                6371e3 * 2 * ATAN2(
+                  SQRT(
+                    SIN(RADIANS(CAST(SUBSTRING_INDEX(coordinates, ',', -1) AS DECIMAL(10, 6)) - :userLatitude) / 2) * SIN(RADIANS(CAST(SUBSTRING_INDEX(coordinates, ',', -1) AS DECIMAL(10, 6)) - :userLatitude) / 2) +
+                    COS(RADIANS(:userLatitude)) * COS(RADIANS(CAST(SUBSTRING_INDEX(coordinates, ',', -1) AS DECIMAL(10, 6)))) *
+                    SIN(RADIANS(CAST(SUBSTRING_INDEX(coordinates, ',', 1) AS DECIMAL(10, 6)) - :userLongitude) / 2) * SIN(RADIANS(CAST(SUBSTRING_INDEX(coordinates, ',', 1) AS DECIMAL(10, 6)) - :userLongitude) / 2)
+                  ),
+                  SQRT(
+                    1 - (
+                      SIN(RADIANS(CAST(SUBSTRING_INDEX(coordinates, ',', -1) AS DECIMAL(10, 6)) - :userLatitude) / 2) * SIN(RADIANS(CAST(SUBSTRING_INDEX(coordinates, ',', -1) AS DECIMAL(10, 6)) - :userLatitude) / 2) +
+                      COS(RADIANS(:userLatitude)) * COS(RADIANS(CAST(SUBSTRING_INDEX(coordinates, ',', -1) AS DECIMAL(10, 6)))) *
+                      SIN(RADIANS(CAST(SUBSTRING_INDEX(coordinates, ',', 1) AS DECIMAL(10, 6)) - :userLongitude) / 2) * SIN(RADIANS(CAST(SUBSTRING_INDEX(coordinates, ',', 1) AS DECIMAL(10, 6)) - :userLongitude) / 2)
+                    )
+                  )
                 )
-            )) AS distance`
+              ) AS distance`
             : ``
         }
         FROM
@@ -477,7 +493,13 @@ async function fetchAndSortNearbyTasks(
             ? ` AND governorate_id = :userGovernorateId`
             : ``
         }
-        ${categoryId ? ` AND task.category_id = :categoryId` : ``}
+        ${
+          childCategoryIds && childCategoryIds.length > 0
+            ? `AND task.category_id IN (:childCategoryIds)`
+            : categoryId
+            ? `AND task.category_id = :categoryId`
+            : ``
+        }        
         ${
           priceMin && priceMax
             ? ` AND task.price >= :priceMin AND task.price <= :priceMax`
@@ -490,6 +512,7 @@ async function fetchAndSortNearbyTasks(
     replacements: {
       searchQuery: `%${searchQuery}%`,
       categoryId: categoryId,
+      childCategoryIds: childCategoryIds,
       priceMin: priceMin,
       priceMax: priceMax,
       taskId: taskId,
@@ -501,11 +524,12 @@ async function fetchAndSortNearbyTasks(
     },
   });
 
+  // Filter tasks with distance less than 100 kilometers (100,000 meters)
+  const filteredTasks = tasks.filter(task => task.distance < 100000);
   // Shuffle the tasks array
-  shuffleArray(tasks);
-
+  shuffleArray(filteredTasks);
   // Apply limit and offset to the shuffled array
-  const limitedTasks = tasks.slice(offset, offset + limit);
+  const limitedTasks = filteredTasks.slice(offset, offset + limit);
 
   const nearbyTasks = await populateTasks(limitedTasks, user?.id);
 
@@ -523,14 +547,24 @@ async function fetchAndSortGovernorateTasks(
   priceMax = undefined,
   taskId = undefined
 ) {
-  if (typeof governorateId === "string") {
-    governorateId = parseInt(governorateId, 10);
+  let childCategoryIds;
+  if (categoryId) {
+    const foundCategory = await Category.findByPk(categoryId);
+    // if is parent category fetch all child categories id to compare with it
+    if (foundCategory.parentId == -1) {
+      const childCategories = await Category.findAll({
+        where: { parentId: categoryId },
+        attributes: ["id"],
+      });
+      childCategoryIds = childCategories.map((category) => category.id);
+    }
   }
   const query = `SELECT
         id,
         title,
         description,
         price,
+        priceMax,
         delivrables,
         coordinates,
         due_date,
@@ -549,7 +583,13 @@ async function fetchAndSortGovernorateTasks(
             ? ` AND governorate_id = :userGovernorateId`
             : ``
         }
-        ${categoryId ? `AND task.category_id = :categoryId` : ``}
+        ${
+          childCategoryIds && childCategoryIds.length > 0
+            ? `AND task.category_id IN (:childCategoryIds)`
+            : categoryId
+            ? `AND task.category_id = :categoryId`
+            : ``
+        }
         ${taskId ? `AND task.id = :taskId` : ``}
         ${
           priceMin && priceMax
@@ -562,6 +602,7 @@ async function fetchAndSortGovernorateTasks(
     replacements: {
       searchQuery: `%${searchQuery}%`,
       categoryId: categoryId,
+      childCategoryIds: childCategoryIds,
       priceMin: priceMin,
       priceMax: priceMax,
       taskId: taskId,
@@ -646,6 +687,7 @@ async function populateOneTask(task, currentUserId) {
   return {
     id: task.id,
     price: task.price,
+    priceMax: task.priceMax,
     deducted_coins: task.deducted_coins,
     title: task.title,
     description: task.description,

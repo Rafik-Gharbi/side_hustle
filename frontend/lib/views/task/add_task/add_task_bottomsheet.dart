@@ -15,8 +15,8 @@ import '../../../widgets/categories_bottomsheet.dart';
 import '../../../widgets/coordinates_picker.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_text_field.dart';
+import '../../../widgets/draggable_bottomsheet.dart';
 import '../../../widgets/governorates_bottomsheet.dart';
-import '../../../widgets/hold_in_safe_area.dart';
 import 'add_task_controller.dart';
 
 class AddTaskBottomsheet extends StatelessWidget {
@@ -35,7 +35,7 @@ class AddTaskBottomsheet extends StatelessWidget {
           if (controller.titleController.text.isEmpty) {
             controller.titleFocusNode.requestFocus();
           }
-          return HoldInSafeArea(
+          return Material(
             child: DecoratedBox(
               decoration: const BoxDecoration(color: kNeutralColor100),
               child: Padding(
@@ -78,8 +78,8 @@ class AddTaskBottomsheet extends StatelessWidget {
                           Buildables.lightDivider(),
                           ListTile(
                             onTap: () => Get.bottomSheet(
+                              DraggableBottomsheet(child: CategoriesBottomsheet(onSelectCategory: (category) => controller.category = category.first)),
                               isScrollControlled: true,
-                              CategoriesBottomsheet(onSelectCategory: (category) => controller.category = category.first),
                             ),
                             title: RichText(
                               text: TextSpan(
@@ -156,12 +156,39 @@ class AddTaskBottomsheet extends StatelessWidget {
                             ),
                           ),
                           Buildables.lightDivider(),
-                          CustomTextField(
-                            hintText: 'task_price'.tr,
-                            fieldController: controller.priceController,
-                            outlinedBorderColor: Colors.transparent,
-                            textInputType: const TextInputType.numberWithOptions(decimal: true),
-                          ),
+                          if (controller.isPriceRange)
+                            Row(
+                              // crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomTextField(
+                                  width: (Get.width - 50) * 0.4,
+                                  hintText: 'task_price_min'.tr,
+                                  fieldController: controller.priceController,
+                                  outlinedBorderColor: Colors.transparent,
+                                  textInputType: const TextInputType.numberWithOptions(decimal: true),
+                                ),
+                                Buildables.verticalDivider(color: kNeutralColor, padding: const EdgeInsets.symmetric(horizontal: Paddings.small), thickness: 0.4),
+                                CustomTextField(
+                                  width: ((Get.width - 50) * 0.6) - 1,
+                                  hintText: 'task_price_max'.tr,
+                                  fieldController: controller.priceMaxController,
+                                  outlinedBorderColor: Colors.transparent,
+                                  textInputType: const TextInputType.numberWithOptions(decimal: true),
+                                  suffixIcon: InkWell(
+                                    onTap: () => controller.isPriceRange = !controller.isPriceRange,
+                                    child: const Icon(Icons.compare_arrows_outlined),
+                                  ),
+                                ),
+                              ],
+                            )
+                          else
+                            CustomTextField(
+                              hintText: 'task_price'.tr,
+                              fieldController: controller.priceController,
+                              outlinedBorderColor: Colors.transparent,
+                              textInputType: const TextInputType.numberWithOptions(decimal: true),
+                              suffixIcon: CustomButtons.icon(icon: const Icon(Icons.compare_arrows_outlined), onPressed: () => controller.isPriceRange = !controller.isPriceRange),
+                            ),
                           Buildables.lightDivider(),
                           CustomTextField(
                             hintText: 'expected_delivrables'.tr,

@@ -122,7 +122,7 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
               onPressed: () => Helper.verifyUser(
                 isVerified: true,
                 loginErrorMsg: 'login_add_task_msg'.tr,
-                () => Get.bottomSheet(const AddTaskBottomsheet(), isScrollControlled: true),
+                () => Get.bottomSheet(const AddTaskBottomsheet(), isScrollControlled: true, backgroundColor: Colors.transparent),
               ),
               mini: true,
               shape: const CircleBorder(),

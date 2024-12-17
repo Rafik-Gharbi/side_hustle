@@ -85,7 +85,7 @@ class TaskCard extends StatelessWidget {
           onTap: openContainer,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [ 
+            children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,10 +144,13 @@ class TaskCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     if (task.distance != null && task.distance!.isNotEmpty)
-                      Text('${'distance'.tr}: ${task.distance} ${'meters'.tr}', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
+                      Text('${'distance'.tr}: ${Helper.formatAmount(double.parse(task.distance!))} ${'kilometers'.tr}', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
                     else
                       const SizedBox(),
-                    Text('${'price'.tr}: ${Helper.formatAmount(task.price!)} ${MainAppController.find.currency.value}', style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                    Text(
+                      '${'price'.tr}: ${Helper.formatAmount(task.price!)} ${task.priceMax != null ? '- ${Helper.formatAmount(task.priceMax!)} ' : ''}${MainAppController.find.currency.value}',
+                      style: AppFonts.x10Regular.copyWith(color: kNeutralColor),
+                    ),
                   ],
                 ),
             ],

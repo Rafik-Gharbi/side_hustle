@@ -209,6 +209,7 @@ class ProfileScreen extends StatelessWidget {
                                                           icon: Icons.edit_outlined,
                                                           onTap: () {
                                                             AuthenticationService.find.loadUserData(controller.loggedInUser);
+                                                            AuthenticationService.find.isLoggingIn = false;
                                                             Get.bottomSheet(
                                                               Padding(
                                                                 padding: const EdgeInsets.only(top: Paddings.exceptional * 3),
@@ -231,7 +232,9 @@ class ProfileScreen extends StatelessWidget {
                                                             actionRequired: AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.pending ? 0 : 1,
                                                             label: 'verify_profile'.tr,
                                                             icon: Icons.verified_outlined,
-                                                            onTap: () => Get.toNamed(VerifyUserScreen.routeName),
+                                                            onTap: () => controller.loggedInUser?.isProfileCompleted ?? false
+                                                                ? Get.toNamed(VerifyUserScreen.routeName)
+                                                                : Helper.snackBar(message: 'complete_profile_first'.tr),
                                                           ),
                                                         Buildables.buildActionTile(
                                                           label: 'change_password'.tr,

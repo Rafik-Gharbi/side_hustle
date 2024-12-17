@@ -293,11 +293,7 @@ class Helper {
     return null;
   }
 
-  static double degreesToMeters(double distanceInDegrees) {
-    const double earthRadius = 6371000;
-    double distanceInMeters = distanceInDegrees * (pi / 180) * earthRadius;
-    return distanceInMeters;
-  }
+  static double metersToKilometers(double distanceInDegrees) => distanceInDegrees / 1000;
 
   static void showNotification(NotificationModel notification) => GetSnackBar(
         titleText: Text(notification.title, style: AppFonts.x16Bold),

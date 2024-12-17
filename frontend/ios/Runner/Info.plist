@@ -9,7 +9,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Ekhdemli</string>
+	<string>Dootify</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,7 +45,7 @@
 	<key>FacebookClientToken</key>
 	<string>c6fc56124c6e75f6b682bcc3231445bd</string>
 	<key>FacebookDisplayName</key>
-	<string>Ekhdemli</string>
+	<string>Dootify</string>
 	<key>GIDClientID</key>
 	<string>495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>

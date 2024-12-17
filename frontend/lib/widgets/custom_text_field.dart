@@ -106,72 +106,76 @@ class CustomTextFieldState extends State<CustomTextField> {
           ClipRRect(
             borderRadius: widget.borderRadius ?? smallRadius,
             child: Container(
+              height: widget.height,
               margin: EdgeInsets.only(top: widget.topPadding ?? 0),
               width: widget.width ?? MediaQuery.of(context).size.width,
               decoration: BoxDecoration(color: widget.fillColor, borderRadius: smallRadius),
-              child: TextFormField(
-                maxLength: widget.maxLength,
-                onTapOutside: widget.onTapOutside,
-                inputFormatters: widget.inputFormatters,
-                style: TextStyle(fontSize: widget.textFontSize),
-                enabled: widget.enabled,
-                textDirection: widget.textInputType == TextInputType.phone ? TextDirection.ltr : null,
-                focusNode: widget.focusNode,
-                textCapitalization: widget.textCapitalization ?? TextCapitalization.sentences,
-                keyboardType: widget.textInputType,
-                textAlign: widget.textAlign ?? TextAlign.start,
-                autofocus: widget.autofocus,
-                maxLines: widget.isTextArea ? widget.textAreaLines : 1,
-                onTap: widget.onTap,
-                readOnly: widget.readOnly ?? widget.onTap != null,
-                validator: widget.validator,
-                onFieldSubmitted: widget.onSubmitted,
-                onChanged: widget.onChanged,
-                decoration: widget.decoration ??
-                    InputDecoration(
-                      contentPadding: widget.outlinedBorder
-                          ? const EdgeInsets.symmetric(horizontal: Paddings.large).copyWith(top: Paddings.extraLarge)
-                          : const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
-                      labelText: widget.labelText,
-                      alignLabelWithHint: true,
-                      label: widget.enableFloatingLabel ? Text(widget.hintText ?? '', style: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor)) : null,
-                      border: widget.outlinedBorder
-                          ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
-                          : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
-                      enabledBorder: widget.outlinedBorder
-                          ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
-                          : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
-                      focusedBorder: widget.outlinedBorder
-                          ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
-                          : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
-                      floatingLabelStyle: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(height: 0.2),
-                      hintText: widget.hintText,
-                      hintStyle: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor),
-                      prefixIcon: widget.prefixIcon,
-                      constraints: BoxConstraints(maxHeight: widget.height ?? double.infinity),
-                      suffixIcon: widget.suffixIcon ??
-                          (widget.isPassword
-                              ? InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      _obscureText = !_obscureText;
-                                    });
-                                  },
-                                  child: widget.height != null
-                                      ? Icon(
-                                          _obscureText ? Icons.visibility : Icons.visibility_off,
-                                          size: 0.5 * widget.height!,
-                                          color: Theme.of(context).primaryColor,
-                                        )
-                                      : Icon(
-                                          _obscureText ? Icons.visibility : Icons.visibility_off,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                )
-                              : null),
-                    ),
-                controller: widget.fieldController,
-                obscureText: _obscureText,
+              child: Center(
+                child: TextFormField(
+                  maxLength: widget.maxLength,
+                  onTapOutside: widget.onTapOutside,
+                  inputFormatters: widget.inputFormatters,
+                  style: TextStyle(fontSize: widget.textFontSize),
+                  enabled: widget.enabled,
+                  textDirection: widget.textInputType == TextInputType.phone ? TextDirection.ltr : null,
+                  focusNode: widget.focusNode,
+                  textCapitalization: widget.textCapitalization ?? TextCapitalization.sentences,
+                  keyboardType: widget.textInputType,
+                  textAlign: widget.textAlign ?? TextAlign.start,
+                  autofocus: widget.autofocus,
+                  maxLines: widget.isTextArea ? widget.textAreaLines : 1,
+                  onTap: widget.onTap,
+                  readOnly: widget.readOnly ?? widget.onTap != null,
+                  validator: widget.validator,
+                  onFieldSubmitted: widget.onSubmitted,
+                  onChanged: widget.onChanged,
+                  decoration: widget.decoration ??
+                      InputDecoration(
+                        contentPadding: widget.outlinedBorder
+                            ? const EdgeInsets.symmetric(horizontal: Paddings.large).copyWith(top: Paddings.extraLarge)
+                            : const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
+                        labelText: widget.labelText,
+                        alignLabelWithHint: true,
+                        label: widget.enableFloatingLabel ? Text(widget.hintText ?? '', style: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor)) : null,
+                        border: widget.outlinedBorder
+                            ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
+                            : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
+                        enabledBorder: widget.outlinedBorder
+                            ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
+                            : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
+                        focusedBorder: widget.outlinedBorder
+                            ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
+                            : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
+                        floatingLabelStyle: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(height: 0.2),
+                        hintText: widget.hintText,
+                        hintStyle: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor),
+                        prefixIcon: widget.prefixIcon,
+                        constraints: BoxConstraints(maxHeight: widget.height ?? double.infinity),
+                        suffixIconConstraints: BoxConstraints(maxHeight: widget.height ?? 40, maxWidth: 40),
+                        suffixIcon: widget.suffixIcon ??
+                            (widget.isPassword
+                                ? InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _obscureText = !_obscureText;
+                                      });
+                                    },
+                                    child: widget.height != null
+                                        ? Icon(
+                                            _obscureText ? Icons.visibility : Icons.visibility_off,
+                                            size: 0.5 * widget.height!,
+                                            color: Theme.of(context).primaryColor,
+                                          )
+                                        : Icon(
+                                            _obscureText ? Icons.visibility : Icons.visibility_off,
+                                            color: Theme.of(context).primaryColor,
+                                          ),
+                                  )
+                                : null),
+                      ),
+                  controller: widget.fieldController,
+                  obscureText: _obscureText,
+                ),
               ),
             ),
           ),

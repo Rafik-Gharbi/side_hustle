@@ -1028,6 +1028,7 @@ exports.updateProfile = async (req, res) => {
       birthdate,
       gender,
       coordinates,
+      hasSharedPosition: coordinates != undefined,
       keepPrivacy,
       bankNumber,
       balance,

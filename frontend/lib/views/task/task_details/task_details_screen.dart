@@ -190,7 +190,7 @@ class TaskDetailsScreen extends StatelessWidget {
                             const SizedBox(width: Paddings.regular),
                             Text('${'price'.tr}:', style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
                             const SizedBox(width: Paddings.regular),
-                            Text('${Helper.formatAmount(task.price ?? 0)} ${MainAppController.find.currency.value}', style: AppFonts.x14Bold.copyWith(color: kNeutralColor)),
+                            Text('${Helper.formatAmount(task.price ?? 0)} ${task.priceMax != null ? '- ${Helper.formatAmount(task.priceMax!)} ' : ''}${MainAppController.find.currency.value}', style: AppFonts.x14Bold.copyWith(color: kNeutralColor)),
                           ],
                         ),
                         const SizedBox(height: Paddings.regular),

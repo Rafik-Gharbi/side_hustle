@@ -6,8 +6,8 @@ import '../constants/constants.dart';
 import '../constants/sizes.dart';
 import '../helpers/buildables.dart';
 import '../models/category.dart';
-import '../models/filter_model.dart';
 import '../services/theme/theme.dart';
+import '../views/home/home_controller.dart';
 import '../views/task/task_list/task_list_screen.dart';
 
 class CategoryCard extends StatelessWidget {
@@ -21,7 +21,7 @@ class CategoryCard extends StatelessWidget {
       borderRadius: smallRadius,
       child: InkWell(
         splashColor: kPrimaryColor.withOpacity(0.5),
-        onTap: () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: FilterModel(category: category))),
+        onTap: () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: HomeController.find.filterModel.copyWith(category: category))),
         child: DecoratedBox(
           decoration: BoxDecoration(borderRadius: smallRadius, color: kNeutralLightColor.withOpacity(0.6)),
           child: SizedBox(

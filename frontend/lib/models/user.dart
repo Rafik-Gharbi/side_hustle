@@ -86,6 +86,7 @@ class User {
   });
 
   int get totalCoins => availableCoins + availablePurchasedCoins;
+  bool get isProfileCompleted => email != null && name != null && phone != null && birthdate != null && (isMailVerified ?? false) && governorate != null;
 
   factory User.fromToken(Map<String, dynamic> payload) => User(
         id: payload['id'],
@@ -94,6 +95,7 @@ class User {
         baseCoins: payload['coins'],
         availableCoins: payload['availableCoins'],
         availablePurchasedCoins: payload['availablePurchasedCoins'],
+        hasSharedPosition: payload['hasSharedPosition'],
         referralCode: payload['referral_code'],
         isMailVerified: payload['isMailVerified'],
         isVerified: VerifyIdentityStatus.fromString(payload['isVerified']),

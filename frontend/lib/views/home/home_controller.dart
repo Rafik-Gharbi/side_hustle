@@ -45,12 +45,14 @@ class HomeController extends GetxController {
     switch (_filterModel.searchMode) {
       case SearchMode.national:
         _filterModel.governorate = MainAppController.find.getGovernorateById(1);
-        SharedPreferencesService.find.add(governorateKey, _filterModel.governorate.toString());
+        SharedPreferencesService.find.add(governorateKey, _filterModel.governorate!.id.toString());
         break;
       case SearchMode.regional:
-        _filterModel.governorate = AuthenticationService.find.jwtUserData?.governorate;
+        Governorate? savedGovernorate = MainAppController.find.getGovernorateById(int.tryParse(SharedPreferencesService.find.get(governorateKey) ?? ''));
+        if (savedGovernorate?.id == 1) savedGovernorate = null;
+        _filterModel.governorate = savedGovernorate ?? AuthenticationService.find.jwtUserData?.governorate;
         if (_filterModel.governorate != null) {
-          SharedPreferencesService.find.add(governorateKey, _filterModel.governorate.toString());
+          SharedPreferencesService.find.add(governorateKey, _filterModel.governorate!.id.toString());
         }
         break;
       default:
@@ -63,8 +65,10 @@ class HomeController extends GetxController {
     _filterModel.governorate = value;
     if (_filterModel.governorate?.id == 1) {
       _filterModel.searchMode = SearchMode.national;
+      SharedPreferencesService.find.add(searchModeKey, _filterModel.searchMode!.name);
     } else if (_filterModel.searchMode != SearchMode.regional) {
       _filterModel.searchMode = SearchMode.regional;
+      SharedPreferencesService.find.add(searchModeKey, _filterModel.searchMode!.name);
     }
     SharedPreferencesService.find.add(governorateKey, value!.id.toString());
     fetchHomeTasks();
@@ -86,10 +90,9 @@ class HomeController extends GetxController {
   Future<void> init() async {
     Helper.waitAndExecute(() => MainAppController.find.isReady, () async {
       // TODO adapt user preferences if selected most searched categories and fix this below by getting true popular categories from BE
-      mostPopularCategories = MainAppController.find.categories.getRange(10, 14).toList();
+      mostPopularCategories = MainAppController.find.categories.where((element) => element.parentId == -1).toList().getRange(10, 14).toList();
       final savedGovernorate = MainAppController.find.getGovernorateById(int.tryParse(SharedPreferencesService.find.get(governorateKey) ?? ''));
-      final savedSearchMode =
-          SearchMode.values.cast<SearchMode?>().singleWhere((element) => element?.name == SharedPreferencesService.find.get(governorateKey), orElse: () => null);
+      final savedSearchMode = SearchMode.values.cast<SearchMode?>().singleWhere((element) => element?.name == SharedPreferencesService.find.get(searchModeKey), orElse: () => null);
       _filterModel.governorate = savedGovernorate ?? AuthenticationService.find.jwtUserData?.governorate;
       _filterModel.searchMode = savedSearchMode ??
           (AuthenticationService.find.jwtUserData?.coordinates != null

@@ -145,11 +145,12 @@ class HomeScreen extends StatelessWidget {
                                       shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
                                       title: Text(
                                         SearchMode.nearby.name.tr,
-                                        style: AppFonts.x14Bold.copyWith(color: AuthenticationService.find.jwtUserData?.coordinates != null ? kBlackColor : kDisabledColor),
+                                        style:
+                                            AppFonts.x14Bold.copyWith(color: (AuthenticationService.find.jwtUserData?.hasSharedPosition ?? false) ? kBlackColor : kDisabledColor),
                                       ),
                                       onTap: () {
                                         Helper.goBack();
-                                        if (AuthenticationService.find.jwtUserData?.coordinates == null) {
+                                        if (!(AuthenticationService.find.jwtUserData?.hasSharedPosition ?? false)) {
                                           Helper.snackBar(message: 'share_your_location'.tr);
                                           return;
                                         }
@@ -322,7 +323,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
                           ],
-                          if (AuthenticationService.find.isUserLoggedIn.value && AuthenticationService.find.jwtUserData?.coordinates == null)
+                          if (AuthenticationService.find.isUserLoggedIn.value && !(AuthenticationService.find.jwtUserData?.hasSharedPosition ?? false))
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: Paddings.large),
                               child: DecoratedBox(
@@ -365,22 +366,30 @@ class HomeScreen extends StatelessWidget {
                             if (SharedPreferencesService.find.isReady.value)
                               Buildables.buildTitle(
                                 '${'new_tasks'.tr} ${'nearby'.tr}',
-                                onSeeMore: () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: controller.filterModel)),
+                                onSeeMore: controller.nearbyTasks.isEmpty
+                                    ? null
+                                    : () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: controller.filterModel)),
                               ),
                             LoadingCardEffect(
                               isLoading: controller.isLoading,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: controller.nearbyTasks.length,
-                                itemBuilder: (context, index) => Padding(
-                                  padding: const EdgeInsets.only(bottom: Paddings.small),
-                                  child: TaskCard(task: controller.nearbyTasks[index]),
-                                ),
-                              ),
+                              child: controller.nearbyTasks.isEmpty
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
+                                      child: Text('no_nearby_tasks_check_city_tasks'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                                    )
+                                  : ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      itemCount: controller.nearbyTasks.length,
+                                      itemBuilder: (context, index) => Padding(
+                                        padding: const EdgeInsets.only(bottom: Paddings.small),
+                                        child: TaskCard(task: controller.nearbyTasks[index]),
+                                      ),
+                                    ),
                             ),
                             const SizedBox(height: Paddings.large),
-                          ] else ...[
+                          ],
+                          if (controller.filterModel.searchMode != SearchMode.nearby || controller.nearbyTasks.isEmpty) ...[
                             if (SharedPreferencesService.find.isReady.value)
                               Buildables.buildTitle(
                                 '',

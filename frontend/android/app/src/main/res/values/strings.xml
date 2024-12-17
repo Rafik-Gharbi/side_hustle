@@ -2,6 +2,6 @@
 <resources>
     <string name="facebook_app_id">1538434026745544</string>
     <string name="facebook_client_token">c6fc56124c6e75f6b682bcc3231445bd</string>
-    <string name="app_name">Ekhdemli</string>
+    <string name="app_name">Dootify</string>
     <string name="fb_login_protocol_scheme">fb1538434026745544</string>
 </resources>

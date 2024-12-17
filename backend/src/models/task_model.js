@@ -14,6 +14,7 @@ const Task = sequelize.define(
     title: { type: Sequelize.STRING, allowNull: false },
     description: { type: Sequelize.STRING, allowNull: false },
     price: { type: Sequelize.FLOAT, allowNull: false },
+    priceMax: { type: Sequelize.FLOAT, allowNull: true },
     deducted_coins: { type: Sequelize.INTEGER, allowNull: false },
     delivrables: { type: Sequelize.STRING, allowNull: true },
     coordinates: { type: Sequelize.STRING, allowNull: true },
