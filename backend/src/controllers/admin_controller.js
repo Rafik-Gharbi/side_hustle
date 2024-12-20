@@ -139,8 +139,8 @@ async function approveUser(userId) {
 
     notificationService.sendNotification(
       userApprove.id,
-      "Successfully Approved",
-      "Your profile has been approved.",
+      "notifications.approved_success",
+      "notifications.profile_approved",
       NotificationType.VERIFICATION,
       { userId: userApprove.id, Approved: true }
     );
@@ -149,16 +149,16 @@ async function approveUser(userId) {
       if (isReferrerRewarded)
         notificationService.sendNotification(
           referral.referrer_id,
-          "🎉 You Earned a Referral Reward!",
-          "Your friend joined Dootify! You've earned more base coins. Thanks for helping grow our community!",
+          "notifications.earned_referral_reward",
+          "notifications.earned_referral_reward_msg_referrer",
           NotificationType.REWARDS,
           { baseCoins: referrer.coins }
         );
       // For referee
       notificationService.sendNotification(
         userApprove.id,
-        "🎉 You Earned a Referral Reward!",
-        "Your referral reward has been credited to your account. Keep referring and keep earning!",
+        "notifications.earned_referral_reward",
+        "notifications.earned_referral_reward_msg_referee",
         NotificationType.REWARDS,
         { coinPack: coinPack.title }
       );
@@ -193,8 +193,8 @@ async function userNotApprovable(userId) {
 
     notificationService.sendNotification(
       userApprove.id,
-      "Failed to Approve",
-      "Your profile hasn't been approved. Probably your profile is missing some needed data or your provided documents weren't acceptable.",
+      "notifications.approve_failed",
+      "notifications.approve_failed_msg",
       NotificationType.VERIFICATION,
       { userId: userApprove.id, Approved: false }
     );
@@ -521,10 +521,7 @@ async function getReferralStatsData() {
 async function getContractStatsData() {
   try {
     const contracts = await Contract.findAll({
-      include: [
-        { model: Task, as: "task" },
-        { model: Service, as: "service" },
-      ],
+      include: [{ model: Reservation, as: "reservation" }],
     });
 
     return contracts;
@@ -783,16 +780,16 @@ async function updateStatus(id, status) {
       transactionUser.save();
       notificationService.sendNotification(
         transactionUser.id,
-        "Balance Update",
-        "Your deposit has been accepted.",
+        "notifications.balance_update",
+        "notifications.deposit_accepted",
         NotificationType.BALANCE,
         {}
       );
     } else if (status === "failed") {
       notificationService.sendNotification(
         transactionUser.id,
-        "Deposit Failed",
-        "Your deposit has been failed.",
+        "notifications.deposit_failed",
+        "notifications.deposit_failed_msg",
         NotificationType.BALANCE,
         {
           /* TODO add reasons */

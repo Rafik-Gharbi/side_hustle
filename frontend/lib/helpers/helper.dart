@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -483,6 +484,14 @@ class Helper {
     } catch (e) {
       LoggerService.logger?.e('Error occured in pickFiles:\n$e');
       return null;
+    }
+  }
+
+  static String formatNumber(String number) {
+    try {
+      return formatNumberSync(number);
+    } catch (e) {
+      return number;
     }
   }
 }

@@ -226,7 +226,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                             titleStyle: AppFonts.x14Regular,
                                             icon: const Icon(Icons.chat_outlined),
                                             width: Get.width - 40,
-                                            onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: controller.confirmedTaskUser.value),
+                                            onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: controller.reservation),
                                           ),
                                           const SizedBox(height: Paddings.regular),
                                           CustomButtons.elevatePrimary(
@@ -278,7 +278,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                           CustomButtons.text(
                                             title: '${'chat_with'.tr} ${task.owner.name ?? 'user'.tr}',
                                             titleStyle: AppFonts.x14Regular,
-                                            onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: task.owner),
+                                            onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: controller.reservation),
                                           ),
                                         ],
                                       ),

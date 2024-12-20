@@ -145,6 +145,7 @@ class MainAppController extends GetxController {
 
   void changeLanguage({Locale? lang}) {
     if (lang == null) return;
+    UserRepository.find.updateUserLanguage(lang.languageCode);
     _saveLanguagePreferences(lang);
     Get.updateLocale(lang);
   }

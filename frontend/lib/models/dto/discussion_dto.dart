@@ -1,12 +1,16 @@
+import '../reservation.dart';
+
 class DiscussionDTO {
-  final int? id;
+  int? id;
   final String? ownerName;
   final String? userName;
   final int? ownerId;
   final int? userId;
+  final Reservation? reservation;
   String? lastMessage;
   DateTime? lastMessageDate;
   int notSeen;
+
 
   DiscussionDTO({
     this.ownerName,
@@ -16,11 +20,13 @@ class DiscussionDTO {
     this.lastMessageDate,
     this.ownerId,
     this.userId,
+    this.reservation,
     this.notSeen = 0,
   });
 
   factory DiscussionDTO.fromJson(Map<String, dynamic> json) => DiscussionDTO(
         id: json['id'],
+        reservation: json['reservation'] != null ? Reservation.fromJson(json['reservation']) : null,
         ownerName: json['owner_name'],
         userName: json['user_name'],
         ownerId: json['owner_id'],

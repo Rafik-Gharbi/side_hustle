@@ -20,6 +20,7 @@ class ManageBalanceController extends GetxController {
   void onClose() {
     super.onClose();
     MainAppController.find.socket?.off('adminBalance');
+    MainAppController.find.socket?.off('adminBalanceStatus');
   }
 
   void _initSocket() {

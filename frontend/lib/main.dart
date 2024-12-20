@@ -74,6 +74,7 @@ import 'views/profile/admin_dashboard/components/stats_screen/task_stats/task_st
 import 'views/profile/admin_dashboard/components/stats_screen/task_stats/task_stats_screen.dart';
 import 'views/profile/admin_dashboard/components/stats_screen/user_stats/user_stats_controller.dart';
 import 'views/profile/admin_dashboard/components/stats_screen/user_stats/user_stats_screen.dart';
+import 'views/splash/splash_screen.dart';
 import 'views/support/components/ticket_details.dart';
 import 'views/profile/admin_dashboard/components/support_system/support_controller.dart';
 import 'views/profile/admin_dashboard/components/support_system/support_screen.dart';
@@ -235,9 +236,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         fallbackLocale: const Locale('en', 'US'),
         theme: AppFonts().basicTheme(),
         initialBinding: InitialBindings(),
-        initialRoute: HomeScreen.routeName,
+        initialRoute: SplashScreen.routeName,
         navigatorObservers: <NavigationHistoryObserver>[NavigationHistoryObserver()],
         getPages: [
+          GetPage(
+            name: SplashScreen.routeName,
+            page: () => const SplashScreen(),
+          ),
           GetPage(
             name: HomeScreen.routeName,
             page: () => const HomeScreen(),

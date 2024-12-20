@@ -70,6 +70,7 @@ class ContractPaymentDialog extends StatelessWidget {
               width: 150,
               disabled: !contract.isSigned,
               onPressed: () {
+                Helper.goBack();
                 Get.bottomSheet(
                   isScrollControlled: true,
                   Buildables.buildPaymentOptionsBottomsheet(
@@ -77,7 +78,6 @@ class ContractPaymentDialog extends StatelessWidget {
                     contractId: contract.id,
                     onSuccessPayment: () {
                       MainAppController.find.socket!.emit('payContract', {'contractId': contract.id, 'discussionId': discussionId});
-                      Helper.goBack();
                     },
                   ),
                 );

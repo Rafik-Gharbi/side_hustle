@@ -711,6 +711,11 @@ final Map<String, String> frFr = <String, String>{
   'regional': 'Régional',
   'national': 'National',
   'worldwide': 'Mondial',
+  'complete_profile_first': 'Veuillez compléter votre profil pour faire cela!',
+  'no_nearby_tasks_check_city_tasks': 'Oups! Nous n\'avons trouvé aucune tâche à proximité avec des détails de localisation. Essayez d\'explorer les tâches dans votre ville!',
+  'task_price_min': 'Prix minimum de la tâche',
+  'task_price_max': 'Prix maximum de la tâche',
+  'payment_successful': 'Payé avec succès!',
   // Validation messages
   'max_value_is': 'La valeur maximale est @value !',
   'valid_for_x_days': 'Valide pour @days jours',

@@ -21,8 +21,8 @@ class NotificationModel {
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) => NotificationModel(
         id: json['id'].toString(),
-        title: json['title'],
-        body: json['body'],
+        title: json['title'] ?? '',
+        body: json['body'] ?? '',
         type: NotificationType.values.singleWhere((element) => element.name == json['type']),
         date: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
         seen: json['seen'] == 1,

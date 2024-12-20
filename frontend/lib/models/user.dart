@@ -56,6 +56,7 @@ class User {
   double balance;
   String? bankNumber;
   DateTime? createdAt;
+  String? language;
 
   User({
     this.id,
@@ -83,6 +84,7 @@ class User {
     this.availableCoins = 0,
     this.availablePurchasedCoins = 0,
     this.createdAt,
+    this.language,
   });
 
   int get totalCoins => availableCoins + availablePurchasedCoins;
@@ -91,6 +93,7 @@ class User {
   factory User.fromToken(Map<String, dynamic> payload) => User(
         id: payload['id'],
         name: payload['name'],
+        language: payload['language'],
         balance: Helper.resolveDouble(payload['balance'] ?? '0'),
         baseCoins: payload['coins'],
         availableCoins: payload['availableCoins'],
@@ -108,6 +111,7 @@ class User {
         id: json['id'],
         email: json['email'],
         name: json['name'],
+        language: json['language'],
         phone: json['phone_number'],
         password: json['password'],
         coordinates: json['coordinates'] != null ? (json['coordinates'] as String).fromString() : null,
@@ -137,6 +141,7 @@ class User {
     if (id != null) data['id'] = id;
     if (email != null) data['email'] = email?.toLowerCase();
     if (name != null) data['name'] = name;
+    if (language != null) data['language'] = language;
     if (password != null) data['password'] = password;
     if (bankNumber != null) data['bankNumber'] = bankNumber;
     if (phone != null) data['phoneNumber'] = phone;
@@ -172,6 +177,7 @@ class User {
     if (id != null) data['id'] = id;
     if (email != null) data['email'] = email;
     if (name != null) data['name'] = name;
+    if (language != null) data['language'] = language;
     if (phone != null) data['phone'] = phone;
     if (coordinates != null) data['coordinates'] = coordinates?.toCoordinatesString();
     if (governorate != null) data['governorate'] = governorate?.id;

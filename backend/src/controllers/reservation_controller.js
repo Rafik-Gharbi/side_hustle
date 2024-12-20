@@ -169,8 +169,8 @@ exports.addTaskReservation = async (req, res) => {
       {
         date,
         task_id: taskId,
-        provider_id: taskOwner.id,
-        user_id: userFound.id,
+        provider_id: userFound.id,
+        user_id: taskOwner.id,
         total_price: totalPrice,
         proposed_price: proposedPrice,
         coupon,
@@ -187,8 +187,8 @@ exports.addTaskReservation = async (req, res) => {
     // Step 4: Send notification to the task owner
     notificationService.sendNotification(
       foundTask.owner_id,
-      "You Have a New Proposal",
-      "Someone has submitted a proposal on your task, check it out!",
+      "notifications.new_proposal",
+      "notifications.new_proposal_on_your_task",
       NotificationType.RESERVATION,
       { reservationId: reservation.id, taskId: taskId, isOwner: true }
     );
@@ -363,8 +363,8 @@ exports.updateTaskReservationStatus = async (req, res) => {
           await reservation.save();
           await notificationService.sendNotification(
             reservation.user_id,
-            "Your Proposal Has Been Rejected",
-            "The task owner has rejected your proposal.",
+            "notifications.your_proposal_rejected",
+            "notifications.owner_rejected_your_proposal",
             NotificationType.RESERVATION,
             {
               reservationId: reservationFound.id,
@@ -394,8 +394,8 @@ exports.updateTaskReservationStatus = async (req, res) => {
         }
         notificationService.sendNotification(
           reservationFound.user_id,
-          "Your Proposal Has Been Confirmed",
-          "The task owner has confirmed your proposal, let's get to work!",
+          "notifications.your_proposal_confirmed",
+          "notifications.owner_confirmed_your_proposal",
           NotificationType.RESERVATION,
           {
             reservationId: reservationFound.id,
@@ -417,8 +417,8 @@ exports.updateTaskReservationStatus = async (req, res) => {
         }
         notificationService.sendNotification(
           reservationFound.user_id,
-          "Your Proposal Has Been Rejected",
-          "The task owner has rejected your proposal.",
+          "notifications.your_proposal_rejected",
+          "notifications.owner_rejected_your_proposal",
           NotificationType.RESERVATION,
           {
             reservationId: reservationFound.id,
@@ -440,8 +440,8 @@ exports.updateTaskReservationStatus = async (req, res) => {
           });
           notificationService.sendNotification(
             reservationFound.user_id,
-            "Your Task Has Been Finished",
-            "The task owner has confirmed your work, good job!",
+            "notifications.task_finished",
+            "notifications.task_owner_confirmed_work",
             NotificationType.RESERVATION,
             {
               reservationId: reservationFound.id,
@@ -495,12 +495,16 @@ exports.getServiceReservationDetails = async (req, res) => {
       let userFound = await User.findOne({
         where: { id: reservation.user_id },
       });
+      let providerFound = await User.findOne({
+        where: { id: reservation.provider_id },
+      });
       confirmedTaskUser = await User.findOne({
         where: { id: reservation.user_id },
       });
       reservation = {
         id: reservation.id,
         user: userFound,
+        provider: providerFound,
         date: reservation.createdAt,
         task: populatedTask,
         totalPrice: reservation.total_price,
@@ -648,8 +652,8 @@ exports.addServiceReservation = async (req, res) => {
       {
         date,
         service_id: serviceId,
-        user_id: userFound.id,
-        provider_id: storeOwner.id,
+        user_id: storeOwner.id,
+        provider_id: userFound.id,
         total_price: totalPrice,
         coupon,
         note,
@@ -674,8 +678,8 @@ exports.addServiceReservation = async (req, res) => {
     // Step 4: Send notification to the task owner
     notificationService.sendNotification(
       serviceStore.owner_id,
-      "You Have a New Reservation",
-      "Someone has booked a service in your store, check it out!",
+      "notifications.new_reservation",
+      "notifications.new_service_booked",
       NotificationType.BOOKING,
       { storeId: serviceStore.id, serviceId: foundService.id, isOwner: true }
     );
@@ -841,8 +845,8 @@ exports.updateServiceStatus = async (req, res) => {
         }
         notificationService.sendNotification(
           reservationFound.user_id,
-          "Your Reservation Has Been Confirmed",
-          "The service owner has confirmed your reservation.",
+          "notifications.reservation_confirmed",
+          "notifications.owner_confirmed_reservation",
           NotificationType.BOOKING,
           {
             reservationId: reservationFound.id,
@@ -864,8 +868,8 @@ exports.updateServiceStatus = async (req, res) => {
         }
         notificationService.sendNotification(
           reservationFound.user_id,
-          "Your Reservation Has Been Rejected",
-          "The service owner has rejected your reservation.",
+          "notifications.reservation_rejected",
+          "notifications.owner_rejected_reservation",
           NotificationType.BOOKING,
           {
             reservationId: reservationFound.id,
@@ -890,8 +894,8 @@ exports.updateServiceStatus = async (req, res) => {
           );
           notificationService.sendNotification(
             serviceOwner.id,
-            "Your Service Has Been Finished",
-            "The service seeker has finished the reservation. Good job!",
+            "notifications.service_finished",
+            "notifications.seeker_finished_reservation",
             NotificationType.BOOKING,
             {
               reservationId: reservationFound.id,

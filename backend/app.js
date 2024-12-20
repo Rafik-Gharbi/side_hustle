@@ -9,16 +9,17 @@ const bodyParser = require("body-parser");
 var cors = require("cors");
 const path = require("path");
 const fs = require("fs");
+const { sequelize } = require("./db.config");
+const multer = require("multer");
+const { i18n } = require("./i18n");
 
 // config
 dotenv.config();
 
 // const
 const app = express();
-// Connect to the database and synchronise models
-const { sequelize } = require("./db.config");
-const multer = require("multer");
 
+// Connect to the database and synchronise models
 sequelize
   .sync({ alter: true })
   .then(() => {
@@ -29,6 +30,10 @@ sequelize
   });
 
 // Middleware
+app.use(i18n.init);
+// app.use((_err, req, res, _next) => {
+//   i18n.init(req, res);
+// });
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));

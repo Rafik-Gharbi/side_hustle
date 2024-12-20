@@ -59,7 +59,8 @@ class NotificationsController extends GetxController {
         content: 'mark_notifications_read'.tr,
         onConfirm: () async {
           await NotificationRepository.find.markAsReadAllNotification(notifications: notificationList.where((element) => !element.seen).toList()).then((value) => _refreshScreen());
-          MainAppController.find.getNotSeenNotifications();
+          await MainAppController.find.getNotSeenNotifications();
+          _refreshScreen();
         },
       );
     }

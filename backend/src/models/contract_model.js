@@ -24,8 +24,6 @@ const Contract = sequelize.define(
   }
 );
 
-Contract.belongsTo(Service, { foreignKey: "service_id", allowNull: true });
-Contract.belongsTo(Task, { foreignKey: "task_id", allowNull: true });
 Contract.belongsTo(Reservation, { foreignKey: "reservation_id", allowNull: false });
 Contract.belongsTo(User, {
   as: "seeker",

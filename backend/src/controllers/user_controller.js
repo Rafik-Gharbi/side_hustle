@@ -328,6 +328,17 @@ exports.signUp = async (req, res) => {
       // await VerificationCode.create(verificationCode);
     }
 
+    // Send notification to the referee to verify his account for getting rewarded
+    if (referralCode) {
+      notificationService.sendNotification(
+        response.id,
+        "notifications.verify_account",
+        "notifications.verify_account_for_reward",
+        NotificationType.REWARDS,
+        {}
+      );
+    }
+
     // Return token
     return res.status(200).json({ token });
   } catch (error) {
@@ -1060,6 +1071,27 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
+exports.updateProfileLanguage = async (req, res) => {
+  const { lang } = req.body;
+  try {
+    const userFound = await User.findByPk(req.decoded.id);
+    if (!lang) {
+      return res.status(400).json({ message: "missing" });
+    }
+
+    const updatedUser = await userFound.update({
+      language: lang,
+    });
+    const jwt = await generateJWT(updatedUser);
+    return res.status(200).json({ jwt });
+  } catch (error) {
+    const errorMessage = error.errors?.[0].message || error.message;
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: errorMessage });
+  }
+};
+
 exports.updateCoordinates = async (req, res) => {
   const { coordinates } = req.body;
   try {
@@ -1114,8 +1146,8 @@ exports.verifyIdentity = async (req, res) => {
     const jwt = await generateJWT(userFound);
 
     notificationService.sendNotificationToAdmin(
-      "New User Verification",
-      "A new user has submitted his document, check them out.",
+      "notifications.new_user_verification",
+      "notifications.new_user_verification_msg",
       NotificationType.VERIFICATION,
       { userId: userFound.id, isAdmin: true }
     );
@@ -1283,10 +1315,11 @@ async function checkUnreviewed() {
           counter++;
           await notificationService.sendNotification(
             foundTask.owner_id,
-            "Please review your finished task",
-            `You have a finished task titled "${foundTask.title}" that hasn't been reviewed yet. Please leave a review for creating a more trustworthy community in our app.`,
+            "notifications.review_finished_task",
+            "notifications.review_finished_task_name",
             NotificationType.REVIEW,
-            { userId: reservation.user_id, taskId: reservation.task_id }
+            { userId: reservation.user_id, taskId: reservation.task_id },
+            (data = { taskTitle: foundTask.title })
           );
         }
       })
@@ -1311,10 +1344,11 @@ async function checkUnreviewed() {
           counter++;
           await notificationService.sendNotification(
             booking.user_id,
-            "Please review your finished service",
-            `You have a finished service titled "${foundService.title}" that hasn't been reviewed yet. Please leave a review for creating a more trustworthy community in our app.`,
+            "notifications.review_finished_service",
+            "notifications.review_finished_service_name",
             NotificationType.REVIEW,
-            { userId: foundService.owner_id, serviceId: booking.service_id }
+            { userId: foundService.owner_id, serviceId: booking.service_id },
+            (data = { serviceName: foundService.title })
           );
         }
       })

@@ -3875,9 +3875,8 @@ final class $$CategoryTableTableReferences
           $_aliasNameGenerator(db.categoryTable.parent, db.categoryTable.id));
 
   $$CategoryTableTableProcessedTableManager? get parent {
-    if ($_item.parent == null) return null;
     final manager = $$CategoryTableTableTableManager($_db, $_db.categoryTable)
-        .filter((f) => f.id($_item.parent!));
+        .filter((f) => f.id($_item.parent));
     final item = $_typedResult.readTableOrNull(_parentTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
@@ -4677,10 +4676,9 @@ final class $$UserTableTableReferences
           db.userTable.governorate, db.governorateTable.id));
 
   $$GovernorateTableTableProcessedTableManager? get governorate {
-    if ($_item.governorate == null) return null;
     final manager =
         $$GovernorateTableTableTableManager($_db, $_db.governorateTable)
-            .filter((f) => f.id($_item.governorate!));
+            .filter((f) => f.id($_item.governorate));
     final item = $_typedResult.readTableOrNull(_governorateTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
@@ -5275,9 +5273,8 @@ final class $$TaskTableTableReferences
           $_aliasNameGenerator(db.taskTable.category, db.categoryTable.id));
 
   $$CategoryTableTableProcessedTableManager? get category {
-    if ($_item.category == null) return null;
     final manager = $$CategoryTableTableTableManager($_db, $_db.categoryTable)
-        .filter((f) => f.id($_item.category!));
+        .filter((f) => f.id($_item.category));
     final item = $_typedResult.readTableOrNull(_categoryTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(

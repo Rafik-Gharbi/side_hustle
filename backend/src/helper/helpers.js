@@ -402,6 +402,7 @@ async function generateJWT(response, isRefresh) {
       id: response.id,
       picture: response.picture,
       name: response.name,
+      language: response.language,
       role: response.role,
       balance: response.balance,
       coins: response.coins,
@@ -702,8 +703,8 @@ async function checkReferralActiveUserRewards(userId) {
         referrer.save();
         notificationService.sendNotification(
           referrer.id,
-          "🎉 You Earned a Referral Reward!",
-          "Your friend completed their first transaction! You've earned more base coins. Keep referring and keep earning!",
+          "notifications.earned_referral_reward",
+          "notifications.earned_referral_reward_first_transaction_msg",
           NotificationType.REWARDS,
           { baseCoins: referrer.coins }
         );

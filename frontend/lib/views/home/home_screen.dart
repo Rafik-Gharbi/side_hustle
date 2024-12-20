@@ -195,6 +195,7 @@ class HomeScreen extends StatelessWidget {
                           Expanded(
                             child: CustomTextField(
                               hintText: 'search_tasks'.tr,
+                              enableFloatingLabel: false,
                               fillColor: kNeutralLightOpacityColor,
                               fieldController: controller.searchController,
                               onChanged: (_) => Helper.onSearchDebounce(controller.searchTask),
@@ -204,6 +205,7 @@ class HomeScreen extends StatelessWidget {
                           CustomButtons.iconWithBackground(
                             icon: const Icon(Icons.filter_alt_outlined, color: kBlackColor),
                             buttonColor: kNeutralLightOpacityColor,
+                            height: 48,
                             onPressed: () => Get.dialog(
                               MoreFiltersPopup(
                                 updateFilter: (filter) => controller.filterModel = filter,
@@ -236,7 +238,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       LoadingCardEffect(
                         isLoading: controller.isLoading,
-                        isRowCards: true,
+                        type: LoadingCardEffectType.category,
                         child: Row(
                           children: List.generate(
                             controller.mostPopularCategories.length,
@@ -312,6 +314,7 @@ class HomeScreen extends StatelessWidget {
                             ),
                             LoadingCardEffect(
                               isLoading: controller.isLoading,
+                              type: LoadingCardEffectType.task,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
@@ -372,6 +375,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                             LoadingCardEffect(
                               isLoading: controller.isLoading,
+                              type: LoadingCardEffectType.task,
                               child: controller.nearbyTasks.isEmpty
                                   ? Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: Paddings.large),
@@ -398,6 +402,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                             LoadingCardEffect(
                               isLoading: controller.isLoading,
+                              type: LoadingCardEffectType.task,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),

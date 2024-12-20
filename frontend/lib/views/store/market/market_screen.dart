@@ -13,7 +13,6 @@ import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_card_effect.dart';
-import '../../../widgets/loading_stores_effect.dart';
 import '../../../widgets/service_card.dart';
 import '../../../widgets/store_card.dart';
 import '../../task/task_filter/more_filters_popup.dart';
@@ -71,8 +70,9 @@ class MarketScreen extends StatelessWidget {
                     ),
                   )
                 : null,
-            body: LoadingStoresEffect(
+            body: LoadingCardEffect(
               isLoading: controller.isLoading,
+              type: LoadingCardEffectType.store,
               child: controller.filteredStoreList.isEmpty
                   ? Center(child: Text('found_nothing'.tr, style: AppFonts.x14Regular))
                   : SingleChildScrollView(
@@ -85,6 +85,7 @@ class MarketScreen extends StatelessWidget {
                               Buildables.buildTitle('hot_services'.tr),
                               LoadingCardEffect(
                                 isLoading: controller.isLoading,
+                                type: LoadingCardEffectType.task,
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),

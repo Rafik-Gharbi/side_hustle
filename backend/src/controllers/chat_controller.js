@@ -10,6 +10,7 @@ const {
 } = require("../sql/sql_request");
 const { Task } = require("../models/task_model");
 const { Service } = require("../models/service_model");
+const { Chat } = require("../models/chat_model");
 
 exports.getUserDiscussions = async (req, res) => {
   const searchText = req.query.searchText;
@@ -18,26 +19,24 @@ exports.getUserDiscussions = async (req, res) => {
   try {
     let queryDiscussion = `
       SELECT
-        discussion.*,
-        chat.message,
-        chat.seen,
-        chat.createdAt,
-        chat.sender_id,
-        chat.reciever_id,
-        chat.discussion_id
+      discussion.*,
+      chat.message,
+      chat.seen,
+      chat.createdAt,
+      chat.sender_id,
+      chat.reciever_id,
+      chat.discussion_id,
+      task.title AS task_title,
+      service.name AS service_name,
+      user.name AS user_name
       FROM discussion
-      LEFT JOIN(
-          SELECT c1.*
-          FROM chat c1
-          INNER JOIN(
-              SELECT discussion_id, MAX(createdAt) AS latestMessage
-              FROM chat
-              GROUP BY discussion_id
-          ) c2
-      ON c1.discussion_id = c2.discussion_id AND c1.createdAt = c2.latestMessage) chat
-      ON discussion.id = chat.discussion_id
-      WHERE discussion.owner_id = :connectedUserId OR discussion.user_id = :connectedUserId
-      ${searchText ? "AND chat.message LIKE :searchText" : ""}
+      ${searchText ? "LEFT JOIN chat ON discussion.id = chat.discussion_id" : "LEFT JOIN( SELECT c1.*  FROM chat c1 INNER JOIN( SELECT discussion_id, MAX(createdAt) AS latestMessage FROM chat GROUP BY discussion_id  ) c2 ON c1.discussion_id = c2.discussion_id AND c1.createdAt = c2.latestMessage) chat ON discussion.id = chat.discussion_id"}
+      LEFT JOIN reservation ON discussion.reservation_id = reservation.id
+      LEFT JOIN task ON reservation.task_id = task.id
+      LEFT JOIN service ON reservation.service_id = service.id
+      LEFT JOIN user ON (discussion.owner_id = user.id OR discussion.user_id = user.id)
+      WHERE (discussion.owner_id = :connectedUserId OR discussion.user_id = :connectedUserId)
+      ${searchText ? "AND (LOWER(chat.message) LIKE LOWER(:searchText) OR LOWER(task.title) LIKE LOWER(:searchText) OR LOWER(service.name) LIKE LOWER(:searchText) OR LOWER(user.name) LIKE LOWER(:searchText))" : ""}
       GROUP BY discussion.id
       ORDER BY chat.createdAt ASC;
     `;
@@ -61,6 +60,25 @@ exports.getUserDiscussions = async (req, res) => {
         userId = discussion.user_id;
         ownerId = discussion.owner_id;
         const notSeen = await getNotSeenMessages(discussion.id, connected);
+        const reservation = await Reservation.findOne({
+          where: { id: discussion.reservation_id },
+          include: [
+            { model: User, as: "user" },
+            { model: User, as: "provider" },
+            { model: Task, as: "task", include: [{ model: User, as: "user" }] },
+            { model: Service, as: "service" },
+          ],
+        });
+        if (searchText && !discussion.message.includes(searchText)) {
+          const latestChat = await Chat.findOne({
+            where: { discussion_id: discussion.id },
+            order: [['createdAt', 'DESC']],
+          });
+          if (latestChat) {
+            discussion.message = latestChat.message;
+            discussion.createdAt = latestChat.createdAt;
+          }
+        }
         return {
           id: discussion.id,
           last_message_date: discussion.createdAt,
@@ -71,6 +89,7 @@ exports.getUserDiscussions = async (req, res) => {
           user_name: userFound.name,
           sender_id: discussion.sender_id,
           notSeen: notSeen ? notSeen : 0,
+          reservation,
         };
       })
     );

@@ -416,8 +416,8 @@ class AuthenticationService extends GetxController {
         _isLoggingIn = true;
       }
       // init chat messages standBy room
+      _initChatStandByRoom();
       if (!silent) {
-        _initChatStandByRoom();
         if (Get.currentRoute == ProfileScreen.routeName) ProfileController.find.init();
         if ((Get.isDialogOpen ?? false) || (Get.isBottomSheetOpen ?? false)) Helper.goBack();
       }
@@ -542,6 +542,7 @@ class AuthenticationService extends GetxController {
         Helper.showNotification(notification);
       } else if (Get.currentRoute == ChatScreen.routeName || Get.currentRoute == MessagesScreen.routeName) {
         ChatController.find.getUserChatHistory();
+        if (Get.currentRoute == MessagesScreen.routeName) ChatController.find.joinRoom(discussionId: data['discussion_id']);
       }
       MainAppController.find.getNotSeenNotifications();
       return MainAppController.find.getNotSeenMessages();

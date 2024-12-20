@@ -703,6 +703,11 @@ final Map<String, String> arTN = <String, String>{
   'regional': 'إقليمي',
   'national': 'وطني',
   'worldwide': 'عالمي',
+  'complete_profile_first': 'يرجى إكمال ملفك الشخصي للقيام بهذا!',
+  'no_nearby_tasks_check_city_tasks': 'عذرًا! لم نتمكن من العثور على أي مهام قريبة تحتوي على تفاصيل الموقع. حاول استكشاف المهام في مدينتك!',
+  'task_price_min': 'الحد الأدنى لسعر المهمة',
+  'task_price_max': 'الحد الأقصى لسعر المهمة',
+  'payment_successful': 'تم الدفع بنجاح!',
   // Validation messages
   'valid_for_x_days': 'متاح ل@days أيام',
   'max_value_is': 'القيمة القصوى هي @value!',

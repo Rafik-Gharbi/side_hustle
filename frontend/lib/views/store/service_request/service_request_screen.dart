@@ -43,6 +43,7 @@ class ServiceRequestScreen extends StatelessWidget {
                           onClosed: (data) => data != null && data ? Future.delayed(const Duration(milliseconds: 600), () => controller.init()) : null,
                           openBuilder: (_, __) => UserProfileScreen(
                             user: reservation.user,
+                            reservation: reservation,
                             requestStatus: reservation.status,
                             isService: true,
                             onAccept: () => controller.acceptProposal(reservation),

@@ -2,6 +2,9 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../views/chat/chat_controller.dart';
+import '../views/chat/chat_screen.dart';
+import '../views/chat/components/messages_screen.dart';
 import '../views/home/home_screen.dart';
 
 import '../../services/shared_preferences.dart';
@@ -38,6 +41,7 @@ class NavigationHistoryObserver extends NavigatorObserver {
   @override
   Future<void> didPush(Route<dynamic> route, Route<dynamic>? previousRoute) async {
     // clear & initialize history when on home screen
+    _checkChatLoadingStatus(route, previousRoute);
     if (route.settings.name == HomeScreen.routeName) {
       history.clear();
       history.add(_createRouteFromName(HomeScreen.routeName));
@@ -128,7 +132,6 @@ class NavigationHistoryObserver extends NavigatorObserver {
     } else {
       _removeLastHistory();
       Get.back();
-      // Get.toNamed(history.last?.settings.name ?? HomeScreen.routeName);
     }
   }
 
@@ -144,6 +147,7 @@ class NavigationHistoryObserver extends NavigatorObserver {
     _currentRoute = newRoute;
     if (history.any((element) => element?.settings.name == newRoute!.settings.name) && history.last?.settings.name != newRoute!.settings.name) {
       _removeLastHistory(untilRouteName: newRoute.settings.name);
+      history.add(newRoute);
     } else if (history.isNotEmpty && newRoute!.settings.name != history.last?.settings.name || history.isEmpty) {
       history.add(newRoute);
     }
@@ -165,4 +169,11 @@ class NavigationHistoryObserver extends NavigatorObserver {
   Map<String, String> routesDictionary = {
     '0': HomeScreen.routeName,
   };
+
+  void _checkChatLoadingStatus(Route route, Route? previousRoute) {
+    if ((route.settings.name != ChatScreen.routeName || route.settings.name != MessagesScreen.routeName) &&
+        (previousRoute?.settings.name == ChatScreen.routeName || previousRoute?.settings.name == MessagesScreen.routeName)) {
+      ChatController.find.isLoading.value = true;
+    }
+  }
 }

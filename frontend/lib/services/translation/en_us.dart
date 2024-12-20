@@ -708,6 +708,7 @@ final Map<String, String> enUs = <String, String>{
   'no_nearby_tasks_check_city_tasks': 'Oops! We couldn\'t find any tasks nearby with location details. Try exploring tasks in your city!',
   'task_price_min': 'Task price min',
   'task_price_max': 'Task price max',
+  'payment_successful': 'Payed successfully!',
   // Validation messages
   'max_value_is': 'Max value is @value !',
   'valid_for_x_days': 'Valid for @days days',

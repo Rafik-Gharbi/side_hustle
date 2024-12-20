@@ -218,7 +218,7 @@ const getUserSupportRequiredActionsCount = async () => {
   return tickets.length;
 };
 
-async function fetchUserBooking(userId) {
+async function fetchUserBooking(userId, status = undefined) {
   let userFound = await User.findByPk(userId);
   if (!userFound) {
     return res.status(404).json({ message: "user_not_found" });
@@ -227,7 +227,8 @@ async function fetchUserBooking(userId) {
   // Check user service bookings
   let bookingList = await Reservation.findAll({
     where: {
-      user_id: userFound.id,
+      [Op.or]: [{ user_id: userFound.id }, { provider_id: userFound.id }],
+      status: status ?? "pending",
       service_id: { [Op.ne]: null },
     },
   });
@@ -260,117 +261,7 @@ async function fetchUserBooking(userId) {
   return formattedList;
 }
 
-async function fetchUserOngoingBooking(userId) {
-  let userFound = await User.findByPk(userId);
-  if (!userFound) {
-    return res.status(404).json({ message: "user_not_found" });
-  }
-
-  // Check user store service bookings
-  let formattedList = [];
-  const userStore = await Store.findOne({ where: { owner_id: userId } });
-  if (userStore) {
-    const storeServices = await Service.findAll({
-      where: { store_id: userStore.id },
-    });
-    if (storeServices.length > 0) {
-      await Promise.all(
-        storeServices.map(async (service) => {
-          let bookingList = await Reservation.findAll({
-            where: {
-              [Op.or]: [{ status: "pending" }, { status: "confirmed" }],
-              service_id: service.id,
-            },
-          });
-          if (bookingList.length > 0) {
-            formattedList = await Promise.all(
-              bookingList.map(async (row) => {
-                let populatedService = await populateOneService(
-                  service,
-                  userFound.id
-                );
-                let serviceAttachments = await ServiceGalleryModel.findAll({
-                  where: { service_id: row.service_id },
-                });
-                const providerFound = await User.findOne({
-                  where: { id: row.provider_id },
-                });
-
-                return {
-                  id: row.id,
-                  user: userFound,
-                  date: row.createdAt,
-                  service: populatedService,
-                  totalPrice: row.total_price,
-                  coupon: row.coupon,
-                  note: row.note,
-                  status: row.status,
-                  serviceAttachments,
-                  provider: providerFound,
-                };
-              })
-            );
-          }
-        })
-      );
-    }
-  }
-  return formattedList;
-}
-
-async function fetchUserOngoingReservation(userId) {
-  let userFound = await User.findByPk(userId);
-  if (!userFound) {
-    return res.status(404).json({ message: "user_not_found" });
-  }
-
-  let formattedList = [];
-  const userTasks = await Task.findAll({ where: { owner_id: userId } });
-  if (userTasks.length > 0) {
-    await Promise.all(
-      userTasks.map(async (task) => {
-        let reservationList = await Reservation.findAll({
-          where: {
-            [Op.or]: [{ status: "pending" }, { status: "confirmed" }],
-            task_id: task.id,
-          },
-        });
-        if (reservationList.length > 0) {
-          formattedList = await Promise.all(
-            reservationList.map(async (row) => {
-              let foundTask = await Task.findByPk(row.task_id);
-              let task = await populateOneTask(foundTask, userFound.id);
-              let taskAttachments = await TaskAttachmentModel.findAll({
-                where: { task_id: row.task_id },
-              });
-              const providerFound = await User.findOne({
-                where: { id: row.provider_id },
-              });
-
-              return {
-                id: row.id,
-                user: userFound,
-                date: row.createdAt,
-                task: task,
-                totalPrice: row.total_price,
-                proposedPrice: row.proposed_price,
-                coupon: row.coupon,
-                note: row.note,
-                status: row.status,
-                provider: providerFound,
-                taskAttachments,
-              };
-            })
-          );
-        }
-      })
-    );
-  }
-
-  return formattedList;
-}
-
-async function fetchUserReservation(userId) {
+async function fetchUserReservation(userId, status = undefined) {
   let userFound = await User.findByPk(userId);
   if (!userFound) {
     return res.status(404).json({ message: "user_not_found" });
@@ -378,7 +269,8 @@ async function fetchUserReservation(userId) {
 
   let reservationList = await Reservation.findAll({
     where: {
-      user_id: userFound.id,
+      [Op.or]: [{ user_id: userFound.id }, { provider_id: userFound.id }],
+      status: status ?? "pending",
       task_id: { [Op.ne]: null },
     },
   });
@@ -525,7 +417,7 @@ async function fetchAndSortNearbyTasks(
   });
 
   // Filter tasks with distance less than 100 kilometers (100,000 meters)
-  const filteredTasks = tasks.filter(task => task.distance < 100000);
+  const filteredTasks = tasks.filter((task) => task.distance < 100000);
   // Shuffle the tasks array
   shuffleArray(filteredTasks);
   // Apply limit and offset to the shuffled array
@@ -1065,13 +957,14 @@ function populateContract(contractId) {
         attributes: ["id", "name"],
       },
       {
-        model: Task,
-        as: "task",
-        include: [{ model: User, as: "user" }],
-      },
-      {
-        model: Service,
-        as: "service",
+        model: Reservation,
+        as: "reservation",
+        include: [
+          { model: User, as: "user" },
+          { model: User, as: "provider" },
+          { model: Task, as: "task" },
+          { model: Service, as: "service" },
+        ],
       },
     ],
   });
@@ -1103,8 +996,6 @@ module.exports = {
   populateServices,
   populateOneService,
   fetchUserBooking,
-  fetchUserOngoingBooking,
-  fetchUserOngoingReservation,
   getRandomHotTasks,
   populateContract,
   getBalanceTransactionsRequiredActionsCount,

@@ -52,8 +52,9 @@ class ChatController extends GetxController {
   bool endLoadBefore = false;
   bool endLoadAfter = false;
   bool isLoadingMoreChat = false;
-  List<Task> currentTasks = [];
-  List<Service> currentServices = [];
+  List<Reservation>? userOngoingReservations = [];
+  Task? currentTask;
+  Service? currentService;
   bool hasOngoingReservation = false;
   RxBool openSearchBar = false.obs;
   RxBool openMessagesSearchBar = false.obs;
@@ -74,7 +75,8 @@ class ChatController extends GetxController {
     // Join the chat room when selecting a discussion
     if (selectedChatBubble != null) {
       if (Get.currentRoute != MessagesScreen.routeName) Get.toNamed(MessagesScreen.routeName);
-      _joinRoom();
+      currentReservation = selectedChatBubble!.reservation;
+      joinRoom();
     }
   }
 
@@ -96,11 +98,10 @@ class ChatController extends GetxController {
     initSocket();
     userChatPropertiesOriginal = await getUserChatHistory();
     userChatPropertiesFiltered = List.of(userChatPropertiesOriginal);
-    if (Get.arguments != null && Get.arguments is User) {
-      selectedChatBubble = userChatPropertiesOriginal.cast<DiscussionDTO?>().singleWhere(
-          (element) => element?.userId == Get.arguments.id && element!.ownerId == loggedInUser!.id || element!.userId == loggedInUser!.id && element.ownerId == Get.arguments.id,
-          orElse: () => null);
-      selectedChatBubble ??= DiscussionDTO(id: -1, ownerId: loggedInUser!.id, ownerName: loggedInUser!.name, userId: Get.arguments.id, userName: Get.arguments.name);
+    if (Get.arguments != null && Get.arguments is Reservation) {
+      selectedChatBubble = _getSelectedDiscussionFromUserBubbles(Get.arguments.id);
+      selectedChatBubble ??= DiscussionDTO(
+          id: -1, ownerId: loggedInUser!.id, ownerName: loggedInUser!.name, userId: Get.arguments.provider.id, userName: Get.arguments.provider.name, reservation: Get.arguments);
     }
     isLoading.value = false;
     update();
@@ -118,31 +119,29 @@ class ChatController extends GetxController {
 
   Future<List<DiscussionDTO>> getUserChatHistory({String? search}) async {
     return await Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () async {
-      final (result, ongoingReservations) = await ChatRepository.find.getUserDiscussions(search: search);
-      if (Get.arguments != null && Get.arguments is String) {
-        selectedChatBubble =
-            userChatPropertiesOriginal.cast<DiscussionDTO?>().singleWhere((element) => element?.userId == Get.arguments || element?.ownerId == Get.arguments, orElse: () => null);
-        _joinRoom();
+      final (discussionList, ongoingReservations) = await ChatRepository.find.getUserDiscussions(search: search);
+      if (Get.arguments != null && Get.arguments is Reservation) {
+        currentReservation = Get.arguments;
+        selectedChatBubble = _getSelectedDiscussionFromUserBubbles(Get.arguments.id);
+        joinRoom();
       }
       hasOngoingReservation = (ongoingReservations?.isNotEmpty ?? false);
-      // TODO fix this if there are more than one ongoing reservation the seeker needs to choose one
-      currentReservation = hasOngoingReservation ? ongoingReservations?.first : null;
-      currentTasks = hasOngoingReservation ? ongoingReservations!.where((element) => element.task != null).map((e) => e.task!).toList() : [];
-      currentServices = hasOngoingReservation ? ongoingReservations!.where((element) => element.service != null).map((e) => e.service!).toList() : [];
+      userOngoingReservations = ongoingReservations ?? [];
       update();
-      return result ?? [];
+      return discussionList ?? [];
     });
   }
 
   void sendMessage() {
-    if (selectedChatBubble == null || messageController.text.trim().isEmpty) return;
-    final sender = AuthenticationService.find.jwtUserData?.id;
-    final reciever = selectedChatBubble!.userId == sender ? selectedChatBubble!.ownerId : selectedChatBubble!.userId;
+    if (selectedChatBubble == null || messageController.text.trim().isEmpty || currentReservation?.id == null) return;
+    final senderId = AuthenticationService.find.jwtUserData?.id;
+    final recieverId = selectedChatBubble!.userId == senderId ? selectedChatBubble!.ownerId : selectedChatBubble!.userId;
     MainAppController.find.socket!.emit('chatMessage', {
       'discussionId': selectedChatBubble?.id,
-      'reciever': reciever,
+      'reservationId': currentReservation?.id,
+      'reciever': recieverId,
       'message': messageController.text,
-      'sender': sender,
+      'sender': senderId,
       'date': DateTime.now().toIso8601String(),
     });
     messageController.clear();
@@ -241,11 +240,15 @@ class ChatController extends GetxController {
     MainAppController.find.socket!.onDisconnect((data) => LoggerService.logger?.i('disconnect $data'));
   }
 
-  void _joinRoom() {
-    if (selectedChatBubble == null) return;
+  void joinRoom({int? discussionId}) {
+    if (Get.arguments != null) currentReservation = userOngoingReservations?.cast<Reservation?>().singleWhere((element) => element?.id == Get.arguments.id, orElse: () => null);
+    if (discussionId != null && selectedChatBubble?.id == -1) selectedChatBubble?.id = discussionId;
+    if (selectedChatBubble == null || currentReservation == null) return;
     page = 1;
     streamSocket.socketStream.drain();
     searchChatResult.clear();
+    currentTask = currentReservation?.task;
+    currentService = currentReservation?.service;
     if (MainAppController.find.socket != null) {
       MainAppController.find.socket!.emit('join', {
         'connected': AuthenticationService.find.jwtUserData?.id,
@@ -253,16 +256,16 @@ class ChatController extends GetxController {
         'discussionId': selectedChatBubble?.id,
       });
     }
-    Future.delayed(const Duration(seconds: 1), () {
-      userChatPropertiesOriginal
-          .cast<DiscussionDTO?>()
-          .singleWhere((element) => element?.userId == selectedChatBubble?.userId && element?.ownerId == selectedChatBubble?.ownerId, orElse: () => null)
-          ?.notSeen = 0;
+    Future.delayed(const Duration(seconds: 1), () async {
+      _getSelectedDiscussionFromUserBubbles(currentReservation!.id!)?.notSeen = 0;
       update();
       MainAppController.find.getNotSeenMessages();
     });
     Future.delayed(const Duration(seconds: 1), () => isLoadingNewChat.value = false);
   }
+
+  DiscussionDTO? _getSelectedDiscussionFromUserBubbles(String reservationId) =>
+      userChatPropertiesOriginal.cast<DiscussionDTO?>().singleWhere((element) => element?.reservation?.id == reservationId, orElse: () => null);
 
   Future<void> _loadMoreMessages() async {
     if (selectedChatBubble?.id == null || endLoadMore || searchMessagesController.text.isNotEmpty) return;
@@ -287,7 +290,7 @@ class ChatController extends GetxController {
         searchChatResult = result;
       }
     } else {
-      _joinRoom();
+      joinRoom();
     }
     isLoadingMoreChat = false;
   }
@@ -366,23 +369,16 @@ class ChatController extends GetxController {
 
   void createContract() {
     if (hasOngoingReservation) {
-      Service? contractService;
-      Task? contractTask;
-      if (currentServices.isNotEmpty) {
-        if (currentServices.length == 1) contractService = currentServices.first;
-      } else if (currentTasks.isNotEmpty) {
-        if (currentTasks.length == 1) contractTask = currentTasks.first;
-      }
       Helper.goBack();
       Buildables.createContractBottomsheet(
-        isTask: contractTask != null,
+        isTask: currentTask != null,
         contract: Contract(
-          description: contractTask?.description ?? contractService?.description ?? '',
-          delivrables: contractTask?.delivrables ?? contractService?.included ?? '',
-          finalPrice: (contractTask != null ? contractTask.price : contractService?.price) ?? 0,
+          description: currentTask?.description ?? currentService?.description ?? '',
+          delivrables: currentTask?.delivrables ?? currentService?.included ?? '',
+          finalPrice: currentTask?.price ?? currentService?.price ?? 0,
           dueDate: null,
-          task: contractTask,
-          service: contractService,
+          task: currentTask,
+          service: currentService,
           createdAt: DateTime.now(),
         ),
         onSubmit: (contract) {

@@ -92,18 +92,18 @@ exports.getHomeTasks = async (req, res) => {
     // get user's ongoing reservation (pending and ongoing tasks)
     let ongoingReservation = [];
     if (currentUserId) {
-      const userReservations = await fetchUserOngoingReservation(currentUserId);
-      ongoingReservation = userReservations.filter(
-        (e) => e.status === "pending" || e.status === "confirmed"
+      ongoingReservation = await fetchUserReservation(
+        currentUserId,
+        (status = "confirmed")
       );
     }
 
     // get user's ongoing booking (pending and ongoing tasks)
     let ongoingBooking = [];
     if (currentUserId) {
-      const userBookings = await fetchUserOngoingBooking(currentUserId);
-      ongoingBooking = userBookings.filter(
-        (e) => e.status === "pending" || e.status === "confirmed"
+      ongoingBooking = await fetchUserBooking(
+        currentUserId,
+        (status = "confirmed")
       );
     }
     return res.status(200).json({
@@ -476,10 +476,11 @@ exports.addTask = async (req, res) => {
     );
     await notificationService.sendNotificationList(
       tokenList,
-      "New Task Available",
-      `A new task in "${category.name}" category has been created. Check it out!`,
+      "notifications.new_task",
+      "notifications.new_task_in_category",
       NotificationType.NEWTASK,
-      { taskId: task.id }
+      { taskId: task.id },
+      (data = { categoryName: category.name })
     );
     checkReferralActiveUserRewards(user.id);
     // Return created task

@@ -37,6 +37,7 @@ const User = sequelize.define(
     balance: { type: Sequelize.FLOAT, defaultValue: 0 },
     availableCoins: { type: Sequelize.INTEGER, defaultValue: 50 },
     referral_code: { type: Sequelize.STRING, unique: true },
+    language: { type: Sequelize.STRING, defaultValue: "en" },
   },
   {
     tableName: "user",

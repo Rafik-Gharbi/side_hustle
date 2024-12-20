@@ -76,6 +76,11 @@ module.exports = (app) => {
     userController.updateProfile
   );
   router.put(
+    "/language",
+    tokenVerification,
+    userController.updateProfileLanguage
+  );
+  router.put(
     "/update-coordinates",
     tokenVerification,
     userController.updateCoordinates

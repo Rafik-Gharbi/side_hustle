@@ -75,7 +75,7 @@ class CustomTextField extends StatefulWidget {
     this.autofocus = false,
     this.prefixIcon,
     this.outlinedBorder = false,
-    this.enableFloatingLabel = false,
+    this.enableFloatingLabel = true,
     this.onTapOutside,
     this.textCapitalization,
     this.inputFormatters,
@@ -108,6 +108,7 @@ class CustomTextFieldState extends State<CustomTextField> {
             child: Container(
               height: widget.height,
               margin: EdgeInsets.only(top: widget.topPadding ?? 0),
+              padding: widget.enableFloatingLabel ? const EdgeInsets.only(top: 3) : null,
               width: widget.width ?? MediaQuery.of(context).size.width,
               decoration: BoxDecoration(color: widget.fillColor, borderRadius: smallRadius),
               child: Center(
@@ -146,6 +147,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                         focusedBorder: widget.outlinedBorder
                             ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
                             : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
+                        floatingLabelBehavior: FloatingLabelBehavior.auto,
                         floatingLabelStyle: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(height: 0.2),
                         hintText: widget.hintText,
                         hintStyle: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor),

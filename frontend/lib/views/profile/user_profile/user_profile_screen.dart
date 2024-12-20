@@ -6,6 +6,7 @@ import '../../../constants/sizes.dart';
 import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/enum/request_status.dart';
+import '../../../models/reservation.dart';
 import '../../../models/user.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
@@ -19,6 +20,7 @@ import 'user_profile_controller.dart';
 class UserProfileScreen extends StatelessWidget {
   static const String routeName = '/user-profile';
   final User? user;
+  final Reservation? reservation;
   final RequestStatus requestStatus;
   final void Function()? onReject;
   final void Function()? onAccept;
@@ -28,6 +30,7 @@ class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({
     super.key,
     this.user,
+    this.reservation,
     this.onReject,
     this.onAccept,
     this.onMarkDone,
@@ -136,7 +139,7 @@ class UserProfileScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  if (requestStatus == RequestStatus.pending)
+                  if (requestStatus == RequestStatus.pending && reservation != null)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -144,21 +147,21 @@ class UserProfileScreen extends StatelessWidget {
                         CustomButtons.text(
                           title: '${'chat_with'.tr} ${user?.name ?? 'user'.tr}',
                           titleStyle: AppFonts.x14Regular,
-                          onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: user),
+                          onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: reservation),
                         ),
                       ],
                     )
-                  else if (requestStatus == RequestStatus.confirmed)
+                  else if (requestStatus == RequestStatus.confirmed && reservation != null)
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CustomButtons.elevateSecondary(
-                          title: '${'chat_with'.tr} ${user?.name ?? 'user'.tr}',
-                          titleStyle: AppFonts.x14Regular,
-                          icon: const Icon(Icons.chat_outlined),
-                          width: Get.width - 40,
-                          onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: user),
-                        ),
+                          CustomButtons.elevateSecondary(
+                            title: '${'chat_with'.tr} ${user?.name ?? 'user'.tr}',
+                            titleStyle: AppFonts.x14Regular,
+                            icon: const Icon(Icons.chat_outlined),
+                            width: Get.width - 40,
+                            onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: reservation),
+                          ),
                         if (onMarkDone != null) ...[
                           const SizedBox(height: Paddings.regular),
                           if (!isService)

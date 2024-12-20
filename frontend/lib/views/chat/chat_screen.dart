@@ -14,7 +14,7 @@ import '../../widgets/custom_buttons.dart';
 import '../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/hold_in_safe_area.dart';
-import '../../widgets/loading_request.dart';
+import '../../widgets/loading_card_effect.dart';
 import '../../widgets/overflowed_text_with_tooltip.dart';
 import 'chat_controller.dart';
 
@@ -28,7 +28,7 @@ class ChatScreen extends StatelessWidget {
       child: GetBuilder<ChatController>(
         initState: (state) => Helper.waitAndExecute(
           () => state.controller != null,
-          () => state.controller!.loggedInUser == null || state.controller!.discussionHistory.isEmpty ? state.controller!.init() : null,
+          () => state.controller!.init(),
         ),
         builder: (controller) => Obx(
           () => CustomScaffoldBottomNavigation(
@@ -36,7 +36,13 @@ class ChatScreen extends StatelessWidget {
             appBarActions: [
               CustomButtons.icon(
                 icon: Icon(controller.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
-                onPressed: () => controller.openSearchBar.value = !controller.openSearchBar.value,
+                onPressed: () {
+                  controller.openSearchBar.value = !controller.openSearchBar.value;
+                  if (!controller.openSearchBar.value) {
+                    controller.searchDiscussionsController.clear();
+                    controller.searchChatBubbles('');
+                  }
+                },
               ),
             ],
             appBarBottom: controller.openSearchBar.value
@@ -60,8 +66,9 @@ class ChatScreen extends StatelessWidget {
               onRefresh: controller.onRefreshScreen,
               child: Padding(
                 padding: const EdgeInsets.all(Paddings.large),
-                child: LoadingRequest(
+                child: LoadingCardEffect(
                   isLoading: controller.isLoading,
+                  type: LoadingCardEffectType.chat,
                   child: controller.userChatPropertiesFiltered.isEmpty
                       ? Center(child: Text('no_discussion_yet'.tr, style: AppFonts.x14Regular))
                       : SharedPreferencesService.find.isReady.value && AuthenticationService.find.jwtUserData == null
@@ -94,7 +101,9 @@ class ChatScreen extends StatelessWidget {
                                                     backgroundColor: kPrimaryColor,
                                                     child: Buildables.userImage(
                                                       size: 50,
-                                                      providedUser: controller.loggedInUser!.name == discussion.ownerName? User(name: discussion.userName) : User(name: discussion.ownerName),
+                                                      providedUser: controller.loggedInUser!.name == discussion.ownerName
+                                                          ? User(name: discussion.userName)
+                                                          : User(name: discussion.ownerName),
                                                     ),
                                                   ),
                                                 ),
@@ -106,7 +115,8 @@ class ChatScreen extends StatelessWidget {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   OverflowedTextWithTooltip(
-                                                    title: controller.loggedInUser!.name == discussion.ownerName ? discussion.userName ?? 'user'.tr : (discussion.ownerName ?? 'user'.tr),
+                                                    title:
+                                                        '${controller.loggedInUser!.name == discussion.ownerName ? discussion.userName ?? 'user'.tr : (discussion.ownerName ?? 'user'.tr)} (${discussion.reservation?.getTitle()})',
                                                     style: (isCurrentChat ? AppFonts.x14Bold : AppFonts.x14Regular).copyWith(color: kBlackColor),
                                                     expand: false,
                                                   ),

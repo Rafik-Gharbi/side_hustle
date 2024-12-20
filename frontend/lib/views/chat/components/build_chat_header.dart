@@ -20,9 +20,7 @@ class BuildChatHeader extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
               child: Text(
-                AuthenticationService.find.jwtUserData?.name == controller.selectedChatBubble?.userName
-                    ? controller.selectedChatBubble?.ownerName ?? ''
-                    : controller.selectedChatBubble?.userName ?? '',
+                '${AuthenticationService.find.jwtUserData?.name == controller.selectedChatBubble?.userName ? controller.selectedChatBubble?.ownerName ?? '' : controller.selectedChatBubble?.userName ?? ''} (${controller.currentReservation?.getTitle()})',
                 style: AppFonts.x14Bold,
               ),
             ),

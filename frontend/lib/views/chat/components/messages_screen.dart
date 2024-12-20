@@ -96,6 +96,7 @@ class MessagesScreen extends StatelessWidget {
                                           fieldController: controller.messageController,
                                           focusNode: controller.messageFocusNode,
                                           outlinedBorder: true,
+                                          enableFloatingLabel: false,
                                           hintText: 'send_message'.tr,
                                           textAlign: TextAlign.start,
                                           onSubmitted: (_) => controller.sendMessage(),

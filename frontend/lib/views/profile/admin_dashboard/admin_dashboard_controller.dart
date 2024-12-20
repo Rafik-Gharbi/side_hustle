@@ -240,7 +240,7 @@ class AdminDashboardController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    MainAppController.find.socket?.off('getDashboardData');
+    MainAppController.find.socket?.off('updateAdminDashboard');
     isAdminSocketJoined.value = false;
   }
 

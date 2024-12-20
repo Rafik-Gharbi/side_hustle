@@ -196,6 +196,15 @@ class UserRepository extends GetxService {
     return null;
   }
 
+  Future<void> updateUserLanguage(String languageCode) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.put, '/user/language', body: {'lang': languageCode}, sendToken: true);
+      if (result['jwt'] != null) AuthenticationService.find.initiateCurrentUser(result['jwt'], silent: true);
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in updateUserLanguage:\n$e');
+    }
+  }
+
   Future<User?> updateUserCoordinates(User user, {bool silent = false}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.put, '/user/update-coordinates', body: user.toUpdateJson(), sendToken: true);

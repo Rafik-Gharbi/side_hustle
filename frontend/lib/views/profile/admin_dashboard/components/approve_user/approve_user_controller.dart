@@ -23,6 +23,7 @@ class ApproveUserController extends GetxController {
   void onClose() {
     super.onClose();
     MainAppController.find.socket?.off('adminApproveUsers');
+    MainAppController.find.socket?.off('adminApproveStatus');
   }
 
   void _initSocket() {

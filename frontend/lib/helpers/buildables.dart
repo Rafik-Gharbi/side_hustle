@@ -416,6 +416,7 @@ class Buildables {
         },
       );
 
+  /// Should be called on a screen and not a dialog or a bottomsheet opened
   static Widget buildPaymentOptionsBottomsheet({
     required void Function() onSuccessPayment,
     required double totalPrice,
@@ -445,7 +446,10 @@ class Buildables {
                   onTap: () async {
                     Helper.goBack();
                     final result = await PaymentService.find.initFlouciPayment(totalPrice, taskId: taskId, serviceId: serviceId, coinPackId: coinPackId, contractId: contractId);
-                    if (result ?? false) onSuccessPayment.call();
+                    if (result ?? false) {
+                      Helper.snackBar(message: 'payment_successful'.tr);
+                      onSuccessPayment.call();
+                    }
                   },
                 ),
                 ListTile(
@@ -458,7 +462,10 @@ class Buildables {
                   onTap: () async {
                     Helper.goBack();
                     final result = await PaymentService.find.payWithBankCard(totalPrice, taskId: taskId, serviceId: serviceId, coinPackId: coinPackId, contractId: contractId);
-                    if (result) onSuccessPayment.call();
+                    if (result) {
+                      Helper.snackBar(message: 'payment_successful'.tr);
+                      onSuccessPayment.call();
+                    }
                   },
                 ),
                 ListTile(
@@ -474,7 +481,10 @@ class Buildables {
                   onTap: () async {
                     Helper.goBack();
                     final result = await PaymentService.find.payWithBalance(totalPrice, taskId: taskId, serviceId: serviceId, coinPackId: coinPackId, contractId: contractId);
-                    if (result) onSuccessPayment.call();
+                    if (result) {
+                      Helper.snackBar(message: 'payment_successful'.tr);
+                      onSuccessPayment.call();
+                    }
                   },
                 ),
               ],

@@ -68,6 +68,7 @@ dependencies:
   webview_flutter: ^4.10.0
 
   image_picker_for_web: any
+  video_player: ^2.9.2
 dependency_overrides:
   animated_bottom_navigation_bar:
     path: lib/overrided_dependencies/animated_bottom_navigation_bar

@@ -100,4 +100,6 @@ class Reservation {
         status: Value(statusUpdate ?? status),
         user: user.id == null ? const Value.absent() : Value(user.id!),
       );
+
+  String getTitle() => task?.title != null ? task!.title : service?.name != null ? service!.name! : 'NA';
 }

@@ -102,6 +102,7 @@ function initializeSocket(io) {
           discussion = await Discussion.create({
             user_id: reciever.id,
             owner_id: sender.id,
+            reservation_id: msg.reservationId,
           });
           isNewBubble = true;
         }
@@ -116,6 +117,7 @@ function initializeSocket(io) {
 
         if (isNewBubble) {
           io.to(`${reciever.id}`).emit("newBubble", createMsg);
+          io.to(`${sender.id}`).emit("notification", createMsg);
         }
         // Emit to reciever if not joined a room
         io.to(`${msg.reciever}`).emit("notification", {
@@ -165,8 +167,6 @@ function initializeSocket(io) {
           dueDate: data.contract.dueDate.split("T")[0],
           description: data.contract.description,
           delivrables: data.contract.delivrables,
-          service_id: data.contract.service?.id,
-          task_id: data.contract.task?.id,
           reservation_id: data.reservationId,
           seeker_id: data.contract.task ? data.sender : data.reciever,
           provider_id: data.contract.task ? data.reciever : data.sender,
@@ -362,6 +362,7 @@ function initializeSocket(io) {
         const adminUser = await validateAdmin(data.jwt);
         if (!adminUser) return;
         const done = await updateStatus(data.id, data.status);
+        await new Promise((resolve) => setTimeout(resolve, 400));
         if (done) {
           const transactions = await getBalanceTransactions();
           io.to(`${adminUser.id}-adminDashboard`).emit("adminBalance", {

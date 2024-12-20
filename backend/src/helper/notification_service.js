@@ -1,4 +1,5 @@
 const { sendFirebaseNotification } = require("../../firebase-admin");
+const { i18n } = require("../../i18n");
 const { Notification } = require("../models/notification_model");
 const { User } = require("../models/user_model");
 
@@ -23,14 +24,17 @@ class NotificationService {
     this.io = io;
   }
 
-  async sendNotificationList(userIdList, title, body, type, action) {
+  async sendNotificationList(userIdList, title, body, type, action, data = {}) {
     userIdList.forEach(async (element) => {
-      await this.sendNotification(element, title, body, type, action);
+      await this.sendNotification(element, title, body, type, action, data);
     });
   }
 
-  async sendNotification(userId, title, body, type, action) {
+  async sendNotification(userId, titleKey, bodyKey, type, action, data = {}) {
     try {
+      const user = await User.findByPk(userId);
+      const title = i18n.__({ phrase: titleKey, locale: user.language }, data);
+      const body = i18n.__({ phrase: bodyKey, locale: user.language }, data);
       let actionEncoded;
       if (action) actionEncoded = JSON.stringify(action);
       // Save notification to database
@@ -41,9 +45,6 @@ class NotificationService {
         type,
         action: actionEncoded,
       });
-
-      // Fetch user to get FCM token
-      const user = await User.findByPk(userId);
 
       if (user && user.fcmToken) {
         // Send notification via Firebase Admin
