@@ -1,4 +1,4 @@
-name: side_hustle
+name: dootify
 description: "Free Your Time, Focus on Your Goals."
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
@@ -69,6 +69,7 @@ dependencies:
 
   image_picker_for_web: any
   video_player: ^2.9.2
+  introduction_screen: ^3.1.14
 dependency_overrides:
   animated_bottom_navigation_bar:
     path: lib/overrided_dependencies/animated_bottom_navigation_bar
@@ -81,19 +82,19 @@ dev_dependencies:
   build_runner: ^2.4.5
 
 icons_launcher:
-  image_path: "assets/images/dootify_logo_dense.png"
+  image_path: "assets/images/dootify-logo-icon.png"
   platforms:
     android:
       enable: true
-      image_path: "assets/images/dootify_logo_dense.png"
+      image_path: "assets/images/dootify-logo-icon.png"
       # adaptive_background_color: '#ffffff'
     ios:
       enable: true
-      image_path: "assets/images/dootify_logo_dense.png"
+      image_path: "assets/images/dootify-logo-icon.png"
     web:
       enable: true
-      image_path: "assets/images/dootify_logo_dense.png"
-      favicon_path: "assets/images/dootify_logo_dense.png"
+      image_path: "assets/images/dootify-logo-icon.png"
+      favicon_path: "assets/images/dootify-logo-icon.png"
 
 flutter:
   uses-material-design: true

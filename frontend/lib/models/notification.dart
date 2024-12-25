@@ -20,7 +20,7 @@ class NotificationModel {
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) => NotificationModel(
-        id: json['id'].toString(),
+        id: json['id']?.toString() ?? '',
         title: json['title'] ?? '',
         body: json['body'] ?? '',
         type: NotificationType.values.singleWhere((element) => element.name == json['type']),

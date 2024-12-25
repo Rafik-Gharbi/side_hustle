@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 DatabaseConnection connect() => DatabaseConnection.delayed(
       Future(() async {
         final WasmDatabaseResult db = await WasmDatabase.open(
-          databaseName: 'side_hustle.db',
+          databaseName: 'dootify.db',
           sqlite3Uri: Uri.parse('/sqlite3.wasm'),
           driftWorkerUri: Uri.parse('/drift_worker.js'),
         );

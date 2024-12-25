@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../constants/colors.dart';
 import '../helpers/helper.dart';
 import '../repositories/payment_repository.dart';
+import '../widgets/custom_buttons.dart';
 import '../widgets/hold_in_safe_area.dart';
 import 'authentication_service.dart';
 
@@ -28,6 +30,7 @@ class PaymentService extends GetxService {
       coinPackId: coinPackId,
     );
     if (paymentLink != null && paymentId != null) {
+      void backToInitialRoute(String currentRoute) => Navigator.of(Get.context!).popUntil((route) => route.settings.name == currentRoute);
       final currentRoute = Get.currentRoute;
       bool isPaymentAccepted = false;
       _webViewController = WebViewController()
@@ -35,8 +38,8 @@ class PaymentService extends GetxService {
         ..enableZoom(false)
         ..setNavigationDelegate(
           NavigationDelegate(
-            onHttpError: (HttpResponseError error) => Navigator.of(Get.context!).popUntil((route) => route.settings.name == currentRoute),
-            onWebResourceError: (WebResourceError error) => Navigator.of(Get.context!).popUntil((route) => route.settings.name == currentRoute),
+            onHttpError: (HttpResponseError error) => backToInitialRoute(currentRoute),
+            onWebResourceError: (WebResourceError error) => backToInitialRoute(currentRoute),
             onNavigationRequest: (NavigationRequest request) async {
               if (request.url.contains('payment/verify')) {
                 isPaymentAccepted = (await PaymentRepository.find.verifyFlouciPayment(paymentId: paymentId)) ?? false;
@@ -47,7 +50,20 @@ class PaymentService extends GetxService {
           ),
         )
         ..loadRequest(Uri.parse(paymentLink));
-      await Get.to(() => HoldInSafeArea(child: Scaffold(body: WebViewWidget(controller: _webViewController!))));
+      await Get.to(
+        () => HoldInSafeArea(
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: kNeutralColor100,
+              leading: CustomButtons.icon(
+                icon: const Icon(Icons.chevron_left, size: 28),
+                onPressed: () => backToInitialRoute(currentRoute),
+              ),
+            ),
+            body: WebViewWidget(controller: _webViewController!),
+          ),
+        ),
+      );
       return isPaymentAccepted;
     } else {
       Helper.snackBar(message: 'error_occurred'.tr);

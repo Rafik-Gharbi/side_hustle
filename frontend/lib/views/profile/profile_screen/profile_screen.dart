@@ -64,7 +64,7 @@ class ProfileScreen extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: Paddings.extraLarge),
                       child: LoadingCardEffect(
-                        isLoading: (controller.isLoading.value || (controller.loggedInUser == null)).obs,
+                        isLoading: controller.isLoading,
                         type: LoadingCardEffectType.profile,
                         child: SingleChildScrollView(
                           child: SharedPreferencesService.find.isReady.value && authService.jwtUserData == null

@@ -9,7 +9,8 @@ import '../../../services/theme/theme.dart';
 import '../../../services/translation/app_localization.dart';
 
 class LanguageSelector extends StatefulWidget {
-  const LanguageSelector({super.key});
+  final Locale? selectedLocale;
+  const LanguageSelector({super.key, this.selectedLocale });
 
   @override
   LanguageSelectorState createState() => LanguageSelectorState();
@@ -20,7 +21,7 @@ class LanguageSelectorState extends State<LanguageSelector> {
 
   @override
   void initState() {
-    _current = Get.locale ?? const Locale('en', 'US');
+    _current = widget.selectedLocale ?? Get.locale ?? const Locale('en', 'US');
     super.initState();
   }
 

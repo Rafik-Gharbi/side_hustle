@@ -31,7 +31,7 @@ class SignUpFields extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (Helper.isMobile) const SizedBox(height: Paddings.exceptional) else const Spacer(),
-            if (isEditProfile) Center(child: Text('edit_profile'.tr, style: AppFonts.x24Bold)) else Text('welcome_side_hustle'.tr, style: AppFonts.x24Bold),
+            if (isEditProfile) Center(child: Text('edit_profile'.tr, style: AppFonts.x24Bold)) else Text('welcome_dootify'.tr, style: AppFonts.x24Bold),
             const SizedBox(height: Paddings.exceptional),
             CustomTextField(
               hintText: 'full_name'.tr,

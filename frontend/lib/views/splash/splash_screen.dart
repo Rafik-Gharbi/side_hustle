@@ -4,7 +4,11 @@ import 'package:video_player/video_player.dart';
 
 import '../../constants/assets.dart';
 import '../../constants/colors.dart';
+import '../../constants/shared_preferences_keys.dart';
+import '../../helpers/helper.dart';
+import '../../services/shared_preferences.dart';
 import '../home/home_screen.dart';
+import '../onboarding/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   static const String routeName = '/splash';
@@ -27,11 +31,15 @@ class SplashScreenState extends State<SplashScreen> {
       })
       ..setLooping(false)
       ..addListener(() {
-        if (_controller.value.isInitialized &&
-            !_controller.value.isPlaying &&
-            _controller.value.position >= _controller.value.duration) {
+        if (_controller.value.isInitialized && !_controller.value.isPlaying && _controller.value.position >= _controller.value.duration) {
           // Navigate to the next screen after the video ends
-          Get.offAndToNamed(HomeScreen.routeName);
+          Helper.waitAndExecute(
+            () => SharedPreferencesService.find.isReady.value,
+            () {
+              final isFirstTime = SharedPreferencesService.find.get(isFirstTimeKey) == null;
+              return isFirstTime ? Get.offAndToNamed(OnboardingScreen.routeName) : Get.offAndToNamed(HomeScreen.routeName);
+            },
+          );
         }
       });
   }

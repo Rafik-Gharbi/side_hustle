@@ -6,8 +6,8 @@ const constantId = {
   Users: [
     {
       id: 1,
-      name: "Rafik Admin",
-      email: "rafik.admin@gmail.com",
+      name: "Admin User",
+      email: "admin.user@gmail.com",
       password: "123",
       gender: "male",
       birthdate: "1992-09-23",
@@ -19,8 +19,8 @@ const constantId = {
     },
     {
       id: 2,
-      name: "Rafik User",
-      email: "rafik.user@gmail.com",
+      name: "Seeker User",
+      email: "seeker.user@gmail.com",
       password: "123",
       gender: "male",
       birthdate: "1992-09-23",
@@ -32,8 +32,8 @@ const constantId = {
     },
     {
       id: 3,
-      name: "Rafik Subscribed",
-      email: "rafik.subscribed@gmail.com",
+      name: "Provider User",
+      email: "provider.user@gmail.com",
       password: "123",
       gender: "male",
       birthdate: "1992-09-23",

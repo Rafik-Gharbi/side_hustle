@@ -1,4 +1,4 @@
-package com.example.side_hustle
+package com.nextGenEase.dootify
 
 import io.flutter.embedding.android.FlutterActivity
 

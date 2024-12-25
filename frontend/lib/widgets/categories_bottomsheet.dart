@@ -157,7 +157,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                                 }
                                 setStateCategory(() => isExpandedParents[index] = value);
                               }
-      
+
                               return AnimatedContainer(
                                 duration: Durations.medium3,
                                 width: isExpandedParents[index] ? Get.width : (Get.width - 30) / 3,
@@ -191,6 +191,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                                                     canUpdate: canUpdate,
                                                     isSelected: isSelected,
                                                     category: subCategory,
+                                                    isChild: true,
                                                     onTap: () {
                                                       if (canUpdate) {
                                                         if (isSelected) {
@@ -233,7 +234,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
     );
   }
 
-  Widget buildCategoryWidget({required bool canUpdate, bool isSelected = false, required void Function() onTap, required Category category}) {
+  Widget buildCategoryWidget({required bool canUpdate, bool isSelected = false, required void Function() onTap, required Category category, bool isChild = false}) {
     return InkWell(
       onTap: onTap,
       child: SingleChildScrollView(
@@ -245,7 +246,11 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                   padding: const EdgeInsets.all(Paddings.small),
                   child: CircleAvatar(
                     radius: 30,
-                    backgroundColor: isSelected ? kPrimaryColor : kNeutralColor,
+                    backgroundColor: isSelected
+                        ? kPrimaryColor
+                        : isChild
+                            ? kAccentDarkColor
+                            : kNeutralColor,
                     child: Center(child: Buildables.buildCategoryIcon(category.icon, size: 40, color: kNeutralColor100)),
                   ),
                 ),

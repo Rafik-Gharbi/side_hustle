@@ -46,11 +46,16 @@ class ProfileController extends GetxController {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) => update());
   }
 
-  ProfileController() {
+  static final ProfileController _singleton = ProfileController._internal();
+
+  factory ProfileController() => _singleton;
+
+  ProfileController._internal() {
     init();
   }
 
   Future<void> init() async {
+    isLoading.value = true;
     final result = await AuthenticationService.find.fetchUserData();
     if (result != null) {
       loggedInUser = result.user;
@@ -64,6 +69,7 @@ class ProfileController extends GetxController {
       adminDashboardActionRequired = result.adminDashboardActionRequired;
       userHasBoosts = result.userHasBoosts;
       MainAppController.find.resolveProfileActionRequired();
+      update();
     }
     if (!MainAppController.find.isBackReachable.value) ApiBaseHelper.find.isLoading = false;
     isLoading.value = false;
@@ -110,7 +116,7 @@ class ProfileController extends GetxController {
   Future<void> subscribeToCategories(List<Category> categories) async {
     String? fcmToken;
     final permission = await FirebaseMessaging.instance.requestPermission();
-    if (permission.authorizationStatus == AuthorizationStatus.authorized) {
+    if (permission.authorizationStatus == AuthorizationStatus.authorized && false) {
       try {
         fcmToken = await FirebaseMessaging.instance.getToken();
       } catch (e, s) {

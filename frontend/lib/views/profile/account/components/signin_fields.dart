@@ -20,7 +20,7 @@ class SignInFields extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (Helper.isMobile) const SizedBox(height: Paddings.exceptional) else const Spacer(),
-            Text('welcome_side_hustle'.tr, style: AppFonts.x24Bold),
+            Text('welcome_dootify'.tr, style: AppFonts.x24Bold),
             const SizedBox(height: Paddings.large),
             if (controller.isPhoneInput)
               Buildables.buildPhoneInput(

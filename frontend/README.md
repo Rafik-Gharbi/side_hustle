@@ -1,4 +1,4 @@
-# side_hustle
+# dootify
 
 A new Flutter project.
 

@@ -117,7 +117,7 @@ function initializeSocket(io) {
 
         if (isNewBubble) {
           io.to(`${reciever.id}`).emit("newBubble", createMsg);
-          io.to(`${sender.id}`).emit("notification", createMsg);
+          io.to(`${sender.id}`).emit("updateDiscussionId", createMsg);
         }
         // Emit to reciever if not joined a room
         io.to(`${msg.reciever}`).emit("notification", {

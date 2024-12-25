@@ -10,7 +10,7 @@ import 'package:path_provider/path_provider.dart';
 Future<File> get databaseFile async {
   // We use `path_provider` to find a suitable path to store our data in.
   final Directory appDir = await getApplicationDocumentsDirectory();
-  final String dbPath = p.join(appDir.path, 'side_hustle.db');
+  final String dbPath = p.join(appDir.path, 'dootify.db');
   return File(dbPath);
 }
 

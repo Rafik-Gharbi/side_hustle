@@ -38,7 +38,7 @@ class NotificationService {
       let actionEncoded;
       if (action) actionEncoded = JSON.stringify(action);
       // Save notification to database
-      await Notification.create({
+      const notification = await Notification.create({
         user_id: userId,
         title,
         body,
@@ -53,7 +53,7 @@ class NotificationService {
         // Send notification via WebSocket
         this.io
           .to(`${userId}`)
-          .emit("notification", { title, body, type, actionEncoded });
+          .emit("notification", { notification });
       }
     } catch (error) {
       console.error("Error sending notification:", error);

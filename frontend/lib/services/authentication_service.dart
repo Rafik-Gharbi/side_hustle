@@ -278,6 +278,7 @@ class AuthenticationService extends GetxController {
         coordinates: coordinates,
         hasSharedPosition: coordinates != null,
         referralCode: referralCodeController.text,
+        language: Get.locale?.languageCode,
       );
       final jwt = await UserRepository.find.signup(user: user);
       isLoggingIn = false;
@@ -545,7 +546,7 @@ class AuthenticationService extends GetxController {
         if (Get.currentRoute == MessagesScreen.routeName) ChatController.find.joinRoom(discussionId: data['discussion_id']);
       }
       MainAppController.find.getNotSeenNotifications();
-      return MainAppController.find.getNotSeenMessages();
+      MainAppController.find.getNotSeenMessages();
     });
     MainAppController.find.getNotSeenNotifications();
     MainAppController.find.resolveProfileActionRequired();

@@ -7,6 +7,7 @@ const LinearGradient bPrimaryColor = LinearGradient(colors: [Color.fromRGBO(29, 
 Color kPrimaryDark = Color.alphaBlend(kPrimaryColor, kNeutralColor.withOpacity(0.1));
 const Color kSecondaryColor = Color(0xff232d37);
 const Color kAccentColor = Color(0xFFFF9931); // Colors.orange;
+const Color kAccentDarkColor = Color.fromARGB(255, 106, 62, 19); // Colors.orange;
 const Color kErrorColor = Color(0xFFE21200);
 Color kErrorLightColor = Colors.red.shade600;
 const Color kRatingColor = Color(0xFFFDCC0D);

@@ -95,6 +95,8 @@ PODS:
   - flutter_facebook_auth (7.1.1):
     - FBSDKLoginKit (~> 17.1.0)
     - Flutter
+  - flutter_keyboard_visibility (0.0.1):
+    - Flutter
   - flutter_libphonenumber_ios (1.1.4):
     - Flutter
     - PhoneNumberKit/PhoneNumberKitCore (= 3.8.0)
@@ -217,6 +219,7 @@ DEPENDENCIES:
   - flutter_compass (from `.symlinks/plugins/flutter_compass/ios`)
   - flutter_config (from `.symlinks/plugins/flutter_config/ios`)
   - flutter_facebook_auth (from `.symlinks/plugins/flutter_facebook_auth/ios`)
+  - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_libphonenumber_ios (from `.symlinks/plugins/flutter_libphonenumber_ios/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
@@ -282,6 +285,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_config/ios"
   flutter_facebook_auth:
     :path: ".symlinks/plugins/flutter_facebook_auth/ios"
+  flutter_keyboard_visibility:
+    :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_libphonenumber_ios:
     :path: ".symlinks/plugins/flutter_libphonenumber_ios/ios"
   flutter_secure_storage:
@@ -338,6 +343,7 @@ SPEC CHECKSUMS:
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
   flutter_config: f48f0d47a284f1791aacce2687eabb3309ba7a41
   flutter_facebook_auth: 48be46091bd1a5cc5a66055f1228a9d99a28bfaa
+  flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_libphonenumber_ios: 5ad8620197bff91dd159d828b7544ec6956e86a1
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
   geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450

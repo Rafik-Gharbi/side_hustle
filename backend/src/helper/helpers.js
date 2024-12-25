@@ -64,14 +64,14 @@ async function verifyToken(token) {
     try {
       jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-          console.error(`Error in verifyToken: ${err}`);
+          console.log(`Error in verifyToken: ${err}`);
           reject(err);
         } else {
           resolve(decoded);
         }
       });
     } catch (error) {
-      console.error(
+      console.log(
         `Catched error in verifyToken. Token: ${token}\nError: ${error}`
       );
       reject(error);

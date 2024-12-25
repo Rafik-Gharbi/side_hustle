@@ -15,4 +15,5 @@ const String hourPreferencesKey = 'hour_preferences';
 const String userSecretKey = 'user_secret';
 const String searchModeKey = 'search_mode';
 const String governorateKey = 'governorate';
+const String isFirstTimeKey = 'is_first_time';
 const String baseUrlKey = 'base_url';

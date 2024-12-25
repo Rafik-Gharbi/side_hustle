@@ -40,6 +40,7 @@ import 'views/boost/list_boost/list_boost_controller.dart';
 import 'views/boost/list_boost/list_boost_screen.dart';
 import 'views/notifications/notification_controller.dart';
 import 'views/notifications/notification_screen.dart';
+import 'views/onboarding/onboarding_screen.dart';
 import 'views/profile/admin_dashboard/admin_dashboard_controller.dart';
 import 'views/profile/admin_dashboard/admin_dashboard_screen.dart';
 import 'views/profile/admin_dashboard/components/feedbacks/feedbacks_controller.dart';
@@ -242,6 +243,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           GetPage(
             name: SplashScreen.routeName,
             page: () => const SplashScreen(),
+          ),
+          GetPage(
+            name: OnboardingScreen.routeName,
+            page: () => const OnboardingScreen(),
           ),
           GetPage(
             name: HomeScreen.routeName,

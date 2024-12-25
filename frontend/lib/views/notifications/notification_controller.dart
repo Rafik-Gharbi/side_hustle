@@ -153,7 +153,7 @@ class NotificationsController extends GetxController {
   }
 
   void _markAsRead(NotificationModel notification) {
-    if (!notification.seen) {
+    if (!notification.seen && notification.id.isNotEmpty) {
       NotificationRepository.find.markAsReadNotification(idNotification: notification.id).then((value) async {
         await _refreshScreen();
         await MainAppController.find.getNotSeenNotifications();

@@ -93,12 +93,12 @@ app.get("/public/support_attachments/documents/:id", async (req, res) => {
 });
 app.get("/terms-condition", async (req, res) => {
   res.sendFile(
-    path.join(__dirname, "./public/data/Side Hustle - Terms & Conditions.pdf")
+    path.join(__dirname, "./public/data/Dootify - Terms & Conditions.pdf")
   );
 });
 app.get("/privacy-policy", async (req, res) => {
   res.sendFile(
-    path.join(__dirname, "./public/data/Side Hustle - Privacy Policy.pdf")
+    path.join(__dirname, "./public/data/Dootify - Privacy Policy.pdf")
   );
 });
 // API for uploads file (photo, galleries)

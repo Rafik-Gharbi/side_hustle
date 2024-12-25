@@ -191,6 +191,7 @@ exports.signUp = async (req, res) => {
     coordinates,
     keepPrivacy,
     referralCode,
+    language,
   } = req.body;
 
   let formattedPhoneNumber = removeSpacesFromPhoneNumber(phoneNumber);
@@ -233,6 +234,7 @@ exports.signUp = async (req, res) => {
         coordinates,
         keepPrivacy,
         referral_code: newUserReferralCode,
+        language: language ?? "en",
       });
     } else if (email || formattedPhoneNumber) {
       // If email or phone_number is provided, password must be set
@@ -240,7 +242,7 @@ exports.signUp = async (req, res) => {
         return res.status(400).json({ message: "missing_password" });
       }
       const hashedPass = await bcrypt.hash(password, 10);
-
+      
       //if the user used a phone number
       if (formattedPhoneNumber) {
         // we verify if it validate the pattern
@@ -262,6 +264,7 @@ exports.signUp = async (req, res) => {
         coordinates,
         keepPrivacy,
         referral_code: newUserReferralCode,
+        language: language ?? "en",
       });
     } else {
       return res.status(400).json({ message: "missing_credentials" });

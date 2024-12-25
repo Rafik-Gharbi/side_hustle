@@ -99,7 +99,7 @@ class ApiBaseHelper extends GetxController {
     if (sendToken) {
       token = getToken();
       _defaultHeader.remove('Authorization');
-      _defaultHeader.putIfAbsent('Authorization', () => 'Bearer $token');
+      if (!Helper.isNullOrEmpty(token)) _defaultHeader.putIfAbsent('Authorization', () => 'Bearer $token');
     }
     final savedBaseUrl = SharedPreferencesService.find.get(baseUrlKey);
     if (savedBaseUrl != null) baseUrl = savedBaseUrl;
@@ -218,7 +218,7 @@ class ApiBaseHelper extends GetxController {
           if (!_isBlockingRenew) {
             _isBlockingRenew = true;
             if (kDebugMode) {
-              Helper.snackBar(message: 'session_expired', title: 'login_msg', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
+              // Helper.snackBar(message: 'session_expired', title: 'login_msg', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
             }
             if (SharedPreferencesService.find.get(refreshTokenKey) != null) {
               final result = await AuthenticationService.find.renewToken();
@@ -229,29 +229,29 @@ class ApiBaseHelper extends GetxController {
             Future.delayed(const Duration(seconds: 30), () => _isBlockingRenew = false);
           }
         } else if (kDebugMode) {
-          Helper.snackBar(
-              message: jsonDecode(response.body)['message'].toString().tr,
-              title: 'debug oups!',
-              includeDismiss: false,
-              styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
+          // Helper.snackBar(
+          // message: jsonDecode(response.body)['message'].toString().tr,
+          // title: 'debug oups!',
+          // includeDismiss: false,
+          // styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
           throw UnauthorisedException(jsonDecode(response.body)['message'].toString());
         }
       case 404:
         if (kDebugMode) {
-          Helper.snackBar(
-              message: jsonDecode(response.body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
+          // Helper.snackBar(
+          // message: jsonDecode(response.body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
         }
         throw NotFoundException(response.body.toString());
       case 406:
         if (kDebugMode) {
-          Helper.snackBar(
-              message: jsonDecode(response.body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
+          // Helper.snackBar(
+          // message: jsonDecode(response.body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
         }
         throw UnauthorisedException(jsonDecode(response.body)['message'].toString());
       case 409:
         if (kDebugMode) {
-          Helper.snackBar(
-              message: jsonDecode(response.body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
+          // Helper.snackBar(
+          // message: jsonDecode(response.body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
         }
         throw ConflictException(response.body.toString());
       case 500:

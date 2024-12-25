@@ -12,11 +12,17 @@ class Assets {
   static const String pictureLoading = 'assets/lottie/picture_loading.json';
   static const String emptyAnimation = 'assets/lottie/empty_animation.json';
   // Pictures
-  static const String dootifyLogo = 'assets/images/dootify_logo.png';
+  static const String dootifyLogo = 'assets/images/dootify-logo.png';
+  static const String dootifyWhiteLogo = 'assets/images/dootify-logo-white.png';
+  static const String dootifyIconLogo = 'assets/images/dootify-logo-icon.png';
+  static const String dootifyWhiteIconLogo = 'assets/images/dootify-logo-icon-white.png';
   static const String dootifyLogoAnimation = 'assets/images/logo_animation.mp4';
   static const String noImage = 'assets/images/no_image.jpg';
   static const String signedContract = 'assets/images/signed.png';
   static const String withdrawMoneyIcon = 'assets/images/withdraw_money.png';
   static const String depositMoneyIcon = 'assets/images/deposit_money.png';
   static const String flouciIcon = 'assets/images/flouci_logo_round.png';
+  static const String onboarding1 = 'assets/images/onboarding1.jpg';
+  static const String onboarding2 = 'assets/images/onboarding2.jpg';
+  static const String onboarding3 = 'assets/images/onboarding3.jpg';
 }

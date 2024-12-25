@@ -118,7 +118,7 @@ class ChatController extends GetxController {
   }
 
   Future<List<DiscussionDTO>> getUserChatHistory({String? search}) async {
-    return await Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () async {
+    return (await Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () async {
       final (discussionList, ongoingReservations) = await ChatRepository.find.getUserDiscussions(search: search);
       if (Get.arguments != null && Get.arguments is Reservation) {
         currentReservation = Get.arguments;
@@ -129,7 +129,9 @@ class ChatController extends GetxController {
       userOngoingReservations = ongoingReservations ?? [];
       update();
       return discussionList ?? [];
-    });
+    }) as List)
+        .map((e) => e as DiscussionDTO)
+        .toList();
   }
 
   void sendMessage() {
@@ -176,6 +178,7 @@ class ChatController extends GetxController {
         discussionHistory = discussionHistory.reversed.toList();
         if (discussionHistory.length < 11 && discussionHistory.isNotEmpty) discussionHistory.last.isFirstMessage = true;
         streamSocket.socketSink.add(discussionHistory);
+        isLoading.value = false;
         update();
       });
       MainAppController.find.socket!.on('chatMessage', (data) {
@@ -227,6 +230,12 @@ class ChatController extends GetxController {
       MainAppController.find.socket!.on('newBubble', (data) async {
         userChatPropertiesOriginal = await getUserChatHistory();
         userChatPropertiesFiltered = userChatPropertiesOriginal;
+      });
+      MainAppController.find.socket!.on('updateDiscussionId', (data) {
+        if (Get.currentRoute == MessagesScreen.routeName) {
+          selectedChatBubble?.id = data['discussion_id'];
+          joinRoom(discussionId: selectedChatBubble?.id);
+        }
       });
       _connectSocket();
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) => update());

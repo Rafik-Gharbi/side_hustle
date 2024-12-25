@@ -145,7 +145,9 @@ class MainAppController extends GetxController {
 
   void changeLanguage({Locale? lang}) {
     if (lang == null) return;
-    UserRepository.find.updateUserLanguage(lang.languageCode);
+    if (AuthenticationService.find.isUserLoggedIn.value) {
+      Helper.onSearchDebounce(() => UserRepository.find.updateUserLanguage(lang.languageCode), duration: const Duration(seconds: 2));
+    }
     _saveLanguagePreferences(lang);
     Get.updateLocale(lang);
   }
