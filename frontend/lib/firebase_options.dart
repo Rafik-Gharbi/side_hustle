@@ -41,48 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyC9slCSaKS-EVPjSKa772HZpmEonxt1x9s',
-    appId: '1:786248351245:web:ff8589f04404779dbcdf44',
-    messagingSenderId: '786248351245',
-    projectId: 'side-hustle-dc63b',
-    authDomain: 'side-hustle-dc63b.firebaseapp.com',
-    storageBucket: 'side-hustle-dc63b.appspot.com',
-    measurementId: 'G-KCXWET3G2J',
+    apiKey: 'AIzaSyDbjlbasCkxL7mTbvuOTcik0NGPu4qIjWc',
+    appId: '1:141879224852:web:dbcda18351387bf49dd501',
+    messagingSenderId: '141879224852',
+    projectId: 'dootify-8a5df',
+    authDomain: 'dootify-8a5df.firebaseapp.com',
+    storageBucket: 'dootify-8a5df.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBvvIdN067XLWb8TnJFlIhxhvBUJaf-XiU',
-    appId: '1:786248351245:android:126f6f04e44392d3bcdf44',
-    messagingSenderId: '786248351245',
-    projectId: 'side-hustle-dc63b',
-    storageBucket: 'side-hustle-dc63b.appspot.com',
+    apiKey: 'AIzaSyC8M1hW23j6ccXYCfPk_atf527pVTyNGus',
+    appId: '1:141879224852:android:b8f3b81e5f0800dd9dd501',
+    messagingSenderId: '141879224852',
+    projectId: 'dootify-8a5df',
+    storageBucket: 'dootify-8a5df.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC0In5EV30h2dR3l4KPRVeRyMExecVH8y8',
-    appId: '1:786248351245:ios:45ad54b9065aa11ebcdf44',
-    messagingSenderId: '786248351245',
-    projectId: 'side-hustle-dc63b',
-    storageBucket: 'side-hustle-dc63b.appspot.com',
-    iosBundleId: 'com.example.sideHustle',
+    apiKey: 'AIzaSyDP1qsP5zYXO5m2Pp0-oFmnUQz6EwfbiMQ',
+    appId: '1:141879224852:ios:6457574ea6638ce69dd501',
+    messagingSenderId: '141879224852',
+    projectId: 'dootify-8a5df',
+    storageBucket: 'dootify-8a5df.firebasestorage.app',
+    iosClientId: '141879224852-2vtnig76hskv3blpojtc1buu53g0j05e.apps.googleusercontent.com',
+    iosBundleId: 'com.nextGenEase.dootify',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC0In5EV30h2dR3l4KPRVeRyMExecVH8y8',
-    appId: '1:786248351245:ios:45ad54b9065aa11ebcdf44',
-    messagingSenderId: '786248351245',
-    projectId: 'side-hustle-dc63b',
-    storageBucket: 'side-hustle-dc63b.appspot.com',
-    iosBundleId: 'com.example.sideHustle',
+    apiKey: 'AIzaSyDP1qsP5zYXO5m2Pp0-oFmnUQz6EwfbiMQ',
+    appId: '1:141879224852:ios:6457574ea6638ce69dd501',
+    messagingSenderId: '141879224852',
+    projectId: 'dootify-8a5df',
+    storageBucket: 'dootify-8a5df.firebasestorage.app',
+    iosClientId: '141879224852-2vtnig76hskv3blpojtc1buu53g0j05e.apps.googleusercontent.com',
+    iosBundleId: 'com.nextGenEase.dootify',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyC9slCSaKS-EVPjSKa772HZpmEonxt1x9s',
-    appId: '1:786248351245:web:fc1424d5d403bf9ebcdf44',
-    messagingSenderId: '786248351245',
-    projectId: 'side-hustle-dc63b',
-    authDomain: 'side-hustle-dc63b.firebaseapp.com',
-    storageBucket: 'side-hustle-dc63b.appspot.com',
-    measurementId: 'G-7WQHPB21RR',
+    apiKey: 'AIzaSyDbjlbasCkxL7mTbvuOTcik0NGPu4qIjWc',
+    appId: '1:141879224852:web:3cf195ff6bd1a1bd9dd501',
+    messagingSenderId: '141879224852',
+    projectId: 'dootify-8a5df',
+    authDomain: 'dootify-8a5df.firebaseapp.com',
+    storageBucket: 'dootify-8a5df.firebasestorage.app',
   );
+
 }

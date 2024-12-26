@@ -18,7 +18,7 @@ class CustomButtons extends StatelessWidget {
   final double? height;
   final bool loading;
   final bool disabled;
-  final Icon? icon;
+  final Widget? icon;
   final bool? isIconLeft;
   final double? iconSize;
   final Color? iconColor;

@@ -47,7 +47,7 @@ class BuildPriceRange extends StatelessWidget {
                     fieldController: controller.minPriceController,
                     textInputType: const TextInputType.numberWithOptions(decimal: true),
                     suffixIcon: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: Paddings.large),
+                      padding: const EdgeInsets.only(top: Paddings.regular),
                       child: Text(mainAppController.currency.value, style: AppFonts.x12Bold),
                     ),
                     onChanged: (value) => Helper.onSearchDebounce(() => controller.managePriceFilter(min: value)),
@@ -68,7 +68,7 @@ class BuildPriceRange extends StatelessWidget {
                     fieldController: controller.maxPriceController,
                     textInputType: const TextInputType.numberWithOptions(decimal: true),
                     suffixIcon: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: Paddings.large),
+                      padding: const EdgeInsets.only(top: Paddings.regular),
                       child: Text(mainAppController.currency.value, style: AppFonts.x12Bold),
                     ),
                     onChanged: (value) => Helper.onSearchDebounce(() => controller.managePriceFilter(max: value)),

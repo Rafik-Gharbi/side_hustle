@@ -3,15 +3,15 @@
     "platforms": {
       "android": {
         "default": {
-          "projectId": "side-hustle-dc63b",
-          "appId": "1:786248351245:android:126f6f04e44392d3bcdf44",
+          "projectId": "dootify-8a5df",
+          "appId": "1:141879224852:android:b8f3b81e5f0800dd9dd501",
           "fileOutput": "android/app/google-services.json"
         }
       },
       "ios": {
         "default": {
-          "projectId": "side-hustle-dc63b",
-          "appId": "1:786248351245:ios:45ad54b9065aa11ebcdf44",
+          "projectId": "dootify-8a5df",
+          "appId": "1:141879224852:ios:6457574ea6638ce69dd501",
           "uploadDebugSymbols": false,
           "fileOutput": "ios/Runner/GoogleService-Info.plist"
         }
@@ -26,13 +26,13 @@
       },
       "dart": {
         "lib/firebase_options.dart": {
-          "projectId": "side-hustle-dc63b",
+          "projectId": "dootify-8a5df",
           "configurations": {
-            "android": "1:786248351245:android:126f6f04e44392d3bcdf44",
-            "ios": "1:786248351245:ios:45ad54b9065aa11ebcdf44",
-            "macos": "1:786248351245:ios:45ad54b9065aa11ebcdf44",
-            "web": "1:786248351245:web:ff8589f04404779dbcdf44",
-            "windows": "1:786248351245:web:fc1424d5d403bf9ebcdf44"
+            "android": "1:141879224852:android:b8f3b81e5f0800dd9dd501",
+            "ios": "1:141879224852:ios:6457574ea6638ce69dd501",
+            "macos": "1:141879224852:ios:6457574ea6638ce69dd501",
+            "web": "1:141879224852:web:dbcda18351387bf49dd501",
+            "windows": "1:141879224852:web:3cf195ff6bd1a1bd9dd501"
           }
         }
       }

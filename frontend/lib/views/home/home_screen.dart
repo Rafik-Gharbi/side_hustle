@@ -41,6 +41,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<HomeController>(
+      didChangeDependencies: (state) => Get.currentRoute == routeName ? Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()) : {},
       builder: (controller) => HoldInSafeArea(
         child: CustomScaffoldBottomNavigation(
           body: Padding(

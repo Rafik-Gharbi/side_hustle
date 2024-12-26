@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "786248351245",
-    "project_id": "side-hustle-dc63b",
-    "storage_bucket": "side-hustle-dc63b.appspot.com"
+    "project_number": "141879224852",
+    "project_id": "dootify-8a5df",
+    "storage_bucket": "dootify-8a5df.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:786248351245:android:126f6f04e44392d3bcdf44",
+        "mobilesdk_app_id": "1:141879224852:android:b8f3b81e5f0800dd9dd501",
         "android_client_info": {
           "package_name": "com.nextGenEase.dootify"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "141879224852-tkoa7o86o36dr5s39mlmahd34j097i64.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyBvvIdN067XLWb8TnJFlIhxhvBUJaf-XiU"
+          "current_key": "AIzaSyC8M1hW23j6ccXYCfPk_atf527pVTyNGus"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "141879224852-tkoa7o86o36dr5s39mlmahd34j097i64.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

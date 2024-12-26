@@ -22,6 +22,8 @@ class Assets {
   static const String withdrawMoneyIcon = 'assets/images/withdraw_money.png';
   static const String depositMoneyIcon = 'assets/images/deposit_money.png';
   static const String flouciIcon = 'assets/images/flouci_logo_round.png';
+  static const String facebookIcon = 'assets/images/facebook_logo.png';
+  static const String googleIcon = 'assets/images/google_logo.png';
   static const String onboarding1 = 'assets/images/onboarding1.jpg';
   static const String onboarding2 = 'assets/images/onboarding2.jpg';
   static const String onboarding3 = 'assets/images/onboarding3.jpg';

@@ -149,15 +149,11 @@ const getTaskHistoryRequiredActionsCount = async (userId) => {
     where: {
       user_id: userId,
       task_id: { [Op.ne]: null },
+      status: { [Op.ne]: "pending" },
     },
   });
 
-  let result = 0;
-  await Promise.all(
-    reservationList.map(async (row) => {
-      if (row.status === "pending" || row.status === "confirmed") result++;
-    })
-  );
+  const result = reservationList.length;
   return result;
 };
 

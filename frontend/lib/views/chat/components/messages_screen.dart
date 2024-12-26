@@ -13,7 +13,6 @@ import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/empty_animation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
-import '../../../widgets/loading_request.dart';
 import '../chat_controller.dart';
 import 'build_chat_header.dart';
 import 'build_chat_messages.dart';
@@ -60,63 +59,57 @@ class MessagesScreen extends StatelessWidget {
                 : null,
             body: Padding(
               padding: const EdgeInsets.all(Paddings.large).copyWith(bottom: Paddings.exceptional),
-              child: LoadingRequest(
-                isLoading: controller.isLoading,
-                child: controller.selectedChatBubble == null
-                    ? Center(child: Text('select_discussion'.tr, style: AppFonts.x14Regular))
-                    : SharedPreferencesService.find.isReady.value && AuthenticationService.find.jwtUserData == null
-                        ? Buildables.buildLoginRequest(onLogin: controller.update)
-                        : controller.loggedInUser == null
-                            ? Buildables.buildLoadingWidget()
-                            : Helper.isNullOrEmpty(controller.selectedChatBubble?.id.toString())
-                                ? Center(child: Text('select_discussion'.tr, style: AppFonts.x14Bold.copyWith(color: kNeutralLightColor)))
-                                : LoadingRequest(
-                                    isLoading: controller.isLoadingNewChat,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                                      children: [
-                                        // Chat Header
-                                        const BuildChatHeader(),
-                                        if (controller.searchChatResult.isNotEmpty)
-                                          const BuildChatSearchResult()
-                                        else if (controller.searchChatResult.isEmpty && controller.searchMessagesController.text.isNotEmpty && !controller.isSearchMode)
-                                          EmptyAnimation(itemCount: 0, message: 'search_not_found'.tr, child: const SizedBox())
-                                        else
-                                          // Chat Messages
-                                          EmptyAnimation(
-                                            message: 'no_messages'.tr,
-                                            itemCount: controller.discussionHistory.length,
-                                            expandIfEmpty: true,
-                                            child: const BuildChatMessages(),
-                                          ),
-                                        const SizedBox(height: Paddings.large),
-                                        // Send new message
-                                        CustomTextField(
-                                          fieldController: controller.messageController,
-                                          focusNode: controller.messageFocusNode,
-                                          outlinedBorder: true,
-                                          enableFloatingLabel: false,
-                                          hintText: 'send_message'.tr,
-                                          textAlign: TextAlign.start,
-                                          onSubmitted: (_) => controller.sendMessage(),
-                                          prefixIcon: CircularButtonWithMenu(
-                                            menuItems: [
-                                              MenuOptionItem(icon: Icons.attach_file_rounded, label: 'attachments'.tr, onTap: controller.attachToMessage),
-                                              if (controller.hasOngoingReservation)
-                                                MenuOptionItem(icon: Icons.assignment_outlined, label: 'create_contract'.tr, onTap: controller.createContract),
-                                            ],
-                                          ),
-                                          suffixIcon: CustomButtons.icon(
-                                            onPressed: controller.sendMessage,
-                                            icon: const Icon(Icons.send, color: kNeutralColor),
-                                            disabled: controller.selectedChatBubble == null,
-                                          ),
-                                        ),
-                                      ],
+              child: controller.selectedChatBubble == null
+                  ? Center(child: Text('select_discussion'.tr, style: AppFonts.x14Regular))
+                  : SharedPreferencesService.find.isReady.value && AuthenticationService.find.jwtUserData == null
+                      ? Buildables.buildLoginRequest(onLogin: controller.update)
+                      : controller.loggedInUser == null
+                          ? Buildables.buildLoadingWidget()
+                          : Helper.isNullOrEmpty(controller.selectedChatBubble?.id.toString())
+                              ? Center(child: Text('select_discussion'.tr, style: AppFonts.x14Bold.copyWith(color: kNeutralLightColor)))
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    // Chat Header
+                                    const BuildChatHeader(),
+                                    if (controller.searchChatResult.isNotEmpty)
+                                      const BuildChatSearchResult()
+                                    else if (controller.searchChatResult.isEmpty && controller.searchMessagesController.text.isNotEmpty && !controller.isSearchMode)
+                                      EmptyAnimation(itemCount: 0, message: 'search_not_found'.tr, child: const SizedBox())
+                                    else
+                                      // Chat Messages
+                                      EmptyAnimation(
+                                        message: 'no_messages'.tr,
+                                        itemCount: controller.discussionHistory.length,
+                                        expandIfEmpty: true,
+                                        child: const BuildChatMessages(),
+                                      ),
+                                    const SizedBox(height: Paddings.large),
+                                    // Send new message
+                                    CustomTextField(
+                                      fieldController: controller.messageController,
+                                      focusNode: controller.messageFocusNode,
+                                      outlinedBorder: true,
+                                      enableFloatingLabel: false,
+                                      hintText: 'send_message'.tr,
+                                      textAlign: TextAlign.start,
+                                      onSubmitted: (_) => controller.sendMessage(),
+                                      prefixIcon: CircularButtonWithMenu(
+                                        menuItems: [
+                                          MenuOptionItem(icon: Icons.attach_file_rounded, label: 'attachments'.tr, onTap: controller.attachToMessage),
+                                          if (controller.hasOngoingReservation)
+                                            MenuOptionItem(icon: Icons.assignment_outlined, label: 'create_contract'.tr, onTap: controller.createContract),
+                                        ],
+                                      ),
+                                      suffixIcon: CustomButtons.icon(
+                                        onPressed: controller.sendMessage,
+                                        icon: const Icon(Icons.send, color: kNeutralColor),
+                                        disabled: controller.selectedChatBubble == null,
+                                      ),
                                     ),
-                                  ),
-              ),
+                                  ],
+                                ),
             ),
           ),
         ),

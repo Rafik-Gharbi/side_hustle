@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../constants/assets.dart';
 import '../../../../controllers/main_app_controller.dart';
 import '../../../../helpers/buildables.dart';
 import '../../../../helpers/form_validators.dart';
@@ -179,7 +180,7 @@ class SignUpFields extends StatelessWidget {
           CustomButtons.elevateSecondary(
             onPressed: () => controller.facebookLogin(isSignUp: true),
             borderSide: const BorderSide(color: kNeutralColor),
-            icon: Icon(Icons.facebook_rounded, color: kBlackColor.withOpacity(.9)),
+            icon: Image.asset(Assets.facebookIcon, width: 25),
             title: 'continue_facebook'.tr,
           ),
           const SizedBox(height: Paddings.large),
@@ -187,7 +188,7 @@ class SignUpFields extends StatelessWidget {
             onPressed: () => controller.signInWithGoogle(isSignUp: true),
             buttonColor: kNeutralColor100,
             borderSide: const BorderSide(color: kNeutralColor),
-            icon: Icon(Icons.g_mobiledata_outlined, color: kBlackColor.withOpacity(.9)),
+            icon: Image.asset(Assets.googleIcon, width: 25),
             title: 'continue_google'.tr,
           ),
           if (Helper.isMobile) const SizedBox(height: Paddings.exceptional) else const Spacer(),

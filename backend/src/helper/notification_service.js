@@ -51,9 +51,7 @@ class NotificationService {
         sendFirebaseNotification([user.fcmToken], title, body, actionEncoded);
       } else {
         // Send notification via WebSocket
-        this.io
-          .to(`${userId}`)
-          .emit("notification", { notification });
+        this.io.to(`${userId}`).emit("notification", { notification });
       }
     } catch (error) {
       console.error("Error sending notification:", error);

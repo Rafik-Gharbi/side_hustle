@@ -101,6 +101,7 @@ class HomeController extends GetxController {
                   ? SearchMode.regional
                   : SearchMode.national);
       await fetchHomeTasks();
+      MainAppController.find.getNotSeenNotifications();
       isLoading.value = false;
       update();
     });

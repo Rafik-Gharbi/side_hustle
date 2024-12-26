@@ -19,7 +19,6 @@
     "your_proposal_confirmed": "Votre proposition a été confirmée",
     "owner_confirmed_your_proposal": "Le propriétaire de la tâche a confirmé votre proposition, au travail !",
     "task_finished": "Votre tâche est terminée",
-    "task_owner_confirmed_work": "Le propriétaire de la tâche a confirmé votre travail, bon travail !",
     "new_reservation": "Vous avez une nouvelle réservation",
     "new_service_booked": "Quelqu'un a réservé un service dans votre magasin, consultez-le !",
     "reservation_confirmed": "Votre réservation a été confirmée",
@@ -37,6 +36,11 @@
     "review_finished_task": "Veuillez évaluer votre tâche terminée",
     "review_finished_task_name": "Vous avez une tâche terminée intitulée {{taskTitle}} qui n'a pas encore été évaluée. Veuillez laisser un avis pour créer une communauté plus fiable dans notre application.",
     "review_finished_service": "Veuillez évaluer votre service terminé",
-    "review_finished_service_name": "Vous avez un service terminé intitulé {{serviceTitle}} qui n'a pas encore été évalué. Veuillez laisser un avis pour créer une communauté plus fiable dans notre application."
+    "review_finished_service_name": "Vous avez un service terminé intitulé {{serviceTitle}} qui n'a pas encore été évalué. Veuillez laisser un avis pour créer une communauté plus fiable dans notre application.",
+    "task_owner_confirmed_work": "Le propriétaire de la tâche a accepté votre travail, bon travail !",
+    "got_new_message": "Vous avez un nouveau message",
+    "got_new_contract": "Vous avez un nouveau contrat",
+    "contract_is_signed": "Votre contrat a été signé",
+    "contract_is_payed": "Votre contrat a été payé"
   }
 }

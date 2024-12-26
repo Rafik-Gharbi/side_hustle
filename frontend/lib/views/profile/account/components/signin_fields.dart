@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../constants/assets.dart';
 import '../../../../helpers/buildables.dart';
 import '../../../../helpers/form_validators.dart';
 import '../../../../helpers/helper.dart';
@@ -75,7 +76,7 @@ class SignInFields extends StatelessWidget {
             CustomButtons.elevateSecondary(
               onPressed: controller.facebookLogin,
               borderSide: const BorderSide(color: kNeutralColor),
-              icon: Icon(Icons.facebook_rounded, color: kBlackColor.withOpacity(.9)),
+              icon: Image.asset(Assets.facebookIcon, width: 25),
               title: 'continue_facebook'.tr,
             ),
             const SizedBox(height: Paddings.large),
@@ -83,7 +84,7 @@ class SignInFields extends StatelessWidget {
               onPressed: controller.signInWithGoogle,
               buttonColor: kNeutralColor100,
               borderSide: const BorderSide(color: kNeutralColor),
-              icon: Icon(Icons.g_mobiledata_outlined, color: kBlackColor.withOpacity(.9)),
+              icon: Image.asset(Assets.googleIcon, width: 25),
               title: 'continue_google'.tr,
             ),
             const SizedBox(height: Paddings.large),

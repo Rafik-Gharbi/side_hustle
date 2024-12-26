@@ -59,6 +59,9 @@ exports.addTaskReservation = async (req, res) => {
   try {
     let userFound = await User.findByPk(req.decoded.id);
     let foundTask = await Task.findByPk(taskId);
+    if (!foundTask) {
+      return res.status(404).json({ message: "task_not_found" });
+    }
     let taskOwner = await User.findByPk(foundTask.owner_id);
 
     if (!userFound || !taskOwner) {
@@ -243,6 +246,7 @@ exports.userTaskReservationsHistory = async (req, res) => {
     let reservationList = await Reservation.findAll({
       where: {
         user_id: userFound.id,
+        status: { [Op.ne]: "pending" },
       },
     });
     const formattedList = await Promise.all(
@@ -362,7 +366,7 @@ exports.updateTaskReservationStatus = async (req, res) => {
           reservation.status = "rejected";
           await reservation.save();
           await notificationService.sendNotification(
-            reservation.user_id,
+            reservation.provider_id,
             "notifications.your_proposal_rejected",
             "notifications.owner_rejected_your_proposal",
             NotificationType.RESERVATION,
@@ -393,7 +397,7 @@ exports.updateTaskReservationStatus = async (req, res) => {
           element.save();
         }
         notificationService.sendNotification(
-          reservationFound.user_id,
+          reservationFound.provider_id,
           "notifications.your_proposal_confirmed",
           "notifications.owner_confirmed_your_proposal",
           NotificationType.RESERVATION,
@@ -416,7 +420,7 @@ exports.updateTaskReservationStatus = async (req, res) => {
           }
         }
         notificationService.sendNotification(
-          reservationFound.user_id,
+          reservationFound.provider_id,
           "notifications.your_proposal_rejected",
           "notifications.owner_rejected_your_proposal",
           NotificationType.RESERVATION,
@@ -439,7 +443,7 @@ exports.updateTaskReservationStatus = async (req, res) => {
             description: `Earnings for contract ${contract.id}`,
           });
           notificationService.sendNotification(
-            reservationFound.user_id,
+            reservationFound.provider_id,
             "notifications.task_finished",
             "notifications.task_owner_confirmed_work",
             NotificationType.RESERVATION,
@@ -844,7 +848,7 @@ exports.updateServiceStatus = async (req, res) => {
           element.save();
         }
         notificationService.sendNotification(
-          reservationFound.user_id,
+          reservationFound.provider_id,
           "notifications.reservation_confirmed",
           "notifications.owner_confirmed_reservation",
           NotificationType.BOOKING,
@@ -867,7 +871,7 @@ exports.updateServiceStatus = async (req, res) => {
           }
         }
         notificationService.sendNotification(
-          reservationFound.user_id,
+          reservationFound.provider_id,
           "notifications.reservation_rejected",
           "notifications.owner_rejected_reservation",
           NotificationType.BOOKING,

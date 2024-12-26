@@ -4,7 +4,10 @@ const { Chat } = require("./src/models/chat_model");
 const { User } = require("./src/models/user_model");
 const { Discussion } = require("./src/models/discussion_model");
 const { getChat, populateContract } = require("./src/sql/sql_request");
-const { NotificationType } = require("./src/helper/notification_service");
+const {
+  NotificationType,
+  notificationService,
+} = require("./src/helper/notification_service");
 const { Contract } = require("./src/models/contract_model");
 const { isUUID, verifyToken } = require("./src/helper/helpers");
 const { createContract } = require("./src/helper/pdfHelper");
@@ -36,6 +39,7 @@ const {
 const {
   BalanceTransaction,
 } = require("./src/models/balance_transaction_model");
+const { i18n } = require("./i18n");
 
 function initializeSocket(io) {
   // const io = socketIo(server);
@@ -120,10 +124,17 @@ function initializeSocket(io) {
           io.to(`${sender.id}`).emit("updateDiscussionId", createMsg);
         }
         // Emit to reciever if not joined a room
-        io.to(`${msg.reciever}`).emit("notification", {
-          title: "You Got a New Message",
-          body: `${sender.name}: ${msg.message}`,
-          type: NotificationType.CHAT,
+        this.io.to(`${reciever.id}`).emit("notification", {
+          notification: {
+            user_id: reciever.id,
+            title: i18n.__({
+              phrase: "notifications.got_new_message",
+              locale: reciever.language,
+            }),
+            body: `${sender.name}: ${msg.message}`,
+            type: NotificationType.CHAT,
+            action: {},
+          },
         });
 
         // Emit the message to all users in the room
@@ -194,10 +205,17 @@ function initializeSocket(io) {
         });
 
         // Emit to reciever if not joined a room
-        io.to(`${data.reciever}`).emit("notification", {
-          title: "You Got a New Contract",
-          body: `${sender.name}: ${data.contract}`,
-          type: NotificationType.CHAT,
+        this.io.to(`${reciever.id}`).emit("notification", {
+          notification: {
+            user_id: reciever.id,
+            title: i18n.__({
+              phrase: "notifications.got_new_contract",
+              locale: reciever.language,
+            }),
+            body: `${sender.name}: ${data.contract}`,
+            type: NotificationType.CHAT,
+            action: {},
+          },
         });
         // Populate contract's task/service
         contract = await populateContract(contract.id);
@@ -230,11 +248,19 @@ function initializeSocket(io) {
         io.to(`${data.discussionId}`).emit("updateContract", {
           contract: contract,
         });
+        const seeker = await User.findByPk(contract.seeker_id);
         // Emit to reciever if not joined a room
-        io.to(`${contract.seeker_id}`).emit("notification", {
-          title: "Your contract has been signed",
-          body: `${contract}`,
-          type: NotificationType.CHAT,
+        this.io.to(`${seeker.id}`).emit("notification", {
+          notification: {
+            user_id: seeker.id,
+            title: i18n.__({
+              phrase: "notifications.contract_is_signed",
+              locale: seeker.language,
+            }),
+            body: `${contract}`,
+            type: NotificationType.CHAT,
+            action: {},
+          },
         });
       } catch (error) {
         console.error("Error signing contract:", error);
@@ -249,27 +275,23 @@ function initializeSocket(io) {
         contract.isPayed = true;
         contract.save();
 
-        const seeker = await User.findByPk(contract.seeker_id);
-        seeker.balance -= contract.finalPrice + contract.finalPrice * 0.1;
-        await seeker.save();
-
-        BalanceTransaction.create({
-          userId: seeker.id,
-          amount: contract.finalPrice + contract.finalPrice * 0.1,
-          type: "taskPayment",
-          status: "completed",
-          description: `Payment for contract ${contract.id}`,
-        });
-
         // Emit the message to all users in the room
         io.to(`${data.discussionId}`).emit("updateContract", {
           contract: contract,
         });
+        const provider = await User.findByPk(contract.provider_id);
         // Emit to reciever if not joined a room
-        io.to(`${contract.provider_id}`).emit("notification", {
-          title: "Your contract has been payed",
-          body: `${contract}`,
-          type: NotificationType.CHAT,
+        this.io.to(`${provider.id}`).emit("notification", {
+          notification: {
+            user_id: provider.id,
+            title: i18n.__({
+              phrase: "notifications.contract_is_payed",
+              locale: provider.language,
+            }),
+            body: `${contract}`,
+            type: NotificationType.CHAT,
+            action: {},
+          },
         });
       } catch (error) {
         console.error("Error paying contract:", error);

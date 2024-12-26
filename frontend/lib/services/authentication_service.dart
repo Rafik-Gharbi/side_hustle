@@ -538,12 +538,11 @@ class AuthenticationService extends GetxController {
     MainAppController.find.socket!.emit('standBy', {'userId': _jwtUserData!.id});
     MainAppController.find.socket!.on('notification', (data) {
       // Show a notification to the user if not in the chat tab
-      final notification = NotificationModel.fromJson(data);
+      final notification = NotificationModel.fromJson(data['notification']);
       if (Get.currentRoute != ChatScreen.routeName && Get.currentRoute != MessagesScreen.routeName) {
         Helper.showNotification(notification);
       } else if (Get.currentRoute == ChatScreen.routeName || Get.currentRoute == MessagesScreen.routeName) {
         ChatController.find.getUserChatHistory();
-        if (Get.currentRoute == MessagesScreen.routeName) ChatController.find.joinRoom(discussionId: data['discussion_id']);
       }
       MainAppController.find.getNotSeenNotifications();
       MainAppController.find.getNotSeenMessages();

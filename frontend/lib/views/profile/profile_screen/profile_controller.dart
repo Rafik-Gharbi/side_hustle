@@ -55,7 +55,6 @@ class ProfileController extends GetxController {
   }
 
   Future<void> init() async {
-    isLoading.value = true;
     final result = await AuthenticationService.find.fetchUserData();
     if (result != null) {
       loggedInUser = result.user;
@@ -116,7 +115,7 @@ class ProfileController extends GetxController {
   Future<void> subscribeToCategories(List<Category> categories) async {
     String? fcmToken;
     final permission = await FirebaseMessaging.instance.requestPermission();
-    if (permission.authorizationStatus == AuthorizationStatus.authorized && false) {
+    if (permission.authorizationStatus == AuthorizationStatus.authorized) {
       try {
         fcmToken = await FirebaseMessaging.instance.getToken();
       } catch (e, s) {

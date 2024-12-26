@@ -19,7 +19,6 @@
     "your_proposal_confirmed": "تم تأكيد اقتراحك",
     "owner_confirmed_your_proposal": "أكد مالك المهمة اقتراحك، لنبدأ العمل!",
     "task_finished": "تم إنهاء مهمتك",
-    "task_owner_confirmed_work": "أكد مالك المهمة عملك، عمل جيد!",
     "new_reservation": "لديك حجز جديد",
     "new_service_booked": "قام شخص ما بحجز خدمة في متجرك، تحقق منها!",
     "reservation_confirmed": "تم تأكيد حجزك",
@@ -37,6 +36,11 @@
     "review_finished_task": "يرجى مراجعة مهمتك المنتهية",
     "review_finished_task_name": "لديك مهمة منتهية بعنوان {{taskTitle}} لم يتم مراجعتها بعد. يرجى ترك مراجعة لإنشاء مجتمع أكثر ثقة في تطبيقنا.",
     "review_finished_service": "يرجى مراجعة خدمتك المنتهية",
-    "review_finished_service_name": "لديك خدمة منتهية بعنوان {{serviceTitle}} لم يتم مراجعتها بعد. يرجى ترك مراجعة لإنشاء مجتمع أكثر ثقة في تطبيقنا."
+    "review_finished_service_name": "لديك خدمة منتهية بعنوان {{serviceTitle}} لم يتم مراجعتها بعد. يرجى ترك مراجعة لإنشاء مجتمع أكثر ثقة في تطبيقنا.",
+    "task_owner_confirmed_work": "قبل مالك المهمة عملك، عمل جيد!",
+    "got_new_message": "لديك رسالة جديدة",
+    "got_new_contract": "لديك عقد جديد",
+    "contract_is_signed": "تم توقيع عقدك",
+    "contract_is_payed": "تم دفع عقدك"
   }
 }

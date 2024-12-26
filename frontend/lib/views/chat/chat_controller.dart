@@ -353,6 +353,7 @@ class ChatController extends GetxController {
     streamSocket.clear();
     discussionHistory.clear();
     selectedChatBubble = null;
+    isLoading.value = false;
     update();
   }
 
@@ -385,7 +386,7 @@ class ChatController extends GetxController {
           description: currentTask?.description ?? currentService?.description ?? '',
           delivrables: currentTask?.delivrables ?? currentService?.included ?? '',
           finalPrice: currentTask?.price ?? currentService?.price ?? 0,
-          dueDate: null,
+          dueDate: currentReservation?.dueDate,
           task: currentTask,
           service: currentService,
           createdAt: DateTime.now(),

@@ -11,6 +11,7 @@ import '../../models/notification.dart';
 import '../../models/user.dart';
 import '../../repositories/notification_repository.dart';
 import '../../services/authentication_service.dart';
+import '../chat/chat_screen.dart';
 import '../profile/admin_dashboard/admin_dashboard_screen.dart';
 import '../profile/admin_dashboard/components/approve_user/approve_user_screen.dart';
 import '../profile/balance/balance_screen.dart';
@@ -68,76 +69,75 @@ class NotificationsController extends GetxController {
 
   Future<void> resolveNotificationAction(NotificationModel notification) async {
     _markAsRead(notification);
-    if (notification.action != null) {
-      final decodedAction = jsonDecode(notification.action!);
-      switch (notification.type) {
-        case NotificationType.chat:
-          // TODO add a reminder if a first chat stays more than 24 hours without an answer
-          break;
-        case NotificationType.balance:
+    final decodedAction = notification.action != null ? jsonDecode(notification.action!) : null;
+    switch (notification.type) {
+      case NotificationType.chat:
+        // TODO add a reminder if a first chat stays more than 24 hours without an answer
+        MainAppController.find.manageNavigation(routeName: ChatScreen.routeName);
+        break;
+      case NotificationType.balance:
+        Future.delayed(const Duration(milliseconds: 600), () {
+          Get.toNamed(BalanceScreen.routeName, arguments: ProfileController.find.loggedInUser);
+        });
+        MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
+        break;
+      case NotificationType.rewards:
+        if (decodedAction?['coinPack'] != null) {
           Future.delayed(const Duration(milliseconds: 600), () {
-            Get.toNamed(BalanceScreen.routeName, arguments: ProfileController.find.loggedInUser);
+            Get.toNamed(TransactionsScreen.routeName, arguments: decodedAction?['coinPack']);
           });
-          MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
-          break;
-        case NotificationType.rewards:
-          if (decodedAction['coinPack'] != null) {
+        }
+        MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
+        break;
+      case NotificationType.booking:
+        Future.delayed(const Duration(milliseconds: 600), () {
+          if (decodedAction?['isOwner'] != null && (decodedAction?['isOwner'] as bool)) {
+            Get.toNamed(MyStoreScreen.routeName, arguments: decodedAction?['serviceId']);
+          } else {
+            Get.toNamed(ServiceHistoryScreen.routeName, arguments: decodedAction?['bookingId']);
+          }
+        });
+        MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
+        break;
+      case NotificationType.newTask:
+        Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(taskId: decodedAction?['taskId']));
+        break;
+      case NotificationType.reservation:
+        Future.delayed(const Duration(milliseconds: 600), () {
+          if (decodedAction?['isOwner'] != null && (decodedAction?['isOwner'] as bool)) {
+            Get.toNamed(TaskRequestScreen.routeName, arguments: decodedAction?['taskId']);
+          } else {
+            Get.toNamed(TaskHistoryScreen.routeName, arguments: decodedAction?['reservationId']);
+          }
+        });
+        MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
+        break;
+      case NotificationType.verification:
+        if (AuthenticationService.find.jwtUserData?.id == decodedAction?['userId']) {
+          if (decodedAction?['Approved'] != null && (decodedAction?['Approved'] as bool)) {
+            AuthenticationService.find.jwtUserData?.isVerified = VerifyIdentityStatus.verified;
+          } else if (decodedAction?['Approved'] != null && !(decodedAction?['Approved'] as bool)) {
+            AuthenticationService.find.jwtUserData?.isVerified = VerifyIdentityStatus.none;
+          }
+        }
+        if (decodedAction?['isAdmin'] != null && (decodedAction?['isAdmin'] as bool)) {
+          Future.delayed(const Duration(milliseconds: 600), () {
             Future.delayed(const Duration(milliseconds: 600), () {
-              Get.toNamed(TransactionsScreen.routeName, arguments: decodedAction['coinPack']);
+              Get.toNamed(ApproveUserScreen.routeName, arguments: decodedAction?['userId']);
             });
-          }
-          MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
-          break;
-        case NotificationType.booking:
-          Future.delayed(const Duration(milliseconds: 600), () {
-            if (decodedAction['isOwner'] != null && (decodedAction['isOwner'] as bool)) {
-              Get.toNamed(MyStoreScreen.routeName, arguments: decodedAction['serviceId']);
-            } else {
-              Get.toNamed(ServiceHistoryScreen.routeName, arguments: decodedAction['bookingId']);
-            }
+            Get.toNamed(AdminDashboardScreen.routeName);
           });
-          MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
-          break;
-        case NotificationType.newTask:
-          Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(taskId: decodedAction['taskId']));
-          break;
-        case NotificationType.reservation:
-          Future.delayed(const Duration(milliseconds: 600), () {
-            if (decodedAction['isOwner'] != null && (decodedAction['isOwner'] as bool)) {
-              Get.toNamed(TaskRequestScreen.routeName, arguments: decodedAction['taskId']);
-            } else {
-              Get.toNamed(TaskHistoryScreen.routeName, arguments: decodedAction['reservationId']);
-            }
-          });
-          MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
-          break;
-        case NotificationType.verification:
-          if (AuthenticationService.find.jwtUserData?.id == decodedAction['userId']) {
-            if (decodedAction['Approved'] != null && (decodedAction['Approved'] as bool)) {
-              AuthenticationService.find.jwtUserData?.isVerified = VerifyIdentityStatus.verified;
-            } else if (decodedAction['Approved'] != null && !(decodedAction['Approved'] as bool)) {
-              AuthenticationService.find.jwtUserData?.isVerified = VerifyIdentityStatus.none;
-            }
-          }
-          if (decodedAction['isAdmin'] != null && (decodedAction['isAdmin'] as bool)) {
-            Future.delayed(const Duration(milliseconds: 600), () {
-              Future.delayed(const Duration(milliseconds: 600), () {
-                Get.toNamed(ApproveUserScreen.routeName, arguments: decodedAction['userId']);
-              });
-              Get.toNamed(AdminDashboardScreen.routeName);
-            });
-          }
-          MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
-          break;
-        case NotificationType.review:
-          if (decodedAction['userId'] != null) {
-            // TODO add more details about the task/service for reminding the user (decodedAction['serviceId'], decodedAction['taskId'])
-            Get.bottomSheet(AddReviewBottomsheet(user: decodedAction['userId']), isScrollControlled: true);
-          }
-          break;
-        case NotificationType.others:
-          break;
-      }
+        }
+        MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
+        break;
+      case NotificationType.review:
+        if (decodedAction?['userId'] != null) {
+          // TODO add more details about the task/service for reminding the user (decodedAction?['serviceId'], decodedAction?['taskId'])
+          Get.bottomSheet(AddReviewBottomsheet(user: decodedAction?['userId']), isScrollControlled: true);
+        }
+        break;
+      case NotificationType.others:
+        break;
     }
   }
 

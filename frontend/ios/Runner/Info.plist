@@ -32,14 +32,14 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>fb1538434026745544</string>
-				<string>com.googleusercontent.apps.495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq</string>
+				<string>com.googleusercontent.apps.141879224852-2vtnig76hskv3blpojtc1buu53g0j05e</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>CLIENT_ID</key>
-	<string>495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq.apps.googleusercontent.com</string>
+	<string>141879224852-2vtnig76hskv3blpojtc1buu53g0j05e.apps.googleusercontent.com</string>
 	<key>FacebookAppID</key>
 	<string>1538434026745544</string>
 	<key>FacebookClientToken</key>
@@ -47,7 +47,7 @@
 	<key>FacebookDisplayName</key>
 	<string>Dootify</string>
 	<key>GIDClientID</key>
-	<string>495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq.apps.googleusercontent.com</string>
+	<string>141879224852-2vtnig76hskv3blpojtc1buu53g0j05e.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
@@ -73,7 +73,7 @@
 	<key>NWPathMonitor</key>
 	<true/>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.495784834252-kl14rvumk5f4ektnorutk4dlp4d32usq</string>
+	<string>com.googleusercontent.apps.141879224852-2vtnig76hskv3blpojtc1buu53g0j05e</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
