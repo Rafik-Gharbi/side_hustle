@@ -69,19 +69,18 @@ class TransactionsScreen extends StatelessWidget {
                                               border: lightBorder,
                                               borderRadius: smallRadius,
                                             ),
-                                            child: SizedBox(
-                                              width: 300,
-                                              height: 110,
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(Paddings.regular),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    const SizedBox(height: Paddings.regular),
-                                                    Row(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(Paddings.regular),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(height: Paddings.regular),
+                                                  Expanded(
+                                                    child: Row(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
-                                                        Text(pack.coinPack.title, style: AppFonts.x16Bold),
+                                                        Expanded(child: Text(pack.coinPack.title, style: AppFonts.x16Bold)),
                                                         const SizedBox(width: Paddings.small),
                                                         if (pack.coinPack.bonus != null)
                                                           Text(
@@ -90,30 +89,30 @@ class TransactionsScreen extends StatelessWidget {
                                                           ),
                                                       ],
                                                     ),
-                                                    Text(
-                                                      'pack_available_coins'.trParams(
-                                                        {
-                                                          'available': pack.available.toString(),
-                                                          'totalCoins': pack.coinPack.totalCoins.toString(),
-                                                          'usedUp': pack.available == 0 ? '(all used up)' : ''
-                                                        },
-                                                      ),
-                                                      style: AppFonts.x14Regular.copyWith(color: kNeutralColor),
+                                                  ),
+                                                  Text(
+                                                    'pack_available_coins'.trParams(
+                                                      {
+                                                        'available': pack.available.toString(),
+                                                        'totalCoins': pack.coinPack.totalCoins.toString(),
+                                                        'usedUp': pack.available == 0 ? '(all used up)' : ''
+                                                      },
                                                     ),
-                                                    const SizedBox(height: Paddings.small),
-                                                    Align(
-                                                      alignment: Alignment.centerRight,
-                                                      child: Text(
-                                                        'expires_in_days'.trParams({
-                                                          'expiration':
-                                                              pack.createdAt.add(Duration(days: 30 * pack.coinPack.validMonths)).difference(DateTime.now()).inDays.toString()
-                                                        }),
-                                                        style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
-                                                      ),
+                                                    style: AppFonts.x14Regular.copyWith(color: kNeutralColor),
+                                                  ),
+                                                  const SizedBox(height: Paddings.small),
+                                                  Align(
+                                                    alignment: Alignment.centerRight,
+                                                    child: Text(
+                                                      'expires_in_days'.trParams({
+                                                        'expiration':
+                                                            pack.createdAt.add(Duration(days: 30 * pack.coinPack.validMonths)).difference(DateTime.now()).inDays.toString()
+                                                      }),
+                                                      style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
                                                     ),
-                                                    const SizedBox(height: Paddings.regular),
-                                                  ],
-                                                ),
+                                                  ),
+                                                  const SizedBox(height: Paddings.regular),
+                                                ],
                                               ),
                                             ),
                                           ),

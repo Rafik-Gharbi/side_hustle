@@ -715,20 +715,9 @@ async function populateStores(fetchedStores) {
 
 async function populateOneStore(store) {
   let services = await Service.findAll({ where: { store_id: store.id } });
-  services = await populateServices(services);
+  store.services = await populateServices(services);
 
-  return {
-    id: store.id,
-    name: store.name,
-    description: store.description,
-    picture: store.picture,
-    governorate_id: store.governorate_id,
-    coordinates: store.coordinates,
-    owner: store.user,
-    services: services,
-    isFavorite: store.notIncluded,
-    rating: store.notes,
-  };
+  return store;
 }
 
 const getFavoriteTaskByUserId = async (userId) => {
@@ -998,6 +987,7 @@ module.exports = {
   getUserReportsRequiredActionsCount,
   getUserFeedbacksRequiredActionsCount,
   populateStores,
+  populateOneStore,
   getUserSupportRequiredActionsCount,
   populateSupportTickets,
   populateOneSupportTicket,

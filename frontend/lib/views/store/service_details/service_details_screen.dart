@@ -79,15 +79,16 @@ class ServiceDetailsScreen extends StatelessWidget {
                                       Get.bottomSheet(AddBoostBottomsheet(serviceId: service.id), isScrollControlled: true);
                                     },
                                   ),
-                                ListTile(
-                                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                  title: Text('report'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
-                                  leading: const Icon(Icons.report_outlined),
-                                  onTap: () async {
-                                    Helper.goBack();
-                                    Get.bottomSheet(ReportUserDialog(user: store!.owner!, service: service), isScrollControlled: true);
-                                  },
-                                ),
+                                if (!isOwner)
+                                  ListTile(
+                                    shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                    title: Text('report'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                    leading: const Icon(Icons.report_outlined),
+                                    onTap: () async {
+                                      Helper.goBack();
+                                      Get.bottomSheet(ReportUserDialog(user: store!.owner!, service: service), isScrollControlled: true);
+                                    },
+                                  ),
                               ],
                             ),
                           ),
@@ -179,7 +180,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                       Text('${Helper.formatAmount(service.price ?? 0)} ${MainAppController.find.currency.value}', style: AppFonts.x14Bold.copyWith(color: kNeutralColor)),
                     ],
                   ),
-                  if (service.timeEstimationFrom != null)
+                  if (service.timeEstimationFrom != null && service.timeEstimationFrom != 0)
                     Padding(
                       padding: const EdgeInsets.only(top: Paddings.regular),
                       child: Row(

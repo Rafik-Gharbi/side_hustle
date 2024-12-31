@@ -7,6 +7,7 @@ module.exports = (app) => {
     tokenVerification,
     tokenMail,
     refreshTokenVerification,
+    tokenVerificationOptional,
   } = require("../middlewares/authentificationHelper");
   var router = require("express").Router();
 
@@ -63,7 +64,7 @@ module.exports = (app) => {
   );
 
   // get user by id, available only for owners
-  router.get("/user-id", tokenVerification, userController.getUserById);
+  router.get("/user-id", tokenVerificationOptional, userController.getUserById);
 
   // endpoint that generate html of contract
   // router.get("/show-contract", checkOrigin, userController.showContract);

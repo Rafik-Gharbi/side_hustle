@@ -12,6 +12,7 @@ import '../../services/theme/theme.dart';
 import '../../widgets/hold_in_safe_area.dart';
 import '../home/home_screen.dart';
 import '../settings/components/language_selector.dart';
+import 'components/logo_animation.dart';
 
 class OnboardingScreen extends StatelessWidget {
   static const String routeName = '/onboarding';
@@ -24,10 +25,12 @@ class OnboardingScreen extends StatelessWidget {
       child: IntroductionScreen(
         pages: [
           PageViewModel(
-            title: 'welcome_dootify'.tr,
+            title: 'welcome_to'.tr,
             bodyWidget: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const LogoAnimation(),
+                const SizedBox(height: Paddings.exceptional),
                 Text('choose_prefered_language'.tr, style: AppFonts.x16Bold),
                 const SizedBox(height: Paddings.large),
                 LanguageSelector(selectedLocale: deviceLocale),
@@ -35,7 +38,7 @@ class OnboardingScreen extends StatelessWidget {
             ),
           ),
           PageViewModel(
-            title: 'welcome_dootify'.tr,
+            title: 'with_dootify'.tr,
             body: 'delegate_tasks_save_time'.tr,
             image: Padding(
               padding: const EdgeInsets.only(top: Paddings.large),

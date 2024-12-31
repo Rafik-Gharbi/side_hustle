@@ -116,7 +116,7 @@ class MyStoreController extends GetxController {
       name: nameController.text,
       description: descriptionController.text,
       governorate: governorate!,
-      picture: ImageDTO(file: storePicture!, type: ImageType.image),
+      picture: storePicture != null ? ImageDTO(file: storePicture!, type: ImageType.image) : null,
       coordinates: coordinates,
     );
     if (currentStore == null) {
@@ -264,5 +264,21 @@ class MyStoreController extends GetxController {
     if (currentStore?.coordinates == null) return;
     final String googleMapslocationUrl = 'https://www.google.com/maps/search/?api=1&query=${currentStore!.coordinates!.latitude},${currentStore!.coordinates!.longitude}';
     Helper.launchUrlHelper(Uri.encodeFull(googleMapslocationUrl));
+  }
+
+  void deleteStore() {
+    Get.back();
+    Helper.openConfirmationDialog(
+      content: 'delete_store_msg'.tr,
+      onConfirm: () async {
+        final result = await StoreRepository.find.deleteStore();
+        if (result) {
+          currentStore = null;
+        } else {
+          Helper.snackBar(message: 'error_occurred'.tr);
+        }
+        update();
+      },
+    );
   }
 }

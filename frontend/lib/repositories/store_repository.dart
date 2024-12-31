@@ -40,7 +40,13 @@ class StoreRepository extends GetxService {
 
   Future<Store?> addStore(Store newstore, {required bool withBack}) async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.post, sendToken: true, '/store/', body: newstore.toJson(), files: [newstore.picture?.file]);
+      final result = await ApiBaseHelper().request(
+        RequestType.post,
+        sendToken: true,
+        '/store/',
+        body: newstore.toJson(),
+        files: newstore.picture?.file != null ? [newstore.picture?.file] : null,
+      );
       if (withBack) Helper.goBack();
       final store = Store.fromJson(result['store']);
       if (MainAppController.find.isConnected) StoreDatabaseRepository.find.backupStore(store);
@@ -155,5 +161,15 @@ class StoreRepository extends GetxService {
       LoggerService.logger?.e('Error occured in getHotServices:\n$e');
     }
     return [];
+  }
+
+  Future<bool> deleteStore() async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.delete, sendToken: true, '/store/');
+      return result['done'];
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in deleteStore:\n$e');
+    }
+    return false;
   }
 }

@@ -105,7 +105,7 @@ class NavigationHistoryObserver extends NavigatorObserver {
       }
       Get.offNamedUntil(ProfileScreen.routeName, (route) => route.settings.name == ProfileScreen.routeName);
     } else if (result != null) {
-      Get.back(result: result);
+      Helper.goBack(result: result);
       _removeLastHistory();
     } else if (history.length <= 1) {
       // get saved history and populate [history]
@@ -131,7 +131,7 @@ class NavigationHistoryObserver extends NavigatorObserver {
       // }
     } else {
       _removeLastHistory();
-      Get.back();
+      Helper.goBack();
     }
   }
 

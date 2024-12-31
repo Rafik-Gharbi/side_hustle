@@ -32,6 +32,12 @@ module.exports = (app) => {
     storeController.addStore
   );
 
+  router.delete(
+    "/",
+    tokenVerification,
+    storeController.deleteStore
+  );
+
   router.post(
     "/service",
     tokenVerification,

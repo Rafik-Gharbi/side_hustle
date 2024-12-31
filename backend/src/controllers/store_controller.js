@@ -11,7 +11,11 @@ const {
 } = require("../helper/helpers");
 const { Service } = require("../models/service_model");
 const { ServiceGalleryModel } = require("../models/service_gallery_model");
-const { populateServices, populateOneService } = require("../sql/sql_request");
+const {
+  populateServices,
+  populateOneService,
+  populateOneStore,
+} = require("../sql/sql_request");
 const { Review } = require("../models/review_model");
 const { Boost } = require("../models/boost_model");
 const { Op } = require("sequelize");
@@ -184,7 +188,7 @@ exports.addStore = async (req, res) => {
       governorate_id,
       owner_id: user.id,
       coordinates,
-      picture: req.files?.photo ? req.files?.photo[0]["filename"] : nill,
+      picture: req.files?.photo ? req.files?.photo[0]["filename"] : undefined,
     });
 
     return res.status(200).json({
@@ -198,6 +202,45 @@ exports.addStore = async (req, res) => {
         owner: user,
       },
     });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// add a new store
+exports.deleteStore = async (req, res) => {
+  try {
+    // Check if user exists
+    const user = await User.findOne({ where: { id: req.decoded.id } });
+    if (!user) {
+      return res.status(404).json({ message: "user_not_found" });
+    }
+    let foundStore = await Store.findOne({
+      where: { owner_id: user.id },
+    });
+    if (!foundStore) {
+      return res.status(404).json({ message: "store_not_found" });
+    }
+
+    foundStore = await populateOneStore(foundStore);
+
+    // TODO soft delete if store services has been booked
+    for (const service of foundStore.services) {
+      const serviceGallery = await ServiceGalleryModel.findAll({
+        where: { service_id: service.id },
+      });
+
+      for (const galleryItem of serviceGallery) {
+        await galleryItem.destroy();
+      }
+
+      await service.destroy();
+    }
+    await foundStore.destroy();
+
+    return res.status(200).json({ done: true });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

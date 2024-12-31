@@ -20,7 +20,7 @@ class WithdrawalBottomsheet extends StatelessWidget {
       builder: (controller) => StatefulBuilder(
         builder: (context, setState) => AnimatedContainer(
           duration: Durations.short4,
-          height: (isExpansionTileOpen ? 540 : 430) + (controller.hasValidatorError ? 20 : 0),
+          height: (isExpansionTileOpen ? 550 : 445) + (controller.hasValidatorError ? 20 : 0),
           child: Material(
             color: kNeutralColor100,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),

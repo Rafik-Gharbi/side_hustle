@@ -76,7 +76,7 @@ class HomeController extends GetxController {
 
   set filterModel(FilterModel value) {
     _filterModel = value;
-    searchTask();
+    if (_filterModel.isNotEmpty) searchTask();
   }
 
   static final HomeController _singleton = HomeController._internal();

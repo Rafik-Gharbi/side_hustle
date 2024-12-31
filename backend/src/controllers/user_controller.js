@@ -242,7 +242,7 @@ exports.signUp = async (req, res) => {
         return res.status(400).json({ message: "missing_password" });
       }
       const hashedPass = await bcrypt.hash(password, 10);
-      
+
       //if the user used a phone number
       if (formattedPhoneNumber) {
         // we verify if it validate the pattern
@@ -437,13 +437,7 @@ exports.profile = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
   try {
-    const connectedUserId = req.decoded.id;
     const id = req.query.id;
-
-    const connectedUser = await User.findByPk(connectedUserId);
-    if (!connectedUser) {
-      return res.status(404).json({ message: "user_not_found" });
-    }
     const userFound = await User.findByPk(id);
 
     const userReviews = await Review.findAll({

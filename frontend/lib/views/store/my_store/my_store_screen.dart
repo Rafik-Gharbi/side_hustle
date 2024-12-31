@@ -48,49 +48,57 @@ class MyStoreScreen extends StatelessWidget {
         ),
       );
 
-  CustomButtonWithOverlay buildMoreButton(bool isOwner, MyStoreController controller) {
-    return CustomButtonWithOverlay(
-      offset: const Offset(-170, 30),
-      buttonWidth: 50,
-      button: const Icon(Icons.more_vert_outlined),
-      menu: DecoratedBox(
-        decoration: BoxDecoration(borderRadius: smallRadius, color: kNeutralColor100),
-        child: SizedBox(
-          width: 200,
-          height: isOwner && controller.currentStore?.coordinates != null ? 180 : 120,
-          child: Column(
-            children: [
-              ListTile(
-                shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                title: Text('bookmark'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
-                leading: Icon(store?.isFavorite ?? false ? Icons.bookmark_outlined : Icons.bookmark_add_outlined),
-                onTap: () {
-                  Helper.goBack();
-                  Helper.verifyUser(() async {
-                    await MainAppController.find.toggleFavoriteStore(store!);
-                    controller.update();
-                  });
-                },
-              ),
-              if (controller.currentStore?.coordinates != null)
-                ListTile(
-                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                  title: Text('get_directions'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
-                  leading: const Icon(Icons.near_me_outlined),
-                  onTap: controller.openStoreItinerary,
+  Widget buildMoreButton(bool isOwner, MyStoreController controller) {
+    return controller.currentStore != null
+        ? CustomButtonWithOverlay(
+            offset: const Offset(-170, 30),
+            buttonWidth: 50,
+            button: const Icon(Icons.more_vert_outlined),
+            menu: DecoratedBox(
+              decoration: BoxDecoration(borderRadius: smallRadius, color: kNeutralColor100),
+              child: SizedBox(
+                width: 200,
+                child: Column(
+                  children: [
+                    ListTile(
+                      shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                      title: Text('bookmark'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                      leading: Icon(store?.isFavorite ?? false ? Icons.bookmark_outlined : Icons.bookmark_add_outlined),
+                      onTap: () {
+                        Helper.goBack();
+                        Helper.verifyUser(() async {
+                          await MainAppController.find.toggleFavoriteStore(store!);
+                          controller.update();
+                        });
+                      },
+                    ),
+                    if (controller.currentStore?.coordinates != null)
+                      ListTile(
+                        shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                        title: Text('get_directions'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                        leading: const Icon(Icons.near_me_outlined),
+                        onTap: controller.openStoreItinerary,
+                      ),
+                    if (isOwner) ...[
+                      ListTile(
+                        shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                        title: Text('edit'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                        leading: const Icon(Icons.edit_outlined),
+                        onTap: controller.editStore,
+                      ),
+                      ListTile(
+                        shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                        title: Text('delete'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                        leading: const Icon(Icons.delete_forever_outlined),
+                        onTap: controller.deleteStore,
+                      ),
+                    ],
+                  ],
                 ),
-              if (isOwner)
-                ListTile(
-                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                  title: Text('edit'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
-                  leading: const Icon(Icons.edit_outlined),
-                  onTap: controller.editStore,
-                )
-            ],
-          ),
-        ),
-      ),
-    );
+              ),
+            ),
+          )
+        : const SizedBox();
   }
 
   Widget buildStoreContent(MyStoreController controller, bool isOwner) {

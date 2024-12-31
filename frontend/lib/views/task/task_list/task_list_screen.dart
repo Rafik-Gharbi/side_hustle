@@ -13,6 +13,7 @@ import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../../widgets/task_card.dart';
+import '../../home/home_controller.dart';
 import '../task_filter/more_filters_popup.dart';
 import 'task_list_controller.dart';
 
@@ -36,6 +37,10 @@ class TaskListScreen extends StatelessWidget {
         builder: (controller) => Obx(
           () => CustomScaffoldBottomNavigation(
             appBarTitle: 'search_tasks'.tr,
+            onBack: () {
+              HomeController.find.filterModel = FilterModel();
+              HomeController.find.searchController.clear();
+            },
             appBarActions: [
               CustomButtons.icon(
                 icon: Icon(controller.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),

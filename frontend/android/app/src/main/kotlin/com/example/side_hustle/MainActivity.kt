@@ -1,4 +1,4 @@
-package com.nextGenEase.dootify
+package com.sparkedgesolution.dootify
 
 import io.flutter.embedding.android.FlutterActivity
 

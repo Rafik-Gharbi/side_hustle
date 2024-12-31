@@ -222,7 +222,10 @@ class ProfileScreen extends StatelessWidget {
                                                             ),
                                                           ),
                                                           isScrollControlled: true,
-                                                        ).then((_) => controller.init());
+                                                        ).then((_) {
+                                                          AuthenticationService.find.clearFormFields();
+                                                          controller.init();
+                                                        });
                                                       },
                                                     ),
                                                     if (AuthenticationService.find.jwtUserData?.isVerified != VerifyIdentityStatus.verified)

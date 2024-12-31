@@ -69,7 +69,11 @@ class DepositBottomsheet extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: Paddings.exceptional),
+            const SizedBox(height: Paddings.large),
+            if (type == DepositType.installment) ...[
+              Text('company_rib_msg'.tr, style: AppFonts.x14Bold),
+              const SizedBox(height: Paddings.large),
+            ],
             CustomTextField(
               hintText: 'amount_to_deposit'.tr,
               fieldController: controller.amountController,
@@ -172,9 +176,9 @@ class DepositBottomsheet extends StatelessWidget {
   double resolveDepositTypeHeight(bool isExpansionTileOpen, bool hasValidatorError, bool hasValidatorErrorSlipDeposit) {
     switch (type) {
       case DepositType.bankCard:
-        return (isExpansionTileOpen ? 570 : 390) + (hasValidatorError ? 20 : 0);
+        return (isExpansionTileOpen ? 560 : 390) + (hasValidatorError ? 20 : 0);
       case DepositType.installment:
-        return (isExpansionTileOpen ? 750 : 550) + (hasValidatorError ? 20 : 0) + (hasValidatorErrorSlipDeposit ? 20 : 0);
+        return (isExpansionTileOpen ? 790 : 585) + (hasValidatorError ? 20 : 0) + (hasValidatorErrorSlipDeposit ? 20 : 0);
       default:
         return Get.height - 100;
     }

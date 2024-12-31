@@ -244,8 +244,14 @@ class AuthenticationService extends GetxController {
     } catch (e) {
       LoggerService.logger?.i('Chat controller is not initialized');
     }
-    SharedPreferencesService.find.removeKey(jwtKey);
-    SharedPreferencesService.find.removeKey(refreshTokenKey);
+    final sharedPreferencesService = SharedPreferencesService.find;
+    final mainAppController = MainAppController.find;
+    sharedPreferencesService.removeKey(jwtKey);
+    sharedPreferencesService.removeKey(refreshTokenKey);
+    mainAppController.notSeenNotifications.value = 0;
+    mainAppController.profileActionRequired.value = 0;
+    mainAppController.notSeenMessages.value = 0;
+    mainAppController.socket?.disconnect();
     _jwtUserData = null;
     _chatRoomInitiated = false;
     _isLoggingIn = false;
