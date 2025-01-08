@@ -39,7 +39,8 @@ class Database extends _$Database {
   @override
   int get schemaVersion => 1;
 
-  Future<void> deleteTransactionTable() async {
+  Future<void> deleteAllData() async {
+    // TODO delete all data in the database
     await customStatement('DELETE FROM "task";');
   }
 

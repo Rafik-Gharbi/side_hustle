@@ -21,6 +21,7 @@ class CustomerSupport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomStandardScaffold(
+      backgroundColor: kNeutralColor100,
       title: 'support_system'.tr,
       body: StatefulBuilder(
           builder: (context, setState) => SingleChildScrollView(

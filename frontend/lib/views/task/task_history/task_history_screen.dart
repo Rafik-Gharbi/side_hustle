@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../constants/colors.dart';
 import '../../../constants/sizes.dart';
 import '../../../models/reservation.dart';
 import '../../../services/theme/theme.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../../widgets/reservation_card.dart';
@@ -19,9 +20,10 @@ class TaskHistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoldInSafeArea(
       child: GetBuilder<TaskHistoryController>(
-        builder: (controller) => CustomScaffoldBottomNavigation(
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
           onBack: () => ProfileController.find.init(),
-          appBarTitle: 'task_history'.tr,
+          title: 'task_history'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.hasNoTasksYet

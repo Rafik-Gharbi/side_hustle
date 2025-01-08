@@ -59,6 +59,7 @@ class TicketDetails extends StatelessWidget {
       }
 
       return CustomStandardScaffold(
+        backgroundColor: kNeutralColor100,
         title: 'ticket_details'.tr,
         actionButton: saveRequired()
             ? CustomButtons.icon(

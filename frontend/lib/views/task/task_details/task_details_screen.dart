@@ -17,7 +17,7 @@ import '../../../services/logger_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_button_with_overlay.dart';
 import '../../../widgets/custom_buttons.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/report_user_dialog.dart';
 import '../../boost/add_boost/add_boost_bottomsheet.dart';
@@ -42,7 +42,9 @@ class TaskDetailsScreen extends StatelessWidget {
         tag: 'task-details-${task.id}',
         autoRemove: false,
         builder: (controller) => HoldInSafeArea(
-              child: CustomScaffoldBottomNavigation(
+              child: CustomStandardScaffold(
+                backgroundColor: kNeutralColor100,
+                title: '',
                 noAppBar: true,
                 body: SingleChildScrollView(
                   child: Padding(
@@ -72,7 +74,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                         onTap: () {
                                           Helper.goBack();
                                           Helper.verifyUser(() async {
-                                            await MainAppController.find.toggleFavoriteTask(task);
+                                            task.isFavorite = await MainAppController.find.toggleFavoriteTask(task);
                                             controller.update();
                                           });
                                         },
@@ -190,7 +192,9 @@ class TaskDetailsScreen extends StatelessWidget {
                             const SizedBox(width: Paddings.regular),
                             Text('${'price'.tr}:', style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
                             const SizedBox(width: Paddings.regular),
-                            Text('${Helper.formatAmount(task.price ?? 0)} ${task.priceMax != null ? '- ${Helper.formatAmount(task.priceMax!)} ' : ''}${MainAppController.find.currency.value}', style: AppFonts.x14Bold.copyWith(color: kNeutralColor)),
+                            Text(
+                                '${Helper.formatAmount(task.price ?? 0)} ${task.priceMax != null ? '- ${Helper.formatAmount(task.priceMax!)} ' : ''}${MainAppController.find.currency.value}',
+                                style: AppFonts.x14Bold.copyWith(color: kNeutralColor)),
                           ],
                         ),
                         const SizedBox(height: Paddings.regular),

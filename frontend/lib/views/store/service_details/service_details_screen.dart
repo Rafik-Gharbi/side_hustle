@@ -19,7 +19,7 @@ import '../../../services/logger_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_button_with_overlay.dart';
 import '../../../widgets/custom_buttons.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/report_user_dialog.dart';
 import '../../boost/add_boost/add_boost_bottomsheet.dart';
@@ -46,7 +46,9 @@ class ServiceDetailsScreen extends StatelessWidget {
       tag: 'service-details-${service.id}',
       autoRemove: false,
       builder: (controller) => HoldInSafeArea(
-        child: CustomScaffoldBottomNavigation(
+        child: CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: '',
           noAppBar: true,
           body: SingleChildScrollView(
             child: Padding(

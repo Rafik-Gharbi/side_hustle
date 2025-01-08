@@ -5,13 +5,13 @@ import '../../../constants/sizes.dart';
 import '../../../helpers/helper.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../constants/colors.dart';
 import '../../constants/constants.dart';
 import '../../controllers/main_app_controller.dart';
 import '../../models/notification.dart';
+import '../../widgets/custom_standard_scaffold.dart';
 import '../../widgets/overflowed_text_with_tooltip.dart';
 import 'notification_controller.dart';
 
@@ -30,15 +30,14 @@ class NotificationScreen extends StatelessWidget {
             state.controller?.fetchNotifications();
           },
         ),
-        builder: (controller) => CustomScaffoldBottomNavigation(
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
           onBack: () => MainAppController.find.getNotSeenNotifications(),
-          appBarTitle: 'notifications'.tr,
-          appBarActions: [
-            CustomButtons.icon(
-              icon: const Icon(Icons.mark_chat_read_outlined, size: 18),
-              onPressed: controller.markAllAsRead,
-            ),
-          ],
+          title: 'notifications'.tr,
+          actionButton: CustomButtons.icon(
+            icon: const Icon(Icons.mark_chat_read_outlined, size: 18),
+            onPressed: controller.markAllAsRead,
+          ),
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.notificationList.isEmpty

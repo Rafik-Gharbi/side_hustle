@@ -22,6 +22,8 @@ module.exports = (app) => {
   // get profile by token
   router.get("/profile", tokenVerification, userController.profile);
 
+  router.get("/send-mail", userController.sendTestMail);
+
   router.delete("/delete", tokenVerification, userController.deleteProfile);
   router.post(
     "/leave-feedback",

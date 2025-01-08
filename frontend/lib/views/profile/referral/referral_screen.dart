@@ -9,8 +9,9 @@ import '../../../constants/sizes.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
+import '../../settings/components/terms_condition_screen.dart';
 import 'components/referees_screen.dart';
 import 'referral_controller.dart';
 
@@ -22,14 +23,13 @@ class ReferralScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoldInSafeArea(
       child: GetBuilder<ReferralController>(
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'referrals'.tr,
-          appBarActions: [
-            CustomButtons.icon(
-              icon: const Icon(Icons.people_alt_outlined),
-              onPressed: () => Get.toNamed(RefereesScreen.routeName),
-            ),
-          ],
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'referrals'.tr,
+          actionButton: CustomButtons.icon(
+            icon: const Icon(Icons.people_alt_outlined),
+            onPressed: () => Get.toNamed(RefereesScreen.routeName),
+          ),
           body: SingleChildScrollView(
             child: Column(
               children: [
@@ -136,9 +136,9 @@ class ReferralScreen extends StatelessWidget {
                 CustomButtons.text(
                   title: 'read_terms_conditions'.tr,
                   titleStyle: AppFonts.x10Regular.copyWith(color: kSelectedDarkColor),
-                  onPressed: () {},
+                  onPressed: () => Get.toNamed(TermsConditionScreen.routeName),
                 ),
-                const SizedBox(height: Paddings.large),
+                const SizedBox(height: Paddings.exceptional),
               ],
             ),
           ),

@@ -8,9 +8,10 @@ import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/transaction.dart';
 import '../../../services/theme/theme.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
+import '../../../widgets/overflowed_text_with_tooltip.dart';
 import 'transactions_controller.dart';
 
 class TransactionsScreen extends StatelessWidget {
@@ -21,8 +22,9 @@ class TransactionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoldInSafeArea(
       child: GetBuilder<TransactionsController>(
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'my_transactions'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'my_transactions'.tr,
           body: SingleChildScrollView(
             child: Column(
               children: [
@@ -150,14 +152,15 @@ class TransactionsScreen extends StatelessWidget {
                                       title: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            isTask
+                                          OverflowedTextWithTooltip(
+                                            title: isTask
                                                 ? transaction.task!.title
                                                 : isService
                                                     ? transaction.service!.name!
                                                     : transaction.type.name.tr,
                                             style: AppFonts.x14Regular,
                                           ),
+                                          const SizedBox(width: Paddings.small),
                                           Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
@@ -179,7 +182,7 @@ class TransactionsScreen extends StatelessWidget {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                '${'status'.tr}: ${transaction.status.name}',
+                                                '${'status'.tr}: ${transaction.status.name.tr}',
                                                 style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
                                               ),
                                               Text(

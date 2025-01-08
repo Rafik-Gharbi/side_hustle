@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../../constants/assets.dart';
 import '../../constants/colors.dart';
@@ -16,7 +17,6 @@ import '../../widgets/booking_card.dart';
 import '../../widgets/categories_bottomsheet.dart';
 import '../../widgets/catgory_card.dart';
 import '../../widgets/custom_button_with_overlay.dart';
-import '../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../widgets/draggable_bottomsheet.dart';
 import '../../widgets/governorates_bottomsheet.dart';
 import '../../widgets/loading_card_effect.dart';
@@ -35,16 +35,47 @@ import '../../widgets/custom_text_field.dart';
 import '../../widgets/hold_in_safe_area.dart';
 
 class HomeScreen extends StatelessWidget {
-  static const String routeName = '/home';
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<HomeController>(
-      didChangeDependencies: (state) => Get.currentRoute == routeName ? Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()) : {},
-      builder: (controller) => HoldInSafeArea(
-        child: CustomScaffoldBottomNavigation(
-          body: Padding(
+      // initState: (state) => Helper.waitAndExecute(
+      //   () => state.controller != null,
+      //   () => TutorialCoachMark(
+      //     targets: state.controller!.targets,
+      //     colorShadow: kNeutralOpacityColor,
+      //     // alignSkip: Alignment.bottomRight,
+      //     textSkip: 'SKIP',
+      //     // paddingFocus: 10,
+      //     // opacityShadow: 0.8,
+      //     onClickTarget: (target) {
+      //       print(target);
+      //     },
+      //     onClickTargetWithTapPosition: (target, tapDetails) {
+      //       print('target: $target');
+      //       print('clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}');
+      //     },
+      //     onClickOverlay: (target) {
+      //       print(target);
+      //     },
+      //     onSkip: () {
+      //       print('skip');
+      //       return true;
+      //     },
+      //     onFinish: () {
+      //       print('finish');
+      //     },
+      //   )..show(context: context),
+      // ),
+      didChangeDependencies: (state) => MainAppController.find.isHomeScreen ? Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()) : {},
+      builder: (controller) {
+        controller.categoryRowKey = GlobalKey();
+        controller.searchFieldKey = GlobalKey();
+        controller.advancedFilterKey = GlobalKey();
+
+        return HoldInSafeArea(
+          child: Padding(
             padding: const EdgeInsets.all(Paddings.large),
             child: RefreshIndicator(
               color: kPrimaryColor,
@@ -195,6 +226,7 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: CustomTextField(
+                              key: controller.searchFieldKey,
                               hintText: 'search_tasks'.tr,
                               enableFloatingLabel: false,
                               fillColor: kNeutralLightOpacityColor,
@@ -204,6 +236,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: Paddings.regular),
                           CustomButtons.iconWithBackground(
+                            key: controller.advancedFilterKey,
                             icon: const Icon(Icons.filter_alt_outlined, color: kBlackColor),
                             buttonColor: kNeutralLightOpacityColor,
                             height: 48,
@@ -238,6 +271,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                       LoadingCardEffect(
+                        key: controller.categoryRowKey,
                         isLoading: controller.isLoading,
                         type: LoadingCardEffectType.category,
                         child: Row(
@@ -424,8 +458,8 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

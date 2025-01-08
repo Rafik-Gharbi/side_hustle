@@ -52,7 +52,7 @@ class ManageBalanceController extends GetxController {
 
   Future<void> rejectBalanceRequest(BalanceTransaction balanceTransaction) async {
     if (balanceTransaction.id == null) return;
-    // TODO add resons too choose from with optionally providing a note to get dilivered to the user
+    // TODO add resons too choose from with optionally providing a note to get delivered to the user
     MainAppController.find.socket!.emit('rejectBalanceRequest', {
       'jwt': ApiBaseHelper.find.getToken(),
       'id': balanceTransaction.id!,

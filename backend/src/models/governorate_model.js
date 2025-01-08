@@ -4,8 +4,8 @@ const Governorate = sequelize.define(
   {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: Sequelize.STRING, allowNull: false },
-    name_fr: { type: Sequelize.STRING, allowNull: true },
-    name_ar: { type: Sequelize.STRING, allowNull: true },
+    nameFr: { type: Sequelize.STRING, allowNull: true },
+    nameAr: { type: Sequelize.STRING, allowNull: true },
   },
   {
     tableName: "governorate",

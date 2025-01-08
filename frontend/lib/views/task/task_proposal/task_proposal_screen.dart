@@ -7,7 +7,7 @@ import '../../../constants/constants.dart';
 import '../../../constants/sizes.dart';
 import '../../../helpers/helper.dart';
 import '../../../services/theme/theme.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../profile/user_profile/user_profile_screen.dart';
@@ -21,8 +21,9 @@ class TaskProposalScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoldInSafeArea(
       child: GetBuilder<TaskProposalController>(
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'task_proposals'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'task_proposals'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.reservationList.isEmpty
@@ -54,10 +55,17 @@ class TaskProposalScreen extends StatelessWidget {
                               splashColor: kPrimaryOpacityColor,
                               onTap: openContainer,
                               title: Row(
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(reservation.user.name ?? '', style: AppFonts.x16Bold),
-                                  // TODO Add user review score
+                                  // user rating
+                                  Row(
+                                    children: [
+                                      Text(Helper.formatAmount(reservation.provider.rating), style: AppFonts.x16Bold),
+                                      const SizedBox(width: Paddings.small),
+                                      const Icon(Icons.star, color: Colors.amber),
+                                    ],
+                                  ),
                                 ],
                               ),
                               subtitle: Column(

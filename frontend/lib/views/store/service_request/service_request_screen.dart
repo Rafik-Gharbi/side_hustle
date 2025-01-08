@@ -8,7 +8,7 @@ import '../../../constants/sizes.dart';
 import '../../../helpers/helper.dart';
 import '../../../services/navigation_history_observer.dart';
 import '../../../services/theme/theme.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../profile/user_profile/user_profile_screen.dart';
@@ -24,8 +24,9 @@ class ServiceRequestScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoldInSafeArea(
       child: GetBuilder<ServiceRequestController>(
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'service_requests'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'service_requests'.tr,
           onBack: NavigationHistoryObserver.instance.previousRouteHistory == MyStoreScreen.routeName ? () => MyStoreController.find.init() : null,
           body: LoadingRequest(
             isLoading: controller.isLoading,
@@ -42,7 +43,7 @@ class ServiceRequestScreen extends StatelessWidget {
                           transitionDuration: const Duration(milliseconds: 600),
                           onClosed: (data) => data != null && data ? Future.delayed(const Duration(milliseconds: 600), () => controller.init()) : null,
                           openBuilder: (_, __) => UserProfileScreen(
-                            user: reservation.user,
+                            user: reservation.provider,
                             reservation: reservation,
                             requestStatus: reservation.status,
                             isService: true,
@@ -58,10 +59,17 @@ class ServiceRequestScreen extends StatelessWidget {
                               splashColor: kPrimaryOpacityColor,
                               onTap: openContainer,
                               title: Row(
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(reservation.user.name ?? '', style: AppFonts.x16Bold),
-                                  // TODO Add user review score
+                                  Text(reservation.provider.name ?? '', style: AppFonts.x16Bold),
+                                  // user rating
+                                  Row(
+                                    children: [
+                                      Text(Helper.formatAmount(reservation.provider.rating), style: AppFonts.x16Bold),
+                                      const SizedBox(width: Paddings.small),
+                                      const Icon(Icons.star, color: Colors.amber),
+                                    ],
+                                  ),
                                 ],
                               ),
                               subtitle: Column(

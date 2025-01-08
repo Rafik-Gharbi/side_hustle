@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../constants/colors.dart';
 import '../../../constants/sizes.dart';
 import '../../../services/theme/theme.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../../widgets/store_card.dart';
@@ -18,8 +19,9 @@ class FavoriteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoldInSafeArea(
       child: GetBuilder<FavoriteController>(
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'my_bookmarks'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'my_bookmarks'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.savedTaskList.isEmpty && controller.savedStoreList.isEmpty
@@ -39,7 +41,12 @@ class FavoriteScreen extends StatelessWidget {
                                   final store = controller.savedStoreList[index];
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: 2),
-                                    child: StoreCard(store: store, onRemoveFavorite: () => controller.removeStoreFromList(store)),
+                                    child: StoreCard(
+                                        store: store,
+                                        onRemoveFavorite: () {
+                                          controller.removeStoreFromList(store);
+                                          controller.init();
+                                        }),
                                   );
                                 },
                               ),
@@ -54,7 +61,12 @@ class FavoriteScreen extends StatelessWidget {
                                   final task = controller.savedTaskList[index];
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: 2),
-                                    child: TaskCard(task: task, onRemoveFavorite: () => controller.removeTaskFromList(task)),
+                                    child: TaskCard(
+                                        task: task,
+                                        onRemoveFavorite: () {
+                                          controller.removeTaskFromList(task);
+                                          controller.init();
+                                        }),
                                   );
                                 },
                               ),

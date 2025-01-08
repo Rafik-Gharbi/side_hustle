@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../constants/colors.dart';
 import '../../../constants/sizes.dart';
 import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../services/theme/theme.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../add_boost/add_boost_bottomsheet.dart';
@@ -28,8 +29,9 @@ class ListBoostScreen extends StatelessWidget {
             state.controller?.fetchUserBoosts();
           },
         ),
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'my_boosts'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'my_boosts'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.boostList.isEmpty

@@ -6,7 +6,7 @@ import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
 
-enum LoadingCardEffectType { task, category, store, chat, profile }
+enum LoadingCardEffectType { task, category, store, chat, profile, categoryBottomSheet }
 
 class LoadingCardEffect extends StatelessWidget {
   final RxBool isLoading;
@@ -29,6 +29,9 @@ class LoadingCardEffect extends StatelessWidget {
         break;
       case LoadingCardEffectType.category:
         loadingEffect = const CategoryLoadingEffect();
+        break;
+      case LoadingCardEffectType.categoryBottomSheet:
+        loadingEffect = const CategoryLoadingEffect(isBottomSheet: true);
         break;
       case LoadingCardEffectType.store:
         loadingEffect = const StoreLoadingEffect();
@@ -89,19 +92,28 @@ class TaskLoadingEffect extends StatelessWidget {
 }
 
 class CategoryLoadingEffect extends StatelessWidget {
-  const CategoryLoadingEffect({super.key});
+  final bool isBottomSheet;
+  const CategoryLoadingEffect({super.key, this.isBottomSheet = false});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
       children: List.generate(
-        4,
-        (index) => CardLoading(
-          height: (Get.width - 60) / 4,
-          width: (Get.width - 60) / 4,
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          margin: const EdgeInsets.only(bottom: 10),
+        isBottomSheet ? 2 : 1,
+        (index) => Padding(
+          padding: EdgeInsets.only(bottom: isBottomSheet ? Paddings.regular : 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(
+              isBottomSheet ? 3 : 4,
+              (index) => CardLoading(
+                height: (Get.width - 60) / 4,
+                width: (Get.width - 60) / 4,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                margin: const EdgeInsets.only(bottom: 10),
+              ),
+            ),
+          ),
         ),
       ),
     );

@@ -3,7 +3,10 @@ const bcrypt = require("bcryptjs");
 const { User } = require("../models/user_model");
 const { decryptData } = require("../helper/encryption");
 const { verifyToken } = require("../helper/helpers");
-// const { loadTranslations } = require("./helpers");
+const { Contract } = require("../models/contract_model");
+const { createContract } = require("../helper/pdfHelper");
+const fs = require("fs");
+const path = require("path");
 
 async function tokenVerification(req, res, next) {
   let token = req.headers["authorization"];
@@ -18,28 +21,43 @@ async function tokenVerification(req, res, next) {
         message: "session_expired",
       });
     }
-    // let checkBearer = "Bearer ";
-    // if (token.startsWith(checkBearer)) {
-    //   token = token.slice(checkBearer.length, token.length);
-    // }
-
-    // jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-    //   if (err) {
-    //     return res.status(403).json({
-    //       success: false,
-    //       message: "session_expired",
-    //     });
-    //   } else {
-    //     req.decoded = decoded;
-    //     next();
-    //   }
-    // });
   } else {
     return res.status(403).json({
       message: "no_token_provided",
     });
   }
 }
+
+async function checkContractPermission(req, res, next) {
+  const user = await User.findByPk(req.decoded.id);
+  const contract = await Contract.findByPk(req.params.id);
+  if (user.id != contract.seeker_id && user.id != contract.provider_id) {
+    return res.status(401).json({ message: "not_allowed" });
+  }
+  const filePath = path.join(
+    __dirname,
+    `./public/contracts/contract_${user.language}_${req.params.id}.pdf`
+  );
+  if (!fs.existsSync(filePath)) {
+    // File language is not created
+    const sender = await User.findByPk(contract.seeker_id);
+    const reciever = await User.findByPk(contract.provider_id);
+
+    await createContract({
+      contractId: contract.id,
+      date: contract.dueDate,
+      seekerName: sender.name,
+      providerName: reciever.name,
+      taskDescription: contract.description,
+      deliverables: contract.delivrables,
+      deliveryDate: contract.dueDate,
+      price: contract.finalPrice,
+      language: user.language,
+    });
+  }
+  next();
+}
+
 function tokenVerificationOptional(req, res, next) {
   let token = req.headers["authorization"];
   if (token && !token.includes("null")) {
@@ -177,4 +195,5 @@ module.exports = {
   roleAuth,
   refreshTokenVerification,
   tokenVerificationOptional,
+  checkContractPermission,
 };

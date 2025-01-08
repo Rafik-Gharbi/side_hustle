@@ -149,7 +149,7 @@ class TaskCard extends StatelessWidget {
                       const SizedBox(),
                     Text(
                       '${'price'.tr}: ${Helper.formatAmount(task.price!)} ${task.priceMax != null ? '- ${Helper.formatAmount(task.priceMax!)} ' : ''}${MainAppController.find.currency.value}',
-                      style: AppFonts.x10Regular.copyWith(color: kNeutralColor),
+                      style: AppFonts.x12Bold.copyWith(color: kNeutralColor),
                     ),
                   ],
                 ),

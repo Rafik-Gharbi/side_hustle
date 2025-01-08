@@ -72,7 +72,7 @@ class SignUpFields extends StatelessWidget {
             Buildables.buildPhoneInput(
               initialNumber: controller.phoneNumber,
               onChanged: (number) => controller.phoneNumber = number?.international,
-              // outlinedBorder: true, // TODO
+              outlinedBorder: true,
               isRequired: controller.phoneNumber?.isNotEmpty ?? false,
             ),
             const SizedBox(height: Paddings.regular),
@@ -81,7 +81,7 @@ class SignUpFields extends StatelessWidget {
               hint: 'select_governorate'.tr,
               maxWidth: true,
               selectedItem: controller.governorate,
-              // outlinedBorder: true, // TODO
+              dropDownWithDecoration: true,
               buttonHeight: 45,
               valueFrom: (governorate) => governorate.name,
               onChanged: (value) => controller.governorate = value,
@@ -99,7 +99,7 @@ class SignUpFields extends StatelessWidget {
             CustomDropDownMenu<Gender>(
               items: Gender.values,
               hint: 'select_gender'.tr,
-              // outlinedBorder: true, // TODO
+              dropDownWithDecoration: true,
               maxWidth: true,
               selectedItem: controller.gender,
               valueFrom: (gender) => gender.value.tr,

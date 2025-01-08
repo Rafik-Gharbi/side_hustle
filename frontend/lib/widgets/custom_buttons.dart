@@ -293,16 +293,17 @@ class CustomButtons extends StatelessWidget {
             child: child ??
                 FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: Text(
-                    title ?? '',
-                    style: disabled
-                        ? Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: titleStyle?.fontSize ?? 17)
-                        : (titleStyle ?? AppFonts.x16Regular).copyWith(
-                            decoration: TextDecoration.underline,
-                            height: 1,
-                            color: isHovered ? kSelectedColor : titleStyle?.color,
-                            decorationColor: isHovered ? kSelectedColor : titleStyle?.color,
-                          ),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(border: Border(bottom: BorderSide(color: isHovered ? kSelectedColor : (titleStyle?.color ?? kSecondaryColor)))),
+                    child: Text(
+                      title ?? '',
+                      style: disabled
+                          ? Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: titleStyle?.fontSize ?? 17)
+                          : (titleStyle ?? AppFonts.x16Regular).copyWith(
+                              color: isHovered ? kSelectedColor : titleStyle?.color,
+                              decorationColor: isHovered ? kSelectedColor : titleStyle?.color,
+                            ),
+                    ),
                   ),
                 ),
           ),

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/sizes.dart';
 import '../../../services/theme/theme.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import 'components/build_document_files_picker.dart';
 import 'components/build_finish_verification_process.dart';
@@ -23,8 +23,9 @@ class VerifyUserScreen extends StatelessWidget {
       child: GetBuilder<VerifyUserController>(
         builder: (controller) => PopScope(
           onPopInvokedWithResult: (didPop, result) => didPop ? controller.clearData() : null,
-          child: CustomScaffoldBottomNavigation(
-            appBarTitle: 'verify_user'.tr,
+          child: CustomStandardScaffold(
+            backgroundColor: kNeutralColor100,
+            title: 'verify_user'.tr,
             onBack: controller.clearData,
             body: Padding(
               padding: const EdgeInsets.only(bottom: Paddings.exceptional),

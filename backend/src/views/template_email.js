@@ -1,14 +1,336 @@
 const fs = require("fs");
 const path = require("path");
-const logoPath = path.join(
-  __dirname,
-  "../../public/images/logo_thelandlord.png"
-);
+const logoPath = path.join(__dirname, "../../public/images/dootify-logo.png");
 const logoData = fs.readFileSync(logoPath);
 const logoBase64 = Buffer.from(logoData).toString("base64");
 const logoPathSig = path.join(__dirname, "../../public/images/sign-admin.png");
 const logoDataSig = fs.readFileSync(logoPathSig);
 const logoBase64Sig = Buffer.from(logoDataSig).toString("base64");
+
+const sendConfirmationMail = (fullName, token, isMobile) => `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <style>
+        body {
+          background-color: #f1f1f1;
+          font-family: Arial, sans-serif;
+          justify-content: center;
+          align-items: center;
+        }
+        .container {
+          max-width: 600px;
+          padding: 20px;
+          background-color: #fff;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+  
+        h1 {
+          font-size: 24px;
+          margin-top: 0;
+          color: #0074FE; /* Primary Color */
+        }
+        h2 {
+          font-size: 20px;
+          color: #252535; /* Neutral Color */
+        }
+        p {
+          font-size: 16px;
+          margin-bottom: 20px;
+          line-height: 1.5;
+          color: #252535; /* Neutral Color */
+        }
+        .logo {
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .logo img {
+          max-width: 200px;
+          height: auto;
+        }
+        button {
+          background-color: #0074FE; /* Primary Color */
+          border: none;
+          color: #fff;
+          padding: 10px 50px;
+          border-radius: 5px;
+          font-size: 16px;
+          cursor: pointer;
+          display: block;
+          margin: 0 auto;
+        }
+        button:hover {
+          background-color: #FF9931; /* Accent Color */
+        }
+        .verification-code {
+          font-size: 24px;
+          font-weight: bold;
+          text-decoration: underline;
+          color: #0074FE; /* Primary Color */
+        }
+      </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <img src="data:image/png;base64,${logoBase64}" width="30%" alt="Dootify Logo" />
+        <br />
+      </div>
+      <h1>Bienvenue sur Dootify!</h1>
+      <h2>${fullName ? `Bonjour ${fullName},` : `Bonjour,`}</h2>
+      <p>
+        Merci de rejoindre <strong>Dootify</strong>, votre compagnon pour découvrir et accomplir vos projets. Nous sommes ravis de vous compter parmi nous et impatients de vous aider à atteindre vos objectifs.
+      </p>
+      ${
+        isMobile
+          ? `
+          <p>Pour confirmer votre adresse email, veuillez entrer le code suivant dans l'application :</p>
+          <h3 class="verification-code">${token}</h3>
+          `
+          : `
+          <p>Pour confirmer votre adresse email, veuillez cliquer sur le bouton ci-dessous :</p>
+          <a href="${process.env.DOOTIFY_WEB}/verification?res=${token}" style="text-decoration: none;">
+            <button>Confirmer mon email</button>
+          </a>
+          `
+      }
+      <p>
+        En confirmant votre adresse email, vous accéderez à toutes les fonctionnalités de Dootify, ainsi qu'aux dernières mises à jour et offres exclusives.
+      </p>
+      <p>
+        Si vous n'avez pas créé de compte Dootify, ignorez cet email ou contactez-nous pour signaler cette erreur.
+      </p>
+      <p>
+        Nous sommes impatients de vous offrir une expérience exceptionnelle et de vous aider à transformer vos idées en réalité.
+      </p>
+      <p>
+        <strong>L'équipe Dootify</strong><br />
+        <em>Achieve More with Dootify</em>
+      </p>
+    </div>
+  </body>
+</html>
+`;
+
+/**
+ * Send Email to reset password
+ * @param {String} fullName User full name
+ * @param {*} email User email
+ * @param {String} API_ENDPOINT Depend on the app running localy or server
+ * @param {String} token Generated unique code
+ * @returns
+ */
+const forgotPasswordEmailTemplate = (reset_code) => `
+  <!DOCTYPE html>
+  <!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        background-color: #f1f1f1;
+        font-family: Arial, sans-serif;
+        justify-content: center;
+        align-items: center;
+      }
+      .container {
+        max-width: 600px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      }
+      h1 {
+        font-size: 24px;
+        margin-top: 0;
+        color: #FF9931; /* Couleur principale */
+      }
+      p {
+        font-size: 16px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .logo img {
+        max-width: 200px;
+        height: auto;
+      }
+      .card {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .code {
+        font-size: 20px; /* Taille de police plus grande pour une meilleure lisibilité */
+        color: #FF9931; 
+        font-weight: bold; /* Gras pour souligner l'importance */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <img src="data:image/png;base64,${logoBase64}" width="30%" alt="Dootify Logo" />
+      </div>
+      <h1>Réinitialisez votre mot de passe</h1>
+      <div class="card">
+        <p>
+          Veuillez utiliser le code suivant pour réinitialiser votre mot de
+          passe :
+        </p>
+        <p class="code">${reset_code}</p>
+        <p>
+          Ce code expirera dans 30 minutes. Saisissez-le rapidement pour
+          réinitialiser votre mot de passe.
+        </p>
+      </div>
+      <p>
+        Si vous n'avez pas demandé à réinitialiser votre mot de passe, veuillez
+        ignorer cet email ou contactez-nous si vous avez des préoccupations
+        concernant la sécurité de votre compte.
+      </p>
+      <p>
+        Merci d'utiliser Dootify. Nous sommes là pour vous offrir la
+        meilleure expérience possible.
+      </p>
+      <p>L'équipe de Dootify</p>
+    </div>
+  </body>
+</html>
+
+  `;
+
+const contactUsMail = (email, name, subject, body, phone) => `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us - Dootify</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f1f1f1;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      }
+      .header {
+        color: #fff;
+        padding: 10px 20px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+      }
+      h1 {
+        color: #FF9931;
+        font-size: 24px;
+      }
+      p {
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .footer p {
+        font-size: 14px;
+        color: #888;
+      }
+      .logo img {
+        max-width: 150px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+      }
+      .button {
+        background-color: #FF9931;
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: inline-block;
+        margin-top: 20px;
+      }
+      .button:hover {
+        background-color: #278eba;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      table, th, td {
+        border: 1px solid #ddd;
+      }
+      th, td {
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+        width: 33%;
+      }
+      td {
+        width: 67%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img src="data:image/png;base64,${logoBase64}" width="30%" alt="Dootify Logo" />
+      </div>
+      <div class="content">
+        <h1>New Contact Us Form Submission</h1>
+        <p>Dear Team,</p>
+        <p>
+          A new message has been received from the contact us form on the
+          website. Here are the details:
+        </p>
+        <table>
+          <tr>
+            <th>Name</th>
+            <td>${name}</td>
+          </tr>
+          <tr>
+            <th>Email</th>
+            <td>${email}</td>
+          </tr>
+          <tr>
+            <th>Phone</th>
+            <td>${phone}</td>
+          </tr>
+          <tr>
+            <th>Subject</th>
+            <td>${subject}</td>
+          </tr>
+          <tr>
+            <th>Message</th>
+            <td>${body}</td>
+          </tr>
+        </table>
+        <p>Please respond to this inquiry as soon as possible.</p>
+      </div>
+      <div class="footer">
+        <p>Thank you,<br />Dootify Team</p>
+      </div>
+    </div>
+  </body>
+</html>
+
+`;
 
 const notificationMessage = (sender, message, property) => `
 <!DOCTYPE html>
@@ -34,7 +356,7 @@ const notificationMessage = (sender, message, property) => `
       h1 {
         font-size: 24px;
         margin-top: 0;
-        color: #2da680; /* Base Color */
+        color: #FF9931; /* Base Color */
       }
       p {
         font-size: 16px;
@@ -65,9 +387,9 @@ const notificationMessage = (sender, message, property) => `
   <body>
     <div class="container">
       <div class="logo">
-        <img src="cid:logo_thelandlord" alt="The Landlord" />
+        <img src="cid:dootify-logo" alt="Dootify" />
       </div>
-      <h1>Nouveau message de The Landlord</h1>
+      <h1>Nouveau message de Dootify</h1>
       <div class="card">
         <h2>${sender.name}</h2>
         <p>${message}</p>
@@ -78,7 +400,7 @@ const notificationMessage = (sender, message, property) => `
         />
       </div>
       <p>
-        Nous avons reçu un nouveau message sur The Landlord. Vous pouvez
+        Nous avons reçu un nouveau message sur Dootify. Vous pouvez
         consulter et répondre à ce message en vous connectant à votre compte.
       </p>
       <p>
@@ -86,176 +408,14 @@ const notificationMessage = (sender, message, property) => `
         contacter.
       </p>
       <p>
-        Merci de votre confiance en The Landlord. Nous sommes là pour vous
+        Merci de votre confiance en Dootify. Nous sommes là pour vous
         offrir la meilleure expérience possible.
       </p>
-      <p>L'équipe de The Landlord</p>
+      <p>L'équipe de Dootify</p>
     </div>
   </body>
 </html>
 
-
-`;
-const emailReservationForCheckin = (propertyName) => `
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Welcome to The Landlord</title>
-	<style>
-	    body {
-        background-color: #f1f1f1;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      .container {
-        max-width: 600px;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      }
-      h1 {
-        font-size: 24px;
-        margin-top: 0;
-        text-align: center;
-        color: #2da680; /* Base Color */
-      }
-      p {
-        font-size: 16px;
-        margin-bottom: 20px;
-        line-height: 1.5;
-        text-align: center;
-        /* color: #2da680; Base Color */
-      }
-      .logo {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      .logo img {
-        max-width: 200px;
-        height: auto;
-      }
-
-	</style>
-</head>
-<body>
-	<div class="container">		
-		<div class="logo">
-			<img src="cid:logo_thelandlord" alt="The landlord" />
-		</div>
-		<h1>Confirmation de votre réservation chez The Landlord</h1>
-    
-		<p>Au nom de toute l'équipe de The Landlord, j'ai le plaisir de vous confirmer votre réservation pour « ${propertyName}» et de vous souhaiter la bienvenue.</p>
-		<p>Pour faciliter votre arrivée et votre séjour, veuillez utiliser le lien suivant pour effectuer votre check-in en ligne. Vous aurez simplement besoin d'entrer votre code de réservation et de suivre les étapes indiquées :
-    www.checkin.thelandlord.tn </p>
-		<p>Chez The Landlord, nous nous engageons à offrir à nos clients des logements de qualité et un service irréprochable. Votre confort et votre satisfaction sont nos priorités.</p>
-		<p>Nous vous invitons également à partager votre expérience en répondant au questionnaire de satisfaction qui vous sera proposé le jour de votre départ. Vos retours sont précieux et nous aident à améliorer continuellement nos services.</p>
-		<p>Nous vous souhaitons un agréable séjour et restons à votre disposition pour toute demande ou information complémentaire.</p>
-		<p>Cordialement,</p>
-		<p>Farouk Ben Achour</p>
-		<p>CEO</p>
-		<p>Raise your expectations</p>
-    
-	</div>
-</body>
-</html>
-`;
-
-const newPartnerMail = (email, password) => `
-<!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      body {
-        background-color: #f1f1f1;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      .container {
-        max-width: 600px;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      }
-
-      h1 {
-        font-size: 24px;
-        margin-top: 0;
-        color: #2da680; /* Base Color */
-      }
-      p {
-        font-size: 16px;
-        margin-bottom: 20px;
-        line-height: 1.5;
-      }
-      .logo {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      .logo img {
-        max-width: 200px;
-        height: auto;
-      }
-      .card {
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-      }
-      .small-image {
-        max-width: 100px; /* Set the maximum width of the image */
-        height: auto; /* Maintain aspect ratio */
-      }
-      .link {
-        color: #2da680;
-        text-decoration: none;
-        font-weight: bold;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="logo">
-        <img src="cid:logo_thelandlord" alt="The Landlord" />
-      </div>
-      <h1>Welcome to The Landlord Partnership</h1>
-      <div class="card">
-        <p>Dear Partner,</p>
-        <p>
-          It is with great enthusiasm that we welcome you as our newest partner! This collaboration marks the beginning of a promising journey, and we are committed to ensuring its success. As part of our partnership, we are pleased to provide you with access to our API documentation through Swagger. This tool will facilitate a seamless integration and exploration of our API endpoints, enabling you to leverage the full potential of our services.
-        </p>
-        <p>
-          Please click on the following link to access Swagger and explore our
-          API endpoints:
-          <a class="link" href="https://api.thelandlord.tn/swagger"
-            >Swagger Documentation</a
-          >
-        </p>
-        <p>Here are your login credentials for accessing Swagger:</p>
-        <ul>
-          <li>Email: ${email}</li>
-          <li>Password: ${password}</li>
-        </ul>
-      </div>
-      <p>
-       Please follow the provided link to access the Swagger interface and immerse yourself in the comprehensive documentation we have prepared for you. Should you require any assistance or have any questions, do not hesitate to reach out to us.
-      </p>
-      <p>
-        We look forward to a fruitful and enduring partnership.
-      </p>
-      <p>Best regards,</p>
-      <p>The Landlord Team</p>
-    </div>
-  </body>
-</html>
 
 `;
 
@@ -269,7 +429,7 @@ const contractMail = (fullName) => `
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Contract The Landlord</title>
+	<title>Contract Dootify</title>
 	<style>
 		    body {
         background-color: #f1f1f1;
@@ -290,14 +450,14 @@ const contractMail = (fullName) => `
         font-size: 24px;
         margin-top: 0;
         text-align: center;
-        color: #2da680; /* Base Color */
+        color: #FF9931; /* Base Color */
       }
       p {
         font-size: 16px;
         margin-bottom: 20px;
         line-height: 1.5;
         text-align: center;
-        /* color: #2da680; Base Color */
+        /* color: #FF9931; Base Color */
       }
       .logo {
         text-align: center;
@@ -314,104 +474,10 @@ const contractMail = (fullName) => `
 		<div class="logo">
 			<img src="cid:logoName" alt="landlord logo" />
 		</div>
-		<h1>Contract The landlord</h1>
+		<h1>Contract Dootify</h1>
 		<hr />
 	</div>
 </body>
-</html>
-
-  `;
-
-/**
- * Send Email to reset password
- * @param {String} fullName User full name
- * @param {*} email User email
- * @param {String} API_ENDPOINT Depend on the app running localy or server
- * @param {String} token Generated unique code
- * @returns
- */
-const forgotPasswordEmailTemplate = (reset_code) => `
-  <!DOCTYPE html>
-  <!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      body {
-        background-color: #f1f1f1;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      .container {
-        max-width: 600px;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      }
-      h1 {
-        font-size: 24px;
-        margin-top: 0;
-        color: #2da680; /* Couleur principale */
-      }
-      p {
-        font-size: 16px;
-        margin-bottom: 20px;
-        line-height: 1.5;
-      }
-      .logo {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      .logo img {
-        max-width: 200px;
-        height: auto;
-      }
-      .card {
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-      }
-      .code {
-        font-size: 20px; /* Taille de police plus grande pour une meilleure lisibilité */
-        color: #333; /* Couleur foncée pour un contraste élevé avec le code */
-        font-weight: bold; /* Gras pour souligner l'importance */
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="logo">
-        <img src="cid:logo_thelandlord" alt="The Landlord" />
-      </div>
-      <h1>Réinitialisez votre mot de passe</h1>
-      <div class="card">
-        <p>
-          Veuillez utiliser le code suivant pour réinitialiser votre mot de
-          passe :
-        </p>
-        <p class="code">${reset_code}</p>
-        <p>
-          Ce code expirera dans 30 minutes. Saisissez-le rapidement pour
-          réinitialiser votre mot de passe.
-        </p>
-      </div>
-      <p>
-        Si vous n'avez pas demandé à réinitialiser votre mot de passe, veuillez
-        ignorer cet email ou contactez-nous si vous avez des préoccupations
-        concernant la sécurité de votre compte.
-      </p>
-      <p>
-        Merci d'utiliser The Landlord. Nous sommes là pour vous offrir la
-        meilleure expérience possible.
-      </p>
-      <p>L'équipe de The Landlord</p>
-    </div>
-  </body>
 </html>
 
   `;
@@ -443,217 +509,11 @@ const resetPasswordConfirmationEmailTemplate = (fullName) => `
   </html>
   `;
 
-const sendConfirmationMail = (fullName, token, isMobile) => `
-<!DOCTYPE html>
-<html>
-<head>
-	<style>
-      body {
-        background-color: #f1f1f1;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      .container {
-        max-width: 600px;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      }
-
-      h1 {
-        font-size: 24px;
-        margin-top: 0;
-        /* text-align: center; */
-        color: #2da680; /* Base Color */
-      }
-      p {
-        font-size: 16px;
-        margin-bottom: 20px;
-        line-height: 1.5;
-        /* text-align: center; */
-        /* color: #2da680; Base Color */
-      }
-      .logo {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      .logo img {
-        max-width: 200px;
-        height: auto;
-      }
-      button {
-        background-color: #2da680; /* Complementary Color */
-        border: none;
-        color: #fff;
-        padding: 10px 50px;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        display: block;
-        margin: 0 auto;
-      }
-      button:hover {
-        background-color: #278eba; /* Accent Color */
-      }
-      .verification-code {
-        font-size: 24px;
-        font-weight: bold;
-        text-decoration: underline;
-      }
-    </style>
-</head>
-<body>
-	<div class="container">		
-		<div class="logo">
-        <img src="cid:logo_thelandlord" alt="The Landlord" />
-		</div>
-		<h1>Confirmez votre adresse email pour The Landlord</h1>
-    <h2>${fullName ? `Bonjour ${fullName}` : ``}</h2>
-		<p>Nous sommes ravis de vous accueillir sur The Landlord. Avant de commencer, nous devons confirmer votre adresse email</p>
-    ${
-      isMobile
-        ? `<p>Collez simplement le code ci-dessous en l'application pour confirmer votre inscription :</p>
-      <h3>${token}</h3>`
-        : `<p>Cliquez simplement sur le lien ci-dessous pour confirmer votre inscription :</p>
-      <a href="${process.env.LANDLORD_WEB}/verification?res=${token}"><button>Vérifier</button></a>`
-    }
-      <p> En confirmant votre email, vous pourrez profiter pleinement de nos services et rester informé des dernières nouveautés et offres exclusives.</p>
-    <p> Si vous n'avez pas créé de compte sur The Landlord, veuillez ignorer cet email ou nous en informer.</p>
-    <p> Nous sommes impatients de vous offrir la meilleure expérience possible.</p>
-    <p> Raise Your Expectations, 
-L'équipe de The Landlord</p>
-	</div>
-</body>
-</html>
-`;
-const sendNotificationReservation = (
-  date_from,
-  date_to,
-  propertyName,
-  property_id,
-  price,
-  reservation_id,
-  clientName,
-  clientPhone,
-  clientEmail
-) => `
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Nouvelle Réservation sur The Landlord</title>
-    <style>
-      body {
-        background-color: #f1f1f1;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      .container {
-        max-width: 600px;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      }
-
-      h1 {
-        font-size: 24px;
-        margin-top: 0;
-        /* text-align: center; */
-        color: #2da680; /* Base Color */
-      }
-      p {
-        font-size: 16px;
-        margin-bottom: 20px;
-        line-height: 1.5;
-        /* text-align: center; */
-        /* color: #2da680; Base Color */
-      }
-      .logo {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      .logo img {
-        max-width: 200px;
-        height: auto;
-      }
-      button {
-        background-color: #2da680; /* Complementary Color */
-        border: none;
-        color: #fff;
-        padding: 10px 50px;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        display: block;
-        margin: 0 auto;
-      }
-      button:hover {
-        background-color: #278eba; /* Accent Color */
-      }
-      .reservation-details {
-        font-size: 16px;
-        margin-bottom: 20px;
-      }
-      .house-link {
-        color: #2da680;
-        text-decoration: underline;
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="logo">
-        <img src="cid:logo_thelandlord" alt="The Landlord" />
-      </div>
-      <h1>Nouvelle Réservation sur The Landlord</h1>
-      <p>Une nouvelle réservation a été effectuée :</p>
-      <div class="reservation-details">
-       
-          ${clientName ? ` <p><strong>Client :</strong> ${clientName}</p>` : ""}
-        <p><strong>Email :</strong> ${clientEmail}</p>
-        ${clientPhone ? `<p><strong>Phone :</strong> ${clientPhone}</p>` : ""}
-      
-        <p><strong>Date de début :</strong> ${date_from}</p>
-        <p><strong>Date de fin :</strong>  ${date_to}</p>
-        <p>
-          <strong>Nom de la maison :</strong>
-          <a href="${
-            process.env.LANDLORD_WEB
-          }/#/property-details/${property_id}" class="house-link">${propertyName}</a>
-        </p>
-        <p><strong>Prix :</strong> ${price} DT</p>
-        <p>
-          <strong>ID de la réservation :</strong>
-          
-            ${reservation_id}
-          
-        </p>
-      </div>
-      <p>
-        Veuillez prendre les mesures nécessaires pour préparer cette réservation
-        et informer le client de tous les détails pertinents.
-      </p>
-
-      <p>Cordialement, L'équipe de The Landlord</p>
-    </div>
-  </body>
-</html>
-
-`;
-
 const contratHtml = () => `
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
   <head>
-    <title>The LandLord</title>
+    <title>Dootify</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -844,7 +704,7 @@ const contratHtml = () => `
       <p style="text-align: justify; line-height: 2.2">
         - Name and first name of the representative
         <b
-          >:Company The Landlord, 1631526V, located at the Résidence du Lac, Rue
+          >:Company Dootify, 1631526V, located at the Résidence du Lac, Rue
           du Lac Victoria, Bloc C bureau 34, 1053 Les Berges du Lac, whose
           activity is short-term rental</b
         >
@@ -1008,9 +868,9 @@ const contratHtml = () => `
     </div>
     <footer>
       <div class="footer">
-        <p class="footext">The Landlord</p>
+        <p class="footext">Dootify</p>
         <p class="footext">Code T.V.A: 1631526MA000</p>
-        <p class="footext">contact@thelandlord.tn</p>
+        <p class="footext">contact@dootify.com</p>
         <p class="footext">+216 58 59 59 00</p>
       </div>
     </footer>
@@ -1107,101 +967,6 @@ const contratHtml = () => `
 </html>
 
 `;
-const contactUsMail = (email, name, subject, body, phone) => `
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contact Us - The Landlord</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f1f1f1;
-        margin: 0;
-        padding: 0;
-      }
-      .container {
-        max-width: 600px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      }
-      .header {
-        background-color: #2da680;
-        color: #fff;
-        padding: 10px 20px;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-      }
-      h1 {
-        font-size: 24px;
-      }
-      p {
-        font-size: 16px;
-        line-height: 1.5;
-      }
-      .footer {
-        text-align: center;
-        margin-top: 20px;
-      }
-      .footer p {
-        font-size: 14px;
-        color: #888;
-      }
-      .logo img {
-        max-width: 150px;
-        height: auto;
-        display: block;
-        margin: 0 auto;
-      }
-      .button {
-        background-color: #2da680;
-        color: #fff;
-        text-decoration: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        display: inline-block;
-        margin-top: 20px;
-      }
-      .button:hover {
-        background-color: #278eba;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <img src="cid:logo_thelandlord" alt="The Landlord Logo" class="logo" />
-      </div>
-      <div class="content">
-        <h1>New Contact Us Form Submission</h1>
-        <p>Dear Team,</p>
-        <p>
-          A new message has been received from the contact us form on the
-          website. Here are the details:
-        </p>
-        <ul>
-          <li><strong>Name:</strong> ${name}</li>
-          <li><strong>Email:</strong> ${email}</li>
-          <li><strong>Phone:</strong> ${phone}</li>
-          <li><strong>Subject:</strong> ${subject}</li>
-          <li>
-            <strong>Message:</strong> ${body}
-          </li>
-        </ul>
-        <p>Please respond to this inquiry as soon as possible.</p>
-      </div>
-      <div class="footer">
-        <p>Thank you,<br />The Landlord Team</p>
-      </div>
-    </div>
-  </body>
-</html>
-
-`;
 
 // export module
 module.exports = {
@@ -1210,9 +975,6 @@ module.exports = {
   resetPasswordConfirmationEmailTemplate,
   contratHtml,
   contractMail,
-  emailReservationForCheckin,
-  sendNotificationReservation,
   contactUsMail,
   notificationMessage,
-  newPartnerMail,
 };

@@ -11,7 +11,7 @@ import '../../../../../models/balance_transaction.dart';
 import '../../../../../services/theme/theme.dart';
 import '../../../../../widgets/balance_transaction_card.dart';
 import '../../../../../widgets/custom_buttons.dart';
-import '../../../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../../../widgets/custom_standard_scaffold.dart';
 import '../../../../../widgets/hold_in_safe_area.dart';
 import '../../../../../widgets/loading_request.dart';
 import '../../../balance/balance_controller.dart';
@@ -27,8 +27,9 @@ class ManageBalanceScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<ManageBalanceController>(
         autoRemove: false,
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'manage_balance'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'manage_balance'.tr,
           onBack: () => ProfileController.find.init(),
           body: LoadingRequest(
             isLoading: controller.isLoading,

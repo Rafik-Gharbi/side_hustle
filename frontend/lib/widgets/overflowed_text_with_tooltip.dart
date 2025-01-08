@@ -20,6 +20,11 @@ class OverflowedTextWithTooltip extends StatelessWidget {
   // This layoutBuilder is used to detect if the title will be overflowed or not, to assign a tooltip with it if so.
   Widget buildOverflowedTextWithTooltip() => LayoutBuilder(
         builder: (context, size) {
+          bool isArabic(String text) {
+            final arabicRegExp = RegExp(r'[\u0600-\u06FF]');
+            return arabicRegExp.hasMatch(text);
+          }
+
           final TextSpan span = TextSpan(text: title, style: style ?? AppFonts.x14Regular);
           final TextPainter tp = TextPainter(maxLines: maxLine, textAlign: TextAlign.left, textDirection: TextDirection.ltr, text: span);
           tp.layout(maxWidth: size.maxWidth - widthPadding);
@@ -28,7 +33,7 @@ class OverflowedTextWithTooltip extends StatelessWidget {
           return Tooltip(
             message: exceeded ? title : '',
             child: Text(
-              title.replaceAll('', '\u{200B}'),
+              isArabic(title) ? title : title.replaceAll('', '\u{200B}'),
               overflow: TextOverflow.ellipsis,
               maxLines: maxLine,
               style: style ?? AppFonts.x14Regular.copyWith(color: kBlackColor, fontWeight: FontWeight.w400),

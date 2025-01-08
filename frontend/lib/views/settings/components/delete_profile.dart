@@ -31,6 +31,7 @@ class DeleteProfile extends StatelessWidget {
     };
 
     return CustomStandardScaffold(
+      backgroundColor: kNeutralColor100,
       title: 'delete_profile'.tr,
       body: Padding(
         padding: const EdgeInsets.all(Paddings.large),

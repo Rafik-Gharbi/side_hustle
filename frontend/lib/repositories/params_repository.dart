@@ -24,7 +24,7 @@ class ParamsRepository extends GetxService {
     try {
       List<Governorate>? governorates;
       if (MainAppController.find.isConnected) {
-        final result = await ApiBaseHelper().request(RequestType.get, '/params/governorates');
+        final result = await ApiBaseHelper().request(RequestType.get, '/params/governorates/${Get.locale?.languageCode ?? 'en'}');
         governorates = (result['governorates'] as List).map((e) => Governorate.fromJson(e)).toList();
       } else {
         governorates = await GovernorateDatabaseRepository.find.select();
@@ -41,7 +41,7 @@ class ParamsRepository extends GetxService {
     try {
       List<Category>? categories;
       if (MainAppController.find.isConnected) {
-        final result = await ApiBaseHelper().request(RequestType.get, '/params/categories');
+        final result = await ApiBaseHelper().request(RequestType.get, '/params/categories/${Get.locale?.languageCode ?? 'en'}');
         categories = (result['categories'] as List).map((e) => Category.fromJson(e)).toList();
       } else {
         categories = await CategoryDatabaseRepository.find.select();
@@ -90,7 +90,7 @@ class ParamsRepository extends GetxService {
 
   Future<List<CoinPack>?> getCoinsPack() async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.get, '/params/coin-packs');
+      final result = await ApiBaseHelper().request(RequestType.get, '/params/coin-packs/${Get.locale?.languageCode ?? 'en'}');
       final coins = (result['coins'] as List).map((e) => CoinPack.fromJson(e)).toList();
       return coins;
     } catch (e) {
@@ -101,7 +101,7 @@ class ParamsRepository extends GetxService {
 
   Future<File?> getTermsCondition() async {
     try {
-      final response = await ApiBaseHelper().request(RequestType.get, '/terms-condition');
+      final response = await ApiBaseHelper().request(RequestType.get, '/terms-condition/${Get.locale?.languageCode ?? 'en'}');
       if (response != null) {
         final bytes = response.bodyBytes;
         final dir = await getApplicationDocumentsDirectory();
@@ -118,7 +118,7 @@ class ParamsRepository extends GetxService {
 
   Future<File?> getPrivacyPolicy() async {
     try {
-      final response = await ApiBaseHelper().request(RequestType.get, '/privacy-policy');
+      final response = await ApiBaseHelper().request(RequestType.get, '/privacy-policy/${Get.locale?.languageCode ?? 'en'}');
       if (response != null) {
         final bytes = response.bodyBytes;
         final dir = await getApplicationDocumentsDirectory();

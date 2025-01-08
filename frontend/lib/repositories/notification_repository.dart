@@ -49,4 +49,14 @@ class NotificationRepository extends GetxService {
     }
     return false;
   }
+
+  testNotification() async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.get, '/notification/test', sendToken: true);
+      return result['done'];
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in testNotification:\n$e');
+    }
+    return false;
+  }
 }

@@ -149,7 +149,14 @@ class ContractDialog extends StatelessWidget {
                       ),
                     );
                   } else {
-                    return Center(child: Text('error_occurred'.tr, style: AppFonts.x14Regular));
+                    return Column(
+                      children: [
+                        Align(alignment: Alignment.centerRight, child: CustomButtons.icon(icon: const Icon(Icons.close), onPressed: Get.back)),
+                        Expanded(
+                          child: Center(child: Text('error_occurred'.tr, style: AppFonts.x14Regular)),
+                        ),
+                      ],
+                    );
                   }
                 } else {
                   return const Center(child: CircularProgressIndicator());

@@ -10,6 +10,7 @@ import '../models/category.dart';
 import '../services/theme/theme.dart';
 import 'custom_buttons.dart';
 import 'custom_text_field.dart';
+import 'loading_card_effect.dart';
 
 class CategoriesBottomsheet extends StatefulWidget {
   final void Function(List<Category> category) onSelectCategory;
@@ -24,12 +25,12 @@ class CategoriesBottomsheet extends StatefulWidget {
 }
 
 class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
-  final searchFocusNode = FocusNode();
   List<Category> parentCategories = [];
   List<bool> isExpandedParents = [];
   List<Category> filteredCategories = [];
   List<Category> selectedCategories = [];
   String searchCategory = '';
+  RxBool isLoading = true.obs;
 
   @override
   void initState() {
@@ -40,18 +41,14 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
         isExpandedParents = [for (var i = 0; i < parentCategories.length; i++) false];
         filteredCategories = _initializeFilteredCategories();
         selectedCategories = widget.selected ?? [];
+        isLoading.value = false;
         setState(() {});
       },
     );
   }
 
-  @override
-  void dispose() {
-    searchFocusNode.dispose();
-    super.dispose();
-  }
-
   void filterCategories(String value) {
+    isLoading.value = true;
     searchCategory = value;
     if (value.isEmpty) {
       filteredCategories = parentCategories;
@@ -64,6 +61,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
           )
           .toList();
     }
+    isLoading.value = false;
     setState(() {});
   }
 
@@ -75,9 +73,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => searchFocusNode.requestFocus());
     final canUpdate = widget.nextUpdate != null ? widget.nextUpdate!.isBefore(DateTime.now()) : true;
-    // TODO add shimmer when loading
     return SafeArea(
       child: DecoratedBox(
         decoration: const BoxDecoration(color: kNeutralColor100),
@@ -122,12 +118,14 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                             style: AppFonts.x12Regular,
                             children: [
                               WidgetSpan(
+                                baseline: TextBaseline.alphabetic,
+                                alignment: PlaceholderAlignment.baseline,
                                 child: InkWell(
                                   onTap: () => debugPrint('Subscribe tapped'),
                                   child: Text('subscribe'.tr, style: AppFonts.x12Bold.copyWith(decoration: TextDecoration.underline)),
                                 ),
                               ),
-                              TextSpan(text: 'premium_more_categories'.tr),
+                              TextSpan(text: ' ${'premium_more_categories'.tr}'),
                             ],
                           ),
                         ),
@@ -137,91 +135,92 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                     const SizedBox(height: Paddings.regular),
                     CustomTextField(
                       hintText: 'search_category'.tr,
-                      focusNode: searchFocusNode,
-                      // textStyle: AppFonts.x14Regular.copyWith(height: 0.1),
-                      // border: UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
                       onChanged: (value) => Helper.onSearchDebounce(() => filterCategories(value)),
                     ),
                     const SizedBox(height: Paddings.regular),
-                    Wrap(
-                      children: List.generate(
-                        filteredCategories.length,
-                        (index) {
-                          final parentCategory = filteredCategories[index];
-                          return StatefulBuilder(
-                            builder: (context, setStateCategory) {
-                              void toggleExpandParent(bool value) {
-                                if (value) {
-                                  isExpandedParents = [for (var i = 0; i < parentCategories.length; i++) false];
-                                  setState(() {});
+                    LoadingCardEffect(
+                      isLoading: isLoading,
+                      type: LoadingCardEffectType.categoryBottomSheet,
+                      child: Wrap(
+                        children: List.generate(
+                          filteredCategories.length,
+                          (index) {
+                            final parentCategory = filteredCategories[index];
+                            return StatefulBuilder(
+                              builder: (context, setStateCategory) {
+                                void toggleExpandParent(bool value) {
+                                  if (value) {
+                                    isExpandedParents = [for (var i = 0; i < parentCategories.length; i++) false];
+                                    setState(() {});
+                                  }
+                                  setStateCategory(() => isExpandedParents[index] = value);
                                 }
-                                setStateCategory(() => isExpandedParents[index] = value);
-                              }
 
-                              return AnimatedContainer(
-                                duration: Durations.medium3,
-                                width: isExpandedParents[index] ? Get.width : (Get.width - 30) / 3,
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.symmetric(vertical: Paddings.regular),
-                                child: isExpandedParents[index]
-                                    ? Theme(
-                                        data: ThemeData(dividerColor: kNeutralLightColor),
-                                        child: ExpansionTile(
-                                          initiallyExpanded: true,
-                                          onExpansionChanged: (value) => toggleExpandParent(value),
-                                          trailing: Icon(Icons.close, color: isExpandedParents[index] ? kNeutralColor : null),
-                                          title: Text(parentCategory.name, style: AppFonts.x16Bold, overflow: TextOverflow.ellipsis),
-                                          childrenPadding: EdgeInsets.zero,
-                                          children: [
-                                            GridView.extent(
-                                              shrinkWrap: true,
-                                              physics: const NeverScrollableScrollPhysics(),
-                                              maxCrossAxisExtent: 140.0,
-                                              childAspectRatio: 0.85,
-                                              mainAxisSpacing: Paddings.regular,
-                                              crossAxisSpacing: Paddings.regular,
-                                              padding: const EdgeInsets.all(Paddings.large),
-                                              children: MainAppController.find
-                                                  .getCategoryChildren(parentCategory)
-                                                  .where((element) => searchCategory.isNotEmpty ? element.name.toLowerCase().contains(searchCategory.toLowerCase()) : true)
-                                                  .map(
-                                                (subCategory) {
-                                                  final isSelected = selectedCategories.any((element) => element.id == subCategory.id);
-                                                  return buildCategoryWidget(
-                                                    canUpdate: canUpdate,
-                                                    isSelected: isSelected,
-                                                    category: subCategory,
-                                                    isChild: true,
-                                                    onTap: () {
-                                                      if (canUpdate) {
-                                                        if (isSelected) {
-                                                          selectedCategories.remove(subCategory);
-                                                        } else if (selectedCategories.length < widget.maxSelect) {
-                                                          selectedCategories.add(subCategory);
+                                return AnimatedContainer(
+                                  duration: Durations.medium3,
+                                  width: isExpandedParents[index] ? Get.width : (Get.width - 30) / 3,
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.symmetric(vertical: Paddings.regular),
+                                  child: isExpandedParents[index]
+                                      ? Theme(
+                                          data: ThemeData(dividerColor: kNeutralLightColor),
+                                          child: ExpansionTile(
+                                            initiallyExpanded: true,
+                                            onExpansionChanged: (value) => toggleExpandParent(value),
+                                            trailing: Icon(Icons.close, color: isExpandedParents[index] ? kNeutralColor : null),
+                                            title: Text(parentCategory.name, style: AppFonts.x16Bold, overflow: TextOverflow.ellipsis),
+                                            childrenPadding: EdgeInsets.zero,
+                                            children: [
+                                              GridView.extent(
+                                                shrinkWrap: true,
+                                                physics: const NeverScrollableScrollPhysics(),
+                                                maxCrossAxisExtent: 140.0,
+                                                childAspectRatio: 0.85,
+                                                mainAxisSpacing: Paddings.regular,
+                                                crossAxisSpacing: Paddings.regular,
+                                                padding: const EdgeInsets.all(Paddings.large),
+                                                children: MainAppController.find
+                                                    .getCategoryChildren(parentCategory)
+                                                    .where((element) => searchCategory.isNotEmpty ? element.name.toLowerCase().contains(searchCategory.toLowerCase()) : true)
+                                                    .map(
+                                                  (subCategory) {
+                                                    final isSelected = selectedCategories.any((element) => element.id == subCategory.id);
+                                                    return buildCategoryWidget(
+                                                      canUpdate: canUpdate,
+                                                      isSelected: isSelected,
+                                                      category: subCategory,
+                                                      isChild: true,
+                                                      onTap: () {
+                                                        if (canUpdate) {
+                                                          if (isSelected) {
+                                                            selectedCategories.remove(subCategory);
+                                                          } else if (selectedCategories.length < widget.maxSelect) {
+                                                            selectedCategories.add(subCategory);
+                                                          }
+                                                          setState(() {});
+                                                          if (canUpdate && widget.maxSelect == 1 && selectedCategories.length == widget.maxSelect) {
+                                                            widget.onSelectCategory.call(selectedCategories);
+                                                            Helper.goBack();
+                                                          }
                                                         }
-                                                        setState(() {});
-                                                        if (canUpdate && widget.maxSelect == 1 && selectedCategories.length == widget.maxSelect) {
-                                                          widget.onSelectCategory.call(selectedCategories);
-                                                          Helper.goBack();
-                                                        }
-                                                      }
-                                                    },
-                                                  );
-                                                },
-                                              ).toList(),
-                                            ),
-                                          ],
+                                                      },
+                                                    );
+                                                  },
+                                                ).toList(),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : buildCategoryWidget(
+                                          canUpdate: canUpdate,
+                                          category: parentCategory,
+                                          onTap: () => setStateCategory(() => toggleExpandParent(true)),
                                         ),
-                                      )
-                                    : buildCategoryWidget(
-                                        canUpdate: canUpdate,
-                                        category: parentCategory,
-                                        onTap: () => setStateCategory(() => toggleExpandParent(true)),
-                                      ),
-                              );
-                            },
-                          );
-                        },
+                                );
+                              },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],
@@ -238,42 +237,43 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
     return InkWell(
       onTap: onTap,
       child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(Paddings.small),
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundColor: isSelected
-                        ? kPrimaryColor
-                        : isChild
-                            ? kAccentDarkColor
-                            : kNeutralColor,
-                    child: Center(child: Buildables.buildCategoryIcon(category.icon, size: 40, color: kNeutralColor100)),
-                  ),
-                ),
-                if (category.description.isNotEmpty)
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Tooltip(
-                      message: category.description,
-                      margin: const EdgeInsets.symmetric(horizontal: Paddings.large),
-                      child: const Icon(Icons.info_outline, size: 16),
+        child: Tooltip(
+          message: category.description,
+          showDuration: const Duration(seconds: 5),
+          margin: const EdgeInsets.symmetric(horizontal: Paddings.large),
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(Paddings.small),
+                    child: CircleAvatar(
+                      radius: 30,
+                      backgroundColor: isSelected
+                          ? kPrimaryColor
+                          : isChild
+                              ? kAccentDarkColor
+                              : kNeutralColor,
+                      child: Center(child: Buildables.buildCategoryIcon(category.icon, size: 40, color: kNeutralColor100)),
                     ),
                   ),
-              ],
-            ),
-            const SizedBox(height: Paddings.small),
-            Text(
-              '${category.name} (${category.subscribed})',
-              style: AppFonts.x12Regular,
-              softWrap: true,
-              textAlign: TextAlign.center,
-            ),
-          ],
+                  if (category.description.isNotEmpty)
+                    const Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Icon(Icons.info_outline, size: 16),
+                    ),
+                ],
+              ),
+              const SizedBox(height: Paddings.small),
+              Text(
+                '${category.name} (${category.subscribed})',
+                style: AppFonts.x12Regular,
+                softWrap: true,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

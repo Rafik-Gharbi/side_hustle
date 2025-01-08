@@ -11,12 +11,10 @@ import '../../models/notification.dart';
 import '../../models/user.dart';
 import '../../repositories/notification_repository.dart';
 import '../../services/authentication_service.dart';
-import '../chat/chat_screen.dart';
 import '../profile/admin_dashboard/admin_dashboard_screen.dart';
 import '../profile/admin_dashboard/components/approve_user/approve_user_screen.dart';
 import '../profile/balance/balance_screen.dart';
 import '../profile/profile_screen/profile_controller.dart';
-import '../profile/profile_screen/profile_screen.dart';
 import '../profile/transactions/transactions_screen.dart';
 import '../review/add_review/add_review_bottomsheet.dart';
 import '../store/my_store/my_store_screen.dart';
@@ -73,13 +71,13 @@ class NotificationsController extends GetxController {
     switch (notification.type) {
       case NotificationType.chat:
         // TODO add a reminder if a first chat stays more than 24 hours without an answer
-        MainAppController.find.manageNavigation(routeName: ChatScreen.routeName);
+        MainAppController.find.manageNavigation(screenIndex: 2);
         break;
       case NotificationType.balance:
         Future.delayed(const Duration(milliseconds: 600), () {
           Get.toNamed(BalanceScreen.routeName, arguments: ProfileController.find.loggedInUser);
         });
-        MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
+        MainAppController.find.manageNavigation(screenIndex: 3);
         break;
       case NotificationType.rewards:
         if (decodedAction?['coinPack'] != null) {
@@ -87,7 +85,7 @@ class NotificationsController extends GetxController {
             Get.toNamed(TransactionsScreen.routeName, arguments: decodedAction?['coinPack']);
           });
         }
-        MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
+        MainAppController.find.manageNavigation(screenIndex: 3);
         break;
       case NotificationType.booking:
         Future.delayed(const Duration(milliseconds: 600), () {
@@ -97,7 +95,7 @@ class NotificationsController extends GetxController {
             Get.toNamed(ServiceHistoryScreen.routeName, arguments: decodedAction?['bookingId']);
           }
         });
-        MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
+        MainAppController.find.manageNavigation(screenIndex: 3);
         break;
       case NotificationType.newTask:
         Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(taskId: decodedAction?['taskId']));
@@ -110,7 +108,7 @@ class NotificationsController extends GetxController {
             Get.toNamed(TaskHistoryScreen.routeName, arguments: decodedAction?['reservationId']);
           }
         });
-        MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
+        MainAppController.find.manageNavigation(screenIndex: 3);
         break;
       case NotificationType.verification:
         if (AuthenticationService.find.jwtUserData?.id == decodedAction?['userId']) {
@@ -128,7 +126,7 @@ class NotificationsController extends GetxController {
             Get.toNamed(AdminDashboardScreen.routeName);
           });
         }
-        MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName);
+        MainAppController.find.manageNavigation(screenIndex: 3);
         break;
       case NotificationType.review:
         if (decodedAction?['userId'] != null) {
@@ -160,5 +158,9 @@ class NotificationsController extends GetxController {
         update();
       });
     }
+  }
+
+  void testNotification() {
+    NotificationRepository.find.testNotification().then((value) => _refreshScreen());
   }
 }

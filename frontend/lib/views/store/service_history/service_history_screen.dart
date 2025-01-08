@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../constants/colors.dart';
 import '../../../constants/sizes.dart';
 import '../../../models/reservation.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/booking_card.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../profile/profile_screen/profile_controller.dart';
@@ -19,9 +20,10 @@ class ServiceHistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoldInSafeArea(
       child: GetBuilder<ServiceHistoryController>(
-        builder: (controller) => CustomScaffoldBottomNavigation(
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
           onBack: () => ProfileController.find.init(),
-          appBarTitle: 'service_history'.tr,
+          title: 'service_history'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.hasNoServicesYet

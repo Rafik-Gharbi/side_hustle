@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../../constants/shared_preferences_keys.dart';
 import '../../controllers/main_app_controller.dart';
@@ -33,6 +34,10 @@ class HomeController extends GetxController {
   TextEditingController searchController = TextEditingController();
   FilterModel _filterModel = FilterModel();
   RxBool isLoading = true.obs;
+  List<TargetFocus> targets = [];
+  GlobalKey categoryRowKey = GlobalKey();
+  GlobalKey searchFieldKey = GlobalKey();
+  GlobalKey advancedFilterKey = GlobalKey();
 
   FilterModel get filterModel => _filterModel;
 
@@ -85,6 +90,7 @@ class HomeController extends GetxController {
 
   HomeController._internal() {
     init();
+    // showTutorial();
   }
 
   Future<void> init() async {
@@ -158,4 +164,94 @@ class HomeController extends GetxController {
           Get.bottomSheet(AddReviewBottomsheet(user: serviceReservation.provider), isScrollControlled: true);
         },
       );
+
+  void showTutorial() {
+    targets.add(TargetFocus(keyTarget: categoryRowKey, identify: 'Target 1', contents: [
+      TargetContent(
+        align: ContentAlign.bottom,
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              'Titulo lorem ipsum',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Text(
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pulvinar tortor eget maximus iaculis.',
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          ],
+        ),
+      )
+    ]));
+
+    targets.add(TargetFocus(keyTarget: searchFieldKey, identify: 'Target 2', contents: [
+      TargetContent(
+          align: ContentAlign.left,
+          child: const Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Multiples content',
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10.0),
+                child: Text(
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pulvinar tortor eget maximus iaculis.',
+                  style: TextStyle(color: Colors.white),
+                ),
+              )
+            ],
+          )),
+      TargetContent(
+        align: ContentAlign.top,
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              'Multiples content',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Text(
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pulvinar tortor eget maximus iaculis.',
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          ],
+        ),
+      )
+    ]));
+
+    targets.add(TargetFocus(keyTarget: advancedFilterKey, identify: 'Target 3', contents: [
+      TargetContent(
+        align: ContentAlign.right,
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              'Title lorem ipsum',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Text(
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pulvinar tortor eget maximus iaculis.',
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          ],
+        ),
+      )
+    ]));
+  }
 }

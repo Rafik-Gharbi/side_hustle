@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../../../constants/colors.dart';
 import '../../../repositories/params_repository.dart';
 import '../../../widgets/custom_standard_scaffold.dart';
 
@@ -14,6 +15,7 @@ class TermsConditionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomStandardScaffold(
+      backgroundColor: kNeutralColor100,
       title: 'terms_condition'.tr,
       body: FutureBuilder<File?>(
         future: ParamsRepository.find.getTermsCondition(),

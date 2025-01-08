@@ -9,8 +9,8 @@ import '../../constants/shared_preferences_keys.dart';
 import '../../constants/sizes.dart';
 import '../../services/shared_preferences.dart';
 import '../../services/theme/theme.dart';
+import '../../widgets/custom_scaffold_bottom_navigation.dart';
 import '../../widgets/hold_in_safe_area.dart';
-import '../home/home_screen.dart';
 import '../settings/components/language_selector.dart';
 import 'components/logo_animation.dart';
 
@@ -64,7 +64,7 @@ class OnboardingScreen extends StatelessWidget {
         ],
         onDone: () {
           SharedPreferencesService.find.add(isFirstTimeKey, 'false');
-          Get.toNamed(HomeScreen.routeName);
+          Get.toNamed(CustomScaffoldBottomNavigation.routeName);
         },
         showSkipButton: true,
         skip: Text('skip'.tr, style: AppFonts.x14Regular.copyWith(color: kDisabledColor)),

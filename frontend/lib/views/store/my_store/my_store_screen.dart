@@ -12,7 +12,7 @@ import '../../../services/authentication_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_button_with_overlay.dart';
 import '../../../widgets/custom_buttons.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import '../../../widgets/service_card.dart';
@@ -38,10 +38,11 @@ class MyStoreScreen extends StatelessWidget {
                     backgroundColor: kNeutralColor100,
                     body: buildStoreContent(controller, isOwner),
                   )
-                : CustomScaffoldBottomNavigation(
-                    appBarTitle: 'my_store'.tr,
+                : CustomStandardScaffold(
+                    backgroundColor: kNeutralColor100,
+                    title: 'my_store'.tr,
                     onBack: () => ProfileController.find.init(),
-                    appBarActions: [buildMoreButton(isOwner, controller)],
+                    actionButton: buildMoreButton(isOwner, controller),
                     body: buildStoreContent(controller, isOwner),
                   );
           },

@@ -29,11 +29,10 @@ import '../services/logger_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/theme/theme.dart';
 import '../services/translation/app_localization.dart';
-import '../views/chat/chat_screen.dart';
-import '../views/home/home_screen.dart';
-import '../views/store/market/market_screen.dart';
-import '../views/profile/profile_screen/profile_screen.dart';
+import '../views/profile/favorite/favorite_controller.dart';
+import '../views/profile/favorite/favorite_screen.dart';
 import '../widgets/custom_buttons.dart';
+import '../widgets/custom_scaffold_bottom_navigation.dart';
 
 class MainAppController extends GetxController {
   static MainAppController get find => Get.find<MainAppController>();
@@ -59,6 +58,11 @@ class MainAppController extends GetxController {
   RxInt profileActionRequired = 0.obs;
 
   bool get isConnected => hasInternetConnection.value && isBackReachable.value;
+  bool get isProfileScreen => bottomNavIndex.value == 3;
+  bool get isChatScreen => bottomNavIndex.value == 2;
+  bool get isMarketScreen => bottomNavIndex.value == 1;
+  bool get isHomeScreen => bottomNavIndex.value == 0;
+
 
   Category? getCategoryById(id) => categories.cast<Category?>().singleWhere((element) => element?.id == id, orElse: () => null);
 
@@ -68,7 +72,7 @@ class MainAppController extends GetxController {
     ever(hasVersionUpdate, (_) {
       if (hasVersionUpdate.value) {
         Helper.waitAndExecute(
-          () => Get.locale != null,
+          () => Get.locale != null && Get.currentRoute == CustomScaffoldBottomNavigation.routeName,
           () => Get.dialog(
             AlertDialog(
               title: Text('update_required'.tr, style: AppFonts.x15Bold),
@@ -77,7 +81,7 @@ class MainAppController extends GetxController {
                 CustomButtons.elevatePrimary(
                   onPressed: () => debugPrint('Open Store for update'), // TODO
                   title: 'update_now'.tr,
-                  width: 150,
+                  width: 180,
                   height: 40,
                   titleStyle: AppFonts.x14Bold,
                 ),
@@ -115,41 +119,21 @@ class MainAppController extends GetxController {
     }
   }
 
-  void manageNavigation({int? screenIndex, String? routeName}) {
-    assert(screenIndex != null || routeName != null, 'screenIndex or routeName is required!');
-    switch (routeName ?? screenIndex) {
-      case 0:
-      case HomeScreen.routeName:
-        bottomNavIndex.value = 0;
-        if (Get.currentRoute != HomeScreen.routeName) Get.offAllNamed(HomeScreen.routeName);
-        break;
-      case 1:
-      case MarketScreen.routeName:
-        bottomNavIndex.value = 1;
-        if (Get.currentRoute != MarketScreen.routeName) Get.offAllNamed(MarketScreen.routeName);
-        break;
-      case 2:
-      case ChatScreen.routeName:
-        bottomNavIndex.value = 2;
-        if (Get.currentRoute != ChatScreen.routeName) Get.offAllNamed(ChatScreen.routeName);
-        break;
-      case 3:
-      case ProfileScreen.routeName:
-        bottomNavIndex.value = 3;
-        if (Get.currentRoute != ProfileScreen.routeName) Navigator.of(Get.context!).popUntil((route) => route.settings.name == ProfileScreen.routeName);
-        break;
-      default:
-        bottomNavIndex.value = screenIndex ?? 0;
-    }
+  void manageNavigation({required int screenIndex}) {
+    bottomNavIndex.value = screenIndex;
+    if (Get.currentRoute != CustomScaffoldBottomNavigation.routeName) Get.offAllNamed(CustomScaffoldBottomNavigation.routeName);
   }
 
-  void changeLanguage({Locale? lang}) {
-    if (lang == null) return;
+  void changeLanguage({Locale? lang, String? languageCode}) {
+    if (lang == null && languageCode == null) return;
     if (AuthenticationService.find.isUserLoggedIn.value) {
-      Helper.onSearchDebounce(() => UserRepository.find.updateUserLanguage(lang.languageCode), duration: const Duration(seconds: 2));
+      Helper.onSearchDebounce(() => UserRepository.find.updateUserLanguage(languageCode ?? lang!.languageCode), duration: const Duration(seconds: 2));
     }
-    _saveLanguagePreferences(lang);
+    lang ??= AppLocalization().supportedLocal.cast().singleWhere((element) => element.languageCode == languageCode, orElse: () => null) ?? const Locale('en', 'US');
+    _saveLanguagePreferences(lang!);
     Get.updateLocale(lang);
+    updateCategories();
+    updateGovernorates();
   }
 
   Future<ConnectivityResult> checkConnectivity({List<ConnectivityResult>? connectivity}) async {
@@ -211,7 +195,7 @@ class MainAppController extends GetxController {
         onUnlocked: () {
           isAuthenticated.value = true;
           if (replaceNavigation) {
-            Get.offAllNamed(route ?? HomeScreen.routeName);
+            Get.offAllNamed(route ?? CustomScaffoldBottomNavigation.routeName);
           } else {
             Helper.goBack();
           }
@@ -263,21 +247,6 @@ class MainAppController extends GetxController {
                 if (!isBackReachable.value) checkVersionRequired();
               });
             }
-            switch (bottomNavIndex.value) {
-              case 0:
-                Get.offAllNamed(HomeScreen.routeName);
-                break;
-              case 1:
-                Get.toNamed(MarketScreen.routeName);
-                break;
-              case 2:
-                Get.toNamed(ChatScreen.routeName);
-                break;
-              case 3:
-                Get.toNamed(ProfileScreen.routeName);
-                break;
-              default:
-            }
           },
         );
       },
@@ -291,7 +260,7 @@ class MainAppController extends GetxController {
       if (didAuthenticate) {
         isAuthenticated.value = true;
         if (replaceNavigation) {
-          Get.offAllNamed(route ?? HomeScreen.routeName);
+          Get.offAllNamed(route ?? CustomScaffoldBottomNavigation.routeName);
         } else {
           Helper.goBack();
         }
@@ -312,9 +281,9 @@ class MainAppController extends GetxController {
     if (categories.isEmpty) categories = await loadCategories();
   }
 
-  Future<void> updateCategories() async {
-    categories = await ParamsRepository.find.getAllCategories() ?? [];
-  }
+  Future<void> updateCategories() async => categories = await ParamsRepository.find.getAllCategories() ?? [];
+
+  Future<void> updateGovernorates() async => governorates = await ParamsRepository.find.getAllGovernorates() ?? [];
 
   Future<void> _initDefaultGovernorates() async {
     Future<List<Governorate>> loadGovernorates() async {
@@ -323,7 +292,7 @@ class MainAppController extends GetxController {
       return decodedJson.map((category) => Governorate.fromJson(category)).toList();
     }
 
-    governorates = await ParamsRepository.find.getAllGovernorates() ?? [];
+    await updateGovernorates();
     if (governorates.isEmpty) governorates = await loadGovernorates();
   }
 
@@ -336,6 +305,7 @@ class MainAppController extends GetxController {
 
   Future<bool> toggleFavoriteTask(Task task) async {
     final result = await FavoriteRepository.find.toggleTaskFavorite(idTask: task.id!);
+    if (Get.currentRoute == FavoriteScreen.routeName) FavoriteController.find.init();
     return result;
   }
 

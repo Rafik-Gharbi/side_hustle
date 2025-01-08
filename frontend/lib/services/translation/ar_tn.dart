@@ -50,7 +50,7 @@ final Map<String, String> arTN = <String, String>{
   'select_x_categories': 'يرجى اختيار ما يصل إلى @max فئات',
   'y_of_x_selected': '@selected من @max تم اختيارها.',
   'subscribe': 'اشترك',
-  'premium_more_categories': 'للترقية للحصول على مزيد من الفئات.',
+  'premium_more_categories': 'في النسخة المميزة للحصول على مزيد من الفئات.',
   'update_categories_in_date': 'يمكنك تحديث فئاتك مرة واحدة كل شهر، التحديث التالي في: @date',
   'search_category': 'بحث في الفئة',
   'tasks_request': 'طلبات المهام',
@@ -286,6 +286,7 @@ final Map<String, String> arTN = <String, String>{
   'user_not_rejected': 'لم يتم رفض المستخدم',
   'could_not_call': 'تعذر الاتصال، رقم الهاتف غير متاح',
   'signup': 'تسجيل',
+  'login': 'تسجيل الدخول',
   'forgot_password': 'نسيت كلمة المرور',
   'have_account_msg': 'هل لديك حساب؟',
   'have_no_account_msg': 'ليس لديك حساب؟',
@@ -719,8 +720,19 @@ final Map<String, String> arTN = <String, String>{
   'company_rib_msg': 'حساب Dootify البنكي : 4242 4242 4242 4242 4242',
   'delete': 'حذف',
   'delete_store_msg': 'هل أنت متأكد أنك تريد حذف متجرك؟',
+  'complete_profile_tasks': 'أكمل هذه المهام لإنهاء ملفك الشخصي:',
+  'profile_is_completed': 'تم اكتمال ملفك الشخصي! 🎉',
+  'profile_completion': 'اكتمال الملف الشخصي',
+  'profile_completed': 'تم اكتمال الملف الشخصي!',
+  'complete_profile': 'أكمل ملفك الشخصي',
+  'add_email_task': 'أضف بريدك الإلكتروني',
+  'add_name_task': 'أضف اسمك',
+  'add_phone_number_task': 'أضف رقم هاتفك',
+  'add_birthdate_task': 'أضف تاريخ ميلادك',
+  'verify_email_task': 'تحقق من بريدك الإلكتروني',
+  'select_governorate_task': 'اختر محافظتك',
   // Validation messages
-  'valid_for_x_days': 'متاح ل@days أيام',
+  'valid_for_x_days': 'متاح ل@days يوم',
   'max_value_is': 'القيمة القصوى هي @value!',
   'field_not_empty': 'لا يمكن أن يكون الحقل فارغًا!',
   'invalid_number': 'رقم غير صالح!',

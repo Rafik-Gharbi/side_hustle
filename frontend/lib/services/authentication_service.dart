@@ -19,10 +19,8 @@ import '../models/notification.dart';
 import '../models/user.dart';
 import '../repositories/user_repository.dart';
 import '../views/chat/chat_controller.dart';
-import '../views/chat/chat_screen.dart';
 import '../views/chat/components/messages_screen.dart';
 import '../views/profile/profile_screen/profile_controller.dart';
-import '../views/profile/profile_screen/profile_screen.dart';
 import 'logger_service.dart';
 import 'shared_preferences.dart';
 
@@ -410,6 +408,7 @@ class AuthenticationService extends GetxController {
         jwtUserData?.role = userFromToken.role;
         jwtUserData?.governorate = userFromToken.governorate;
         jwtUserData?.name = userFromToken.name;
+        jwtUserData?.language = userFromToken.language;
         jwtUserData?.balance = userFromToken.balance;
         jwtUserData?.baseCoins = userFromToken.baseCoins;
         jwtUserData?.availableCoins = userFromToken.availableCoins;
@@ -424,8 +423,11 @@ class AuthenticationService extends GetxController {
       }
       // init chat messages standBy room
       _initChatStandByRoom();
+      if (jwtUserData?.language != null && jwtUserData?.language != Get.locale?.languageCode) {
+        MainAppController.find.changeLanguage(languageCode: jwtUserData!.language);
+      }
       if (!silent) {
-        if (Get.currentRoute == ProfileScreen.routeName) ProfileController.find.init();
+        if (MainAppController.find.isProfileScreen) ProfileController.find.init();
         if ((Get.isDialogOpen ?? false) || (Get.isBottomSheetOpen ?? false)) Helper.goBack();
       }
       update();
@@ -545,9 +547,9 @@ class AuthenticationService extends GetxController {
     MainAppController.find.socket!.on('notification', (data) {
       // Show a notification to the user if not in the chat tab
       final notification = NotificationModel.fromJson(data['notification']);
-      if (Get.currentRoute != ChatScreen.routeName && Get.currentRoute != MessagesScreen.routeName) {
+      if (!MainAppController.find.isChatScreen && Get.currentRoute != MessagesScreen.routeName) {
         Helper.showNotification(notification);
-      } else if (Get.currentRoute == ChatScreen.routeName || Get.currentRoute == MessagesScreen.routeName) {
+      } else if (MainAppController.find.isChatScreen || Get.currentRoute == MessagesScreen.routeName) {
         ChatController.find.getUserChatHistory();
       }
       MainAppController.find.getNotSeenNotifications();

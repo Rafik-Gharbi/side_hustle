@@ -12,9 +12,10 @@ class HoldInSafeArea extends StatelessWidget {
   const HoldInSafeArea({super.key, required this.child, this.padding, this.bottom = false, this.backgroundColor});
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Material(
-          color: backgroundColor ?? (Helper.isMobile ? kPrimaryColor : Colors.transparent),
+  Widget build(BuildContext context) => Material(
+        color: backgroundColor ?? (Helper.isMobile ? kPrimaryColor : Colors.transparent),
+        child: DecoratedBox(
+          decoration: const BoxDecoration(color: kNeutralColor100),
           child: SafeArea(
             bottom: bottom,
             child: Padding(

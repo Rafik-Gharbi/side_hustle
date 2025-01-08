@@ -9,8 +9,7 @@ import '../../constants/assets.dart';
 import '../../constants/colors.dart';
 import '../../constants/sizes.dart';
 import '../../controllers/main_app_controller.dart';
-import 'profile_screen/profile_screen.dart';
-import '../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../widgets/custom_standard_scaffold.dart';
 import '../../widgets/hold_in_safe_area.dart';
 
 class VerificationScreen extends StatelessWidget {
@@ -21,8 +20,10 @@ class VerificationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final errorHasOccured = Get.arguments == null || Get.arguments.isNotEmpty;
     return HoldInSafeArea(
-      child: CustomScaffoldBottomNavigation(
+      child: CustomStandardScaffold(
         backgroundColor: kNeutralColor100,
+        title: '',
+        noAppBar: true,
         body: DecoratedBox(
           decoration: const BoxDecoration(border: Border(top: BorderSide(color: kNeutralLightColor, width: 0.5))),
           child: LoadingRequest(
@@ -40,7 +41,7 @@ class VerificationScreen extends StatelessWidget {
                 const SizedBox(height: Paddings.regular),
                 CustomButtons.text(
                   title: 'go_profile'.tr,
-                  onPressed: () => MainAppController.find.manageNavigation(routeName: ProfileScreen.routeName),
+                  onPressed: () => MainAppController.find.manageNavigation(screenIndex: 3),
                 ),
               ],
             ),

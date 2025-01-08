@@ -16,7 +16,6 @@ class Assets {
   static const String dootifyWhiteLogo = 'assets/images/dootify-logo-white.png';
   static const String dootifyIconLogo = 'assets/images/dootify-logo-icon.png';
   static const String dootifyWhiteIconLogo = 'assets/images/dootify-logo-icon-white.png';
-  static const String dootifyLogoAnimation = 'assets/images/logo_animation.mp4';
   static const String noImage = 'assets/images/no_image.jpg';
   static const String signedContract = 'assets/images/signed.png';
   static const String withdrawMoneyIcon = 'assets/images/withdraw_money.png';

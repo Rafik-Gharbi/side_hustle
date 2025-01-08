@@ -10,7 +10,7 @@ import '../../helpers/helper.dart';
 import '../../services/authentication_service.dart';
 import '../../services/theme/theme.dart';
 import '../../services/theme/theme_service.dart';
-import '../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../widgets/custom_standard_scaffold.dart';
 import '../../widgets/feedback_bottomsheet.dart';
 import 'components/animated_list_tile.dart';
 import 'components/animated_title.dart';
@@ -26,8 +26,9 @@ class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => CustomScaffoldBottomNavigation(
-        appBarTitle: 'settings'.tr,
+  Widget build(BuildContext context) => CustomStandardScaffold(
+        backgroundColor: kNeutralColor100,
+        title: 'settings'.tr,
         body: GetBuilder<SettingsController>(
           builder: (controller) => Center(
             child: SingleChildScrollView(

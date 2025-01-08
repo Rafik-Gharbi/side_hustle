@@ -14,6 +14,8 @@ import '../../../repositories/store_repository.dart';
 import '../../../services/authentication_service.dart';
 
 class MarketController extends GetxController {
+  /// not permanent, use with caution
+  static MarketController get find => Get.find<MarketController>();
   final ScrollController scrollController = ScrollController();
   final TextEditingController searchStoreController = TextEditingController();
   final TextEditingController noteController = TextEditingController();

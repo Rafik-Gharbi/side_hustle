@@ -25,7 +25,12 @@ exports.checkCurrentVersion = async (req, res) => {
 // get all regions
 exports.getAllGovernorates = async (req, res) => {
   try {
+    const lang = req.params.lang;
     let governorates = await Governorate.findAll();
+    governorates = governorates.map((row) => ({
+      id: row.id,
+      name: lang === "ar" ? row.nameAr : lang === "fr" ? row.nameFr : row.name,
+    }));
     return res.status(200).json({ governorates });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -37,6 +42,7 @@ exports.getAllGovernorates = async (req, res) => {
 // get all categories
 exports.getAllCategories = async (req, res) => {
   try {
+    const lang = req.params.lang;
     let categories = await Category.findAll();
     const populatedCategories = await Promise.all(
       categories.map(async (row) => {
@@ -47,7 +53,9 @@ exports.getAllCategories = async (req, res) => {
         let subscribedCount = subscribedUsers.length;
 
         if (row.parentId === -1) {
-          const childCategories = categories.filter(category => category.parentId === row.id);
+          const childCategories = categories.filter(
+            (category) => category.parentId === row.id
+          );
           for (const child of childCategories) {
             let childSubscribedUsers = await CategorySubscriptionModel.findAll({
               where: { category_id: child.id },
@@ -58,8 +66,14 @@ exports.getAllCategories = async (req, res) => {
 
         return {
           id: row.id,
-          name: row.name,
-          description: row.description,
+          name:
+            lang === "ar" ? row.nameAr : lang === "fr" ? row.nameFr : row.name,
+          description:
+            lang === "ar"
+              ? row.descriptionAr
+              : lang === "fr"
+              ? row.descriptionFr
+              : row.description,
           icon: row.icon,
           parentId: row.parentId,
           subscribed: subscribedCount,
@@ -76,7 +90,28 @@ exports.getAllCategories = async (req, res) => {
 
 exports.getCoinPacks = async (req, res) => {
   try {
-    const coins = await CoinPack.findAll();
+    const lang = req.params.lang;
+    let coins = await CoinPack.findAll();
+    for (let i = 0; i < coins.length; i++) {
+      coins[i].title =
+        lang === "ar"
+          ? coins[i].titleAr
+          : lang === "fr"
+          ? coins[i].titleFr
+          : coins[i].title;
+      coins[i].description =
+        lang === "ar"
+          ? coins[i].descriptionAr
+          : lang === "fr"
+          ? coins[i].descriptionFr
+          : coins[i].description;
+      coins[i].bonusMsg =
+        lang === "ar"
+          ? coins[i].bonusMsgAr
+          : lang === "fr"
+          ? coins[i].bonusMsgFr
+          : coins[i].bonusMsg;
+    }
     return res.status(200).json({ coins });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -87,12 +122,12 @@ exports.getCoinPacks = async (req, res) => {
 
 exports.sendMail = async (req, res) => {
   try {
-    const template = contactUsMail('email', 'name', 'subject', 'body', 'phone');
+    const template = contactUsMail("email", "name", "subject", "body", "phone");
     sendMail(
       process.env.AUTH_USER_EMAIL,
-      `Contact Us The Landlord - Testing`,
+      `Contact Us Dootify - Testing`,
       template,
-      req.host
+      req.hostname
     );
     return res.status(200).json({ done: true });
   } catch (error) {
@@ -104,7 +139,8 @@ exports.sendMail = async (req, res) => {
 
 exports.reportUser = async (req, res) => {
   try {
-    const { user, reportedUser, task, service, reasons, explanation } = req.body;
+    const { user, reportedUser, task, service, reasons, explanation } =
+      req.body;
     if ((!task && !service) || !reasons) {
       return res.status(400).json({ message: "missing" });
     }

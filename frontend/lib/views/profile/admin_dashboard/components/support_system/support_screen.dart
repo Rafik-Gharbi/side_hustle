@@ -10,7 +10,7 @@ import '../../../../../helpers/helper.dart';
 import '../../../../../models/support_ticket.dart';
 import '../../../../../services/theme/theme.dart';
 import '../../../../../widgets/custom_buttons.dart';
-import '../../../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../../../widgets/custom_standard_scaffold.dart';
 import '../../../../../widgets/hold_in_safe_area.dart';
 import '../../../../../widgets/loading_request.dart';
 import '../../../profile_screen/profile_controller.dart';
@@ -27,8 +27,9 @@ class SupportScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<SupportController>(
         autoRemove: false,
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'support_system'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'support_system'.tr,
           onBack: () => ProfileController.find.init(),
           body: LoadingRequest(
             isLoading: controller.isLoading,

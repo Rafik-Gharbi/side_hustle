@@ -10,7 +10,7 @@ import '../../../../../helpers/helper.dart';
 import '../../../../../models/dto/feedback_dto.dart';
 import '../../../../../services/theme/theme.dart';
 import '../../../../../widgets/custom_buttons.dart';
-import '../../../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../../../widgets/custom_standard_scaffold.dart';
 import '../../../../../widgets/hold_in_safe_area.dart';
 import '../../../../../widgets/loading_request.dart';
 import '../../../profile_screen/profile_controller.dart';
@@ -26,8 +26,9 @@ class FeedbacksScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<FeedbacksController>(
         autoRemove: false,
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'feedbacks'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'feedbacks'.tr,
           onBack: () => ProfileController.find.init(),
           body: LoadingRequest(
             isLoading: controller.isLoading,

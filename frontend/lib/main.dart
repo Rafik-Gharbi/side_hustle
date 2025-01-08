@@ -4,6 +4,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -96,12 +97,9 @@ import 'views/store/service_history/service_history_screen.dart';
 import 'views/task/add_task/add_task_bottomsheet.dart';
 import 'views/profile/admin_dashboard/components/approve_user/approve_user_controller.dart';
 import 'views/profile/admin_dashboard/components/approve_user/approve_user_screen.dart';
-import 'views/chat/chat_controller.dart';
-import 'views/chat/chat_screen.dart';
 import 'views/chat/components/messages_screen.dart';
 import 'views/profile/favorite/favorite_controller.dart';
 import 'views/profile/favorite/favorite_screen.dart';
-import 'views/home/home_screen.dart';
 
 import 'controllers/main_app_controller.dart';
 import 'services/logger_service.dart';
@@ -110,12 +108,8 @@ import 'services/shared_preferences.dart';
 import 'services/theme/theme.dart';
 import 'services/translation/app_localization.dart';
 import 'views/home/home_controller.dart';
-import 'views/store/market/market_controller.dart';
-import 'views/store/market/market_screen.dart';
 import 'views/store/my_store/my_store_controller.dart';
 import 'views/store/my_store/my_store_screen.dart';
-import 'views/profile/profile_screen/profile_controller.dart';
-import 'views/profile/profile_screen/profile_screen.dart';
 import 'views/store/service_request/service_request_controller.dart';
 import 'views/store/service_request/service_request_screen.dart';
 import 'views/settings/settings_controller.dart';
@@ -134,6 +128,7 @@ import 'views/profile/verification_screen.dart';
 import 'views/profile/verify_user/verify_user_controller.dart';
 import 'views/profile/verify_user/verify_user_screen.dart';
 import 'widgets/coins_market.dart';
+import 'widgets/custom_scaffold_bottom_navigation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -174,7 +169,9 @@ Future<void> main() async {
           onDismissActionReceivedMethod: NotificationService.onDismissActionReceivedMethod,
         ),
       );
-  runApp(const RestartWidget(child: MyApp()));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then(
+    (_) => runApp(const RestartWidget(child: MyApp())),
+  );
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -249,14 +246,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             page: () => const OnboardingScreen(),
           ),
           GetPage(
-            name: HomeScreen.routeName,
-            page: () => const HomeScreen(),
-            binding: BindingsBuilder.put(() => HomeController()),
-          ),
-          GetPage(
-            name: ProfileScreen.routeName,
-            page: () => const ProfileScreen(),
-            binding: BindingsBuilder.put(() => ProfileController()),
+            name: CustomScaffoldBottomNavigation.routeName,
+            page: () => const CustomScaffoldBottomNavigation(),
           ),
           GetPage(
             name: UserProfileScreen.routeName,
@@ -300,16 +291,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             name: ServiceHistoryScreen.routeName,
             page: () => const ServiceHistoryScreen(),
             binding: BindingsBuilder.put(() => ServiceHistoryController()),
-          ),
-          GetPage(
-            name: ChatScreen.routeName,
-            page: () => const ChatScreen(),
-            binding: BindingsBuilder.put(() => ChatController()),
-          ),
-          GetPage(
-            name: MarketScreen.routeName,
-            page: () => const MarketScreen(),
-            binding: BindingsBuilder.put(() => MarketController()),
           ),
           GetPage(
             name: MyStoreScreen.routeName,

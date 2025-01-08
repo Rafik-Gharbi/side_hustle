@@ -8,7 +8,7 @@ import '../../../helpers/helper.dart';
 import '../../../models/filter_model.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
@@ -35,28 +35,32 @@ class TaskListScreen extends StatelessWidget {
           () => state.controller?.fetchSearchedTasks(searchQuery: searchQuery, filter: filterModel, taskId: taskId, boosted: boosted),
         ),
         builder: (controller) => Obx(
-          () => CustomScaffoldBottomNavigation(
-            appBarTitle: 'search_tasks'.tr,
+          () => CustomStandardScaffold(
+            backgroundColor: kNeutralColor100,
+            title: 'search_tasks'.tr,
             onBack: () {
               HomeController.find.filterModel = FilterModel();
               HomeController.find.searchController.clear();
             },
-            appBarActions: [
-              CustomButtons.icon(
-                icon: Icon(controller.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
-                onPressed: () => controller.openSearchBar.value = !controller.openSearchBar.value,
-              ),
-              CustomButtons.icon(
-                icon: const Icon(Icons.filter_alt_outlined),
-                onPressed: () => Get.dialog(
-                  MoreFiltersPopup(
-                    updateFilter: (filter) => controller.filterModel = filter,
-                    clearFilter: () => controller.filterModel = FilterModel(),
-                    filter: controller.filterModel,
+            actionButton: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomButtons.icon(
+                  icon: Icon(controller.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
+                  onPressed: () => controller.openSearchBar.value = !controller.openSearchBar.value,
+                ),
+                CustomButtons.icon(
+                  icon: const Icon(Icons.filter_alt_outlined),
+                  onPressed: () => Get.dialog(
+                    MoreFiltersPopup(
+                      updateFilter: (filter) => controller.filterModel = filter,
+                      clearFilter: () => controller.filterModel = FilterModel(),
+                      filter: controller.filterModel,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
             appBarBottom: controller.openSearchBar.value
                 ? AppBar(
                     backgroundColor: kNeutralColor100,

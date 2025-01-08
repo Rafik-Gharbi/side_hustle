@@ -124,7 +124,7 @@ function initializeSocket(io) {
           io.to(`${sender.id}`).emit("updateDiscussionId", createMsg);
         }
         // Emit to reciever if not joined a room
-        this.io.to(`${reciever.id}`).emit("notification", {
+        io.to(`${reciever.id}`).emit("notification", {
           notification: {
             user_id: reciever.id,
             title: i18n.__({
@@ -193,8 +193,21 @@ function initializeSocket(io) {
           deliverables: data.contract.delivrables,
           deliveryDate: contract.dueDate,
           price: contract.finalPrice,
-          language: "fr",
+          language: sender.language,
         });
+        if (reciever.language != sender.language) {
+          await createContract({
+            contractId: contract.id,
+            date: new Date().toLocaleDateString(),
+            seekerName: sender.name,
+            providerName: reciever.name,
+            taskDescription: data.contract.description,
+            deliverables: data.contract.delivrables,
+            deliveryDate: contract.dueDate,
+            price: contract.finalPrice,
+            language: reciever.language,
+          });
+        }
 
         // Create a new chat message for contract tracking (history in discussion)
         await Chat.create({
@@ -205,7 +218,7 @@ function initializeSocket(io) {
         });
 
         // Emit to reciever if not joined a room
-        this.io.to(`${reciever.id}`).emit("notification", {
+        io.to(`${reciever.id}`).emit("notification", {
           notification: {
             user_id: reciever.id,
             title: i18n.__({
@@ -250,7 +263,7 @@ function initializeSocket(io) {
         });
         const seeker = await User.findByPk(contract.seeker_id);
         // Emit to reciever if not joined a room
-        this.io.to(`${seeker.id}`).emit("notification", {
+        io.to(`${seeker.id}`).emit("notification", {
           notification: {
             user_id: seeker.id,
             title: i18n.__({
@@ -281,7 +294,7 @@ function initializeSocket(io) {
         });
         const provider = await User.findByPk(contract.provider_id);
         // Emit to reciever if not joined a room
-        this.io.to(`${provider.id}`).emit("notification", {
+        io.to(`${provider.id}`).emit("notification", {
           notification: {
             user_id: provider.id,
             title: i18n.__({

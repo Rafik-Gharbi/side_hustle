@@ -1,5 +1,8 @@
 const { sequelize } = require("../../db.config");
-const { getDate } = require("../helper/helpers");
+const {
+  NotificationType,
+  notificationService,
+} = require("../helper/notification_service");
 const { Notification } = require("../models/notification_model");
 const { User } = require("../models/user_model");
 
@@ -114,6 +117,29 @@ exports.getNotSeenNotificationsCount = async (req, res) => {
     });
 
     return res.status(200).json({ count: notificationList[0]["count"] });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.testNotification = async (req, res) => {
+  try {
+    let userFound = await User.findByPk(req.decoded.id);
+    if (!userFound) {
+      return res.status(404).json({ message: "user_not_found" });
+    }
+    await notificationService.sendNotification(
+      userFound.id,
+      "notifications.new_task",
+      "notifications.new_task_in_category",
+      NotificationType.NEWTASK,
+      { taskId: 0 },
+      (data = { categoryName: "Test" })
+    );
+
+    return res.status(200).json({ done: true });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
     console.error("\x1b[31m%s\x1b[0m", error);

@@ -10,7 +10,7 @@ import '../../../../../helpers/helper.dart';
 import '../../../../../models/dto/user_approve_dto.dart';
 import '../../../../../services/theme/theme.dart';
 import '../../../../../widgets/custom_buttons.dart';
-import '../../../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../../../widgets/custom_standard_scaffold.dart';
 import '../../../../../widgets/hold_in_safe_area.dart';
 import '../../../../../widgets/loading_request.dart';
 import '../../../profile_screen/profile_controller.dart';
@@ -25,8 +25,9 @@ class ApproveUserScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<ApproveUserController>(
         autoRemove: false,
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'approve_users'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'approve_users'.tr,
           onBack: () => ProfileController.find.init(),
           body: LoadingRequest(
             isLoading: controller.isLoading,

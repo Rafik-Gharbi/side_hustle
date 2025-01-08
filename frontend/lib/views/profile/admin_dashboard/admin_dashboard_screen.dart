@@ -8,7 +8,7 @@ import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/theme/theme.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import 'components/approve_user/approve_user_screen.dart';
@@ -29,10 +29,9 @@ class AdminDashboardScreen extends StatelessWidget {
           builder: (authService) => GetBuilder<AdminDashboardController>(
             initState: (state) => Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()),
             autoRemove: false,
-            builder: (controller) => CustomScaffoldBottomNavigation(
+            builder: (controller) => CustomStandardScaffold(
               backgroundColor: kNeutralColor100,
-              appBarColor: kNeutralLightColor,
-              appBarTitle: 'admin_dashboard'.tr,
+              title: 'admin_dashboard'.tr,
               body: DecoratedBox(
                 decoration: BoxDecoration(color: kNeutralOpacityColor),
                 child: SizedBox(

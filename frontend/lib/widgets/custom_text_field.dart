@@ -154,26 +154,25 @@ class CustomTextFieldState extends State<CustomTextField> {
                         prefixIcon: widget.prefixIcon,
                         constraints: BoxConstraints(maxHeight: widget.height ?? double.infinity),
                         suffixIconConstraints: BoxConstraints(maxHeight: widget.height ?? 40, maxWidth: 40),
-                        suffixIcon: widget.suffixIcon ??
-                            (widget.isPassword
-                                ? InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _obscureText = !_obscureText;
-                                      });
-                                    },
-                                    child: widget.height != null
-                                        ? Icon(
-                                            _obscureText ? Icons.visibility : Icons.visibility_off,
-                                            size: 0.5 * widget.height!,
-                                            color: Theme.of(context).primaryColor,
-                                          )
-                                        : Icon(
-                                            _obscureText ? Icons.visibility : Icons.visibility_off,
-                                            color: Theme.of(context).primaryColor,
-                                          ),
-                                  )
-                                : null),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                          child: widget.suffixIcon ??
+                              (widget.isPassword
+                                  ? InkWell(
+                                      onTap: () => setState(() => _obscureText = !_obscureText),
+                                      child: widget.height != null
+                                          ? Icon(
+                                              _obscureText ? Icons.visibility : Icons.visibility_off,
+                                              size: 0.5 * widget.height!,
+                                              color: Theme.of(context).primaryColor,
+                                            )
+                                          : Icon(
+                                              _obscureText ? Icons.visibility : Icons.visibility_off,
+                                              color: Theme.of(context).primaryColor,
+                                            ),
+                                    )
+                                  : null),
+                        ),
                       ),
                   controller: widget.fieldController,
                   obscureText: _obscureText,

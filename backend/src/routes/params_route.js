@@ -9,11 +9,11 @@ module.exports = (app) => {
   router.get("/check-connection", paramsController.checkCurrentVersion);
 
   // get app params governorates and categories
-  router.get("/governorates", paramsController.getAllGovernorates);
+  router.get("/governorates/:lang", paramsController.getAllGovernorates);
 
-  router.get("/categories", paramsController.getAllCategories);
+  router.get("/categories/:lang", paramsController.getAllCategories);
 
-  router.get("/coin-packs", paramsController.getCoinPacks);
+  router.get("/coin-packs/:lang", paramsController.getCoinPacks);
 
   router.get("/send-mail", paramsController.sendMail);
 

@@ -27,44 +27,58 @@ class Buildables {
     required void Function(PhoneNumber?) onChanged,
     bool isRequired = true,
     PhoneController? controller,
+    bool outlinedBorder = false,
   }) =>
       Theme(
         data: ThemeData(bottomSheetTheme: const BottomSheetThemeData(backgroundColor: kNeutralColor100)),
-        child: Container(
-          margin: const EdgeInsets.only(top: Paddings.small),
-          child: PhoneFormField(
-            controller: controller ?? PhoneController(initialValue: PhoneNumber.parse(initialNumber ?? defaultPrefix)),
-            validator: PhoneValidator.compose([PhoneValidator.required(Get.context!), PhoneValidator.validMobile(Get.context!)]),
-            countrySelectorNavigator: const CountrySelectorNavigator.modalBottomSheet(),
-            enabled: true,
-            isCountrySelectionEnabled: true,
-            isCountryButtonPersistent: true,
-            style: AppFonts.x14Regular,
-            countryButtonStyle: const CountryButtonStyle(
-              showDialCode: true,
-              showIsoCode: true,
-              showFlag: true,
-              flagSize: 16,
-              textStyle: AppFonts.x14Regular,
-              padding: EdgeInsets.only(bottom: 8, right: 10, left: 15),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Container(
+            margin: const EdgeInsets.only(top: Paddings.small),
+            child: PhoneFormField(
+              controller: controller ?? PhoneController(initialValue: PhoneNumber.parse(initialNumber ?? defaultPrefix)),
+              validator: PhoneValidator.compose([PhoneValidator.required(Get.context!), PhoneValidator.validMobile(Get.context!)]),
+              countrySelectorNavigator: const CountrySelectorNavigator.modalBottomSheet(),
+              enabled: true,
+              isCountrySelectionEnabled: true,
+              isCountryButtonPersistent: true,
+              style: AppFonts.x14Regular,
+              countryButtonStyle: const CountryButtonStyle(
+                showDialCode: true,
+                showIsoCode: true,
+                showFlag: true,
+                flagSize: 16,
+                textStyle: AppFonts.x14Regular,
+                padding: EdgeInsets.only(bottom: 8, right: 10, left: 15),
+              ),
+              decoration: InputDecoration(
+                alignLabelWithHint: true,
+                errorStyle: AppFonts.x12Regular.copyWith(color: kErrorColor),
+                contentPadding: outlinedBorder
+                    ? const EdgeInsets.symmetric(horizontal: Paddings.large).copyWith(top: Paddings.extraLarge)
+                    : const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
+                // label: enableFloatingLabel ? Text(hintText ?? '', style: hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor)) : null,
+                border: outlinedBorder
+                    ? OutlineInputBorder(borderRadius: smallRadius, borderSide: const BorderSide(color: kNeutralLightColor))
+                    : const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
+                enabledBorder: outlinedBorder
+                    ? OutlineInputBorder(borderRadius: smallRadius, borderSide: const BorderSide(color: kNeutralLightColor))
+                    : const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
+                focusedBorder: outlinedBorder
+                    ? OutlineInputBorder(borderRadius: smallRadius, borderSide: const BorderSide(color: kNeutralLightColor))
+                    : const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                floatingLabelStyle: AppFonts.x14Regular.copyWith(height: 0.2),
+                hintStyle: AppFonts.x14Regular.copyWith(color: kNeutralColor.withAlpha(150)),
+              ),
+              onChanged: (phoneNumber) {
+                if (phoneNumber.international.isNotEmpty) {
+                  onChanged.call(phoneNumber);
+                  Helper.selectedIsoCode = phoneNumber.isoCode.toString();
+                  Helper.phonePrefix = phoneNumber.countryCode;
+                }
+              },
             ),
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
-              alignLabelWithHint: true,
-              errorStyle: AppFonts.x12Regular.copyWith(color: kErrorColor),
-              border: const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
-              enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
-              focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
-              floatingLabelStyle: AppFonts.x14Regular.copyWith(height: 0.2),
-              hintStyle: AppFonts.x14Regular.copyWith(color: kNeutralColor.withAlpha(150)),
-            ),
-            onChanged: (phoneNumber) {
-              if (phoneNumber.international.isNotEmpty) {
-                onChanged.call(phoneNumber);
-                Helper.selectedIsoCode = phoneNumber.isoCode.toString();
-                Helper.phonePrefix = phoneNumber.countryCode;
-              }
-            },
           ),
         ),
       );

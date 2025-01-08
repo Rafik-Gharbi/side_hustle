@@ -6,7 +6,7 @@ import '../../../../constants/sizes.dart';
 import '../../../../helpers/buildables.dart';
 import '../../../../helpers/helper.dart';
 import '../../../../services/theme/theme.dart';
-import '../../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../../widgets/custom_standard_scaffold.dart';
 import '../../../../widgets/hold_in_safe_area.dart';
 import '../../../../widgets/loading_request.dart';
 import '../../../../widgets/overflowed_text_with_tooltip.dart';
@@ -20,8 +20,9 @@ class RefereesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoldInSafeArea(
       child: GetBuilder<ReferralController>(
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'referees'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'referees'.tr,
           body: LoadingRequest(
             isLoading: controller.isLoading,
             child: controller.referredUsers.isEmpty

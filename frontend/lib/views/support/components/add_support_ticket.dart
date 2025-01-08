@@ -102,7 +102,7 @@ class AddSupportTicket extends StatelessWidget {
                             Expanded(
                               flex: 2,
                               child: CustomDropDownMenu(
-                                items: TicketCategory.values,
+                                items: TicketCategory.values.where((element) => element != TicketCategory.profileDeletion).toList(),
                                 valueFrom: (category) => category.name.tr,
                                 selectedItem: ticketCategory,
                                 hint: ticketCategory?.name.tr ?? 'select_option'.tr,

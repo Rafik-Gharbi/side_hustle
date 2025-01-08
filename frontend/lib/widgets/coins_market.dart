@@ -11,7 +11,7 @@ import '../repositories/params_repository.dart';
 import '../repositories/transaction_repository.dart';
 import '../services/theme/theme.dart';
 import 'custom_buttons.dart';
-import 'custom_scaffold_bottom_navigation.dart';
+import 'custom_standard_scaffold.dart';
 
 class CoinsMarketController extends GetxController {
   List<CoinPack> coinPacks = [];
@@ -33,8 +33,9 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<CoinsMarketController>(
-      builder: (controller) => CustomScaffoldBottomNavigation(
-        appBarTitle: 'coin_shop'.tr,
+      builder: (controller) => CustomStandardScaffold(
+        backgroundColor: kNeutralColor100,
+        title: 'coin_shop'.tr,
         body: Column(
           children: [
             Buildables.buildAvailableCoins(withBuyButton: false),
@@ -69,7 +70,6 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
         onTap: () => _purchaseCoins(pack),
         child: SizedBox(
           width: double.infinity,
-          height: pack.bonus != null && pack.bonusMsg != null ? 180 : 140,
           child: DecoratedBox(
             decoration: BoxDecoration(color: kNeutralLightOpacityColor, border: lightBorder, borderRadius: smallRadius),
             child: Stack(
@@ -80,7 +80,7 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (pack.bonus != null) const SizedBox(height: Paddings.exceptional),
+                      if (pack.bonus != null) const SizedBox(height: Paddings.extraLarge * 2),
                       Row(
                         children: [
                           Text(pack.title, style: AppFonts.x16Bold),
@@ -115,9 +115,11 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
                     child: DecoratedBox(
                       decoration: const BoxDecoration(color: kAccentColor, borderRadius: BorderRadius.horizontal(left: Radius.circular(10))),
                       child: SizedBox(
-                        width: 80,
                         height: 30,
-                        child: Center(child: Text('save_percentage'.trParams({'percentage': pack.save.toString()}), style: AppFonts.x12Bold.copyWith(color: kNeutralColor100))),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: Paddings.small),
+                          child: Center(child: Text('save_percentage'.trParams({'percentage': pack.save.toString()}), style: AppFonts.x12Bold.copyWith(color: kNeutralColor100))),
+                        ),
                       ),
                     ),
                   ),

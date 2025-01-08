@@ -1,4 +1,4 @@
-const PDFDocument = require("pdfkit");
+const pdfmake = require("pdfmake");
 const fs = require("fs");
 const path = require("path");
 const { formatDate } = require("./helpers");
@@ -235,36 +235,97 @@ ${contractStaticTemplates["ar"]}
   `,
 };
 
+// Define fonts (ensure these font files are available in your project)
+const fonts = {
+  Roboto: {
+    normal: path.join(__dirname, "fonts/Roboto-Regular.ttf"),
+    bold: path.join(__dirname, "fonts/Roboto-Bold.ttf"),
+    italics: path.join(__dirname, "fonts/Roboto-Italic.ttf"),
+    bolditalics: path.join(__dirname, "fonts/Roboto-BoldItalic.ttf"),
+  },
+  Amiri: {
+    normal: path.join(__dirname, "fonts/Amiri-Regular.ttf"),
+    bold: path.join(__dirname, "fonts/Amiri-Bold.ttf"),
+  },
+};
+
+// Initialize pdfmake with fonts
+const printer = new pdfmake(fonts);
+
 // Function to generate and save PDF
 const generateContractPDF = async (data, language = "en") => {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument();
-    const fileName = `contract_${data.contractId}.pdf`;
+    const fileName = `contract_${language}_${data.contractId}.pdf`;
     const filePath = path.join(__dirname, "../../public/contracts", fileName);
 
-    // Check and create the contracts folder using absolute path
-    const contractDir = path.join(__dirname, "../../public/contracts/");
+    // Ensure the contracts folder exists
+    const contractDir = path.dirname(filePath);
     if (!fs.existsSync(contractDir)) {
-      fs.mkdirSync(contractDir, { recursive: true }); // Ensure the directory exists, recursively creating necessary folders
+      fs.mkdirSync(contractDir, { recursive: true });
     }
 
-    // Write the PDF file
-    const stream = fs.createWriteStream(filePath);
-    doc.pipe(stream);
-
-    // Generate content based on language
+    // Define PDF content
     const content = contractDynamicTemplates[language](data);
 
-    console.log(`Contract created ${fileName}`);
-    // Add content to PDF
-    doc.text(content, {
-      align: language == "ar" ? "right" : "left",
-    });
+    // PDF styles and default settings
+    const docDefinition = {
+      content: content.split("\n").map((line) => {
+        const titlePattern = /^(\d+)\.\s*(.+)$/; // Match lines like "1. title"
+        const match = line.match(titlePattern);
 
-    doc.end();
+        // Function to reverse parentheses
+        const reverseParentheses = (text) =>
+          text
+            .replace(/\(/g, "TEMP_RIGHT_PAREN") // Temporarily replace "("
+            .replace(/\)/g, "(") // Replace ")" with "("
+            .replace(/TEMP_RIGHT_PAREN/g, ")"); // Replace temp placeholder with ")"
+
+        if (match) {
+          // If the line is a title, reverse the title text separately
+          const number = match[1]; // Extract the number
+          const text = match[2]; // Extract the title text
+          return {
+            text: reverseParentheses(
+              `${text.split(" ").reverse().join(" ")} .${number}`
+            ),
+            alignment: language === "ar" ? "right" : "left",
+            margin: [0, 5, 0, 5],
+          };
+        }
+
+        // For regular lines, reverse all words and handle parentheses
+        return {
+          text: reverseParentheses(line.split(" ").reverse().join(" ")),
+          alignment: language === "ar" ? "right" : "left",
+          margin: [0, 5, 0, 5],
+        };
+      }),
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          alignment: language === "ar" ? "right" : "left",
+        },
+        content: {
+          fontSize: 12,
+          alignment: language === "ar" ? "right" : "left",
+        },
+      },
+      defaultStyle: {
+        font: language === "ar" ? "Amiri" : "Roboto",
+        direction: language === "ar" ? "rtl" : "ltr",
+      },
+    };
+
+    // Generate PDF
+    const pdfDoc = printer.createPdfKitDocument(docDefinition);
+    const stream = fs.createWriteStream(filePath);
+
+    pdfDoc.pipe(stream);
+    pdfDoc.end();
 
     stream.on("finish", () => {
-      resolve(path.join(__dirname, `../../public/contracts/${fileName}`));
+      resolve(filePath);
     });
 
     stream.on("error", (err) => {

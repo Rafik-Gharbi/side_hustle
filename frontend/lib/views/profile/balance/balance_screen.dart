@@ -12,7 +12,7 @@ import '../../../services/theme/theme.dart';
 import '../../../widgets/balance_transaction_card.dart';
 import '../../../widgets/custom_button_with_overlay.dart';
 import '../../../widgets/custom_buttons.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
 import 'balance_controller.dart';
@@ -30,8 +30,9 @@ class BalanceScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<BalanceController>(
         init: BalanceController(loggedUser),
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'my_balance'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'my_balance'.tr,
           body: DecoratedBox(
             decoration: const BoxDecoration(
               gradient: LinearGradient(colors: [kNeutralColor, kNeutralColor100], begin: Alignment.topCenter, end: Alignment.bottomCenter),
@@ -142,11 +143,25 @@ class BalanceScreen extends StatelessWidget {
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  // TODO confiscate the bank number and add see option
-                                  Text(
-                                    '${'bank_number'.tr}: ${controller.loggedUser.bankNumber ?? 'not_provided'.tr}',
-                                    style: AppFonts.x14Regular.copyWith(color: kNeutralColor100),
+                                  Obx(
+                                    () => Text(
+                                      '${'bank_number'.tr}: ${controller.isBankNumberConfiscated.value ? '**** **** **** ${controller.loggedUser.bankNumber!.substring(16)}' : controller.loggedUser.bankNumber ?? 'not_provided'.tr}',
+                                      style: AppFonts.x14Regular.copyWith(color: kNeutralColor100),
+                                    ),
                                   ),
+                                  const SizedBox(width: Paddings.small),
+                                  if (controller.loggedUser.bankNumber != null)
+                                    InkWell(
+                                      onTap: () => controller.isBankNumberConfiscated.value = !controller.isBankNumberConfiscated.value,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: Paddings.small),
+                                        child: Icon(
+                                          controller.isBankNumberConfiscated.value ? Icons.visibility : Icons.visibility_off,
+                                          color: kAccentColor,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
                                   InkWell(
                                     onTap: () => Get.bottomSheet(AddBankNumberBottomsheet(bankNumber: controller.loggedUser.bankNumber), isScrollControlled: true)
                                         .then((value) => controller.bankNumberController.text = ''),

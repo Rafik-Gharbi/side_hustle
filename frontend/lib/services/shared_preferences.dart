@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/shared_preferences_keys.dart';
@@ -9,7 +10,6 @@ class SharedPreferencesService extends GetxService {
 
   static SharedPreferencesService get find => Get.find<SharedPreferencesService>();
 
-  // TODO use encrypted SharedPreferences
   SharedPreferencesService() {
     _getSharedPreferencesInstance();
   }
@@ -21,7 +21,7 @@ class SharedPreferencesService extends GetxService {
   void removeKey(String key) => _prefs!.remove(key);
 
   Future<void> _getSharedPreferencesInstance() async {
-    _prefs ??= await SharedPreferences.getInstance();
+    _prefs ??= await EncryptedSharedPreferences().getInstance();
     SharedPreferencesService.find.removeKey(baseUrlKey);
     isReady.value = true;
   }

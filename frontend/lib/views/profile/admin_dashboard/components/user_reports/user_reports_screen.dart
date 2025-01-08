@@ -10,7 +10,7 @@ import '../../../../../helpers/helper.dart';
 import '../../../../../models/dto/report_dto.dart';
 import '../../../../../services/theme/theme.dart';
 import '../../../../../widgets/custom_buttons.dart';
-import '../../../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../../../widgets/custom_standard_scaffold.dart';
 import '../../../../../widgets/hold_in_safe_area.dart';
 import '../../../../../widgets/loading_request.dart';
 import '../../../../../widgets/service_card.dart';
@@ -28,8 +28,9 @@ class UserReportsScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<UserReportsController>(
         autoRemove: false,
-        builder: (controller) => CustomScaffoldBottomNavigation(
-          appBarTitle: 'reports'.tr,
+        builder: (controller) => CustomStandardScaffold(
+          backgroundColor: kNeutralColor100,
+          title: 'reports'.tr,
           onBack: () => ProfileController.find.init(),
           body: LoadingRequest(
             isLoading: controller.isLoading,

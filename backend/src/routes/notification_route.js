@@ -9,6 +9,7 @@ module.exports = (app) => {
   router.post("/mark-read-all", tokenVerification, notificationController.markAsReadAllNotification);
   router.get("/list", tokenVerification, notificationController.getNotifications);
   router.get("/count", tokenVerification, notificationController.getNotSeenNotificationsCount);
+  router.get("/test", tokenVerification, notificationController.testNotification);
 
   app.use("/notification", router);
 };

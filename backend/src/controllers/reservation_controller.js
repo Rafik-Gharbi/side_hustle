@@ -35,6 +35,7 @@ const { ServiceGalleryModel } = require("../models/service_gallery_model");
 const { sequelize } = require("../../db.config");
 const { Contract } = require("../models/contract_model");
 const { BalanceTransaction } = require("../models/balance_transaction_model");
+const { Review } = require("../models/review_model");
 
 exports.addTaskReservation = async (req, res) => {
   const {
@@ -319,6 +320,14 @@ exports.getReservationByTask = async (req, res) => {
         const providerFound = await User.findOne({
           where: { id: row.provider_id },
         });
+        const providerRating = await Review.findAll({
+          where: { user_id: providerFound.id },
+          attributes: [
+            [sequelize.fn("AVG", sequelize.col("rating")), "avgRating"],
+          ],
+        });
+        providerFound.dataValues.rating =
+          providerRating[0].dataValues.avgRating;
 
         return {
           id: row.id,
@@ -776,6 +785,14 @@ exports.getReservationByService = async (req, res) => {
         const providerFound = await User.findOne({
           where: { id: row.provider_id },
         });
+        const providerRating = await Review.findAll({
+          where: { user_id: providerFound.id },
+          attributes: [
+            [sequelize.fn("AVG", sequelize.col("rating")), "avgRating"],
+          ],
+        });
+        providerFound.dataValues.rating =
+          providerRating[0].dataValues.avgRating;
         const serviceCondidatesNumber = await getServiceCondidatesNumber(
           row.service_id
         );

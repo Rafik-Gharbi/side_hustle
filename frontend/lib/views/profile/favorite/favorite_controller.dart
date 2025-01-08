@@ -5,12 +5,14 @@ import '../../../models/task.dart';
 import '../../../repositories/favorite_repository.dart';
 
 class FavoriteController extends GetxController {
+  /// Not permanent, use with caution!
+  static FavoriteController get find => Get.find<FavoriteController>();
   RxBool isLoading = true.obs;
   List<Task> savedTaskList = [];
   List<Store> savedStoreList = [];
 
   FavoriteController() {
-    _init();
+    init();
   }
 
   void removeTaskFromList(Task task) {
@@ -23,7 +25,7 @@ class FavoriteController extends GetxController {
     update();
   }
 
-  Future<void> _init() async {
+  Future<void> init() async {
     final result = await FavoriteRepository.find.listFavorite();
     savedTaskList = result?.savedTasks ?? [];
     savedStoreList = result?.savedStores ?? [];

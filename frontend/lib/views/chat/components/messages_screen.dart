@@ -9,7 +9,7 @@ import '../../../services/authentication_service.dart';
 import '../../../services/shared_preferences.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
-import '../../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/empty_animation.dart';
 import '../../../widgets/hold_in_safe_area.dart';
@@ -33,16 +33,15 @@ class MessagesScreen extends StatelessWidget {
           () => state.controller!.selectedChatBubble == null ? state.controller!.init() : null,
         ),
         builder: (controller) => Obx(
-          () => CustomScaffoldBottomNavigation(
-            appBarTitle: 'messages'.tr,
-            hideBottomNavigation: true,
+          () => CustomStandardScaffold(
+            backgroundColor: kNeutralColor100,
+            title: 'messages'.tr,
             onBack: controller.clearMessagesScreen,
-            appBarActions: [
+            actionButton: 
               CustomButtons.icon(
                 icon: Icon(controller.openMessagesSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
                 onPressed: () => controller.openMessagesSearchBar.value = !controller.openMessagesSearchBar.value,
               ),
-            ],
             appBarBottom: controller.openMessagesSearchBar.value
                 ? AppBar(
                     backgroundColor: kNeutralColor100,

@@ -25,6 +25,7 @@ class BalanceController extends GetxController {
   bool _hasValidatorErrorSlipDeposit = false;
   XFile? depositSlip;
   List<BalanceTransaction> balanceTransactions = [];
+  RxBool isBankNumberConfiscated = false.obs;
 
   bool get hasValidatorErrorSlipDeposit => _hasValidatorErrorSlipDeposit;
 
@@ -50,6 +51,7 @@ class BalanceController extends GetxController {
     final (result, count) = await BalanceRepository.find.getBalanceTransactions();
     balanceTransactions = result ?? [];
     withdrawalsCount = count;
+    if (loggedUser.bankNumber != null) isBankNumberConfiscated.value = true;
     isLoading.value = false;
     update();
   }

@@ -58,6 +58,21 @@ const {
   SupportAttachmentModel,
 } = require("../models/support_attachment_model");
 
+exports.sendTestMail = async (req, res) => {
+  try {
+    let code = generateRandomCode();
+    // const template = forgotPasswordEmailTemplate(code);
+    const template = contactUsMail("email", "name", "subject", "body", "phone");
+    // const template = sendConfirmationMail("Rafik Test", code, true);
+    sendMail("rafik.gharbi@icloud.com", "Contact Us Dootify - Testing", template);
+    return res.status(200).json({ message: "done" });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 exports.renewJWT = async (req, res) => {
   try {
     const decodedJwt = req.decoded;
@@ -126,7 +141,7 @@ exports.signIn = async (req, res) => {
     //   }
     // }
     if (!user.isMailVerified) {
-      resendConfirmationMail(user, req.host, isMobile);
+      resendConfirmationMail(user, req.hostname, isMobile);
     }
     await user.save();
 
@@ -151,21 +166,21 @@ exports.contactUs = async (req, res) => {
     const template = contactUsMail(email, name, subject, body, phone);
     sendMail(
       process.env.AUTH_USER_EMAIL,
-      `Contact Us The Landlord - ${subject}`,
+      `Contact Us Dootify - ${subject}`,
       template,
-      req.host
+      req.hostname
     );
     sendMail(
-      "reservations@thelandlord.tn",
-      `Contact Us The Landlord - ${subject}`,
+      "reservations@dootify.com",
+      `Contact Us Dootify - ${subject}`,
       template,
-      req.host
+      req.hostname
     );
     sendMail(
-      "Sarah.benachour@thelandlord.tn",
-      `Contact Us The Landlord - ${subject}`,
+      "Sarah.benachour@dootify.com",
+      `Contact Us Dootify - ${subject}`,
       template,
-      req.host
+      req.hostname
     );
     return res.status(200).json({ message: "done" });
   } catch (error) {
@@ -319,7 +334,12 @@ exports.signUp = async (req, res) => {
         isMobile ? code : cryptedToken,
         isMobile
       );
-      sendMail(response.email, "Confirmation de compte", template, req.host);
+      sendMail(
+        response.email,
+        "Confirmation de compte",
+        template,
+        req.hostname
+      );
     }
     if (formattedPhoneNumber) {
       // const otp = await sendOTP(formattedPhoneNumber);
@@ -843,7 +863,11 @@ exports.resendVerification = async (req, res) => {
     if (user.isMailVerified) {
       return res.status(404).json({ message: "already_verified" });
     }
-    verificationCode = await resendConfirmationMail(user, req.host, isMobile);
+    verificationCode = await resendConfirmationMail(
+      user,
+      req.hostname,
+      isMobile
+    );
 
     return res.status(200).json({ message: verificationCode });
   } catch (error) {
@@ -905,7 +929,12 @@ exports.emailForgotPassword = async (req, res) => {
     }
 
     const templateUser = forgotPasswordEmailTemplate(code);
-    sendMail(foundUser.email, "Forgot Password Code", templateUser, req.host);
+    sendMail(
+      foundUser.email,
+      "Forgot Password Code",
+      templateUser,
+      req.hostname
+    );
 
     return res.status(200).json({ message: "done" });
   } catch (error) {

@@ -2,7 +2,7 @@ name: dootify
 description: "Free Your Time, Focus on Your Goals."
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.2.1
+version: 0.16.2
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
@@ -66,10 +66,12 @@ dependencies:
   fl_chart: ^0.69.0
   universal_html: ^2.2.4
   webview_flutter: ^4.10.0
+  tutorial_coach_mark: ^1.2.12
 
   image_picker_for_web: any
   video_player: ^2.9.2
   introduction_screen: ^3.1.14
+  encrypted_shared_preferences: ^3.0.1
 
 dependency_overrides:
   animated_bottom_navigation_bar:

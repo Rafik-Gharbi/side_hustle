@@ -126,7 +126,7 @@ cron.schedule("0 0 1 * *", async () => {
           coins: totalCoins,
           status: "completed",
         });
-        user.availableCoins += coins;
+        user.availableCoins += totalCoins;
         user.save();
 
         console.log(
