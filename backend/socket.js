@@ -644,6 +644,7 @@ function initializeSocket(io) {
 // Helper function to validate admin
 async function validateAdmin(jwt) {
   try {
+    if (!jwt) return;
     const adminUser = await verifyToken(jwt);
     return adminUser?.role === "admin" ? adminUser : null;
   } catch (error) {

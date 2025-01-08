@@ -208,6 +208,7 @@ class AuthenticationService extends GetxController {
         LoggerService.logger?.e('Sign-in with Google failed due to unknown reason.'); // Handle failed sign-in
       }
     } catch (error) {
+      Helper.snackBar(message: 'error_occurred'.tr);
       LoggerService.logger?.e('Error: $error'); // Handle general errors
     }
     return null;
@@ -223,6 +224,7 @@ class AuthenticationService extends GetxController {
         return null;
       }
     } catch (e) {
+      Helper.snackBar(message: 'error_occurred'.tr);
       LoggerService.logger?.e('Error: $e');
     }
     return null;

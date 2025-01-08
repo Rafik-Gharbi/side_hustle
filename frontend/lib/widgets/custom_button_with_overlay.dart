@@ -39,7 +39,7 @@ class _CustomButtonWithOverlayState extends State<CustomButtonWithOverlay> {
   void initState() {
     super.initState();
     currentOffset = widget.offset;
-    if (Helper.isArabic) currentOffset = Offset(currentOffset.dx + currentOffset.distance - 15, currentOffset.dy);
+    if (Helper.isArabic) currentOffset = Offset(currentOffset.dx + currentOffset.distance - 5, currentOffset.dy);
   }
 
   void _showDropdown(BuildContext context) async {

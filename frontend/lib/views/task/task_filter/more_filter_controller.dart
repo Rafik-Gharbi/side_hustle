@@ -10,7 +10,7 @@ class MoreFilterController extends GetxController {
   final TextEditingController maxPriceController = TextEditingController();
   Category _category = anyCategory;
   RxDouble nearbyRange = 10.0.obs;
-  FilterModel filter;
+  FilterModel? filter;
 
   Category get category => _category;
 
@@ -18,9 +18,12 @@ class MoreFilterController extends GetxController {
     _category = value;
     update();
   }
+  static final MoreFilterController _singleton = MoreFilterController._internal();
 
-  MoreFilterController({required this.filter}) {
-    init(filter);
+  factory MoreFilterController() => _singleton;
+
+  MoreFilterController._internal() {
+    filter = FilterModel();
   }
 
   void init(FilterModel filter) {

@@ -57,7 +57,7 @@ class TaskDetailsScreen extends StatelessWidget {
                           children: [
                             CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: () => Helper.goBack()),
                             CustomButtonWithOverlay(
-                              offset: const Offset(-170, 30),
+                              offset: const Offset(-160, 30),
                               buttonWidth: 50,
                               button: const Icon(Icons.more_vert_outlined),
                               menu: DecoratedBox(

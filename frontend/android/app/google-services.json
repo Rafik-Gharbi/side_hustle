@@ -7,12 +7,28 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:141879224852:android:b8f3b81e5f0800dd9dd501",
+        "mobilesdk_app_id": "1:141879224852:android:769466f7d634060b9dd501",
         "android_client_info": {
           "package_name": "com.sparkedgesolutions.dootify"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "141879224852-osfoa8lh2g03f8o9qh24sl591ssautm4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sparkedgesolutions.dootify",
+            "certificate_hash": "f92ca7f4b6e1adf7fa430ffa5da13f09e441dd2a"
+          }
+        },
+        {
+          "client_id": "141879224852-q6oob9anfo33q9ds4tduefudkpfrupev.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sparkedgesolutions.dootify",
+            "certificate_hash": "00c49a8f9b2f963bd78e1e38a279853e306595a1"
+          }
+        },
         {
           "client_id": "141879224852-tkoa7o86o36dr5s39mlmahd34j097i64.apps.googleusercontent.com",
           "client_type": 3
@@ -29,6 +45,13 @@
             {
               "client_id": "141879224852-tkoa7o86o36dr5s39mlmahd34j097i64.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "141879224852-5ub8n04hki2of5nmrjoi2ttkll17pc95.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sparkedgesolutions.dootify"
+              }
             }
           ]
         }

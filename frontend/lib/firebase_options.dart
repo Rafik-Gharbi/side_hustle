@@ -42,7 +42,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyDbjlbasCkxL7mTbvuOTcik0NGPu4qIjWc',
-    appId: '1:141879224852:web:dbcda18351387bf49dd501',
+    appId: '1:141879224852:web:df7652ced0419dfd9dd501',
     messagingSenderId: '141879224852',
     projectId: 'dootify-8a5df',
     authDomain: 'dootify-8a5df.firebaseapp.com',
@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyC8M1hW23j6ccXYCfPk_atf527pVTyNGus',
-    appId: '1:141879224852:android:b8f3b81e5f0800dd9dd501',
+    appId: '1:141879224852:android:769466f7d634060b9dd501',
     messagingSenderId: '141879224852',
     projectId: 'dootify-8a5df',
     storageBucket: 'dootify-8a5df.firebasestorage.app',
@@ -59,27 +59,27 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDP1qsP5zYXO5m2Pp0-oFmnUQz6EwfbiMQ',
-    appId: '1:141879224852:ios:6457574ea6638ce69dd501',
+    appId: '1:141879224852:ios:beb1b74a96b0a72d9dd501',
     messagingSenderId: '141879224852',
     projectId: 'dootify-8a5df',
     storageBucket: 'dootify-8a5df.firebasestorage.app',
-    iosClientId: '141879224852-2vtnig76hskv3blpojtc1buu53g0j05e.apps.googleusercontent.com',
-    iosBundleId: 'com.nextGenEase.dootify',
+    iosClientId: '141879224852-5ub8n04hki2of5nmrjoi2ttkll17pc95.apps.googleusercontent.com',
+    iosBundleId: 'com.sparkedgesolutions.dootify',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDP1qsP5zYXO5m2Pp0-oFmnUQz6EwfbiMQ',
-    appId: '1:141879224852:ios:6457574ea6638ce69dd501',
+    appId: '1:141879224852:ios:beb1b74a96b0a72d9dd501',
     messagingSenderId: '141879224852',
     projectId: 'dootify-8a5df',
     storageBucket: 'dootify-8a5df.firebasestorage.app',
-    iosClientId: '141879224852-2vtnig76hskv3blpojtc1buu53g0j05e.apps.googleusercontent.com',
-    iosBundleId: 'com.nextGenEase.dootify',
+    iosClientId: '141879224852-5ub8n04hki2of5nmrjoi2ttkll17pc95.apps.googleusercontent.com',
+    iosBundleId: 'com.sparkedgesolutions.dootify',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyDbjlbasCkxL7mTbvuOTcik0NGPu4qIjWc',
-    appId: '1:141879224852:web:3cf195ff6bd1a1bd9dd501',
+    appId: '1:141879224852:web:6aadbeb516b57a789dd501',
     messagingSenderId: '141879224852',
     projectId: 'dootify-8a5df',
     authDomain: 'dootify-8a5df.firebaseapp.com',

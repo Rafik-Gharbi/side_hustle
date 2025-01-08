@@ -43,7 +43,7 @@ const String baseUrlLocalWeb = 'http://localhost:3000'; // web localhost
 const String baseUrlLocalAndroid = 'http://10.0.2.2:3000'; // android localhost
 const String baseUrlLocalIos = 'http://127.0.0.1:3000'; // ios localhost
 const String baseUrlRealDevice = 'http://192.168.1.23:3000'; // 'http://172.20.10.2:3000'; // real device ip address
-const String baseUrlRemote = 'https://test.abidconcept.tn'; // remote
+const String baseUrlRemote = 'https://api.dootify.com'; // remote
 String _lastRequestedUrl = '';
 
 class ApiBaseHelper extends GetxController {

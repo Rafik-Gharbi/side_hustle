@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>141879224852-2vtnig76hskv3blpojtc1buu53g0j05e.apps.googleusercontent.com</string>
+	<string>141879224852-5ub8n04hki2of5nmrjoi2ttkll17pc95.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.141879224852-2vtnig76hskv3blpojtc1buu53g0j05e</string>
+	<string>com.googleusercontent.apps.141879224852-5ub8n04hki2of5nmrjoi2ttkll17pc95</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDP1qsP5zYXO5m2Pp0-oFmnUQz6EwfbiMQ</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.nextGenEase.dootify</string>
+	<string>com.sparkedgesolutions.dootify</string>
 	<key>PROJECT_ID</key>
 	<string>dootify-8a5df</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:141879224852:ios:6457574ea6638ce69dd501</string>
+	<string>1:141879224852:ios:beb1b74a96b0a72d9dd501</string>
 </dict>
 </plist>

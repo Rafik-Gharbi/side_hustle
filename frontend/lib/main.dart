@@ -37,6 +37,7 @@ import 'repositories/user_repository.dart';
 import 'services/authentication_service.dart';
 import 'services/payment_service.dart';
 import 'services/theme/theme_service.dart';
+import 'services/translation/translation_checker.dart';
 import 'views/boost/list_boost/list_boost_controller.dart';
 import 'views/boost/list_boost/list_boost_screen.dart';
 import 'views/notifications/notification_controller.dart';
@@ -107,7 +108,6 @@ import 'services/navigation_history_observer.dart';
 import 'services/shared_preferences.dart';
 import 'services/theme/theme.dart';
 import 'services/translation/app_localization.dart';
-import 'views/home/home_controller.dart';
 import 'views/store/my_store/my_store_controller.dart';
 import 'views/store/my_store/my_store_screen.dart';
 import 'views/store/service_request/service_request_controller.dart';
@@ -169,6 +169,8 @@ Future<void> main() async {
           onDismissActionReceivedMethod: NotificationService.onDismissActionReceivedMethod,
         ),
       );
+      
+  await TranslationChecker.checkTranslations();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then(
     (_) => runApp(const RestartWidget(child: MyApp())),
   );

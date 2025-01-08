@@ -37,7 +37,10 @@ class MoreFiltersPopup extends StatelessWidget {
             borderRadius: regularRadius,
             child: HoldInSafeArea(
               child: GetBuilder<MoreFilterController>(
-                init: MoreFilterController(filter: filter),
+                init: MoreFilterController(),
+                initState: (state) => Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init(filter)),
+                didUpdateWidget: (oldWidget, state) => Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init(filter)),
+                dispose: (state) => Helper.waitAndExecute(() => state.controller != null, () => state.controller!.filter = FilterModel()),
                 autoRemove: false,
                 builder: (controller) => Material(
                   surfaceTintColor: Helper.isMobile ? kNeutralColor100 : Colors.transparent,

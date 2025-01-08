@@ -31,6 +31,7 @@ import '../views/task/task_proposal/task_proposal_screen.dart';
 import 'coins_market.dart';
 import 'custom_buttons.dart';
 import 'custom_text_field.dart';
+import 'hold_in_safe_area.dart';
 
 final screens = {
   'home': const HomeScreen(),
@@ -77,53 +78,54 @@ class CustomScaffoldBottomNavigation extends StatelessWidget {
                       )
                     : const SizedBox(),
               ),
-        body: StatefulBuilder(
-          builder: (context, setState) => Column(
-            children: [
-              Obx(
-                () => (!MainAppController.find.hasInternetConnection.value || !MainAppController.find.isBackReachable.value) && showConnectivityMsg
-                    ? DecoratedBox(
-                        decoration: BoxDecoration(color: kErrorColor.withOpacity(0.8)),
-                        child: SizedBox(
-                          width: Get.width,
-                          height: 60,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    !MainAppController.find.hasInternetConnection.value
-                                        ? 'offline_msg'.tr
-                                        : !MainAppController.find.isBackReachable.value
-                                            ? 'server_offline_msg'.tr
-                                            : 'error_occurred'.tr,
-                                    style: AppFonts.x12Bold.copyWith(color: kNeutralColor100),
-                                    softWrap: true,
+        body: HoldInSafeArea(
+          child: StatefulBuilder(
+            builder: (context, setState) => Column(
+              children: [
+                Obx(
+                  () => (!MainAppController.find.hasInternetConnection.value || !MainAppController.find.isBackReachable.value) && showConnectivityMsg
+                      ? DecoratedBox(
+                          decoration: BoxDecoration(color: kErrorColor.withOpacity(0.8)),
+                          child: SizedBox(
+                            width: Get.width,
+                            height: 60,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      !MainAppController.find.hasInternetConnection.value
+                                          ? 'offline_msg'.tr
+                                          : !MainAppController.find.isBackReachable.value
+                                              ? 'server_offline_msg'.tr
+                                              : 'error_occurred'.tr,
+                                      style: AppFonts.x12Bold.copyWith(color: kNeutralColor100),
+                                      softWrap: true,
+                                    ),
                                   ),
-                                ),
-                                CustomButtons.icon(
-                                  icon: const Icon(Icons.close, color: kNeutralColor100),
-                                  onPressed: () => setState(() => showConnectivityMsg = false),
-                                ),
-                              ],
+                                  CustomButtons.icon(
+                                    icon: const Icon(Icons.close, color: kNeutralColor100),
+                                    onPressed: () => setState(() => showConnectivityMsg = false),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    : const SizedBox(),
-              ),
-              Obx(
-                () => Expanded(
-                  child: IndexedStack(
-                    index: MainAppController.find.bottomNavIndex.value,
-                    children: screens.values.toList(),
+                        )
+                      : const SizedBox(),
+                ),
+                Obx(
+                  () => Expanded(
+                    child: IndexedStack(
+                      index: MainAppController.find.bottomNavIndex.value,
+                      children: screens.values.toList(),
+                    ),
                   ),
                 ),
-              ),
-              // Expanded(child: body),
-            ],
+              ],
+            ),
           ),
         ),
         floatingActionButton: hideBottomNavigation

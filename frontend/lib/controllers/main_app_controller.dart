@@ -11,6 +11,7 @@ import 'package:flutter_screen_lock/flutter_screen_lock.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import '../constants/colors.dart';
+import '../constants/constants.dart';
 import '../constants/shared_preferences_keys.dart';
 import '../helpers/helper.dart';
 import '../models/category.dart';
@@ -63,14 +64,17 @@ class MainAppController extends GetxController {
   bool get isMarketScreen => bottomNavIndex.value == 1;
   bool get isHomeScreen => bottomNavIndex.value == 0;
 
-
   Category? getCategoryById(id) => categories.cast<Category?>().singleWhere((element) => element?.id == id, orElse: () => null);
 
   Governorate? getGovernorateById(id) => id == null ? null : governorates.cast<Governorate?>().singleWhere((element) => element?.id == id, orElse: () => null);
 
   MainAppController() {
+    Helper.waitAndExecute(
+      () => Get.context != null,
+      () => MainAppController.find.changeLanguage(lang: Localizations.localeOf(Get.context!)),
+    );
     ever(hasVersionUpdate, (_) {
-      if (hasVersionUpdate.value) {
+      if (hasVersionUpdate.value && (GetPlatform.isAndroid || GetPlatform.isIOS)) {
         Helper.waitAndExecute(
           () => Get.locale != null && Get.currentRoute == CustomScaffoldBottomNavigation.routeName,
           () => Get.dialog(
@@ -79,7 +83,7 @@ class MainAppController extends GetxController {
               content: Text('update_required_msg'.tr, style: AppFonts.x14Regular),
               actions: [
                 CustomButtons.elevatePrimary(
-                  onPressed: () => debugPrint('Open Store for update'), // TODO
+                  onPressed: () => Helper.launchUrlHelper(GetPlatform.isAndroid ? playStoreUrl : appStoreUrl),
                   title: 'update_now'.tr,
                   width: 180,
                   height: 40,
