@@ -76,6 +76,7 @@ class DepositBottomsheet extends StatelessWidget {
             ],
             CustomTextField(
               hintText: 'amount_to_deposit'.tr,
+              isOptional: false,
               fieldController: controller.amountController,
               textInputType: const TextInputType.numberWithOptions(decimal: true),
               validator: FormValidators.notEmptyOrNullFloatValidator,

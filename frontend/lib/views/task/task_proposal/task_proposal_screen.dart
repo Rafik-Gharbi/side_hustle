@@ -39,7 +39,7 @@ class TaskProposalScreen extends StatelessWidget {
                           transitionDuration: const Duration(milliseconds: 600),
                           onClosed: (data) => data != null && data ? Future.delayed(const Duration(milliseconds: 600), () => controller.init()) : null,
                           openBuilder: (_, __) => UserProfileScreen(
-                            user: reservation.user,
+                            user: reservation.provider,
                             reservation: reservation,
                             requestStatus: reservation.status,
                             onAccept: () => controller.acceptProposal(reservation),
@@ -57,7 +57,7 @@ class TaskProposalScreen extends StatelessWidget {
                               title: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(reservation.user.name ?? '', style: AppFonts.x16Bold),
+                                  Text(reservation.provider.name ?? '', style: AppFonts.x16Bold),
                                   // user rating
                                   Row(
                                     children: [

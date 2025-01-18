@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/constants.dart';
+import '../../../constants/shared_preferences_keys.dart';
 import '../../../constants/sizes.dart';
 import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/store.dart';
 import '../../../services/authentication_service.dart';
+import '../../../services/shared_preferences.dart';
 import '../../../services/theme/theme.dart';
+import '../../../viewmodel/reservation_viewmodel.dart';
+import '../../../viewmodel/store_viewmodel.dart';
 import '../../../widgets/custom_button_with_overlay.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_standard_scaffold.dart';
@@ -28,29 +33,44 @@ class MyStoreScreen extends StatelessWidget {
   const MyStoreScreen({super.key, this.store});
 
   @override
-  Widget build(BuildContext context) => HoldInSafeArea(
-        child: GetBuilder<MyStoreController>(
-          init: MyStoreController(store: store),
-          builder: (controller) {
-            final isOwner = controller.currentStore == null || controller.currentStore?.owner?.id == AuthenticationService.find.jwtUserData?.id;
-            return store != null
-                ? Scaffold(
-                    backgroundColor: kNeutralColor100,
-                    body: buildStoreContent(controller, isOwner),
-                  )
-                : CustomStandardScaffold(
-                    backgroundColor: kNeutralColor100,
-                    title: 'my_store'.tr,
-                    onBack: () => ProfileController.find.init(),
-                    actionButton: buildMoreButton(isOwner, controller),
-                    body: buildStoreContent(controller, isOwner),
-                  );
-          },
-        ),
-      );
+  Widget build(BuildContext context) {
+    final hasFinishedCreateStoreTutorial = SharedPreferencesService.find.get(hasFinishedCreateStoreTutorialKey) == 'true';
+    bool hasOpenedTutorial = false;
+    return HoldInSafeArea(
+      child: GetBuilder<MyStoreController>(
+        init: MyStoreController(store: store),
+        initState: (state) => Helper.waitAndExecute(() => state.controller != null, () {
+          if (!hasFinishedCreateStoreTutorial && Get.currentRoute == routeName && !hasOpenedTutorial && state.controller!.targets.isNotEmpty) {
+            hasOpenedTutorial = true;
+            TutorialCoachMark(
+              targets: state.controller!.targets,
+              colorShadow: kNeutralOpacityColor,
+              hideSkip: true,
+              onFinish: () => SharedPreferencesService.find.add(hasFinishedCreateStoreTutorialKey, 'true'),
+            ).show(context: context);
+          }
+        }),
+        builder: (controller) {
+          final isOwner = StoreViewmodel.currentStore == null || StoreViewmodel.currentStore?.owner?.id == AuthenticationService.find.jwtUserData?.id;
+          return store != null
+              ? Scaffold(
+                  backgroundColor: kNeutralColor100,
+                  body: buildStoreContent(controller, isOwner),
+                )
+              : CustomStandardScaffold(
+                  backgroundColor: kNeutralColor100,
+                  title: 'my_store'.tr,
+                  onBack: () => ProfileController.find.init(),
+                  actionButton: buildMoreButton(isOwner, controller),
+                  body: buildStoreContent(controller, isOwner),
+                );
+        },
+      ),
+    );
+  }
 
   Widget buildMoreButton(bool isOwner, MyStoreController controller) {
-    return controller.currentStore != null
+    return StoreViewmodel.currentStore != null
         ? CustomButtonWithOverlay(
             offset: const Offset(-170, 30),
             buttonWidth: 50,
@@ -73,7 +93,7 @@ class MyStoreScreen extends StatelessWidget {
                         });
                       },
                     ),
-                    if (controller.currentStore?.coordinates != null)
+                    if (StoreViewmodel.currentStore?.coordinates != null)
                       ListTile(
                         shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
                         title: Text('get_directions'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
@@ -105,7 +125,7 @@ class MyStoreScreen extends StatelessWidget {
   Widget buildStoreContent(MyStoreController controller, bool isOwner) {
     return LoadingRequest(
       isLoading: controller.isLoading,
-      child: controller.currentStore == null && isOwner
+      child: StoreViewmodel.currentStore == null && isOwner
           ? Padding(
               padding: const EdgeInsets.all(Paddings.large),
               child: Column(
@@ -117,6 +137,7 @@ class MyStoreScreen extends StatelessWidget {
                   Text('have_no_store'.tr, style: AppFonts.x14Regular),
                   const Spacer(),
                   CustomButtons.elevatePrimary(
+                    key: controller.createStoreBtnKey,
                     title: 'create_store'.tr,
                     width: Get.width,
                     onPressed: controller.createStore,
@@ -142,8 +163,8 @@ class MyStoreScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  if (controller.currentStore?.picture?.file.path != null)
-                    Image.network(controller.currentStore!.picture!.file.path, height: 200, width: Get.width, fit: BoxFit.cover)
+                  if (StoreViewmodel.currentStore?.picture?.file.path != null)
+                    Image.network(StoreViewmodel.currentStore!.picture!.file.path, height: 200, width: Get.width, fit: BoxFit.cover)
                   else if (!isOwner)
                     DecoratedBox(
                       decoration: BoxDecoration(color: kNeutralLightOpacityColor),
@@ -174,33 +195,33 @@ class MyStoreScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: Paddings.small),
-                        Text(controller.currentStore?.name ?? 'user_store'.tr, style: AppFonts.x18Bold),
+                        Text(StoreViewmodel.currentStore?.name ?? 'user_store'.tr, style: AppFonts.x18Bold),
                         const SizedBox(height: Paddings.small),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(Icons.pin_drop_outlined, size: 14),
                             const SizedBox(width: Paddings.regular),
-                            Text(controller.currentStore?.governorate?.name ?? 'city'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                            Text(StoreViewmodel.currentStore?.governorate?.name ?? 'city'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                           ],
                         ),
                         const SizedBox(height: Paddings.extraLarge),
                         Text('store_description'.tr, style: AppFonts.x15Bold),
                         const SizedBox(height: Paddings.regular),
-                        Text(controller.currentStore?.description ?? '', style: AppFonts.x14Regular, softWrap: true),
+                        Text(StoreViewmodel.currentStore?.description ?? '', style: AppFonts.x14Regular, softWrap: true),
                         const SizedBox(height: Paddings.exceptional),
-                        if (controller.currentStore?.services?.isNotEmpty ?? false) ...[
+                        if (StoreViewmodel.currentStore?.services?.isNotEmpty ?? false) ...[
                           Text('store_services'.tr, style: AppFonts.x15Bold),
                           const SizedBox(height: Paddings.large),
                           ListView.separated(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: controller.currentStore?.services?.length ?? 0,
+                            itemCount: StoreViewmodel.currentStore?.services?.length ?? 0,
                             separatorBuilder: (context, index) => const SizedBox(height: Paddings.regular),
                             itemBuilder: (context, index) {
-                              final service = controller.currentStore?.services![index];
+                              final service = StoreViewmodel.currentStore?.services![index];
                               return ServiceCard(
-                                store: store ?? controller.currentStore!,
+                                store: store ?? StoreViewmodel.currentStore!,
                                 service: service!,
                                 requests: service.requests,
                                 onBookService: () => isOwner
@@ -208,12 +229,12 @@ class MyStoreScreen extends StatelessWidget {
                                     : Helper.verifyUser(
                                         isVerified: true,
                                         () => Buildables.requestBottomsheet(
-                                          noteController: controller.noteController,
-                                          onSubmit: () => controller.bookService(service),
+                                          noteController: ReservationViewmodel.noteController,
+                                          onSubmit: () => ReservationViewmodel.bookService(service),
                                           neededCoins: service.coins,
-                                        ).then((value) => controller.clearRequestFormFields()),
+                                        ).then((value) => ReservationViewmodel.clearRequestFormFields()),
                                       ),
-                                isOwner: AuthenticationService.find.jwtUserData?.id == controller.currentStore?.owner?.id,
+                                isOwner: AuthenticationService.find.jwtUserData?.id == StoreViewmodel.currentStore?.owner?.id,
                                 onDeleteService: () => controller.deleteService(service),
                                 onEditService: () => controller.editService(service),
                                 isHighlighted: controller.highlightedService?.id == service.id,
@@ -227,14 +248,14 @@ class MyStoreScreen extends StatelessWidget {
                             child: CustomButtons.elevatePrimary(
                               title: 'add_service'.tr,
                               width: Get.width,
-                              onPressed: () => controller.addService(),
+                              onPressed: () => StoreViewmodel.addService(),
                             ),
                           ),
                         Text('store_owner_rating'.tr, style: AppFonts.x15Bold),
                         const SizedBox(height: Paddings.regular),
                         RatingOverview(
                           onShowAllReviews: () => Get.bottomSheet(AllReviews(reviews: controller.storeOwnerReviews, isBottomsheet: true), isScrollControlled: true),
-                          rating: controller.currentStore?.rating ?? 0,
+                          rating: StoreViewmodel.currentStore?.rating ?? 0,
                           reviews: controller.storeOwnerReviews,
                         ),
                         const SizedBox(height: Paddings.exceptional),

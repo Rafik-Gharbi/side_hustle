@@ -52,6 +52,7 @@ class MapScreen extends StatelessWidget {
                                     updateFilter: (filter) => controller.filterModel = filter,
                                     clearFilter: () => controller.filterModel = FilterModel(),
                                     filter: controller.filterModel,
+                                    isTasks: controller.isTasks,
                                   ),
                                 ),
                               ),
@@ -81,7 +82,7 @@ class MapScreen extends StatelessWidget {
                               return Marker(
                                 point: marker.coordinates,
                                 alignment: Alignment.center,
-                                width: 90,
+                                width: 30,
                                 height: 30,
                                 child: BuildCustomMarker(marker, controller.mapController, onTap: () {}),
                               );

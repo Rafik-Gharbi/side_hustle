@@ -38,6 +38,7 @@ class AddBankNumberBottomsheet extends StatelessWidget {
                     const SizedBox(height: Paddings.exceptional),
                     CustomTextField(
                       hintText: 'bank_number_lower'.tr,
+                      isOptional: false,
                       fieldController: controller.bankNumberController,
                       textInputType: const TextInputType.numberWithOptions(decimal: true),
                       validator: (value) => FormValidators.minNumberOfCharsValidator(value, 20, isNumber: true),

@@ -16,6 +16,7 @@ class BuildPriceRange extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<MoreFilterController>(
+      dispose: (state) => state.controller?.clearFilter,
       builder: (controller) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -25,12 +26,12 @@ class BuildPriceRange extends StatelessWidget {
           ),
           RangeSlider(
             min: kMinPriceRange,
-            max: kMaxPriceRange,
+            max: controller.maxPrice,
             activeColor: kPrimaryColor,
             onChanged: (value) => controller.managePriceFilter(range: value),
             values: RangeValues(
               double.tryParse(controller.minPriceController.text) ?? kMinPriceRange,
-              double.tryParse(controller.maxPriceController.text) ?? kMaxPriceRange,
+              double.tryParse(controller.maxPriceController.text) ?? controller.maxPrice,
             ),
           ),
           GetBuilder<MainAppController>(
@@ -48,7 +49,7 @@ class BuildPriceRange extends StatelessWidget {
                     textInputType: const TextInputType.numberWithOptions(decimal: true),
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(top: Paddings.regular),
-                      child: Text(mainAppController.currency.value, style: AppFonts.x12Bold),
+                      child: Text(mainAppController.currency.value, style: AppFonts.x11Bold, softWrap: false),
                     ),
                     onChanged: (value) => Helper.onSearchDebounce(() => controller.managePriceFilter(min: value)),
                   ),
@@ -69,7 +70,7 @@ class BuildPriceRange extends StatelessWidget {
                     textInputType: const TextInputType.numberWithOptions(decimal: true),
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(top: Paddings.regular),
-                      child: Text(mainAppController.currency.value, style: AppFonts.x12Bold),
+                      child: Text(mainAppController.currency.value, style: AppFonts.x11Bold, softWrap: false),
                     ),
                     onChanged: (value) => Helper.onSearchDebounce(() => controller.managePriceFilter(max: value)),
                   ),

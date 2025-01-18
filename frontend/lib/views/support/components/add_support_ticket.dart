@@ -92,6 +92,7 @@ class AddSupportTicket extends StatelessWidget {
                         CustomTextField(
                           hintText: 'subject'.tr,
                           outlinedBorder: true,
+                          isOptional: false,
                           fieldController: subjectController,
                           validator: FormValidators.notEmptyOrNullValidator,
                         ),
@@ -108,6 +109,7 @@ class AddSupportTicket extends StatelessWidget {
                                 hint: ticketCategory?.name.tr ?? 'select_option'.tr,
                                 dropDownWithDecoration: true,
                                 buttonHeight: 45,
+                                isRequired: true,
                                 buttonWidth: double.infinity,
                                 validator: FormValidators.notNullObjectValidator,
                                 onChanged: (category) => setState(() => ticketCategory = category),
@@ -133,6 +135,7 @@ class AddSupportTicket extends StatelessWidget {
                           hintText: 'description'.tr,
                           fieldController: descriptionController,
                           isTextArea: true,
+                          isOptional: false,
                           outlinedBorder: true,
                           validator: FormValidators.notEmptyOrNullValidator,
                         ),
@@ -228,6 +231,7 @@ class AddSupportTicket extends StatelessWidget {
                                 UserRepository.find
                                     .submitSupportTicket(
                                       SupportTicket(
+                                        guestId: Helper.getOrCreateGuestId(),
                                         category: ticketCategory!,
                                         subject: subjectController.text,
                                         description: descriptionController.text,

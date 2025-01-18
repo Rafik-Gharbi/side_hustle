@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +15,8 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' 
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:encrypt/encrypt.dart' as enc;
+import 'package:uuid/uuid.dart';
 
 import '../models/notification.dart';
 import '../constants/colors.dart';
@@ -29,6 +33,7 @@ import '../services/translation/app_localization.dart';
 import '../services/logger_service.dart';
 import '../services/theme/theme.dart';
 import '../views/notifications/notification_controller.dart';
+import '../views/profile/account/login_dialog.dart';
 import '../views/profile/admin_dashboard/components/stats_screen/components/pie_chart.dart';
 import '../views/profile/verification_screen.dart';
 import '../widgets/custom_popup.dart';
@@ -38,25 +43,31 @@ import 'extensions/date_time_extension.dart';
 
 class Helper {
   static Timer? _searchOnStoppedTyping;
-
   static String selectedIsoCode = defaultIsoCode;
   static String phonePrefix = defaultPrefix;
   static bool? lastCheckedVersion;
+  static String _previousSnackBarMessage = '';
 
-  static void snackBar({String message = 'Snack bar test', String? title, Duration? duration, bool includeDismiss = true, Widget? overrideButton, TextStyle? styleMessage}) =>
-      GetSnackBar(
-        titleText: title != null ? Text(title.tr, style: styleMessage ?? AppFonts.x16Bold) : null,
-        messageText: Text(message.tr, style: styleMessage ?? AppFonts.x14Regular),
-        duration: duration ?? const Duration(seconds: 3),
-        isDismissible: true,
-        borderColor: kSecondaryColor,
-        borderWidth: 2,
-        borderRadius: 10,
-        margin: isMobile ? const EdgeInsets.symmetric(horizontal: 2).copyWith(bottom: 10) : EdgeInsets.only(left: (Get.width / 3) * 2, right: 50, bottom: 10),
-        backgroundColor: kNeutralColor100,
-        snackPosition: SnackPosition.BOTTOM,
-        mainButton: overrideButton ?? (includeDismiss ? TextButton(onPressed: () => Get.closeAllSnackbars(), child: Text('dismiss'.tr)) : null),
-      ).show();
+  static void snackBar({String message = 'Snack bar test', String? title, Duration? duration, bool includeDismiss = true, Widget? overrideButton, TextStyle? styleMessage}) {
+    if (message == _previousSnackBarMessage) {
+      Future.delayed(duration ?? const Duration(seconds: 3), () => _previousSnackBarMessage = '');
+      return;
+    }
+    _previousSnackBarMessage = message;
+    GetSnackBar(
+      titleText: title != null ? Text(title.tr, style: styleMessage ?? AppFonts.x16Bold) : null,
+      messageText: Text(message.tr, style: styleMessage ?? AppFonts.x14Regular),
+      duration: duration ?? const Duration(seconds: 3),
+      isDismissible: true,
+      borderColor: kSecondaryColor,
+      borderWidth: 2,
+      borderRadius: 10,
+      margin: isMobile ? const EdgeInsets.symmetric(horizontal: 2).copyWith(bottom: 10) : EdgeInsets.only(left: (Get.width / 3) * 2, right: 50, bottom: 10),
+      backgroundColor: kNeutralColor100,
+      snackPosition: SnackPosition.BOTTOM,
+      mainButton: overrideButton ?? (includeDismiss ? TextButton(onPressed: () => Get.closeAllSnackbars(), child: Text('dismiss'.tr)) : null),
+    ).show();
+  }
 
   static Future<dynamic> waitAndExecute(bool Function() condition, Function callback, {Duration? duration}) async {
     while (!condition()) {
@@ -84,14 +95,18 @@ class Helper {
     return luminance > threshold;
   }
 
-  static String getReadableLanguage(String? languageCode) {
+  static String getReadableLanguage(String? languageCode, String? countryCode) {
     switch (languageCode) {
       case 'en':
         return 'English';
       case 'fr':
         return 'Français';
       case 'ar':
-        return 'العربية';
+        if (countryCode == 'TN') {
+          return 'اللهجة التونسية';
+        } else {
+          return 'العربية';
+        }
       // Add more language codes and their readable names as needed
       default:
         return 'Unknown';
@@ -142,28 +157,38 @@ class Helper {
     return false;
   }
 
+  static String getOrCreateGuestId() {
+    String? guestId = SharedPreferencesService.find.get(guestIdKey);
+    if (guestId == null) {
+      guestId = const Uuid().v4();
+      SharedPreferencesService.find.add(guestIdKey, guestId);
+    }
+    return guestId;
+  }
+
   static dynamic decryptResponse(String response) {
-    final decryptedDataString = Helper.decryptData(response);
+    final decryptedDataString = decryptData(response);
     final jsonDecrypted = json.decode(decryptedDataString);
     return jsonDecrypted;
   }
 
-  static String encryptData(String password) {
-    // final key = enc.Key.fromUtf8('23557520584123485319BCFAEFEDADEF');
-    // final iv = enc.IV(Uint8List.fromList(List<int>.filled(16, 0)));
-    // final encrypter = enc.Encrypter(enc.AES(key, mode: enc.AESMode.cbc));
-    // final encrypted = encrypter.encrypt(password, iv: iv);
-    // return encrypted.base64;
-    return '';
+  static String encryptData(String data) {
+    final key = enc.Key.fromUtf8(dotenv.env['SECRET_KEY']!);
+    final iv = enc.IV(Uint8List.fromList(List<int>.filled(16, 0)));
+    final encrypter = enc.Encrypter(enc.AES(key, mode: enc.AESMode.cbc));
+    final encrypted = encrypter.encrypt(data, iv: iv);
+    return encrypted.base64;
   }
 
   static String decryptData(String encryptedData) {
-    // final key = enc.Key.fromUtf8('23557520584123485319BCFAEFEDADEF');
-    // final iv = enc.IV(Uint8List.fromList(List<int>.filled(16, 0)));
-    // final encrypter = enc.Encrypter(enc.AES(key, mode: enc.AESMode.cbc));
-    // final decrypted = encrypter.decrypt64(encryptedData, iv: iv);
-    // return decrypted;
-    return '';
+    String decrypted = encryptedData;
+    if (encryptedData.isNotEmpty) {
+      final key = enc.Key.fromUtf8(dotenv.env['SECRET_KEY']!);
+      final iv = enc.IV(Uint8List.fromList(List<int>.filled(16, 0)));
+      final encrypter = enc.Encrypter(enc.AES(key, mode: enc.AESMode.cbc));
+      decrypted = encrypter.decrypt64(encryptedData, iv: iv);
+    }
+    return decrypted;
   }
 
   static String getNameInitials(String? name) {
@@ -226,7 +251,7 @@ class Helper {
         itemStyle: AppFonts.x14Regular,
       ),
       minTime: isFutureDate ? DateTime.now() : DateTime(1900),
-      maxTime: isFutureDate ? DateTime.now().add(const Duration(days: 60)) : DateTime.now(),
+      maxTime: isFutureDate ? DateTime.now().add(const Duration(days: 30)) : DateTime.now(),
       onConfirm: onConfirm,
       currentTime: currentTime,
       onCancel: onClear,
@@ -462,7 +487,16 @@ class Helper {
         snackBar(message: 'verify_profile_msg'.tr);
       }
     } else {
-      snackBar(message: loginErrorMsg ?? 'login_express_interest_msg'.tr);
+      snackBar(
+        message: loginErrorMsg ?? 'login_express_interest_msg'.tr,
+        overrideButton: TextButton(
+          onPressed: () => Get.bottomSheet(const LoginDialog(), isScrollControlled: true).then((value) {
+            AuthenticationService.find.currentState = LoginWidgetState.login;
+            AuthenticationService.find.clearFormFields();
+          }),
+          child: Text('login'.tr),
+        ),
+      );
     }
   }
 

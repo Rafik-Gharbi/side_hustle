@@ -1,7 +1,5 @@
 const cron = require("node-cron");
 const {
-  getDate,
-  checkUnitDinar,
   getTaskCondidatesNumber,
   calculateTaskCoinsPrice,
   generateJWT,
@@ -10,16 +8,12 @@ const {
   checkReferralActiveUserRewards,
 } = require("../helper/helpers");
 const { User } = require("../models/user_model");
-const axios = require("axios");
-const jwt = require("jsonwebtoken");
-const { encryptData } = require("../helper/encryption");
 const {
   fetchUserReservation,
   populateOneTask,
   populateOneService,
   getServiceOwner,
 } = require("../sql/sql_request");
-const { sendMail } = require("../helper/email_service");
 const { Task } = require("../models/task_model");
 const { Reservation } = require("../models/reservation_model");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
@@ -225,19 +219,7 @@ exports.addTaskReservation = async (req, res) => {
   }
 };
 
-exports.listTaskReservation = async (req, res) => {
-  try {
-    const formattedList = await fetchUserReservation(req.decoded.id);
-
-    return res.status(200).json({ formattedList });
-  } catch (error) {
-    console.log(`Error at ${req.route.path}`);
-    console.error("\x1b[31m%s\x1b[0m", error);
-    return res.status(500).json({ message: error });
-  }
-};
-
-exports.userTaskReservationsHistory = async (req, res) => {
+exports.userTaskOffersHistory = async (req, res) => {
   try {
     let userFound = await User.findByPk(req.decoded.id);
     if (!userFound) {
@@ -246,8 +228,8 @@ exports.userTaskReservationsHistory = async (req, res) => {
 
     let reservationList = await Reservation.findAll({
       where: {
-        user_id: userFound.id,
-        status: { [Op.ne]: "pending" },
+        provider_id: userFound.id,
+        task_id: { [Op.ne]: null },
       },
     });
     const formattedList = await Promise.all(
@@ -665,8 +647,8 @@ exports.addServiceReservation = async (req, res) => {
       {
         date,
         service_id: serviceId,
-        user_id: storeOwner.id,
-        provider_id: userFound.id,
+        provider_id: storeOwner.id,
+        user_id: userFound.id,
         total_price: totalPrice,
         coupon,
         note,
@@ -706,8 +688,14 @@ exports.addServiceReservation = async (req, res) => {
   }
 };
 
-exports.userServicesHistory = async (req, res) => {
+exports.userRequestedServices = async (req, res) => {
   try {
+    const page = req.query.page;
+    const limit = req.query.limit;
+    const pageQuery = page ?? 1;
+    const limitQuery = limit ? parseInt(limit) : 9;
+    const offset = (pageQuery - 1) * limit;
+
     let userFound = await User.findByPk(req.decoded.id);
     if (!userFound) {
       return res.status(404).json({ message: "user_not_found" });
@@ -716,6 +704,58 @@ exports.userServicesHistory = async (req, res) => {
     let reservationList = await Reservation.findAll({
       where: {
         user_id: userFound.id,
+        service_id: { [Op.ne]: null },
+      },
+      limit: limitQuery,
+      offset: offset,
+    });
+    const formattedList = await Promise.all(
+      reservationList.map(async (row) => {
+        const foundService = await Service.findByPk(row.service_id);
+        const populatedService = await populateOneService(foundService);
+        const serviceGallerys = await ServiceGalleryModel.findAll({
+          where: { service_id: row.service_id },
+        });
+        const providerFound = await User.findOne({
+          where: { id: row.provider_id },
+        });
+
+        return {
+          id: row.id,
+          user: userFound,
+          provider: providerFound,
+          date: row.createdAt,
+          service: populatedService,
+          totalPrice: row.total_price,
+          coupon: row.coupon,
+          note: row.note,
+          status: row.status,
+          serviceGallerys,
+          dueDate: row.dueDate,
+        };
+      })
+    );
+
+    return res.status(200).json({ formattedList });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.userServicesProvided = async (req, res) => {
+  try {
+    let userFound = await User.findByPk(req.decoded.id);
+    if (!userFound) {
+      return res.status(404).json({ message: "user_not_found" });
+    }
+
+    let reservationList = await Reservation.findAll({
+      where: {
+        provider_id: userFound.id,
+        service_id: { [Op.ne]: null },
+        [Op.or]: [{ status: "rejected" }, { status: "finished" }],
       },
     });
     const formattedList = await Promise.all(
@@ -785,14 +825,13 @@ exports.getReservationByService = async (req, res) => {
         const providerFound = await User.findOne({
           where: { id: row.provider_id },
         });
-        const providerRating = await Review.findAll({
-          where: { user_id: providerFound.id },
+        const userRating = await Review.findAll({
+          where: { user_id: userFound.id },
           attributes: [
             [sequelize.fn("AVG", sequelize.col("rating")), "avgRating"],
           ],
         });
-        providerFound.dataValues.rating =
-          providerRating[0].dataValues.avgRating;
+        userFound.dataValues.rating = userRating[0].dataValues.avgRating;
         const serviceCondidatesNumber = await getServiceCondidatesNumber(
           row.service_id
         );
@@ -939,6 +978,7 @@ exports.updateServiceStatus = async (req, res) => {
 
 async function payFinishedReservations() {
   const twelveHoursAgo = new Date(new Date() - 12 * 60 * 60 * 1000);
+  let jobDone = 0;
   const reservations = await Reservation.findAll({
     where: {
       status: "finished",
@@ -969,9 +1009,11 @@ async function payFinishedReservations() {
         provider.save();
         transaction.status = "completed";
         transaction.save();
+        jobDone++;
       }
     }
   }
+  console.log(`Cron job found and updated ${jobDone} finished reservations`);
 }
 
 cron.schedule("0 9,21 * * *", () => {

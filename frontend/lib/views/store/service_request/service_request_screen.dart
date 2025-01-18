@@ -43,7 +43,7 @@ class ServiceRequestScreen extends StatelessWidget {
                           transitionDuration: const Duration(milliseconds: 600),
                           onClosed: (data) => data != null && data ? Future.delayed(const Duration(milliseconds: 600), () => controller.init()) : null,
                           openBuilder: (_, __) => UserProfileScreen(
-                            user: reservation.provider,
+                            user: reservation.user,
                             reservation: reservation,
                             requestStatus: reservation.status,
                             isService: true,
@@ -61,11 +61,11 @@ class ServiceRequestScreen extends StatelessWidget {
                               title: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(reservation.provider.name ?? '', style: AppFonts.x16Bold),
+                                  Text(reservation.user.name ?? '', style: AppFonts.x16Bold),
                                   // user rating
                                   Row(
                                     children: [
-                                      Text(Helper.formatAmount(reservation.provider.rating), style: AppFonts.x16Bold),
+                                      Text(Helper.formatAmount(reservation.user.rating), style: AppFonts.x16Bold),
                                       const SizedBox(width: Paddings.small),
                                       const Icon(Icons.star, color: Colors.amber),
                                     ],

@@ -6,17 +6,15 @@ import '../../constants/shared_preferences_keys.dart';
 import '../../controllers/main_app_controller.dart';
 import '../../helpers/helper.dart';
 import '../../models/category.dart';
-import '../../models/enum/request_status.dart';
 import '../../models/filter_model.dart';
 import '../../models/governorate.dart';
 import '../../models/reservation.dart';
 import '../../models/task.dart';
 import '../../networking/api_base_helper.dart';
-import '../../repositories/reservation_repository.dart';
 import '../../repositories/task_repository.dart';
 import '../../services/authentication_service.dart';
 import '../../services/shared_preferences.dart';
-import '../review/add_review/add_review_bottomsheet.dart';
+import '../../services/tutorials/home_tutorial.dart';
 import '../task/task_list/task_list_screen.dart';
 
 enum SearchMode { nearby, regional, national, worldwide }
@@ -38,6 +36,9 @@ class HomeController extends GetxController {
   GlobalKey categoryRowKey = GlobalKey();
   GlobalKey searchFieldKey = GlobalKey();
   GlobalKey advancedFilterKey = GlobalKey();
+  GlobalKey firstTaskKey = GlobalKey();
+  GlobalKey mapViewKey = GlobalKey();
+  GlobalKey searchModeDropdownKey = GlobalKey();
 
   FilterModel get filterModel => _filterModel;
 
@@ -90,7 +91,14 @@ class HomeController extends GetxController {
 
   HomeController._internal() {
     init();
-    // showTutorial();
+    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () {
+      if (!(SharedPreferencesService.find.get(hasFinishedHomeTutorialKey) == 'true')) {
+        Helper.waitAndExecute(() => MainAppController.find.isHomeScreen, () {
+          HomeTutorial.showTutorial();
+          update();
+        });
+      }
+    });
   }
 
   Future<void> init() async {
@@ -152,106 +160,5 @@ class HomeController extends GetxController {
       Helper.snackBar(message: 'Couldn\'t check version update');
     }
     init();
-  }
-
-  void markServiceReservationAsDone(Reservation serviceReservation) => Helper.openConfirmationDialog(
-        content: 'mark_service_done_msg'.tr,
-        onConfirm: () async {
-          await ReservationRepository.find.updateServiceReservationStatus(serviceReservation, RequestStatus.finished);
-          Helper.goBack();
-          init();
-          MainAppController.find.resolveProfileActionRequired();
-          Get.bottomSheet(AddReviewBottomsheet(user: serviceReservation.provider), isScrollControlled: true);
-        },
-      );
-
-  void showTutorial() {
-    targets.add(TargetFocus(keyTarget: categoryRowKey, identify: 'Target 1', contents: [
-      TargetContent(
-        align: ContentAlign.bottom,
-        child: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'Titulo lorem ipsum',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pulvinar tortor eget maximus iaculis.',
-                style: TextStyle(color: Colors.white),
-              ),
-            )
-          ],
-        ),
-      )
-    ]));
-
-    targets.add(TargetFocus(keyTarget: searchFieldKey, identify: 'Target 2', contents: [
-      TargetContent(
-          align: ContentAlign.left,
-          child: const Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Multiples content',
-                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.0),
-                child: Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pulvinar tortor eget maximus iaculis.',
-                  style: TextStyle(color: Colors.white),
-                ),
-              )
-            ],
-          )),
-      TargetContent(
-        align: ContentAlign.top,
-        child: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'Multiples content',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pulvinar tortor eget maximus iaculis.',
-                style: TextStyle(color: Colors.white),
-              ),
-            )
-          ],
-        ),
-      )
-    ]));
-
-    targets.add(TargetFocus(keyTarget: advancedFilterKey, identify: 'Target 3', contents: [
-      TargetContent(
-        align: ContentAlign.right,
-        child: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'Title lorem ipsum',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pulvinar tortor eget maximus iaculis.',
-                style: TextStyle(color: Colors.white),
-              ),
-            )
-          ],
-        ),
-      )
-    ]));
   }
 }

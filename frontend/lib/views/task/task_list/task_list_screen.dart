@@ -47,7 +47,13 @@ class TaskListScreen extends StatelessWidget {
               children: [
                 CustomButtons.icon(
                   icon: Icon(controller.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
-                  onPressed: () => controller.openSearchBar.value = !controller.openSearchBar.value,
+                  onPressed: () {
+                    controller.openSearchBar.value = !controller.openSearchBar.value;
+                    if (!controller.openSearchBar.value && controller.searchTaskController.text.isNotEmpty) {
+                      controller.page = 0;
+                      controller.fetchSearchedTasks(searchQuery: '');
+                    }
+                  },
                 ),
                 CustomButtons.icon(
                   icon: const Icon(Icons.filter_alt_outlined),
@@ -68,10 +74,23 @@ class TaskListScreen extends StatelessWidget {
                     flexibleSpace: CustomTextField(
                       fieldController: controller.searchTaskController,
                       hintText: 'search_tasks'.tr,
-                      suffixIcon: const Icon(Icons.search, color: kPrimaryColor),
+                      suffixIcon: CustomButtons.icon(
+                        icon: const Icon(Icons.search, color: kPrimaryColor),
+                        onPressed: controller.searchTaskController.text.isNotEmpty
+                            ? () {
+                                controller.page = 0;
+                                controller.fetchSearchedTasks();
+                              }
+                            : () {},
+                      ),
                       fillColor: Colors.white,
                       onChanged: (value) => Helper.onSearchDebounce(
-                        () => value.length >= 3 || value.isEmpty ? controller.fetchSearchedTasks() : null,
+                        () {
+                          if (value.length >= 3 || value.isEmpty) {
+                            controller.page = 0;
+                            controller.fetchSearchedTasks();
+                          }
+                        },
                       ),
                     ),
                   )
@@ -84,6 +103,13 @@ class TaskListScreen extends StatelessWidget {
                       controller: controller.scrollController,
                       child: Column(
                         children: [
+                          if (controller.filterModel.nearby != null &&
+                              controller.filterModel.nearby! > 1 &&
+                              !controller.filteredTaskList.any((element) => element.distance != null))
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.large),
+                              child: Text('no_nearby_tasks_check_city_tasks'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                            ),
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),

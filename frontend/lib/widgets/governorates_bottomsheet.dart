@@ -34,20 +34,28 @@ class GovernorateBottomsheet extends StatelessWidget {
                   Helper.goBack();
                 },
                 child: OnHover(
-                  builder: (isHovered) => DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: smallRadius,
-                      color: isHovered
-                          ? kNeutralLightColor.withAlpha(150)
-                          : selectedItem != null && selectedItem!.name == governorate.name
-                              ? kPrimaryColor
-                              : null,
-                    ),
-                    child: SizedBox(
-                      height: 40,
-                      child: Center(child: Text(governorate.name, style: AppFonts.x14Regular)),
-                    ),
-                  ),
+                  builder: (isHovered) {
+                    final isSelected = selectedItem != null && selectedItem!.name == governorate.name;
+                    return DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: smallRadius,
+                        color: isHovered
+                            ? kNeutralLightColor.withAlpha(150)
+                            : isSelected
+                                ? kPrimaryColor
+                                : null,
+                      ),
+                      child: SizedBox(
+                        height: 40,
+                        child: Center(
+                          child: Text(
+                            governorate.name,
+                            style: AppFonts.x14Regular.copyWith(color: isSelected ? kNeutralColor100 : kBlackColor, fontWeight: isSelected ? FontWeight.bold : null),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             );

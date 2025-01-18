@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../constants/constants.dart';
 import '../controllers/main_app_controller.dart';
 import '../database/database_repository/reservation_database_repository.dart';
 import '../helpers/helper.dart';
@@ -72,11 +73,11 @@ class ReservationRepository extends GetxService {
     }
   }
 
-  Future<List<Reservation>> getUserTasksHistory() async {
+  Future<List<Reservation>> getUserTasksOffers({int page = 0, int limit = kLoadMoreLimit}) async {
     try {
       List<Reservation> reservations = [];
       if (MainAppController.find.isConnected) {
-        final result = await ApiBaseHelper().request(RequestType.get, '/reservation/reservations-history', sendToken: true);
+        final result = await ApiBaseHelper().request(RequestType.get, '/reservation/tasks-offers?page=$page&limit=$limit', sendToken: true);
         reservations = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
       } else {
         reservations = await ReservationDatabaseRepository.find.select();
@@ -84,7 +85,7 @@ class ReservationRepository extends GetxService {
       // if (reservations.isNotEmpty && MainAppController.find.isConnected) ReservationDatabaseRepository.find.backupReservations(reservations);
       return reservations;
     } catch (e) {
-      LoggerService.logger?.e('Error occured in getUserTasksHistory:\n$e');
+      LoggerService.logger?.e('Error occured in getUserTasksOffers:\n$e');
     }
     return [];
   }
@@ -111,16 +112,16 @@ class ReservationRepository extends GetxService {
     return false;
   }
 
-  // Future<List<Reservation>> listReservation() async {
-  //   try {
-  //     final result = await ApiBaseHelper().request(RequestType.get, '/reservation/list', sendToken: true);
-  //     final services = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
-  //     return services;
-  //   } catch (e) {
-  //     LoggerService.logger?.e('Error occured in listReservation:\n$e');
-  //   }
-  //   return [];
-  // }
+  Future<List<Reservation>> listTaskOffers() async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.get, '/reservation/task-offers', sendToken: true);
+      final services = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
+      return services;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in listTaskOffers:\n$e');
+    }
+    return [];
+  }
 
   Future<List<Reservation>> getReservationByServiceId(String serviceId) async {
     try {
@@ -150,11 +151,11 @@ class ReservationRepository extends GetxService {
     }
   }
 
-  Future<List<Reservation>> getUserServicesHistory() async {
+  Future<List<Reservation>> getUserRequestedServices({int page = 0, int limit = kLoadMoreLimit}) async {
     try {
       List<Reservation> bookings = [];
       if (MainAppController.find.isConnected) {
-        final result = await ApiBaseHelper().request(RequestType.get, '/reservation/services-history', sendToken: true);
+        final result = await ApiBaseHelper().request(RequestType.get, '/reservation/services-requests?page=$page&limit=$limit', sendToken: true);
         bookings = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
       } else {
         bookings = await ReservationDatabaseRepository.find.select();
@@ -162,7 +163,24 @@ class ReservationRepository extends GetxService {
       if (bookings.isNotEmpty && MainAppController.find.isConnected) ReservationDatabaseRepository.find.backupReservations(bookings);
       return bookings;
     } catch (e) {
-      LoggerService.logger?.e('Error occured in getUserServicesHistory:\n$e');
+      LoggerService.logger?.e('Error occured in getUserRequestedServices:\n$e');
+    }
+    return [];
+  }
+
+  Future<List<Reservation>> getUserProvidedServices({int page = 0, int limit = kLoadMoreLimit}) async {
+    try {
+      List<Reservation> bookings = [];
+      if (MainAppController.find.isConnected) {
+        final result = await ApiBaseHelper().request(RequestType.get, '/reservation/service-offers?page=$page&limit=$limit', sendToken: true);
+        bookings = (result['formattedList'] as List).map((e) => Reservation.fromJson(e)).toList();
+      } else {
+        bookings = await ReservationDatabaseRepository.find.select();
+      }
+      if (bookings.isNotEmpty && MainAppController.find.isConnected) ReservationDatabaseRepository.find.backupReservations(bookings);
+      return bookings;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getUserProvidedServices:\n$e');
     }
     return [];
   }

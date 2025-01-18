@@ -17,9 +17,15 @@ module.exports = (app) => {
 
   router.get("/send-mail", paramsController.sendMail);
 
+  router.get("/max-task-price", paramsController.getMaxTaskPrice);
+
+  router.get("/max-service-price", paramsController.getMaxServicePrice);
+
   router.post("/report", tokenVerificationOptional, paramsController.reportUser);
 
   router.post("/feedback", tokenVerificationOptional, paramsController.feedback);
+  
+  router.post("/survey", paramsController.survey);
 
   app.use("/params", router);
 };

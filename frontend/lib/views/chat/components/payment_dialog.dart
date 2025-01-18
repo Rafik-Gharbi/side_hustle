@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constants/colors.dart';
+import '../../../constants/constants.dart';
 import '../../../constants/sizes.dart';
 import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/buildables.dart';
@@ -49,14 +50,14 @@ class ContractPaymentDialog extends StatelessWidget {
               ),
               TableRow(
                 children: [
-                  Text('${'service_fees'.tr} (10%):', style: AppFonts.x14Regular),
-                  Text('${Helper.formatAmount(contract.finalPrice * 0.1)} ${MainAppController.find.currency.value}', style: AppFonts.x14Regular),
+                  Text('${'service_fees'.tr} (${Helper.formatAmount(serviceFees * 100)}%):', style: AppFonts.x14Regular),
+                  Text('${Helper.formatAmount(contract.finalPrice * serviceFees)} ${MainAppController.find.currency.value}', style: AppFonts.x14Regular),
                 ],
               ),
               TableRow(
                 children: [
                   Text('${'total_amount'.tr}:', style: AppFonts.x14Bold),
-                  Text('${Helper.formatAmount(contract.finalPrice + contract.finalPrice * 0.1)} ${MainAppController.find.currency.value}', style: AppFonts.x14Bold),
+                  Text('${Helper.formatAmount(contract.finalPrice + contract.finalPrice * serviceFees)} ${MainAppController.find.currency.value}', style: AppFonts.x14Bold),
                 ],
               ),
             ],

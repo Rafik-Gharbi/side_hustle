@@ -12,6 +12,7 @@ import '../../../services/authentication_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/overflowed_text_with_tooltip.dart';
+import '../../profile/account/login_dialog.dart';
 import '../../task/task_details/task_details_screen.dart';
 
 class TaskMapCard extends StatelessWidget {
@@ -33,9 +34,12 @@ class TaskMapCard extends StatelessWidget {
             children: [
               // Leading category icon
               if (task.category != null)
-                SizedBox(
-                  width: 50,
-                  child: Buildables.buildCategoryIcon(task.category!.icon),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: Paddings.small),
+                  child: SizedBox(
+                    width: 50,
+                    child: Buildables.buildCategoryIcon(task.category!.icon),
+                  ),
                 ),
               Expanded(
                 child: Column(
@@ -65,7 +69,18 @@ class TaskMapCard extends StatelessWidget {
                               padding: const EdgeInsets.only(left: Paddings.regular),
                               child: CustomButtons.icon(
                                 icon: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined, size: 18),
-                                onPressed: () => AuthenticationService.find.isUserLoggedIn.value ? toggleFavorite() : Helper.snackBar(message: 'login_save_task_msg'.tr),
+                                onPressed: () => AuthenticationService.find.isUserLoggedIn.value
+                                    ? toggleFavorite()
+                                    : Helper.snackBar(
+                                        message: 'login_save_task_msg'.tr,
+                                        overrideButton: TextButton(
+                                          onPressed: () => Get.bottomSheet(const LoginDialog(), isScrollControlled: true).then((value) {
+                                            AuthenticationService.find.currentState = LoginWidgetState.login;
+                                            AuthenticationService.find.clearFormFields();
+                                          }),
+                                          child: Text('login'.tr),
+                                        ),
+                                      ),
                               ),
                             );
                           }),
@@ -78,7 +93,8 @@ class TaskMapCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           if (task.distance != null && task.distance!.isNotEmpty)
-                            Text('${'distance'.tr}: ${Helper.formatAmount(double.parse(task.distance!))} ${'kilometers'.tr}', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
+                            Text('${'distance'.tr}: ${Helper.formatAmount(double.parse(task.distance!))} ${'kilometers'.tr}',
+                                style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
                           else
                             const SizedBox(),
                           Text(

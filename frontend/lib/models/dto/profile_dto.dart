@@ -7,10 +7,9 @@ class ProfileDTO {
   final List<Category> subscribedCategories;
   final DateTime nextUpdateGategory;
   final int myRequestActionRequired;
-  final int taskHistoryActionRequired;
+  final int myOffersActionRequired;
   final int myStoreActionRequired;
   final int approveUsersActionRequired;
-  final int serviceHistoryActionRequired;
   final int adminDashboardActionRequired;
   final bool userHasBoosts;
 
@@ -21,8 +20,7 @@ class ProfileDTO {
     this.approveUsersActionRequired = 0,
     this.myRequestActionRequired = 0,
     this.myStoreActionRequired = 0,
-    this.taskHistoryActionRequired = 0,
-    this.serviceHistoryActionRequired = 0,
+    this.myOffersActionRequired = 0,
     this.adminDashboardActionRequired = 0,
     this.userHasBoosts = false,
   });
@@ -36,9 +34,8 @@ class ProfileDTO {
             : DateTime.now(),
         approveUsersActionRequired: json['approveUsersActionRequired'] ?? 0,
         myRequestActionRequired: json['myRequestActionRequired'] ?? 0,
+        myOffersActionRequired: json['myOffersActionRequired'] ?? 0,
         myStoreActionRequired: json['myStoreActionRequired'] ?? 0,
-        taskHistoryActionRequired: json['taskHistoryActionRequired'] ?? 0,
-        serviceHistoryActionRequired: json['serviceHistoryActionRequired'] ?? 0,
         adminDashboardActionRequired: json['adminDashboardActionRequired'] ?? 0,
         userHasBoosts: json['userHasBoosts'] ?? false,
       );

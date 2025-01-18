@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../../../constants/constants.dart';
+import '../../../constants/shared_preferences_keys.dart';
+import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/dto/service_dto.dart';
 import '../../../models/filter_model.dart';
-import '../../../models/reservation.dart';
 import '../../../models/service.dart';
 import '../../../models/store.dart';
 import '../../../networking/api_base_helper.dart';
-import '../../../repositories/reservation_repository.dart';
 import '../../../repositories/store_repository.dart';
-import '../../../services/authentication_service.dart';
+import '../../../services/shared_preferences.dart';
+import '../../../services/tutorials/market_tutorial.dart';
 
 class MarketController extends GetxController {
   /// not permanent, use with caution
@@ -29,6 +31,10 @@ class MarketController extends GetxController {
   int page = 0;
   List<Service> hotServices = [];
   List<ServiceDTO> _hotServicesDTO = [];
+  List<TargetFocus> targets = [];
+  GlobalKey searchIconKey = GlobalKey();
+  GlobalKey advancedFilterKey = GlobalKey();
+  GlobalKey firstStoreKey = GlobalKey();
 
   FilterModel get filterModel => _filterModel;
 
@@ -43,19 +49,28 @@ class MarketController extends GetxController {
     scrollController.addListener(() {
       if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 50) _loadMore();
     });
-    _init();
+    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () {
+      if (!(SharedPreferencesService.find.get(hasFinishedMarketTutorialKey) == 'true')) {
+        Helper.waitAndExecute(() => MainAppController.find.isMarketScreen, () {
+          MarketTutorial.showTutorial();
+          update();
+        });
+      }
+    });
+    init();
   }
 
   Store getServiceStore(Service service) => _hotServicesDTO.singleWhere((element) => element.service?.id == service.id).store!;
 
-  Future<void> fetchSearchedStores({FilterModel? filter, String? searchQuery}) async {
+  Future<void> fetchSearchedStores({FilterModel? filter, String? searchQuery, int? fixPage}) async {
+    if (fixPage != null) page = fixPage;
     if (searchQuery != null && searchQuery.isNotEmpty) {
       openSearchBar.value = true;
       searchStoreController.text = searchQuery;
     }
     if (filter != null) _filterModel = filter;
     if (page > 1) isLoadingMore.value = true;
-    storeList = await StoreRepository.find.filterStores(page: ++page, searchQuery: searchStoreController.text, filter: _filterModel) ?? [];
+    storeList = await StoreRepository.find.filterStores(page: fixPage ?? ++page, searchQuery: searchStoreController.text, filter: _filterModel) ?? [];
     if ((storeList.isEmpty) || storeList.length < kLoadMoreLimit) isEndList = true;
     if (page == 1) {
       filteredStoreList = storeList;
@@ -73,30 +88,14 @@ class MarketController extends GetxController {
     fetchSearchedStores().then((value) => Future.delayed(Durations.long1, () => ApiBaseHelper.find.blockRequest = false));
   }
 
-  Future<void> _init() async {
+  Future<void> init() async {
+    searchStoreController.text = '';
     final result = await StoreRepository.find.getHotServices();
     _hotServicesDTO = result;
     hotServices = result.where((element) => element.service != null).map((e) => e.service!).toList();
+    fetchSearchedStores(fixPage: 1);
+    openSearchBar.value = false;
     update();
-  }
-
-  Future<void> bookService(Service service) async {
-    final result = await ReservationRepository.find.addServiceReservation(
-      reservation: Reservation(
-        service: service,
-        date: DateTime.now(),
-        totalPrice: service.price ?? 0,
-        user: AuthenticationService.find.jwtUserData!,
-        provider: service.owner!,
-        note: noteController.text,
-        coins: service.coins,
-        // coupon: coupon,
-      ),
-    );
-    if (result) {
-      Helper.goBack();
-      Helper.snackBar(message: 'service_booked_successfully'.tr);
-    }
   }
 
   void clearRequestFormFields() {

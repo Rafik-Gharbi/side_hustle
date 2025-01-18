@@ -26,6 +26,10 @@ const SupportTicket = sequelize.define(
       allowNull: false,
       defaultValue: "",
     },
+    guest_id: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
     status: {
       type: Sequelize.ENUM("open", "pending", "resolved", "closed"),
       defaultValue: "open",
@@ -44,7 +48,7 @@ const SupportTicket = sequelize.define(
 SupportTicket.belongsTo(User, {
   as: "user",
   foreignKey: "user_id",
-  allowNull: false,
+  allowNull: true,
 });
 SupportTicket.belongsTo(User, {
   as: "assigned",

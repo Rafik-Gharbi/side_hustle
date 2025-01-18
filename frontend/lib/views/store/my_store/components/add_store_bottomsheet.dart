@@ -9,6 +9,7 @@ import '../../../../controllers/main_app_controller.dart';
 import '../../../../helpers/form_validators.dart';
 import '../../../../models/governorate.dart';
 import '../../../../services/theme/theme.dart';
+import '../../../../viewmodel/store_viewmodel.dart';
 import '../../../../widgets/coordinates_picker.dart';
 import '../../../../widgets/custom_buttons.dart';
 import '../../../../widgets/custom_dropdown.dart';
@@ -40,7 +41,7 @@ class AddStoreBottomsheet extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
                           child: isUpdate
-                              ? Image.network(controller.currentStore!.picture!.file.path, height: 199, width: Get.width - 1, fit: BoxFit.cover)
+                              ? Image.network(StoreViewmodel.currentStore!.picture!.file.path, height: 199, width: Get.width - 1, fit: BoxFit.cover)
                               : Image.file(File(controller.storePicture!.path), height: 198, width: Get.width - 1, fit: BoxFit.cover),
                         ),
                       )
@@ -67,12 +68,14 @@ class AddStoreBottomsheet extends StatelessWidget {
                         child: Column(
                           children: [
                             CustomTextField(
+                              isOptional: false,
                               hintText: 'store_name'.tr,
                               fieldController: controller.nameController,
                               validator: FormValidators.notEmptyOrNullValidator,
                             ),
                             const SizedBox(height: Paddings.regular),
                             CustomTextField(
+                              isOptional: false,
                               hintText: 'store_description'.tr,
                               fieldController: controller.descriptionController,
                               isTextArea: true,
@@ -83,6 +86,7 @@ class AddStoreBottomsheet extends StatelessWidget {
                               items: MainAppController.find.governorates,
                               hint: 'select_governorate'.tr,
                               maxWidth: true,
+                              isRequired: true,
                               selectedItem: controller.governorate,
                               buttonHeight: 45,
                               valueFrom: (governorate) => governorate.name,

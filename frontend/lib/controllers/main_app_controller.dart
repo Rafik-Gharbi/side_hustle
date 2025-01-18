@@ -30,10 +30,14 @@ import '../services/logger_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/theme/theme.dart';
 import '../services/translation/app_localization.dart';
+import '../views/chat/chat_controller.dart';
+import '../views/home/home_controller.dart';
 import '../views/profile/favorite/favorite_controller.dart';
 import '../views/profile/favorite/favorite_screen.dart';
+import '../views/profile/profile_screen/profile_controller.dart';
+import '../views/store/market/market_controller.dart';
 import '../widgets/custom_buttons.dart';
-import '../widgets/custom_scaffold_bottom_navigation.dart';
+import '../widgets/main_screen_with_bottom_navigation.dart';
 
 class MainAppController extends GetxController {
   static MainAppController get find => Get.find<MainAppController>();
@@ -68,7 +72,11 @@ class MainAppController extends GetxController {
 
   Governorate? getGovernorateById(id) => id == null ? null : governorates.cast<Governorate?>().singleWhere((element) => element?.id == id, orElse: () => null);
 
-  MainAppController() {
+  static final MainAppController _singleton = MainAppController._internal();
+
+  factory MainAppController() => _singleton;
+
+  MainAppController._internal() {
     Helper.waitAndExecute(
       () => Get.context != null,
       () => MainAppController.find.changeLanguage(lang: Localizations.localeOf(Get.context!)),
@@ -76,7 +84,7 @@ class MainAppController extends GetxController {
     ever(hasVersionUpdate, (_) {
       if (hasVersionUpdate.value && (GetPlatform.isAndroid || GetPlatform.isIOS)) {
         Helper.waitAndExecute(
-          () => Get.locale != null && Get.currentRoute == CustomScaffoldBottomNavigation.routeName,
+          () => Get.locale != null && Get.currentRoute == MainScreenWithBottomNavigation.routeName,
           () => Get.dialog(
             AlertDialog(
               title: Text('update_required'.tr, style: AppFonts.x15Bold),
@@ -98,7 +106,7 @@ class MainAppController extends GetxController {
     });
     subscription = Connectivity().onConnectivityChanged.listen((result) async {
       currentConnectivityStatus = await checkConnectivity(connectivity: result);
-      await checkVersionRequired();
+      if (isReady) await checkVersionRequired();
       hasInternetConnection.value = currentConnectivityStatus != ConnectivityResult.none;
       foundation.debugPrint('Device is connected: $isConnected');
     });
@@ -111,21 +119,24 @@ class MainAppController extends GetxController {
     super.dispose();
   }
 
-  Future<void> checkVersionRequired() async {
-    final (isBEConnected, version) = await ApiBaseHelper.find.checkConnectionToBackend();
-    isBackReachable.value = isBEConnected;
-    if (version != null) {
-      final currentVersion = await Helper.getCurrentVersion();
-      hasVersionUpdate.value = Helper.compareVersions(version, currentVersion);
-      LoggerService.logger?.i(hasVersionUpdate.value ? 'Version update is required' : 'Current version is compatible');
-    } else {
-      Helper.snackBar(message: 'Couldn\'t check version update');
-    }
-  }
+  Future<void> checkVersionRequired() async => Helper.waitAndExecute(
+        () => SharedPreferencesService.find.isReady.value,
+        () async {
+          final (isBEConnected, version) = await ApiBaseHelper.find.checkConnectionToBackend();
+          isBackReachable.value = isBEConnected;
+          if (version != null) {
+            final currentVersion = await Helper.getCurrentVersion();
+            hasVersionUpdate.value = Helper.compareVersions(version, currentVersion);
+            LoggerService.logger?.i(hasVersionUpdate.value ? 'Version update is required' : 'Current version is compatible');
+          } else {
+            Helper.snackBar(message: 'Couldn\'t check version update');
+          }
+        },
+      );
 
   void manageNavigation({required int screenIndex}) {
     bottomNavIndex.value = screenIndex;
-    if (Get.currentRoute != CustomScaffoldBottomNavigation.routeName) Get.offAllNamed(CustomScaffoldBottomNavigation.routeName);
+    if (Get.currentRoute != MainScreenWithBottomNavigation.routeName) Get.offAllNamed(MainScreenWithBottomNavigation.routeName);
   }
 
   void changeLanguage({Locale? lang, String? languageCode}) {
@@ -199,7 +210,7 @@ class MainAppController extends GetxController {
         onUnlocked: () {
           isAuthenticated.value = true;
           if (replaceNavigation) {
-            Get.offAllNamed(route ?? CustomScaffoldBottomNavigation.routeName);
+            Get.offAllNamed(route ?? MainScreenWithBottomNavigation.routeName);
           } else {
             Helper.goBack();
           }
@@ -248,8 +259,21 @@ class MainAppController extends GetxController {
               checkConnectivity().then((value) {
                 currentConnectivityStatus = value;
                 hasInternetConnection.value = currentConnectivityStatus != ConnectivityResult.none;
-                if (!isBackReachable.value) checkVersionRequired();
               });
+            }
+            if (!isBackReachable.value && hasInternetConnection.value) checkVersionRequired();
+            switch (bottomNavIndex.value) {
+              case 1:
+                MarketController.find.init();
+                break;
+              case 2:
+                ChatController.find.init();
+                break;
+              case 3:
+                ProfileController.find.init();
+                break;
+              default:
+                HomeController.find.init();
             }
           },
         );
@@ -264,7 +288,7 @@ class MainAppController extends GetxController {
       if (didAuthenticate) {
         isAuthenticated.value = true;
         if (replaceNavigation) {
-          Get.offAllNamed(route ?? CustomScaffoldBottomNavigation.routeName);
+          Get.offAllNamed(route ?? MainScreenWithBottomNavigation.routeName);
         } else {
           Helper.goBack();
         }

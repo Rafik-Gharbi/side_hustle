@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,7 +10,6 @@ import '../../helpers/buildables.dart';
 import '../../helpers/helper.dart';
 import '../../services/authentication_service.dart';
 import '../../services/theme/theme.dart';
-import '../../services/theme/theme_service.dart';
 import '../../widgets/custom_standard_scaffold.dart';
 import '../../widgets/feedback_bottomsheet.dart';
 import 'components/animated_list_tile.dart';
@@ -38,13 +38,13 @@ class SettingsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     AnimatedTitle(title: 'general'.tr),
-                    Obx(() => AnimatedListTile(
-                          leading: const Icon(Icons.light_mode_outlined),
-                          subtitle: '${'current_theme'.tr}: ${ThemeService.find.currentTheme.value.name.tr}',
-                          title: 'theme'.tr,
-                          onTap: () => ThemeService.find.toggleTheme(),
-                          // onTap: () => ThemeService.find.toggleTheme(),
-                        )),
+                    // Obx(() => AnimatedListTile(
+                    //       leading: const Icon(Icons.light_mode_outlined),
+                    //       subtitle: '${'current_theme'.tr}: ${ThemeService.find.currentTheme.value.name.tr}',
+                    //       title: 'theme'.tr,
+                    //       onTap: () => ThemeService.find.toggleTheme(),
+                    //       // onTap: () => ThemeService.find.toggleTheme(),
+                    //     )),
                     // Obx(() => AnimatedListTile(
                     //       leading: const Icon(Icons.currency_exchange_outlined),
                     //       subtitle: '${'current_currency'.tr}: ${MainAppController.find.currency.value}',
@@ -65,16 +65,16 @@ class SettingsScreen extends StatelessWidget {
                     //     )),
                     AnimatedListTile(
                       leading: const Icon(Icons.translate_outlined),
-                      subtitle: '${'current_language'.tr}: ${Helper.getReadableLanguage(Get.locale?.languageCode ?? 'en')}',
+                      subtitle: '${'current_language'.tr}: ${Helper.getReadableLanguage(Get.locale?.languageCode ?? 'en', Get.locale?.countryCode ?? 'US')}',
                       title: 'language'.tr,
                       onTap: () => Get.bottomSheet(const LanguageSelector()),
                     ),
-                    AnimatedListTile(
-                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
-                      leading: const Icon(Icons.favorite_border),
-                      subtitle: 'msg_rate_review_us'.tr,
-                      title: 'rate_us'.tr,
-                    ),
+                    // AnimatedListTile(
+                    //   onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
+                    //   leading: const Icon(Icons.favorite_border),
+                    //   subtitle: 'msg_rate_review_us'.tr,
+                    //   title: 'rate_us'.tr,
+                    // ),
                     AnimatedListTile(
                       leading: const Icon(Icons.mail_outline),
                       subtitle: 'msg_share_thoughts'.tr,
@@ -93,45 +93,45 @@ class SettingsScreen extends StatelessWidget {
                       title: 'terms_condition'.tr,
                       onTap: () => Get.toNamed(TermsConditionScreen.routeName),
                     ),
-                    Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
-                    AnimatedTitle(title: 'notifications'.tr),
-                    AnimatedListTile(
-                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
-                      leading: const Icon(Icons.notifications_none_outlined),
-                      subtitle: 'enable_notifications'.tr,
-                      title: 'msg_push_notifications'.tr,
-                      trailing: const Icon(Icons.expand_less),
-                    ),
-                    AnimatedListTile(
-                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
-                      widget: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('default_reminders'.tr, overflow: TextOverflow.ellipsis, style: AppFonts.x16Bold),
-                          Text('15_m'.tr, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
-                        ],
-                      ),
-                    ),
-                    Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
-                    AnimatedTitle(title: 'preferences'.tr),
-                    AnimatedListTile(
-                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
-                      title: 'switch_24_hour_format'.tr,
-                      titleStyle: AppFonts.x16Regular,
-                      trailing: Switch(
-                        value: controller.is24Hour,
-                        activeColor: kPrimaryColor,
-                        inactiveTrackColor: kNeutralOpacityColor,
-                        inactiveThumbColor: kNeutralColor,
-                        trackOutlineColor: controller.is24Hour ? null : WidgetStatePropertyAll(kNeutralOpacityColor),
-                        onChanged: (_) => controller.is24Hour = !controller.is24Hour,
-                      ),
-                    ),
-                    AnimatedListTile(
-                      subtitle: controller.categoryPreferences == 'show_popular_categories'.tr ? 'or_my_most_searched_categories'.tr : 'or_popular_categories'.tr,
-                      title: controller.categoryPreferences,
-                      onTap: () => controller.toggleCategorySectionPreferences(),
-                    ),
+                    // Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
+                    // AnimatedTitle(title: 'notifications'.tr),
+                    // AnimatedListTile(
+                    //   onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
+                    //   leading: const Icon(Icons.notifications_none_outlined),
+                    //   subtitle: 'enable_notifications'.tr,
+                    //   title: 'msg_push_notifications'.tr,
+                    //   trailing: const Icon(Icons.expand_less),
+                    // ),
+                    // AnimatedListTile(
+                    //   onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
+                    //   widget: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: <Widget>[
+                    //       Text('default_reminders'.tr, overflow: TextOverflow.ellipsis, style: AppFonts.x16Bold),
+                    //       Text('15_m'.tr, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
+                    //     ],
+                    //   ),
+                    // ),
+                    // Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
+                    // AnimatedTitle(title: 'preferences'.tr),
+                    // AnimatedListTile(
+                    //   onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
+                    //   title: 'switch_24_hour_format'.tr,
+                    //   titleStyle: AppFonts.x16Regular,
+                    //   trailing: Switch(
+                    //     value: controller.is24Hour,
+                    //     activeColor: kPrimaryColor,
+                    //     inactiveTrackColor: kNeutralOpacityColor,
+                    //     inactiveThumbColor: kNeutralColor,
+                    //     trackOutlineColor: controller.is24Hour ? null : WidgetStatePropertyAll(kNeutralOpacityColor),
+                    //     onChanged: (_) => controller.is24Hour = !controller.is24Hour,
+                    //   ),
+                    // ),
+                    // AnimatedListTile(
+                    //   subtitle: controller.categoryPreferences == 'show_popular_categories'.tr ? 'or_my_most_searched_categories'.tr : 'or_popular_categories'.tr,
+                    //   title: controller.categoryPreferences,
+                    //   onTap: () => controller.toggleCategorySectionPreferences(),
+                    // ),
                     Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
                     AnimatedTitle(title: 'security'.tr),
                     Obx(
@@ -142,26 +142,27 @@ class SettingsScreen extends StatelessWidget {
                         onTap: () => MainAppController.find.setAuthentication(context),
                       ),
                     ),
-                    Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
-                    AnimatedTitle(title: 'data_management'.tr),
-                    AnimatedListTile(
-                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
-                      widget: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('max_caching'.tr, overflow: TextOverflow.ellipsis, style: AppFonts.x16Bold),
-                          Text('500_mb'.tr, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
-                        ],
+                    // Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
+                    // AnimatedTitle(title: 'data_management'.tr),
+                    // AnimatedListTile(
+                    //   onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
+                    //   widget: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: <Widget>[
+                    //       Text('max_caching'.tr, overflow: TextOverflow.ellipsis, style: AppFonts.x16Bold),
+                    //       Text('500_mb'.tr, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
+                    //     ],
+                    //   ),
+                    // ),
+                    if (!kReleaseMode)
+                      AnimatedListTile(
+                        title: 'delete_cache'.tr,
+                        onTap: controller.deleteCache,
+                        trailing: const Icon(
+                          Icons.delete_forever,
+                          color: kErrorColor,
+                        ),
                       ),
-                    ),
-                    AnimatedListTile(
-                      title: 'delete_cache'.tr,
-                      onTap: controller.deleteCache,
-                      trailing: const Icon(
-                        Icons.delete_forever,
-                        color: kErrorColor,
-                      ),
-                    ),
                     Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
                     AnimatedTitle(title: 'support'.tr),
                     AnimatedListTile(
@@ -169,16 +170,16 @@ class SettingsScreen extends StatelessWidget {
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => Get.toNamed(CustomerSupport.routeName),
                     ),
-                    AnimatedListTile(
-                      title: 'help'.tr,
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
-                    ),
-                    AnimatedListTile(
-                      title: 'faq'.tr,
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
-                    ),
+                    // AnimatedListTile(
+                    //   title: 'help'.tr,
+                    //   trailing: const Icon(Icons.chevron_right),
+                    //   onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
+                    // ),
+                    // AnimatedListTile(
+                    //   title: 'faq'.tr,
+                    //   trailing: const Icon(Icons.chevron_right),
+                    //   onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
+                    // ),
                     if (AuthenticationService.find.isLoggingIn)
                       AnimatedListTile(
                         title: 'delete_profile'.tr,

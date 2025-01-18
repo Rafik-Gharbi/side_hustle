@@ -27,16 +27,9 @@ module.exports = (app) => {
 
   // list own reservation via JWT
   router.get(
-    "/list",
+    "/tasks-offers",
     tokenVerification,
-    reservationController.listTaskReservation
-  );
-
-  // list own reservation via JWT
-  router.get(
-    "/reservations-history",
-    tokenVerification,
-    reservationController.userTaskReservationsHistory
+    reservationController.userTaskOffersHistory
   );
 
   // list reservation by task
@@ -70,9 +63,16 @@ module.exports = (app) => {
 
   // list own booking via JWT
   router.get(
-    "/services-history",
+    "/services-requests",
     tokenVerification,
-    reservationController.userServicesHistory
+    reservationController.userRequestedServices
+  );
+
+  // list provided services via JWT
+  router.get(
+    "/service-offers",
+    tokenVerification,
+    reservationController.userServicesProvided
   );
 
   // list booking by service

@@ -127,23 +127,6 @@ const getMyRequestRequiredActionsCount = async (userId) => {
   return result;
 };
 
-const getServiceHistoryRequiredActionsCount = async (userId) => {
-  let bookingList = await Reservation.findAll({
-    where: {
-      user_id: userId,
-      service_id: { [Op.ne]: null },
-    },
-  });
-
-  let result = 0;
-  await Promise.all(
-    bookingList.map(async (row) => {
-      if (row.status === "pending" || row.status === "confirmed") result++;
-    })
-  );
-  return result;
-};
-
 const getTaskHistoryRequiredActionsCount = async (userId) => {
   let reservationList = await Reservation.findAll({
     where: {
@@ -265,8 +248,8 @@ async function fetchUserReservation(userId, status = undefined) {
 
   let reservationList = await Reservation.findAll({
     where: {
-      [Op.or]: [{ user_id: userFound.id }, { provider_id: userFound.id }],
-      status: status ?? "pending",
+      provider_id: userFound.id,
+      status: status ?? null,
       task_id: { [Op.ne]: null },
     },
   });
@@ -274,7 +257,6 @@ async function fetchUserReservation(userId, status = undefined) {
     reservationList.map(async (row) => {
       let taskAttachments;
       let task;
-      // let service;
       if (row.task_id) {
         const foundTask = await Task.findByPk(row.task_id);
         taskAttachments = await TaskAttachmentModel.findAll({
@@ -282,10 +264,6 @@ async function fetchUserReservation(userId, status = undefined) {
         });
         task = await populateOneTask(foundTask, userFound.id);
       }
-      // if (row.service_id) {
-      //   const foundService = await Service.findByPk(row.service_id);
-      //   service = await populateOneService(foundService, userFound.id);
-      // }
       const providerFound = await User.findOne({
         where: { id: row.provider_id },
       });
@@ -295,7 +273,6 @@ async function fetchUserReservation(userId, status = undefined) {
         user: userFound,
         date: row.createdAt,
         task: task,
-        // service: service,
         totalPrice: row.total_price,
         proposedPrice: row.proposed_price,
         coupon: row.coupon,
@@ -388,11 +365,8 @@ async function fetchAndSortNearbyTasks(
             ? `AND task.category_id = :categoryId`
             : ``
         }        
-        ${
-          priceMin && priceMax
-            ? ` AND task.price >= :priceMin AND task.price <= :priceMax`
-            : ``
-        }
+        ${priceMin ? ` AND task.price >= :priceMin` : ``}
+        ${priceMax ? ` AND task.price <= :priceMax` : ``}
         ${userLongitude && userLatitude ? ` ORDER BY distance ASC` : ``}
       `;
   const tasks = await sequelize.query(query, {
@@ -413,7 +387,12 @@ async function fetchAndSortNearbyTasks(
   });
 
   // Filter tasks with distance less than 100 kilometers (100,000 meters)
-  const filteredTasks = tasks.filter((task) => task.distance < 100000);
+  let filteredTasks = [];
+  if (userLongitude && userLatitude) {
+    filteredTasks = tasks.filter((task) => task.distance < 100000);
+  } else {
+    filteredTasks = tasks;
+  }
   // Shuffle the tasks array
   shuffleArray(filteredTasks);
   // Apply limit and offset to the shuffled array
@@ -479,11 +458,8 @@ async function fetchAndSortGovernorateTasks(
             : ``
         }
         ${taskId ? `AND task.id = :taskId` : ``}
-        ${
-          priceMin && priceMax
-            ? `AND task.price >= :priceMin AND task.price <= :priceMax`
-            : ``
-        }
+        ${priceMin ? ` AND task.price >= :priceMin` : ``}
+        ${priceMax ? ` AND task.price <= :priceMax` : ``}
       `;
   const tasks = await sequelize.query(query, {
     type: sequelize.QueryTypes.SELECT,
@@ -947,7 +923,7 @@ function populateContract(contractId) {
         include: [
           { model: User, as: "user" },
           { model: User, as: "provider" },
-          { model: Task, as: "task" },
+          { model: Task, as: "task", include: [{ model: User, as: "user" }] },
           { model: Service, as: "service" },
         ],
       },
@@ -976,7 +952,6 @@ module.exports = {
   getTaskHistoryRequiredActionsCount,
   getMyStoreRequiredActionsCount,
   getApproveUsersRequiredActionsCount,
-  getServiceHistoryRequiredActionsCount,
   getServiceOwner,
   populateServices,
   populateOneService,

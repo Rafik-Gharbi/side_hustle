@@ -16,6 +16,7 @@ const {
   notificationService,
   NotificationType,
 } = require("./notification_service");
+const { decryptData } = require("./encryption");
 
 function adjustString(inputString) {
   const ext = path.extname(inputString).toLowerCase();
@@ -59,24 +60,34 @@ async function verifyToken(token) {
   if (token.startsWith(checkBearer)) {
     token = token.slice(checkBearer.length, token.length);
   }
-
   return await new Promise((resolve, reject) => {
-    try {
-      jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-          console.log(`Error in verifyToken; Token: ${token}\n${err}`);
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        if (err.name === "TokenExpiredError") {
+          console.log(`Token expired: ${token}`);
           reject(err);
         } else {
-          resolve(decoded);
+          console.log(`Error in verifyToken; Token: ${token}\n${err}`);
+          reject(err);
         }
-      });
-    } catch (error) {
-      console.log(
-        `Catched error in verifyToken. Token: ${token}\nError: ${error}`
-      );
-      reject(error);
-    }
+      } else {
+        resolve(decoded);
+      }
+    });
   });
+}
+
+async function ensureDecryptBody(req) {
+  if (req.body.encryptedData) {
+    // Handle JSON body with encrypted data
+    try {
+      const decrypted = decryptData(req.body.encryptedData);
+      req.body = JSON.parse(decrypted);
+    } catch (error) {
+      console.error("Decryption failed:", error);
+      return res.status(400).send("Invalid encrypted data");
+    }
+  }
 }
 
 function addAuthentication(body, targetProperty) {
@@ -744,4 +755,5 @@ module.exports = {
   generateUniqueReferralCode,
   checkReferralActiveUserRewards,
   verifyToken,
+  ensureDecryptBody,
 };

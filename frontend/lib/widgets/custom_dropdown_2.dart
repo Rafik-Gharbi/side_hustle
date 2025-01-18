@@ -307,20 +307,26 @@ class _BuildDropDownButton<T> extends StatelessWidget {
                                 (value) => DropdownMenuItem<T>(
                                   value: value,
                                   child: OnHover(
-                                    builder: (isHovered) => DecoratedBox(
-                                      decoration: BoxDecoration(
-                                        color: isHovered
-                                            ? kNeutralLightColor.withAlpha(150)
-                                            : selectedItem != null &&
-                                                    (selectedItem == value || (valueFrom != null ? valueFrom!.call(value) == valueFrom!.call(selectedItem as T) : false))
-                                                ? kPrimaryColor
-                                                : null,
-                                        borderRadius: smallRadius,
-                                      ),
-                                      child: Center(
-                                        child: Text(valueFrom?.call(value) ?? value.toString(), style: AppFonts.x14Bold),
-                                      ),
-                                    ),
+                                    builder: (isHovered) {
+                                      final isSelected = selectedItem != null &&
+                                          (selectedItem == value || (valueFrom != null ? valueFrom!.call(value) == valueFrom!.call(selectedItem as T) : false));
+                                      return DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          color: isHovered
+                                              ? kNeutralLightColor.withAlpha(150)
+                                              : isSelected
+                                                  ? kPrimaryColor
+                                                  : null,
+                                          borderRadius: smallRadius,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            valueFrom?.call(value) ?? value.toString(),
+                                            style: AppFonts.x14Bold.copyWith(color: isSelected ? kNeutralColor100 : kBlackColor),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               )

@@ -2,7 +2,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
-const { adjustString } = require("../helper/helpers");
+const { adjustString, ensureDecryptBody } = require("../helper/helpers");
 
 // Helper to create directory if it doesn't exist
 function ensureDirectoryExists(dir) {
@@ -16,6 +16,7 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let dir;
 
+    ensureDecryptBody(req);
     // Check file type to determine destination
     const ext = path.extname(file.originalname).toLowerCase();
     if (ext === ".txt") {
@@ -29,13 +30,13 @@ const storage = multer.diskStorage({
       error.status = 415;
       return cb(error);
     }
-    
+
     ensureDirectoryExists(dir); // Ensure directory exists
     cb(null, dir);
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname).toLowerCase();
-    
+
     if (ext === ".txt") {
       // For log files
       const userId = req.decoded?.id || "unknown";
@@ -47,7 +48,7 @@ const storage = multer.diskStorage({
       cb(null, `doc-${userId}-${timestamp}${ext}`);
     } else if ([".jpg", ".jpeg", ".png", ".gif", ".webp"].includes(ext)) {
       // For image files
-      cb(null, `${adjustString(file.originalname)}-${req.decoded.id}${ext}`);
+      cb(null, `${adjustString(file.originalname)}-${req.decoded?.id}${ext}`);
     } else {
       const error = new Error("Invalid file type");
       error.status = 415;

@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+import '../../../constants/shared_preferences_keys.dart';
 import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/helper.dart';
 import '../../../helpers/image_picker_by_platform/image_picker_platform.dart';
@@ -13,12 +15,14 @@ import '../../../networking/api_base_helper.dart';
 import '../../../repositories/user_repository.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/logger_service.dart';
+import '../../../services/shared_preferences.dart';
+import '../../../services/tutorials/profile_tutorial.dart';
 import '../../../widgets/categories_bottomsheet.dart';
 import '../../../widgets/draggable_bottomsheet.dart';
 
 class ProfileController extends GetxController {
-  /// not permanent use with caution
   static ProfileController get find => Get.find<ProfileController>();
+  final ScrollController scrollController = ScrollController();
   User? loggedInUser;
   RxBool _isLoading = true.obs;
   XFile? profilePicture;
@@ -26,12 +30,17 @@ class ProfileController extends GetxController {
   List<Category> subscribedCategories = [];
   DateTime? nextUpdateGategory;
   int myRequestActionRequired = 0;
-  int taskHistoryActionRequired = 0;
+  int myOffersActionRequired = 0;
   int myStoreActionRequired = 0;
   int approveUsersActionRequired = 0;
-  int serviceHistoryActionRequired = 0;
   int adminDashboardActionRequired = 0;
   bool userHasBoosts = false;
+  List<TargetFocus> targets = [];
+  GlobalKey profileHeaderKey = GlobalKey();
+  GlobalKey verifyAccountKey = GlobalKey();
+  GlobalKey subscribeCategoryKey = GlobalKey();
+  GlobalKey createStoreKey = GlobalKey();
+  GlobalKey referFriendKey = GlobalKey();
 
   RxBool get isLoading => _isLoading;
   bool get isUpdatingProfile => _isUpdatingProfile;
@@ -51,6 +60,14 @@ class ProfileController extends GetxController {
   factory ProfileController() => _singleton;
 
   ProfileController._internal() {
+    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () {
+      if (!(SharedPreferencesService.find.get(hasFinishedProfileTutorialKey) == 'true')) {
+        Helper.waitAndExecute(() => MainAppController.find.isProfileScreen, () {
+          ProfileTutorial.showTutorial();
+          update();
+        });
+      }
+    });
     init();
   }
 
@@ -58,13 +75,13 @@ class ProfileController extends GetxController {
     final result = await AuthenticationService.find.fetchUserData();
     if (result != null) {
       loggedInUser = result.user;
+      AuthenticationService.find.jwtUserData = loggedInUser;
       subscribedCategories = result.subscribedCategories;
       nextUpdateGategory = result.nextUpdateGategory;
       myRequestActionRequired = result.myRequestActionRequired;
-      taskHistoryActionRequired = result.taskHistoryActionRequired;
+      myOffersActionRequired = result.myOffersActionRequired;
       myStoreActionRequired = result.myStoreActionRequired;
       approveUsersActionRequired = result.approveUsersActionRequired;
-      serviceHistoryActionRequired = result.serviceHistoryActionRequired;
       adminDashboardActionRequired = result.adminDashboardActionRequired;
       userHasBoosts = result.userHasBoosts;
       MainAppController.find.resolveProfileActionRequired();

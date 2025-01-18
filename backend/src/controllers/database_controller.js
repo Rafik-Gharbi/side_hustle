@@ -8,7 +8,7 @@ const { Store } = require("../models/store_model");
 const { Service } = require("../models/service_model");
 const { Review } = require("../models/review_model");
 const { deleteDatabase } = require("../../db.config");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const {
   removeSpacesFromPhoneNumber,
   generateUniqueReferralCode,

@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constants/constants.dart';
+import '../../../helpers/helper.dart';
 import '../../../models/category.dart';
 import '../../../models/filter_model.dart';
+import '../../../repositories/params_repository.dart';
+import '../../../services/authentication_service.dart';
+import '../../profile/account/login_dialog.dart';
 
 class MoreFilterController extends GetxController {
   final TextEditingController minPriceController = TextEditingController();
@@ -11,6 +15,7 @@ class MoreFilterController extends GetxController {
   Category _category = anyCategory;
   RxDouble nearbyRange = 10.0.obs;
   FilterModel? filter;
+  double maxPrice = kMaxPriceRange;
 
   Category get category => _category;
 
@@ -18,6 +23,7 @@ class MoreFilterController extends GetxController {
     _category = value;
     update();
   }
+
   static final MoreFilterController _singleton = MoreFilterController._internal();
 
   factory MoreFilterController() => _singleton;
@@ -26,8 +32,8 @@ class MoreFilterController extends GetxController {
     filter = FilterModel();
   }
 
-  void init(FilterModel filter) {
-    // TODO get max task price from backend
+  Future<void> init(FilterModel filter, bool isTasks) async {
+    maxPrice = (isTasks ? await ParamsRepository.find.getMaxTaskPrice() : await ParamsRepository.find.getMaxServicePrice()) ?? kMaxPriceRange;
     minPriceController.text = filter.minPrice?.toStringAsFixed(0) ?? '';
     maxPriceController.text = filter.maxPrice?.toStringAsFixed(0) ?? '';
     _category = filter.category ?? anyCategory;
@@ -48,10 +54,17 @@ class MoreFilterController extends GetxController {
       final maxDouble = double.tryParse(max);
       if (maxDouble != null && maxDouble > (double.tryParse(minPriceController.text) ?? 0)) maxPriceController.text = maxDouble.toStringAsFixed(0);
     }
+    if (double.tryParse(minPriceController.text) != null &&
+        double.tryParse(maxPriceController.text) != null &&
+        double.tryParse(minPriceController.text)! > double.tryParse(maxPriceController.text)!) {
+      final min = minPriceController.text;
+      minPriceController.text = double.tryParse(maxPriceController.text)?.toStringAsFixed(0) ?? '';
+      maxPriceController.text = double.tryParse(min)?.toStringAsFixed(0) ?? '';
+    }
     update();
   }
 
-  void clearFiler() {
+  void clearFilter() {
     category = anyCategory;
     minPriceController.clear();
     maxPriceController.clear();
@@ -64,4 +77,22 @@ class MoreFilterController extends GetxController {
         maxPrice: double.tryParse(maxPriceController.text),
         nearby: nearbyRange.value,
       );
+
+  Future<void> shareLocation() async {
+    if (AuthenticationService.find.isLoggingIn) {
+      await AuthenticationService.find.getUserCoordinates(withSave: true);
+      update();
+    } else {
+      Helper.snackBar(
+        message: 'login_express_interest_msg'.tr,
+        overrideButton: TextButton(
+          onPressed: () => Get.bottomSheet(const LoginDialog(), isScrollControlled: true).then((value) {
+            AuthenticationService.find.currentState = LoginWidgetState.login;
+            AuthenticationService.find.clearFormFields();
+          }),
+          child: Text('login'.tr),
+        ),
+      );
+    }
+  }
 }

@@ -219,6 +219,12 @@ class User {
         governorate: MainAppController.find.getGovernorateById(user.governorate),
       );
 
+  String get getSignupMethod => googleId != null
+      ? 'google'
+      : facebookId != null
+          ? 'facebook'
+          : 'email';
+
   UserTableCompanion toUserCompanion() => UserTableCompanion(
         id: id == null ? const Value.absent() : Value(id!),
         email: email == null ? const Value.absent() : Value(email!),

@@ -6,6 +6,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
+const multiparty = require("multiparty");
+const busboy = require("busboy");
 var cors = require("cors");
 const path = require("path");
 const { sequelize } = require("./db.config");
@@ -15,6 +17,7 @@ const {
   tokenVerification,
   checkContractPermission,
 } = require("./src/middlewares/authentificationHelper");
+const { encryptData, decryptData } = require("./src/helper/encryption");
 
 // config
 dotenv.config();
@@ -39,13 +42,32 @@ app.use(i18n.init);
 // });
 app.use(bodyParser.json());
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.text({ type: "application/xml" }));
 app.use(express.static(path.join(__dirname, "public")));
+// Add encryption in transit
+app.use((req, res, next) => {
+  const originalSend = res.send;
+  res.send = function (data) {
+    try {
+      const parsedData = JSON.parse(data);
+      const encrypted = encryptData(JSON.stringify(parsedData));
+      return originalSend.call(this, encrypted);
+    } catch (e) {
+      return originalSend.call(this, data);
+    }
+  };
+  if (req.body.encryptedData) {
+    const decrypted = decryptData(req.body.encryptedData);
+    req.body = JSON.parse(decrypted);
+  }
+  next();
+});
+
 
 // API for getting created contract
 app.get(
-  "/public/contracts/:id",
+  "/public/contracts",
   tokenVerification,
   checkContractPermission,
   async (req, res) => {
@@ -53,7 +75,7 @@ app.get(
     res.sendFile(
       path.join(
         __dirname,
-        `./public/contracts/contract_${user.language}_${req.params.id}.pdf`
+        `./public/contracts/contract_${req.query.lang}_${req.query.id}.pdf`
       )
     );
   }

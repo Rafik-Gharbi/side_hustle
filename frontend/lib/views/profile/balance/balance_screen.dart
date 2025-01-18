@@ -1,13 +1,16 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../../../constants/assets.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/constants.dart';
+import '../../../constants/shared_preferences_keys.dart';
 import '../../../constants/sizes.dart';
 import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/helper.dart';
-import '../../../models/user.dart';
+import '../../../services/shared_preferences.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/balance_transaction_card.dart';
 import '../../../widgets/custom_button_with_overlay.dart';
@@ -22,14 +25,28 @@ import 'components/withdrawal_bottomsheet.dart';
 
 class BalanceScreen extends StatelessWidget {
   static const String routeName = '/my-balance';
-  final User loggedUser;
-  const BalanceScreen({super.key, required this.loggedUser});
+  const BalanceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final hasFinishedBalanceTutorial = SharedPreferencesService.find.get(hasFinishedBalanceTutorialKey) == 'true';
+    bool hasOpenedTutorial = false;
     return HoldInSafeArea(
       child: GetBuilder<BalanceController>(
-        init: BalanceController(loggedUser),
+        initState: (state) {
+          FirebaseAnalytics.instance.logScreenView(screenName: 'BalanceScreen');
+          Helper.waitAndExecute(() => state.controller != null, () {
+            if (!hasFinishedBalanceTutorial && Get.currentRoute == routeName && !hasOpenedTutorial && state.controller!.targets.isNotEmpty) {
+              hasOpenedTutorial = true;
+              TutorialCoachMark(
+                targets: state.controller!.targets,
+                colorShadow: kNeutralOpacityColor,
+                hideSkip: true,
+                onFinish: () => SharedPreferencesService.find.add(hasFinishedBalanceTutorialKey, 'true'),
+              ).show(context: context);
+            }
+          });
+        },
         builder: (controller) => CustomStandardScaffold(
           backgroundColor: kNeutralColor100,
           title: 'my_balance'.tr,
@@ -52,17 +69,26 @@ class BalanceScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('account_balance'.tr, style: AppFonts.x16Regular.copyWith(color: kNeutralColor100)),
-                              Text(
-                                '${Helper.formatAmount(controller.loggedUser.balance)} ${MainAppController.find.currency.value}',
-                                style: AppFonts.x24Bold.copyWith(color: kNeutralColor100),
+                              Padding(
+                                key: controller.balanceOverview,
+                                padding: const EdgeInsets.all(Paddings.regular),
+                                child: Column(
+                                  children: [
+                                    Text('account_balance'.tr, style: AppFonts.x16Regular.copyWith(color: kNeutralColor100)),
+                                    Text(
+                                      '${Helper.formatAmount(controller.loggedUser.balance)} ${MainAppController.find.currency.value}',
+                                      style: AppFonts.x24Bold.copyWith(color: kNeutralColor100),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: Paddings.extraLarge),
+                              const SizedBox(height: Paddings.regular),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   CustomButtons.icon(
-                                    onPressed: () => Get.bottomSheet(const WithdrawalBottomsheet(), isScrollControlled: true).then((value) => controller.clearWithdrawalFields()),
+                                    key: controller.withdrawBtnKey,
+                                    onPressed: () => Get.bottomSheet(const WithdrawalBottomsheet(), isScrollControlled: true),
                                     child: DecoratedBox(
                                       decoration: BoxDecoration(color: kAccentColor.withOpacity(0.9), borderRadius: circularRadius),
                                       child: Padding(
@@ -84,6 +110,7 @@ class BalanceScreen extends StatelessWidget {
                                   CustomButtonWithOverlay(
                                     buttonWidth: 140,
                                     button: DecoratedBox(
+                                      key: controller.depositBtnKey,
                                       decoration: BoxDecoration(color: kAccentColor.withOpacity(0.9), borderRadius: circularRadius),
                                       child: Padding(
                                         padding: const EdgeInsets.all(Paddings.regular),

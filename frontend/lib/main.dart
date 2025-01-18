@@ -9,7 +9,11 @@ import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 import 'constants/colors.dart';
+import 'constants/shared_preferences_keys.dart';
 import 'database/database_repository/category_database_repository.dart';
 import 'database/database_repository/governorate_database_repository.dart';
 import 'database/database_repository/reservation_database_repository.dart';
@@ -40,6 +44,7 @@ import 'services/theme/theme_service.dart';
 import 'services/translation/translation_checker.dart';
 import 'views/boost/list_boost/list_boost_controller.dart';
 import 'views/boost/list_boost/list_boost_screen.dart';
+import 'views/home/home_controller.dart';
 import 'views/notifications/notification_controller.dart';
 import 'views/notifications/notification_screen.dart';
 import 'views/onboarding/onboarding_screen.dart';
@@ -77,6 +82,8 @@ import 'views/profile/admin_dashboard/components/stats_screen/task_stats/task_st
 import 'views/profile/admin_dashboard/components/stats_screen/task_stats/task_stats_screen.dart';
 import 'views/profile/admin_dashboard/components/stats_screen/user_stats/user_stats_controller.dart';
 import 'views/profile/admin_dashboard/components/stats_screen/user_stats/user_stats_screen.dart';
+import 'views/profile/balance/balance_controller.dart';
+import 'views/profile/profile_screen/profile_controller.dart';
 import 'views/splash/splash_screen.dart';
 import 'views/support/components/ticket_details.dart';
 import 'views/profile/admin_dashboard/components/support_system/support_controller.dart';
@@ -93,8 +100,6 @@ import 'views/support/customer_support.dart';
 import 'views/settings/components/delete_profile.dart';
 import 'views/settings/components/privacy_policy_screen.dart';
 import 'views/settings/components/terms_condition_screen.dart';
-import 'views/store/service_history/service_history_controller.dart';
-import 'views/store/service_history/service_history_screen.dart';
 import 'views/task/add_task/add_task_bottomsheet.dart';
 import 'views/profile/admin_dashboard/components/approve_user/approve_user_controller.dart';
 import 'views/profile/admin_dashboard/components/approve_user/approve_user_screen.dart';
@@ -115,24 +120,25 @@ import 'views/store/service_request/service_request_screen.dart';
 import 'views/settings/settings_controller.dart';
 import 'views/settings/settings_screen.dart';
 import 'views/task/task_details/task_details_screen.dart';
-import 'views/task/task_history/task_history_controller.dart';
-import 'views/task/task_history/task_history_screen.dart';
+import 'views/task/my_offers/my_offers_controller.dart';
+import 'views/task/my_offers/my_offers_screen.dart';
 import 'views/task/task_list/task_list_controller.dart';
 import 'views/task/task_list/task_list_screen.dart';
 import 'views/task/task_proposal/task_proposal_controller.dart';
 import 'views/task/task_proposal/task_proposal_screen.dart';
-import 'views/task/task_request/task_request_controller.dart';
-import 'views/task/task_request/task_request_screen.dart';
+import 'views/task/my_request/my_request_controller.dart';
+import 'views/task/my_request/my_request_screen.dart';
 import 'views/profile/user_profile/user_profile_screen.dart';
 import 'views/profile/verification_screen.dart';
 import 'views/profile/verify_user/verify_user_controller.dart';
 import 'views/profile/verify_user/verify_user_screen.dart';
 import 'widgets/coins_market.dart';
-import 'widgets/custom_scaffold_bottom_navigation.dart';
+import 'widgets/main_screen_with_bottom_navigation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();
+  await dotenv.load(fileName: 'assets/.env');
   await init();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -169,7 +175,7 @@ Future<void> main() async {
           onDismissActionReceivedMethod: NotificationService.onDismissActionReceivedMethod,
         ),
       );
-      
+
   await TranslationChecker.checkTranslations();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then(
     (_) => runApp(const RestartWidget(child: MyApp())),
@@ -198,9 +204,19 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  late FirebaseAnalyticsObserver observer;
+  String firstScreen = SplashScreen.routeName;
+
+  @override
+  void initState() {
+    super.initState();
+    observer = FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance);
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      if (SharedPreferencesService.find.get(isFirstTimeKey) != null) firstScreen = MainScreenWithBottomNavigation.routeName;
       _checkUserPosition();
       MainAppController.find.checkVersionRequired();
     }
@@ -236,8 +252,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         fallbackLocale: const Locale('en', 'US'),
         theme: AppFonts().basicTheme(),
         initialBinding: InitialBindings(),
-        initialRoute: SplashScreen.routeName,
-        navigatorObservers: <NavigationHistoryObserver>[NavigationHistoryObserver()],
+        initialRoute: firstScreen,
+        navigatorObservers: [NavigationHistoryObserver(), observer],
         getPages: [
           GetPage(
             name: SplashScreen.routeName,
@@ -248,8 +264,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             page: () => const OnboardingScreen(),
           ),
           GetPage(
-            name: CustomScaffoldBottomNavigation.routeName,
-            page: () => const CustomScaffoldBottomNavigation(),
+            name: MainScreenWithBottomNavigation.routeName,
+            page: () => const MainScreenWithBottomNavigation(),
           ),
           GetPage(
             name: UserProfileScreen.routeName,
@@ -275,9 +291,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             binding: BindingsBuilder.put(() => FavoriteController()),
           ),
           GetPage(
-            name: TaskRequestScreen.routeName,
-            page: () => const TaskRequestScreen(),
-            binding: BindingsBuilder.put(() => TaskRequestController()),
+            name: MyRequestScreen.routeName,
+            page: () => const MyRequestScreen(),
+            binding: BindingsBuilder.put(() => MyRequestController()),
           ),
           GetPage(
             name: TaskProposalScreen.routeName,
@@ -285,14 +301,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             binding: BindingsBuilder.put(() => TaskProposalController()),
           ),
           GetPage(
-            name: TaskHistoryScreen.routeName,
-            page: () => const TaskHistoryScreen(),
-            binding: BindingsBuilder.put(() => TaskHistoryController()),
-          ),
-          GetPage(
-            name: ServiceHistoryScreen.routeName,
-            page: () => const ServiceHistoryScreen(),
-            binding: BindingsBuilder.put(() => ServiceHistoryController()),
+            name: MyOffersScreen.routeName,
+            page: () => const MyOffersScreen(),
+            binding: BindingsBuilder.put(() => MyOffersController()),
           ),
           GetPage(
             name: MyStoreScreen.routeName,
@@ -357,7 +368,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
           GetPage(
             name: BalanceScreen.routeName,
-            page: () => BalanceScreen(loggedUser: Get.arguments),
+            page: () => const BalanceScreen(),
+            binding: BindingsBuilder.put(() => BalanceController()),
           ),
           GetPage(
             name: AdminDashboardScreen.routeName,
@@ -436,6 +448,9 @@ class InitialBindings implements Bindings {
     Get.put(ThemeService(), permanent: true);
     Get.put(NotificationsController(), permanent: true);
     Get.put(PaymentService(), permanent: true);
+    Get.put(HomeController(), permanent: true);
+    Get.put(ProfileController(), permanent: true);
+    // Get.put(BalanceController(), permanent: true);
     // Repositories
     Get.put(ChatRepository(), permanent: true);
     Get.put(UserRepository(), permanent: true);

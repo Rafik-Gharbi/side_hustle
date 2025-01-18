@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:get/get.dart';
@@ -140,6 +141,11 @@ class AuthenticationService extends GetxController {
 
   set isPhoneInput(bool value) {
     _isPhoneInput = value;
+    update();
+  }
+
+  set jwtUserData(User? value) {
+    _jwtUserData = value;
     update();
   }
 
@@ -287,6 +293,13 @@ class AuthenticationService extends GetxController {
         language: Get.locale?.languageCode,
       );
       final jwt = await UserRepository.find.signup(user: user);
+      await FirebaseAnalytics.instance.logEvent(
+        name: 'sign_up',
+        parameters: {
+          'referee': referralCodeController.text.isNotEmpty,
+          'method': user.getSignupMethod,
+        },
+      );
       isLoggingIn = false;
       if (jwt != null) {
         Helper.goBack();
@@ -308,6 +321,8 @@ class AuthenticationService extends GetxController {
         initiateCurrentUser(jwt);
         await Helper.mobileEmailVerification(user.email);
       }
+    } else {
+      Helper.snackBar(message: 'check_your_inputs'.tr);
     }
   }
 
@@ -383,6 +398,12 @@ class AuthenticationService extends GetxController {
 
   Future<void> _handleLogin(User user) async {
     final loginResponse = await UserRepository.find.login(user: user);
+    await FirebaseAnalytics.instance.logEvent(
+        name: 'login',
+        parameters: {
+          'method': user.getSignupMethod,
+        },
+      );
     isLoggingIn = false;
     if (loginResponse?.token != null) {
       if (loginResponse?.refreshToken != null) {
@@ -431,6 +452,10 @@ class AuthenticationService extends GetxController {
       if (!silent) {
         if (MainAppController.find.isProfileScreen) ProfileController.find.init();
         if ((Get.isDialogOpen ?? false) || (Get.isBottomSheetOpen ?? false)) Helper.goBack();
+      }
+      // update guest user data with user id
+      if (SharedPreferencesService.find.get(guestIdKey) != null && jwtUserData?.id != null) {
+        UserRepository.find.updateGuestData(guestId: Helper.getOrCreateGuestId()).then((status) => status ? SharedPreferencesService.find.removeKey(guestIdKey) : null);
       }
       update();
     }

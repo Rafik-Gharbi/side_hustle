@@ -1,13 +1,12 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../views/home/home_screen.dart';
 
 import '../../services/shared_preferences.dart';
 import '../constants/shared_preferences_keys.dart';
 import '../helpers/helper.dart';
-import '../widgets/custom_scaffold_bottom_navigation.dart';
+import '../widgets/main_screen_with_bottom_navigation.dart';
 
 class NavigationHistoryObserver extends NavigatorObserver {
   static final NavigationHistoryObserver instance = NavigationHistoryObserver._();
@@ -17,29 +16,29 @@ class NavigationHistoryObserver extends NavigatorObserver {
   // bool _fetchSavedHistoryRequired = true;
 
   String get previousRouteHistory =>
-      history.length >= 2 ? history.elementAt(history.length - 2)?.settings.name ?? CustomScaffoldBottomNavigation.routeName : CustomScaffoldBottomNavigation.routeName;
+      history.length >= 2 ? history.elementAt(history.length - 2)?.settings.name ?? MainScreenWithBottomNavigation.routeName : MainScreenWithBottomNavigation.routeName;
 
   factory NavigationHistoryObserver() => instance;
 
   NavigationHistoryObserver._() {
     // history.map((e) => e?.settings.name).toList()
-    history.add(_createRouteFromName(CustomScaffoldBottomNavigation.routeName));
+    history.add(_createRouteFromName(MainScreenWithBottomNavigation.routeName));
   }
 
   Route<dynamic>? get currentRoute => _currentRoute;
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    if (route.settings.name == CustomScaffoldBottomNavigation.routeName) history.clear();
-    if (history.isNotEmpty && (previousRouteHistory == route.settings.name || previousRouteHistory == previousRoute?.settings.name)) _removeLastHistory();
+    // if (route.settings.name == MainScreenWithBottomNavigation.routeName) history.clear();
+    // if (history.isNotEmpty && (previousRouteHistory == route.settings.name || previousRouteHistory == previousRoute?.settings.name)) _removeLastHistory();
   }
 
   @override
   Future<void> didPush(Route<dynamic> route, Route<dynamic>? previousRoute) async {
     // clear & initialize history when on home screen
-    if (route.settings.name == CustomScaffoldBottomNavigation.routeName) {
+    if (route.settings.name == MainScreenWithBottomNavigation.routeName) {
       history.clear();
-      history.add(_createRouteFromName(CustomScaffoldBottomNavigation.routeName));
+      history.add(_createRouteFromName(MainScreenWithBottomNavigation.routeName));
       Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () => SharedPreferencesService.find.removeKey(navigationStackKey));
     }
     // save navigation history in shared preferences
@@ -85,7 +84,7 @@ class NavigationHistoryObserver extends NavigatorObserver {
 
   @override
   void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    if (route.settings.name == CustomScaffoldBottomNavigation.routeName) {
+    if (route.settings.name == MainScreenWithBottomNavigation.routeName) {
       history.clear();
     }
   }
@@ -97,31 +96,31 @@ class NavigationHistoryObserver extends NavigatorObserver {
     if (result != null) {
       Helper.goBack(result: result);
       _removeLastHistory();
-    } else if (history.length <= 1) {
-      // get saved history and populate [history]
-      // if (_fetchSavedHistoryRequired) {
-      //   Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () {
-      //     final savedHistory = SharedPreferencesService.find.get(navigationStackKey);
-      //     _fetchSavedHistoryRequired = false;
-      //     if (savedHistory != null) {
-      //       try {
-      //         final mappedSavedHistory = (jsonDecode(savedHistory) as List).map((e) => e as String).map(
-      //             (e) => _createRouteFromName(routesDictionary[e.contains('/') ? e.substring(0, e.indexOf('/')) : e]!, arg: e.contains('/') ? e.substring(e.indexOf('/')) : null));
-      //         final Iterable<Route<dynamic>?> routes = mappedSavedHistory;
-      //         history.addAll(routes);
-      //       } catch (e) {
-      //         LoggerService.logger?.e(e);
-      //       }
-      //     }
-      //     Get.toNamed(previousRoute);
-      //     _removeLastHistory();
-      //   });
-      // } else {
-      Get.toNamed(previousRouteHistory);
+    // } else if (history.length <= 1) {
+    //   // get saved history and populate [history]
+    //   // if (_fetchSavedHistoryRequired) {
+    //   //   Helper.waitAndExecute(() => SharedPreferencesService.find.isReady, () {
+    //   //     final savedHistory = SharedPreferencesService.find.get(navigationStackKey);
+    //   //     _fetchSavedHistoryRequired = false;
+    //   //     if (savedHistory != null) {
+    //   //       try {
+    //   //         final mappedSavedHistory = (jsonDecode(savedHistory) as List).map((e) => e as String).map(
+    //   //             (e) => _createRouteFromName(routesDictionary[e.contains('/') ? e.substring(0, e.indexOf('/')) : e]!, arg: e.contains('/') ? e.substring(e.indexOf('/')) : null));
+    //   //         final Iterable<Route<dynamic>?> routes = mappedSavedHistory;
+    //   //         history.addAll(routes);
+    //   //       } catch (e) {
+    //   //         LoggerService.logger?.e(e);
+    //   //       }
+    //   //     }
+    //   //     Get.toNamed(previousRoute);
+    //   //     _removeLastHistory();
+    //   //   });
+    //   // } else {
+    //   Get.toNamed(previousRouteHistory);
       // }
     } else {
-      _removeLastHistory();
       Helper.goBack();
+      _removeLastHistory();
     }
   }
 
@@ -148,8 +147,8 @@ class NavigationHistoryObserver extends NavigatorObserver {
 
   Route<dynamic> _createRouteFromName(String routeName) {
     switch (routeName) {
-      case CustomScaffoldBottomNavigation.routeName:
-        return MaterialPageRoute(builder: (context) => const HomeScreen(), settings: const RouteSettings(name: CustomScaffoldBottomNavigation.routeName));
+      case MainScreenWithBottomNavigation.routeName:
+        return MaterialPageRoute(builder: (context) => const HomeScreen(), settings: const RouteSettings(name: MainScreenWithBottomNavigation.routeName));
       // ...other routes
       default:
         throw Exception('Unknown route name: $routeName');
@@ -157,6 +156,6 @@ class NavigationHistoryObserver extends NavigatorObserver {
   }
 
   Map<String, String> routesDictionary = {
-    '0': CustomScaffoldBottomNavigation.routeName,
+    '0': MainScreenWithBottomNavigation.routeName,
   };
 }

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../constants/shared_preferences_keys.dart';
 import '../controllers/main_app_controller.dart';
 import '../database/database_repository/user_database_repository.dart';
 import '../helpers/helper.dart';
@@ -15,6 +16,7 @@ import '../networking/api_base_helper.dart';
 import '../networking/api_exceptions.dart';
 import '../services/authentication_service.dart';
 import '../services/logger_service.dart';
+import '../services/shared_preferences.dart';
 
 class UserRepository extends GetxService {
   static UserRepository get find => Get.find<UserRepository>();
@@ -333,7 +335,8 @@ class UserRepository extends GetxService {
 
   Future<List<SupportTicket>?> getUserSupportTickets() async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.get, '/user/support-tickets', sendToken: true);
+      final guestId = SharedPreferencesService.find.get(guestIdKey);
+      final result = await ApiBaseHelper().request(RequestType.get, '/user/support-tickets?guest_id=$guestId', sendToken: true);
       final tickets = (result['tickets'] as List).map((e) => SupportTicket.fromJson(e)).toList();
       return tickets;
     } catch (e) {
@@ -344,7 +347,8 @@ class UserRepository extends GetxService {
 
   Future<List<SupportMessage>?> getTicketMessages(String ticketId) async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.get, '/user/support-messages/$ticketId', sendToken: true);
+      final guestId = SharedPreferencesService.find.get(guestIdKey);
+      final result = await ApiBaseHelper().request(RequestType.get, '/user/support-messages?ticket_id=$ticketId&guest_id=$guestId', sendToken: true);
       final tickets = (result['messages'] as List).map((e) => SupportMessage.fromJson(e)).toList();
       return tickets;
     } catch (e) {
@@ -387,5 +391,15 @@ class UserRepository extends GetxService {
       LoggerService.logger?.e('Error occured in submitSupportTicket:\n$e');
     }
     return null;
+  }
+
+  Future<bool> updateGuestData({required String guestId}) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.put, '/user/guest-data', body: {'guest_id': guestId}, sendToken: true);
+      return result['done'];
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in updateGuestData:\n$e');
+    }
+    return false;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
@@ -35,6 +36,12 @@ class ReferralController extends GetxController {
     if (referralCode != null) {
       Clipboard.setData(ClipboardData(text: referralCode!));
       Helper.snackBar(message: 'copied_clipboard'.tr);
+      FirebaseAnalytics.instance.logEvent(
+        name: 'share',
+        parameters: {
+          'method': 'copy_code',
+        },
+      );
     }
   }
 
@@ -42,6 +49,12 @@ class ReferralController extends GetxController {
     if (referralCode != null) {
       final message = 'share_referral_code_message'.trParams({'referralCode': referralCode!});
       Share.share(message);
+      FirebaseAnalytics.instance.logEvent(
+        name: 'share',
+        parameters: {
+          'method': 'share_msg',
+        },
+      );
     }
   }
 }

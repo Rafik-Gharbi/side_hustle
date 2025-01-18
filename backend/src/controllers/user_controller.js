@@ -4,7 +4,7 @@ const { Review } = require("../models/review_model");
 const { Governorate } = require("../models/governorate_model");
 const { VerificationCode } = require("../models/verification_code");
 const { Op } = require("sequelize");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { sendMail } = require("../helper/email_service");
 const {
@@ -38,10 +38,9 @@ const {
 } = require("../helper/notification_service");
 const {
   getMyRequestRequiredActionsCount,
-  getTaskHistoryRequiredActionsCount,
+  getTaskHistoryRequiredActionsCount: getMyOffersRequiredActionsCount,
   getMyStoreRequiredActionsCount,
   getApproveUsersRequiredActionsCount,
-  getServiceHistoryRequiredActionsCount,
   populateSupportTickets,
   populateSupportMessages,
 } = require("../sql/sql_request");
@@ -64,7 +63,11 @@ exports.sendTestMail = async (req, res) => {
     // const template = forgotPasswordEmailTemplate(code);
     const template = contactUsMail("email", "name", "subject", "body", "phone");
     // const template = sendConfirmationMail("Rafik Test", code, true);
-    sendMail("rafik.gharbi@icloud.com", "Contact Us Dootify - Testing", template);
+    sendMail(
+      "rafik.gharbi@icloud.com",
+      "Contact Us Dootify - Testing",
+      template
+    );
     return res.status(200).json({ message: "done" });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);
@@ -121,7 +124,7 @@ exports.signIn = async (req, res) => {
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         console.log("Password is not valid");
-        // return res.status(401).json({ message: "invalid_credentials" });
+        return res.status(401).json({ message: "invalid_credentials" });
       }
     } else if (!googleId && !facebookId) {
       return res.status(400).json({ message: "missing_credentials" });
@@ -414,11 +417,7 @@ exports.profile = async (req, res) => {
     let myRequestActionRequired = await getMyRequestRequiredActionsCount(
       userId
     );
-    let taskHistoryActionRequired = await getTaskHistoryRequiredActionsCount(
-      userId
-    );
-    let serviceHistoryActionRequired =
-      await getServiceHistoryRequiredActionsCount(userId);
+    let myOffersActionRequired = await getMyOffersRequiredActionsCount(userId);
     let myStoreActionRequired = await getMyStoreRequiredActionsCount(userId);
     let approveUsersActionRequired = await getApproveUsersRequiredActionsCount(
       userId
@@ -441,10 +440,9 @@ exports.profile = async (req, res) => {
       user: userFound,
       subscribedCategories: categories,
       myRequestActionRequired,
-      taskHistoryActionRequired,
+      myOffersActionRequired,
       myStoreActionRequired,
       approveUsersActionRequired,
-      serviceHistoryActionRequired,
       userHasBoosts,
       adminDashboardActionRequired,
     });
@@ -648,14 +646,15 @@ exports.profileDeletionFeedback = async (req, res) => {
 
 exports.getSupportTickets = async (req, res) => {
   try {
-    const userId = req.decoded.id;
+    const userId = req.decoded?.id;
+    const guest_id = req.query.guest_id;
     const userFound = await User.findByPk(userId);
-    if (!userFound) {
+    if (!userFound && !guest_id) {
       return res.status(404).json({ message: "account_not_found" });
     }
 
     let openedSupportTicket = await SupportTicket.findAll({
-      where: { user_id: userId },
+      where: guest_id ? { guest_id: guest_id } : { user_id: userId },
       include: [{ model: User, as: "user" }],
     });
 
@@ -671,10 +670,10 @@ exports.getSupportTickets = async (req, res) => {
 
 exports.addSupportTicket = async (req, res) => {
   try {
-    const userId = req.decoded.id;
-    const { category, priority, description, subject } = req.body;
-    const userFound = await User.findByPk(userId);
-    if (!userFound) {
+    const user_id = req.decoded?.id;
+    const { category, priority, description, subject, guest_id } = req.body;
+    const userFound = await User.findByPk(user_id);
+    if (!userFound && !guest_id) {
       return res.status(404).json({ message: "account_not_found" });
     }
     if (!category || !description || !subject) {
@@ -682,11 +681,12 @@ exports.addSupportTicket = async (req, res) => {
     }
 
     const ticket = await SupportTicket.create({
-      user_id: userId,
-      category: category,
-      subject: subject,
-      description: description,
-      priority: priority,
+      user_id,
+      category,
+      subject,
+      description,
+      priority,
+      guest_id,
     });
 
     let pictures = req.files?.photo ?? req.files?.gallery;
@@ -720,10 +720,10 @@ exports.addSupportTicket = async (req, res) => {
 
 exports.updateSupportTicket = async (req, res) => {
   try {
-    const userId = req.decoded.id;
-    const { status, priority, id } = req.body;
+    const userId = req.decoded?.id;
+    const { status, priority, id, guest_id } = req.body;
     const userFound = await User.findByPk(userId);
-    if (!userFound) {
+    if (!userFound && !guest_id) {
       return res.status(404).json({ message: "account_not_found" });
     }
     if (!id || !status || !priority) {
@@ -749,12 +749,40 @@ exports.updateSupportTicket = async (req, res) => {
   }
 };
 
-exports.getSupportMessages = async (req, res) => {
+exports.updateGuestData = async (req, res) => {
   try {
     const userId = req.decoded.id;
-    const ticketId = req.params.id;
+    const guest_id = req.body.guest_id;
     const userFound = await User.findByPk(userId);
     if (!userFound) {
+      return res.status(404).json({ message: "account_not_found" });
+    }
+    const ticketsFound = await SupportTicket.findAll({
+      where: { guest_id: guest_id },
+    });
+    await Promise.all(
+      ticketsFound.map(async (ticket) => {
+        ticket.user_id = userId;
+        ticket.guest_id = null;
+        await ticket.save();
+      })
+    );
+
+    return res.status(200).json({ done: true });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.getSupportMessages = async (req, res) => {
+  try {
+    const userId = req.decoded?.id;
+    const guest_id = req.query.guest_id;
+    const ticketId = req.query.ticket_id;
+    const userFound = await User.findByPk(userId);
+    if (!userFound && !guest_id) {
       return res.status(404).json({ message: "account_not_found" });
     }
     const ticketFound = await SupportTicket.findByPk(ticketId);
@@ -779,10 +807,10 @@ exports.getSupportMessages = async (req, res) => {
 
 exports.sendSupportMessage = async (req, res) => {
   try {
-    const userId = req.decoded.id;
-    const { message, attachment, ticketId } = req.body;
+    const userId = req.decoded?.id;
+    const { message, attachment, ticketId, guest_id } = req.body;
     const userFound = await User.findByPk(userId);
-    if (!userFound) {
+    if (!userFound && !guest_id) {
       return res.status(404).json({ message: "account_not_found" });
     }
     if (!message) {
@@ -791,6 +819,7 @@ exports.sendSupportMessage = async (req, res) => {
 
     const msg = await SupportMessage.create({
       sender_id: userId,
+      guest_id: guest_id,
       message: message,
       attachment: attachment,
       ticket_id: ticketId,
@@ -1196,14 +1225,12 @@ exports.userActionsRequiredCount = async (req, res) => {
     let myRequestActionRequired = await getMyRequestRequiredActionsCount(
       userFound.id
     );
-    let taskHistoryActionRequired = await getTaskHistoryRequiredActionsCount(
+    let taskHistoryActionRequired = await getMyOffersRequiredActionsCount(
       userFound.id
     );
     let myStoreActionRequired = await getMyStoreRequiredActionsCount(
       userFound.id
     );
-    let serviceHistoryActionRequired =
-      await getServiceHistoryRequiredActionsCount(userFound.id);
     const categories = await CategorySubscriptionModel.findAll({
       where: { user_id: userFound.id },
     });
@@ -1214,7 +1241,6 @@ exports.userActionsRequiredCount = async (req, res) => {
       myRequestActionRequired +
       taskHistoryActionRequired +
       myStoreActionRequired +
-      serviceHistoryActionRequired +
       adminDashboardActionRequired;
     if (categories.length == 0) count++;
     return res.status(200).json({ count });

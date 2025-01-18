@@ -40,6 +40,7 @@ const {
   BalanceTransaction,
 } = require("./src/models/balance_transaction_model");
 const { i18n } = require("./i18n");
+const { Reservation } = require("./src/models/reservation_model");
 
 function initializeSocket(io) {
   // const io = socketIo(server);
@@ -171,16 +172,21 @@ function initializeSocket(io) {
         if (!discussion) throw new Error("discussion not found");
         if (!data.contract.task && !data.contract.service)
           throw new Error("a task or service is required");
-
+        const reservation = await Reservation.findByPk(
+          discussion.reservation_id
+        );
+        if (!reservation) throw new Error("reservation not found");
         // Create a new chat message entry in the database
         let contract = await Contract.create({
           finalPrice: data.contract.finalPrice,
           dueDate: data.contract.dueDate.split("T")[0],
           description: data.contract.description,
           delivrables: data.contract.delivrables,
-          reservation_id: data.reservationId,
-          seeker_id: data.contract.task ? data.sender : data.reciever,
-          provider_id: data.contract.task ? data.reciever : data.sender,
+          reservation_id: reservation.id,
+          seeker_id: reservation.user_id,
+          provider_id: reservation.provider_id,
+          // seeker_id: data.contract.task ? data.sender : data.reciever,
+          // provider_id: data.contract.task ? data.reciever : data.sender,
         });
 
         // Create the pdf contract with the given data
@@ -227,7 +233,7 @@ function initializeSocket(io) {
             }),
             body: `${sender.name}: ${data.contract}`,
             type: NotificationType.CHAT,
-            action: {},
+            action: null,
           },
         });
         // Populate contract's task/service

@@ -13,6 +13,7 @@ import '../helpers/helper.dart';
 import '../models/task.dart';
 import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
+import '../views/profile/account/login_dialog.dart';
 import '../views/task/task_details/task_details_screen.dart';
 import 'custom_buttons.dart';
 import 'overflowed_text_with_tooltip.dart';
@@ -26,6 +27,7 @@ class TaskCard extends StatelessWidget {
   final int condidates;
   final bool dense;
   final bool isHighlighted;
+  final Color? backgroundColor;
 
   const TaskCard({
     super.key,
@@ -36,6 +38,7 @@ class TaskCard extends StatelessWidget {
     this.onOpenProposals,
     this.condidates = 0,
     this.dense = false,
+    this.backgroundColor,
     this.isHighlighted = false,
   });
 
@@ -75,87 +78,101 @@ class TaskCard extends StatelessWidget {
       isInitialized = true;
       return Padding(
         padding: EdgeInsets.only(bottom: dense ? 0 : Paddings.regular),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-          shape: dense
-              ? const OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
-              : RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
-          tileColor: highlightTile ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
-          splashColor: kPrimaryOpacityColor,
-          onTap: openContainer,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(width: Get.width - (dense ? 180 : 160), child: OverflowedTextWithTooltip(title: task.title, style: AppFonts.x14Bold, expand: false)),
-                    if (task.category != null && !dense) Text(task.category!.name, style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
-                  ],
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: backgroundColor, borderRadius: smallRadius),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+            shape: dense
+                ? const OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
+                : RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
+            tileColor: highlightTile ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
+            splashColor: kPrimaryOpacityColor,
+            onTap: openContainer,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(width: Get.width - (dense ? 180 : 160), child: OverflowedTextWithTooltip(title: task.title, style: AppFonts.x14Bold, expand: false)),
+                      if (task.category != null && !dense) Text(task.category!.name, style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                    ],
+                  ),
                 ),
-              ),
-              // Bookmark task
-              if (task.owner.id != AuthenticationService.find.jwtUserData?.id && !dense)
-                StatefulBuilder(builder: (context, setState) {
-                  Future<void> toggleFavorite() async {
-                    final result = await MainAppController.find.toggleFavoriteTask(task);
-                    setState(() => task.isFavorite = result);
-                    if (!result) onRemoveFavorite?.call();
-                    TaskDatabaseRepository.find.backupTask(task, isFavorite: true);
-                  }
+                // Bookmark task
+                if (task.owner.id != AuthenticationService.find.jwtUserData?.id && !dense)
+                  StatefulBuilder(builder: (context, setState) {
+                    Future<void> toggleFavorite() async {
+                      final result = await MainAppController.find.toggleFavoriteTask(task);
+                      setState(() => task.isFavorite = result);
+                      if (!result) onRemoveFavorite?.call();
+                      TaskDatabaseRepository.find.backupTask(task, isFavorite: true);
+                    }
 
-                  return Padding(
-                    padding: const EdgeInsets.only(left: Paddings.regular),
-                    child: CustomButtons.icon(
-                      icon: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined, size: 18),
-                      onPressed: () => AuthenticationService.find.isUserLoggedIn.value ? toggleFavorite() : Helper.snackBar(message: 'login_save_task_msg'.tr),
-                    ),
-                  );
-                })
-              else if (AuthenticationService.find.isUserLoggedIn.value && task.owner.id == AuthenticationService.find.jwtUserData?.id && !dense)
-                Column(
-                  children: [
-                    Badge(
-                      offset: Offset(condidates > 99 ? -5 : 0, 5),
-                      label: condidates == -1
-                          ? const Icon(Icons.done_outlined, size: 16, color: kNeutralColor100)
-                          : Text(condidates > 99 ? '+99' : condidates.toString(), style: AppFonts.x11Bold.copyWith(color: kNeutralColor100)),
-                      backgroundColor: condidates == -1 ? kConfirmedColor : kErrorColor,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: Paddings.regular),
-                        child: CustomButtons.icon(
-                          icon: const Icon(Icons.three_p_outlined, size: 24),
-                          onPressed: () => condidates > 0 || condidates == -1 ? onOpenProposals?.call() : Helper.snackBar(message: 'no_proposals_submitted'.tr),
+                    return Padding(
+                      padding: const EdgeInsets.only(left: Paddings.regular),
+                      child: CustomButtons.icon(
+                        icon: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined, size: 18),
+                        onPressed: () => AuthenticationService.find.isUserLoggedIn.value
+                            ? toggleFavorite()
+                            : Helper.snackBar(
+                                message: 'login_save_task_msg'.tr,
+                                overrideButton: TextButton(
+                                  onPressed: () => Get.bottomSheet(const LoginDialog(), isScrollControlled: true).then((value) {
+                                    AuthenticationService.find.currentState = LoginWidgetState.login;
+                                    AuthenticationService.find.clearFormFields();
+                                  }),
+                                  child: Text('login'.tr),
+                                ),
+                              ),
+                      ),
+                    );
+                  })
+                else if (AuthenticationService.find.isUserLoggedIn.value && task.owner.id == AuthenticationService.find.jwtUserData?.id && !dense)
+                  Column(
+                    children: [
+                      Badge(
+                        offset: Offset(condidates > 99 ? -5 : 0, 5),
+                        label: condidates == -1
+                            ? const Icon(Icons.done_outlined, size: 16, color: kNeutralColor100)
+                            : Text(condidates > 99 ? '+99' : condidates.toString(), style: AppFonts.x11Bold.copyWith(color: kNeutralColor100)),
+                        backgroundColor: condidates == -1 ? kConfirmedColor : kErrorColor,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: Paddings.regular),
+                          child: CustomButtons.icon(
+                            icon: const Icon(Icons.three_p_outlined, size: 24),
+                            onPressed: () => condidates > 0 || condidates == -1 ? onOpenProposals?.call() : Helper.snackBar(message: 'no_proposals_submitted'.tr),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-            ],
+                    ],
+                  )
+              ],
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(task.description, softWrap: true, maxLines: 2, overflow: TextOverflow.ellipsis, style: AppFonts.x12Regular),
+                const SizedBox(height: Paddings.regular),
+                if (task.price != null)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (task.distance != null && task.distance!.isNotEmpty)
+                        Text('${'distance'.tr}: ${Helper.formatAmount(double.parse(task.distance!))} ${'kilometers'.tr}', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
+                      else
+                        const SizedBox(),
+                      Text(
+                        '${'price'.tr}: ${Helper.formatAmount(task.price!)} ${task.priceMax != null ? '- ${Helper.formatAmount(task.priceMax!)} ' : ''}${MainAppController.find.currency.value}',
+                        style: AppFonts.x12Bold.copyWith(color: kNeutralColor),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+            leading: task.category != null ? Buildables.buildCategoryIcon(task.category!.icon) : null,
           ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(task.description, softWrap: true, maxLines: 2, overflow: TextOverflow.ellipsis, style: AppFonts.x12Regular),
-              const SizedBox(height: Paddings.regular),
-              if (task.price != null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (task.distance != null && task.distance!.isNotEmpty)
-                      Text('${'distance'.tr}: ${Helper.formatAmount(double.parse(task.distance!))} ${'kilometers'.tr}', style: AppFonts.x10Regular.copyWith(color: kNeutralColor))
-                    else
-                      const SizedBox(),
-                    Text(
-                      '${'price'.tr}: ${Helper.formatAmount(task.price!)} ${task.priceMax != null ? '- ${Helper.formatAmount(task.priceMax!)} ' : ''}${MainAppController.find.currency.value}',
-                      style: AppFonts.x12Bold.copyWith(color: kNeutralColor),
-                    ),
-                  ],
-                ),
-            ],
-          ),
-          leading: task.category != null ? Buildables.buildCategoryIcon(task.category!.icon) : null,
         ),
       );
     });

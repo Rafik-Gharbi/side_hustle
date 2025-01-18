@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -38,6 +39,7 @@ class EmotionSliderBottomsheetState extends State<EmotionSliderBottomsheet> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAnalytics.instance.logScreenView(screenName: 'FeedbackBottomsheet');
     return Material(
       color: kNeutralColor100,
       child: Stack(
@@ -51,7 +53,7 @@ class EmotionSliderBottomsheetState extends State<EmotionSliderBottomsheet> {
             onSubmitFeedback: submitFeedback,
           ),
           Positioned(
-            top: 30,
+            top: 40,
             right: 20,
             child: CustomButtons.icon(icon: const Icon(Icons.close, color: kNeutralColor100), onPressed: () => Helper.goBack()),
           )
@@ -91,74 +93,81 @@ class EmotionSlider extends StatelessWidget {
         final textColor = Helper.isColorDarkEnoughForWhiteText(color!) ? kBlackColor : kNeutralColor100;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 500),
+          height: Get.height,
           color: color,
           padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 300,
-                child: Text('how_was_your_experience'.tr, style: AppFonts.x24Bold.copyWith(color: textColor), textAlign: TextAlign.center),
-              ),
-              const SizedBox(height: Paddings.exceptional * 1.5),
-              // Emotion Face
-              AnimatedFacePainter(emotionLevel: currentLevel),
-              const SizedBox(height: Paddings.exceptional),
-              // Emotion Name
-              Text(
-                FeedbackEmotion.values[currentLevel.round()].value.tr,
-                style: AppFonts.x24Bold.copyWith(color: textColor),
-              ),
-              const SizedBox(height: Paddings.exceptional),
-              // Emotion Slider
-              Slider(
-                value: currentLevel,
-                min: 0,
-                max: 4,
-                divisions: 4,
-                activeColor: Colors.white,
-                onChanged: onLevelChanged,
-              ),
-              const SizedBox(height: Paddings.exceptional),
-              AnimatedContainer(
-                duration: Durations.medium1,
-                height: isCommentExpanded ? 180 : 40,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () => onExpandComment.call(!isCommentExpanded),
-                        child: Row(
+          child: SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      child: Text('how_was_your_experience'.tr, style: AppFonts.x24Bold.copyWith(color: textColor), textAlign: TextAlign.center),
+                    ),
+                    const SizedBox(height: Paddings.exceptional * 1.5),
+                    // Emotion Face
+                    AnimatedFacePainter(emotionLevel: currentLevel),
+                    const SizedBox(height: Paddings.exceptional),
+                    // Emotion Name
+                    Text(
+                      FeedbackEmotion.values[currentLevel.round()].value.tr,
+                      style: AppFonts.x24Bold.copyWith(color: textColor),
+                    ),
+                    const SizedBox(height: Paddings.exceptional),
+                    // Emotion Slider
+                    Slider(
+                      value: currentLevel,
+                      min: 0,
+                      max: 4,
+                      divisions: 4,
+                      activeColor: Colors.white,
+                      onChanged: onLevelChanged,
+                    ),
+                    const SizedBox(height: Paddings.exceptional),
+                    AnimatedContainer(
+                      duration: Durations.medium1,
+                      height: isCommentExpanded ? 180 : 40,
+                      child: SingleChildScrollView(
+                        child: Column(
                           children: [
-                            Icon(Icons.comment_outlined, color: textColor),
-                            const SizedBox(width: Paddings.regular),
-                            Text('add_comment'.tr, style: AppFonts.x14Regular.copyWith(color: textColor)),
+                            InkWell(
+                              onTap: () => onExpandComment.call(!isCommentExpanded),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.comment_outlined, color: textColor),
+                                  const SizedBox(width: Paddings.regular),
+                                  Text('add_comment'.tr, style: AppFonts.x14Regular.copyWith(color: textColor)),
+                                ],
+                              ),
+                            ),
+                            if (isCommentExpanded)
+                              Padding(
+                                padding: const EdgeInsets.only(top: Paddings.regular),
+                                child: CustomTextField(
+                                  hintText: 'how_could_improve'.tr,
+                                  fieldController: commentController,
+                                  outlinedBorder: true,
+                                  isTextArea: true,
+                                ),
+                              )
                           ],
                         ),
                       ),
-                      if (isCommentExpanded)
-                        Padding(
-                          padding: const EdgeInsets.only(top: Paddings.regular),
-                          child: CustomTextField(
-                            hintText: 'how_could_improve'.tr,
-                            fieldController: commentController,
-                            outlinedBorder: true,
-                            isTextArea: true,
-                          ),
-                        )
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: Paddings.exceptional),
+                    CustomButtons.elevatePrimary(
+                      title: 'submit_feedback'.tr,
+                      titleStyle: AppFonts.x16Bold,
+                      buttonColor: kNeutralLightColor,
+                      width: double.infinity,
+                      onPressed: onSubmitFeedback,
+                    )
+                  ],
                 ),
               ),
-              const SizedBox(height: Paddings.exceptional),
-              CustomButtons.elevatePrimary(
-                title: 'submit_feedback'.tr,
-                titleStyle: AppFonts.x16Bold,
-                buttonColor: kNeutralLightColor,
-                width: double.infinity,
-                onPressed: onSubmitFeedback,
-              )
-            ],
+            ),
           ),
         );
       },

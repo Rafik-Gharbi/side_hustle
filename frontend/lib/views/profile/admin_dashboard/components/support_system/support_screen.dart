@@ -1,4 +1,5 @@
 import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,6 +28,7 @@ class SupportScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<SupportController>(
         autoRemove: false,
+        initState: (state) => FirebaseAnalytics.instance.logScreenView(screenName: 'SupportScreen'),
         builder: (controller) => CustomStandardScaffold(
           backgroundColor: kNeutralColor100,
           title: 'support_system'.tr,

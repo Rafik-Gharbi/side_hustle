@@ -5,7 +5,7 @@ import '../../constants/assets.dart';
 import '../../constants/shared_preferences_keys.dart';
 import '../../helpers/helper.dart';
 import '../../services/shared_preferences.dart';
-import '../../widgets/custom_scaffold_bottom_navigation.dart';
+import '../../widgets/main_screen_with_bottom_navigation.dart';
 import '../onboarding/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -63,7 +63,7 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
           () => SharedPreferencesService.find.isReady.value,
           () {
             final isFirstTime = SharedPreferencesService.find.get(isFirstTimeKey) == null;
-            return isFirstTime ? Get.offAndToNamed(OnboardingScreen.routeName) : Get.offAndToNamed(CustomScaffoldBottomNavigation.routeName);
+            return isFirstTime ? Get.offAndToNamed(OnboardingScreen.routeName) : Get.offAndToNamed(MainScreenWithBottomNavigation.routeName);
           },
         );
       }

@@ -9,6 +9,9 @@ const { Feedback } = require("../models/feedback_model");
 const { CoinPack } = require("../models/coin_pack_model");
 const { contactUsMail } = require("../views/template_email");
 const { sendMail } = require("../helper/email_service");
+const { Task } = require("../models/task_model");
+const { Service } = require("../models/service_model");
+const { Survey } = require("../models/survey_model");
 
 // check backend is reachable
 exports.checkCurrentVersion = async (req, res) => {
@@ -137,6 +140,28 @@ exports.sendMail = async (req, res) => {
   }
 };
 
+exports.getMaxTaskPrice = async (req, res) => {
+  try {
+    const maxPrice = await Task.max("price");
+    return res.status(200).json({ max: maxPrice });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.getMaxServicePrice = async (req, res) => {
+  try {
+    const maxPrice = await Service.max("price");
+    return res.status(200).json({ max: maxPrice });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
 exports.reportUser = async (req, res) => {
   try {
     const { user, reportedUser, task, service, reasons, explanation } =
@@ -178,6 +203,58 @@ exports.feedback = async (req, res) => {
       feedback,
       comment,
       user_id: req.decoded?.id,
+    });
+
+    return res.status(200).json({ done: true });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+exports.survey = async (req, res) => {
+  try {
+    await Survey.create({
+      gender: req.body.gender,
+      ageRange: req.body.ageRange,
+      employment: req.body.employment,
+      usageFrequency: req.body.usageFrequency,
+      internetAccess: req.body.internetAccess,
+      hasBankCard: req.body.hasBankCard,
+      paymentMethods: req.body.paymentMethods,
+      serviceOffer: req.body.serviceOffer,
+      paidFor: req.body.paidFor,
+      monthlyPremium: req.body.monthlyPremium,
+      interestDelegating: req.body.interestDelegating,
+      providerChallenges: req.body.providerChallenges,
+      findProviders: req.body.findProviders,
+      findingPain: req.body.findingPain,
+      findingCriteria: req.body.findingCriteria,
+      taskFees: req.body.taskFees,
+      preferredCategories: req.body.preferredCategories,
+      transferMoney: req.body.transferMoney,
+      neededFeatures: req.body.neededFeatures,
+      escrowPayment: req.body.escrowPayment,
+      verifyIdentity: req.body.verifyIdentity,
+      premiumSubscription: req.body.premiumSubscription,
+      payPremium: req.body.payPremium,
+      testUser: req.body.testUser,
+      notifyPublic: req.body.notifyPublic,
+      otherInternetAccess: req.body.otherInternetAccess,
+      otherPaymentMethod: req.body.otherPaymentMethod,
+      serviceOffering: req.body.serviceOffering,
+      providerChallengesText: req.body.providerChallengesText,
+      findProvidersText: req.body.findProvidersText,
+      findingPainText: req.body.findingPainText,
+      findingCriteriaText: req.body.findingCriteriaText,
+      preferredCategoriesText: req.body.preferredCategoriesText,
+      neededFeaturesText: req.body.neededFeaturesText,
+      escrowPaymenting: req.body.escrowPaymenting,
+      openFeedback: req.body.openFeedback,
+      testUserFullName: req.body.testUserFullName,
+      testUserEmail: req.body.testUserEmail,
+      testUserPhone: req.body.testUserPhone,
     });
 
     return res.status(200).json({ done: true });

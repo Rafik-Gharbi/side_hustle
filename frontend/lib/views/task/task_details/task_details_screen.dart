@@ -15,6 +15,7 @@ import '../../../models/task.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/logger_service.dart';
 import '../../../services/theme/theme.dart';
+import '../../../viewmodel/reservation_viewmodel.dart';
 import '../../../widgets/custom_button_with_overlay.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_standard_scaffold.dart';
@@ -238,7 +239,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                             titleStyle: AppFonts.x14Regular,
                                             icon: const Icon(Icons.done, color: kNeutralColor100),
                                             width: Get.width - 40,
-                                            onPressed: controller.markDoneProposals,
+                                            onPressed: () => ReservationViewmodel.markDoneProposals(controller.reservation),
                                           ),
                                         ],
                                       )
@@ -254,13 +255,13 @@ class TaskDetailsScreen extends StatelessWidget {
                                         onPressed: () => Helper.verifyUser(
                                           isVerified: true,
                                           () => Buildables.requestBottomsheet(
-                                            noteController: controller.noteController,
-                                            proposedPriceController: controller.proposedPriceController,
-                                            deliveryDateController: controller.deliveryDateController,
-                                            onSubmit: () => controller.submitProposal(task),
+                                            noteController: ReservationViewmodel.noteController,
+                                            proposedPriceController: ReservationViewmodel.proposedPriceController,
+                                            deliveryDateController: ReservationViewmodel.deliveryDateController,
+                                            onSubmit: () => ReservationViewmodel.submitProposal(task, onFinish: controller.init),
                                             isTask: true,
                                             neededCoins: task.coins,
-                                          ).then((value) => controller.clearFormFields()),
+                                          ).then((value) => ReservationViewmodel.clearRequestFormFields()),
                                         ),
                                         width: Get.width,
                                       ),

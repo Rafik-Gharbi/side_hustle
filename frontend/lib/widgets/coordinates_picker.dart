@@ -94,6 +94,7 @@ class _CoordinatesPickerState extends State<CoordinatesPicker> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      key: widget.key,
       children: [
         Obx(
           () => Row(

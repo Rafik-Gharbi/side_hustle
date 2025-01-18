@@ -27,18 +27,21 @@ class ForgotPassword extends StatelessWidget {
           CustomTextField(
             fieldController: controller.validationKeyController,
             hintText: 'verification_key'.tr,
+            isOptional: false,
             validator: FormValidators.notEmptyOrNullValidator,
             isPassword: true,
           ),
           CustomTextField(
             fieldController: controller.passwordController,
             hintText: 'new_password'.tr,
+            isOptional: false,
             isPassword: true,
             validator: FormValidators.passwordValidator,
           ),
           CustomTextField(
             fieldController: controller.confirmPasswordController,
             hintText: 'confirm_password'.tr,
+            isOptional: false,
             isPassword: true,
             validator: (v) => FormValidators.confirmPasswordValidator(v, controller.passwordController.text),
           ),
@@ -69,6 +72,8 @@ class ForgotPassword extends StatelessWidget {
           CustomTextField(
             fieldController: controller.emailController,
             hintText: 'email'.tr,
+            isOptional: false,
+            textInputType: TextInputType.emailAddress,
             validator: FormValidators.emailValidator,
           ),
           const SizedBox(height: Paddings.exceptional),

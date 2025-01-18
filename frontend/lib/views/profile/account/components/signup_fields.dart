@@ -19,8 +19,9 @@ import '../../../../widgets/custom_text_field.dart';
 class SignUpFields extends StatelessWidget {
   final double maxHeight;
   final User? user;
+  final bool isBottomSheet;
 
-  const SignUpFields({super.key, required this.maxHeight, this.user});
+  const SignUpFields({super.key, required this.maxHeight, this.user, this.isBottomSheet = false});
 
   @override
   Widget build(BuildContext context) {
@@ -31,20 +32,26 @@ class SignUpFields extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (Helper.isMobile) const SizedBox(height: Paddings.exceptional) else const Spacer(),
-            if (isEditProfile) Center(child: Text('edit_profile'.tr, style: AppFonts.x24Bold)) else Text('welcome_dootify'.tr, style: AppFonts.x24Bold),
-            const SizedBox(height: Paddings.exceptional),
+            if (!isBottomSheet) ...[
+              if (Helper.isMobile) const SizedBox(height: Paddings.exceptional) else const Spacer(),
+              if (isEditProfile) Center(child: Text('edit_profile'.tr, style: AppFonts.x24Bold)) else Text('welcome_dootify'.tr, style: AppFonts.x24Bold),
+              const SizedBox(height: Paddings.exceptional),
+            ] else
+              const SizedBox(height: Paddings.regular),
             CustomTextField(
               hintText: 'full_name'.tr,
               fieldController: controller.nameController,
               outlinedBorder: true,
+              isOptional: false,
               validator: FormValidators.notEmptyOrNullValidator,
             ),
             const SizedBox(height: Paddings.regular),
             CustomTextField(
               hintText: 'email'.tr,
+              textInputType: TextInputType.emailAddress,
               fieldController: controller.emailController,
               outlinedBorder: true,
+              isOptional: false,
               textCapitalization: TextCapitalization.none,
               validator: FormValidators.emailValidator,
             ),
@@ -54,6 +61,7 @@ class SignUpFields extends StatelessWidget {
                 hintText: 'password'.tr,
                 fieldController: controller.passwordController,
                 outlinedBorder: true,
+                isOptional: false,
                 textCapitalization: TextCapitalization.none,
                 isPassword: true,
                 validator: FormValidators.notEmptyOrNullValidator,
@@ -63,6 +71,7 @@ class SignUpFields extends StatelessWidget {
                 hintText: 'confirm_password'.tr,
                 fieldController: controller.confirmPasswordController,
                 outlinedBorder: true,
+                isOptional: false,
                 textCapitalization: TextCapitalization.none,
                 isPassword: true,
                 validator: (value) => FormValidators.confirmPasswordValidator(value, controller.passwordController.text),
@@ -80,6 +89,7 @@ class SignUpFields extends StatelessWidget {
               items: MainAppController.find.governorates,
               hint: 'select_governorate'.tr,
               maxWidth: true,
+              isRequired: true,
               selectedItem: controller.governorate,
               dropDownWithDecoration: true,
               buttonHeight: 45,
@@ -91,6 +101,7 @@ class SignUpFields extends StatelessWidget {
             CustomTextField(
               hintText: 'birthdate'.tr,
               outlinedBorder: true,
+              isOptional: false,
               fieldController: controller.birthdateController,
               onTap: () => Helper.openDatePicker(currentTime: DateTime.now(), onConfirm: (p0) => controller.birthdateController.text = Helper.formatDate(p0)),
               readOnly: true,
@@ -99,6 +110,7 @@ class SignUpFields extends StatelessWidget {
             CustomDropDownMenu<Gender>(
               items: Gender.values,
               hint: 'select_gender'.tr,
+              isRequired: true,
               dropDownWithDecoration: true,
               maxWidth: true,
               selectedItem: controller.gender,
@@ -178,7 +190,7 @@ class SignUpFields extends StatelessWidget {
             const SizedBox(height: Paddings.exceptional),
           ],
           CustomButtons.elevateSecondary(
-            onPressed: () => controller.facebookLogin(isSignUp: true),
+            onPressed: () => Helper.snackBar(message: 'feature_not_available_yet'.tr), // controller.facebookLogin(isSignUp: true),
             borderSide: const BorderSide(color: kNeutralColor),
             icon: Image.asset(Assets.facebookIcon, width: 25),
             title: 'continue_facebook'.tr,
@@ -195,30 +207,32 @@ class SignUpFields extends StatelessWidget {
         ],
       ),
     );
-    return Helper.isMobile
-        ? SizedBox(
-            height: maxHeight,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge),
-              child: Column(
+    return isBottomSheet
+        ? buildSignUpForm
+        : Helper.isMobile
+            ? SizedBox(
+                height: maxHeight,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge),
+                  child: Column(
+                    children: [
+                      buildSignUpForm,
+                      if (!isEditProfile) ...[
+                        Padding(padding: const EdgeInsets.symmetric(vertical: Paddings.small), child: buildOrDivider),
+                        buildSignUpWithSocial,
+                      ],
+                    ],
+                  ),
+                ),
+              )
+            : Row(
                 children: [
-                  buildSignUpForm,
+                  Expanded(flex: 5, child: buildSignUpForm),
                   if (!isEditProfile) ...[
-                    Padding(padding: const EdgeInsets.symmetric(vertical: Paddings.small), child: buildOrDivider),
-                    buildSignUpWithSocial,
+                    Padding(padding: const EdgeInsets.symmetric(horizontal: Paddings.large), child: buildOrDivider),
+                    Expanded(flex: 3, child: buildSignUpWithSocial),
                   ],
                 ],
-              ),
-            ),
-          )
-        : Row(
-            children: [
-              Expanded(flex: 5, child: buildSignUpForm),
-              if (!isEditProfile) ...[
-                Padding(padding: const EdgeInsets.symmetric(horizontal: Paddings.large), child: buildOrDivider),
-                Expanded(flex: 3, child: buildSignUpWithSocial),
-              ],
-            ],
-          );
+              );
   }
 }

@@ -1,26 +1,28 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+import '../../../constants/shared_preferences_keys.dart';
 import '../../../helpers/helper.dart';
 import '../../../helpers/image_picker_by_platform/image_picker_platform.dart';
-import '../../../models/category.dart';
 import '../../../models/dto/image_dto.dart';
 import '../../../models/dto/store_review_dto.dart';
 import '../../../models/governorate.dart';
-import '../../../models/reservation.dart';
 import '../../../models/review.dart';
 import '../../../models/service.dart';
 import '../../../models/store.dart';
-import '../../../repositories/reservation_repository.dart';
 import '../../../repositories/store_repository.dart';
-import '../../../services/authentication_service.dart';
 import '../../../services/logger_service.dart';
-import 'components/add_service_bottomsheet.dart';
+import '../../../services/shared_preferences.dart';
+import '../../../services/tutorials/create_store_tutorial.dart';
+import '../../../viewmodel/store_viewmodel.dart';
 import 'components/add_store_bottomsheet.dart';
+import 'my_store_screen.dart';
 
 class MyStoreController extends GetxController {
   /// not permanent, use with caution
@@ -28,25 +30,15 @@ class MyStoreController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController servicePriceController = TextEditingController();
-  final TextEditingController serviceDescriptionController = TextEditingController();
-  final TextEditingController serviceNameController = TextEditingController();
-  final TextEditingController noteController = TextEditingController();
-  final TextEditingController serviceIncludedController = TextEditingController();
-  final TextEditingController serviceNotIncludedController = TextEditingController();
-  final TextEditingController serviceNoteController = TextEditingController();
-  final TextEditingController serviceTimeFromController = TextEditingController();
-  final TextEditingController serviceTimeToController = TextEditingController();
   XFile? storePicture;
-  Store? currentStore;
   RxBool isLoading = true.obs;
   Governorate? _governorate;
-  Category? _category;
-  String? updateServiceId;
   LatLng? _coordinates;
   Service? highlightedService;
   bool _showAllReviews = false;
   List<Review> storeOwnerReviews = [];
+  List<TargetFocus> targets = [];
+  GlobalKey createStoreBtnKey = GlobalKey();
 
   bool get showAllReviews => _showAllReviews;
 
@@ -55,20 +47,12 @@ class MyStoreController extends GetxController {
     update();
   }
 
-  List<XFile> serviceGallery = [];
-
   Governorate? get governorate => _governorate;
-  Category? get category => _category;
 
   LatLng? get coordinates => _coordinates;
 
   set coordinates(LatLng? value) {
     _coordinates = value;
-    update();
-  }
-
-  set category(Category? value) {
-    _category = value;
     update();
   }
 
@@ -78,7 +62,15 @@ class MyStoreController extends GetxController {
   }
 
   MyStoreController({Store? store}) {
-    init(store: store);
+        Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () {
+      if (!(SharedPreferencesService.find.get(hasFinishedCreateStoreTutorialKey) == 'true')) {
+        Helper.waitAndExecute(() => Get.currentRoute == MyStoreScreen.routeName && Get.isRegistered<MyStoreController>(), () {
+          CreateStoreTutorial.showTutorial();
+          update();
+        });
+      }
+    });
+init(store: store);
   }
 
   Future<void> init({Store? store}) async {
@@ -88,9 +80,11 @@ class MyStoreController extends GetxController {
     } else {
       result = await StoreRepository.find.getUserStore();
     }
-    currentStore = result?.store;
+    StoreViewmodel.currentStore = result?.store;
     storeOwnerReviews = result?.reviews ?? [];
-    if (Get.arguments != null) highlightedService = currentStore?.services?.cast<Service?>().singleWhere((element) => element?.id == Get.arguments, orElse: () => null);
+    if (Get.arguments != null) {
+      highlightedService = StoreViewmodel.currentStore?.services?.cast<Service?>().singleWhere((element) => element?.id == Get.arguments, orElse: () => null);
+    }
     if (highlightedService != null) {
       Future.delayed(const Duration(milliseconds: 1600), () {
         highlightedService = null;
@@ -107,51 +101,30 @@ class MyStoreController extends GetxController {
         () => Get.bottomSheet(AddStoreBottomsheet(isUpdate: update), isScrollControlled: true).then((value) => _clearStoreFields()),
       );
 
-  void addService({bool update = false}) => Get.bottomSheet(AddServiceBottomsheet(isUpdate: update), isScrollControlled: true).then((value) => _clearServiceFields());
-
   Future<void> upsertStore() async {
     Store? result;
     final store = Store(
-      id: currentStore?.id,
+      id: StoreViewmodel.currentStore?.id,
       name: nameController.text,
       description: descriptionController.text,
       governorate: governorate!,
       picture: storePicture != null ? ImageDTO(file: storePicture!, type: ImageType.image) : null,
       coordinates: coordinates,
     );
-    if (currentStore == null) {
+    if (StoreViewmodel.currentStore == null) {
       result = await StoreRepository.find.addStore(store, withBack: true);
+      FirebaseAnalytics.instance.logEvent(
+        name: 'create_store',
+        parameters: {
+          'store_title': store.name ?? 'undefined',
+          'governorate': store.governorate?.name ?? 'undefined',
+        },
+      );
     } else {
       result = await StoreRepository.find.updateStore(store, withBack: true);
     }
     if (result != null) {
-      currentStore = result;
-      update();
-    }
-  }
-
-  Future<void> upsertService({bool isUpdate = false}) async {
-    Service? result;
-    final service = Service(
-      id: updateServiceId,
-      name: serviceNameController.text,
-      description: serviceDescriptionController.text,
-      category: category!,
-      gallery: serviceGallery.map((e) => ImageDTO(file: e, type: ImageType.image)).toList(),
-      price: double.tryParse(servicePriceController.text),
-      included: serviceIncludedController.text,
-      notIncluded: serviceNotIncludedController.text,
-      notes: serviceNoteController.text,
-      timeEstimationFrom: serviceTimeFromController.text.isNotEmpty ? double.tryParse(serviceTimeFromController.text) : null,
-      timeEstimationTo: serviceTimeToController.text.isNotEmpty ? double.tryParse(serviceTimeToController.text) : null,
-    );
-    if (!isUpdate) {
-      result = await StoreRepository.find.addService(service, currentStore!, withBack: true);
-    } else {
-      result = await StoreRepository.find.updateService(service, currentStore!, withBack: true);
-    }
-    if (result != null) {
-      currentStore!.services = [...currentStore!.services?.where((element) => element.id != result?.id).toList() ?? [], result];
+      StoreViewmodel.currentStore = result;
       update();
     }
   }
@@ -174,68 +147,12 @@ class MyStoreController extends GetxController {
     }
   }
 
-  Future<void> addServicePictures() async {
-    try {
-      List<XFile>? imageList;
-      final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
-      if (foundation.kIsWeb) {
-        imageList = await pickerPlatform.getMedia();
-      } else {
-        imageList = await pickerPlatform.pickMultiImage();
-      }
-      if (imageList != null) {
-        serviceGallery = imageList;
-        update();
-      }
-    } catch (e) {
-      LoggerService.logger?.e('Error occured in addServicePictures:\n$e');
-    }
-  }
-
   void editStore() {
-    nameController.text = currentStore?.name ?? '';
-    descriptionController.text = currentStore?.description ?? '';
-    governorate = currentStore?.governorate;
-    storePicture = currentStore?.picture?.file;
+    nameController.text = StoreViewmodel.currentStore?.name ?? '';
+    descriptionController.text = StoreViewmodel.currentStore?.description ?? '';
+    governorate = StoreViewmodel.currentStore?.governorate;
+    storePicture = StoreViewmodel.currentStore?.picture?.file;
     createStore(update: true);
-  }
-
-  void editService(Service service) {
-    serviceNameController.text = service.name ?? '';
-    serviceDescriptionController.text = service.description ?? '';
-    servicePriceController.text = service.price.toString();
-    serviceGallery = service.gallery?.map((e) => e.file).toList() ?? [];
-    category = service.category;
-    updateServiceId = service.id;
-    addService(update: true);
-  }
-
-  void deleteService(Service service) => Helper.openConfirmationDialog(
-        content: 'delete_service_msg'.trParams({'serviceName': service.name!}),
-        onConfirm: () async {
-          final result = await StoreRepository.find.deleteService(service);
-          if (result) currentStore!.services!.removeWhere((element) => element.id == service.id);
-          update();
-        },
-      );
-
-  Future<void> bookService(Service service) async {
-    final result = await ReservationRepository.find.addServiceReservation(
-      reservation: Reservation(
-        service: service,
-        date: DateTime.now(),
-        totalPrice: service.price ?? 0,
-        user: AuthenticationService.find.jwtUserData!,
-        provider: service.owner!,
-        note: noteController.text,
-        coins: service.coins,
-        // coupon: coupon,
-      ),
-    );
-    if (result) {
-      Helper.goBack();
-      Helper.snackBar(message: 'service_booked_successfully'.tr);
-    }
   }
 
   void _clearStoreFields() {
@@ -246,23 +163,10 @@ class MyStoreController extends GetxController {
     update();
   }
 
-  void _clearServiceFields() {
-    serviceNameController.clear();
-    serviceDescriptionController.clear();
-    servicePriceController.clear();
-    serviceGallery = [];
-    category = null;
-    updateServiceId = null;
-    update();
-  }
-
-  clearRequestFormFields() {
-    noteController.clear();
-  }
-
   void openStoreItinerary() {
-    if (currentStore?.coordinates == null) return;
-    final String googleMapslocationUrl = 'https://www.google.com/maps/search/?api=1&query=${currentStore!.coordinates!.latitude},${currentStore!.coordinates!.longitude}';
+    if (StoreViewmodel.currentStore?.coordinates == null) return;
+    final String googleMapslocationUrl =
+        'https://www.google.com/maps/search/?api=1&query=${StoreViewmodel.currentStore!.coordinates!.latitude},${StoreViewmodel.currentStore!.coordinates!.longitude}';
     Helper.launchUrlHelper(Uri.encodeFull(googleMapslocationUrl));
   }
 
@@ -273,7 +177,7 @@ class MyStoreController extends GetxController {
       onConfirm: () async {
         final result = await StoreRepository.find.deleteStore();
         if (result) {
-          currentStore = null;
+          StoreViewmodel.currentStore = null;
         } else {
           Helper.snackBar(message: 'error_occurred'.tr);
         }
@@ -281,4 +185,12 @@ class MyStoreController extends GetxController {
       },
     );
   }
+
+  void upsertService({required bool isUpdate}) => StoreViewmodel.upsertService(isUpdate: isUpdate, onFinish: update);
+
+  void deleteService(Service service) => StoreViewmodel.deleteService(service, onFinish: update);
+
+  void addServicePictures() => StoreViewmodel.addServicePictures(onFinish: update);
+
+  void editService(Service service) => StoreViewmodel.editService(service, onFinish: update);
 }

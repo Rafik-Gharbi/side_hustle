@@ -26,11 +26,15 @@ class SignInFields extends StatelessWidget {
             if (controller.isPhoneInput)
               Buildables.buildPhoneInput(
                 initialNumber: controller.phoneNumber,
+                outlinedBorder: true,
                 onChanged: (number) => controller.phoneNumber = number?.international,
               )
             else
               CustomTextField(
                 hintText: 'email'.tr,
+                outlinedBorder: true,
+                isOptional: false,
+                textInputType: TextInputType.emailAddress,
                 fieldController: controller.emailController,
                 validator: FormValidators.emailValidator,
                 textCapitalization: TextCapitalization.none,
@@ -38,9 +42,11 @@ class SignInFields extends StatelessWidget {
             const SizedBox(height: Paddings.regular),
             CustomTextField(
               hintText: 'password'.tr,
+              isOptional: false,
               fieldController: controller.passwordController,
               textCapitalization: TextCapitalization.none,
               isPassword: true,
+              outlinedBorder: true,
               validator: FormValidators.notEmptyOrNullValidator,
             ),
             const SizedBox(height: Paddings.small),
@@ -74,7 +80,7 @@ class SignInFields extends StatelessWidget {
             ),
             if (Helper.isMobile) const SizedBox(height: Paddings.exceptional) else const Spacer(),
             CustomButtons.elevateSecondary(
-              onPressed: controller.facebookLogin,
+              onPressed: () => Helper.snackBar(message: 'feature_not_available_yet'.tr), // controller.facebookLogin,
               borderSide: const BorderSide(color: kNeutralColor),
               icon: Image.asset(Assets.facebookIcon, width: 25),
               title: 'continue_facebook'.tr,

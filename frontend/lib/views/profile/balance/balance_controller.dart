@@ -2,30 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+import '../../../constants/constants.dart';
+import '../../../constants/shared_preferences_keys.dart';
 import '../../../helpers/helper.dart';
 import '../../../helpers/image_picker_by_platform/image_picker_platform.dart';
 import '../../../models/balance_transaction.dart';
 import '../../../models/user.dart';
 import '../../../repositories/balance_repository.dart';
 import '../../../repositories/user_repository.dart';
+import '../../../services/authentication_service.dart';
 import '../../../services/logger_service.dart';
+import '../../../services/shared_preferences.dart';
+import '../../../services/tutorials/balance_tutorial.dart';
+import 'balance_screen.dart';
+import 'components/withdrawal_dialog.dart';
 
 enum DepositType { bankCard, installment }
 
 class BalanceController extends GetxController {
+  /// Not permanent, use with caution!
+  static BalanceController get find => Get.find<BalanceController>();
   final GlobalKey<FormState> formKey = GlobalKey();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController bankNumberController = TextEditingController();
   RxBool isLoading = true.obs;
   int withdrawalsCount = 0;
   bool get hasBankNumber => loggedUser.bankNumber != null;
-  User loggedUser;
+  late User loggedUser;
   bool _hasValidatorError = false;
   bool _hasValidatorErrorSlipDeposit = false;
   XFile? depositSlip;
   List<BalanceTransaction> balanceTransactions = [];
   RxBool isBankNumberConfiscated = false.obs;
+  List<TargetFocus> targets = [];
+  GlobalKey withdrawBtnKey = GlobalKey();
+  GlobalKey depositBtnKey = GlobalKey();
+  GlobalKey balanceOverview = GlobalKey();
 
   bool get hasValidatorErrorSlipDeposit => _hasValidatorErrorSlipDeposit;
 
@@ -41,8 +55,21 @@ class BalanceController extends GetxController {
     update();
   }
 
-  BalanceController(this.loggedUser) {
+  static final BalanceController _singleton = BalanceController._internal();
+
+  factory BalanceController() => _singleton;
+
+  BalanceController._internal() {
+    loggedUser = AuthenticationService.find.jwtUserData!;
     init();
+    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () {
+      if (!(SharedPreferencesService.find.get(hasFinishedBalanceTutorialKey) == 'true')) {
+        Helper.waitAndExecute(() => Get.currentRoute == BalanceScreen.routeName && Get.isRegistered<BalanceController>(), () {
+          BalanceTutorial.showTutorial();
+          update();
+        });
+      }
+    });
   }
 
   bool get couldRequestWithdrawal => hasBankNumber && withdrawalsCount < 3 && loggedUser.balance >= 100;
@@ -60,13 +87,25 @@ class BalanceController extends GetxController {
     if (formKey.currentState?.validate() ?? false) {
       Get.back(); // close bottomsheet
       hasValidatorError = false;
-      final result = await BalanceRepository.find.requestWithdrawal(amount: double.parse(amountController.text));
-      if (result) {
-        Helper.snackBar(message: 'withdrawal_requested_success');
-      } else {
-        Helper.snackBar(message: 'withdrawal_request_failed');
-      }
-      init();
+      final amount = double.parse(amountController.text);
+      Future.delayed(
+        Durations.medium1,
+        () => Get.dialog(
+          WithdrawalDialog(
+            amount: amount,
+            onWithdraw: () async {
+              final result = await BalanceRepository.find.requestWithdrawal(amount: amount - amount * serviceFees);
+              if (result) {
+                Helper.snackBar(message: 'withdrawal_requested_success');
+              } else {
+                Helper.snackBar(message: 'withdrawal_request_failed');
+              }
+              init();
+              clearWithdrawalFields();
+            },
+          ),
+        ),
+      );
     } else {
       hasValidatorError = true;
     }

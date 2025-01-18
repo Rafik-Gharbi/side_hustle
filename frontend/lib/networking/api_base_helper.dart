@@ -18,6 +18,7 @@ import '../services/shared_preferences.dart';
 import '../services/theme/theme.dart';
 import '../widgets/custom_buttons.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/main_screen_with_bottom_navigation.dart';
 import 'api_exceptions.dart';
 
 enum RequestType { get, post, delete, put }
@@ -49,6 +50,7 @@ String _lastRequestedUrl = '';
 class ApiBaseHelper extends GetxController {
   static ApiBaseHelper get find => Get.find<ApiBaseHelper>();
   static bool _isBlockingRenew = false;
+  bool changeIpAddressOpened = false;
   // String baseUrl = baseUrlRemote;
   String baseUrl = kReleaseMode
       ? baseUrlRemote
@@ -108,6 +110,7 @@ class ApiBaseHelper extends GetxController {
     if (files != null && files.isNotEmpty) {
       LoggerService.logger!.i('API uploadFile, url $url');
       final imageUploadRequest = http.MultipartRequest(requestType.name.toUpperCase(), requestUrl);
+      imageUploadRequest.headers['Content-Type'] = 'multipart/form-data';
       if (sendToken) imageUploadRequest.headers['Authorization'] = 'Bearer $token';
 
       for (var file in files) {
@@ -130,8 +133,12 @@ class ApiBaseHelper extends GetxController {
         imageUploadRequest.files.add(http.MultipartFile.fromBytes(keyImage, fileBytes.toList(), filename: filename));
       }
       if (body is Map<String, dynamic>) {
+        Map<String, dynamic> bodyData = {};
         for (var element in (body).keys) {
-          if (body[element] != null) imageUploadRequest.fields.putIfAbsent(element, () => body[element].toString());
+          if (body[element] != null) bodyData.putIfAbsent(element, () => body[element].toString());
+        }
+        if (bodyData.isNotEmpty) {
+          imageUploadRequest.fields.putIfAbsent('encryptedData', () => Helper.encryptData(jsonEncode(bodyData)));
         }
       } else {
         LoggerService.logger!.w('uploadFile body is not a Map<String, dynamic>');
@@ -164,7 +171,7 @@ class ApiBaseHelper extends GetxController {
           LoggerService.logger!.i('API Post, url $url');
           response = await http.post(
             requestUrl,
-            body: body != null ? jsonEncode(body) : null,
+            body: body != null ? jsonEncode(Map.of({'encryptedData': Helper.encryptData(jsonEncode(body))})) : null,
             headers: headers ?? _defaultHeader,
           );
           break;
@@ -172,7 +179,7 @@ class ApiBaseHelper extends GetxController {
           LoggerService.logger!.i('API Put, url $url');
           response = await http.put(
             requestUrl,
-            body: body != null ? jsonEncode(body) : null,
+            body: body != null ? jsonEncode(Map.of({'encryptedData': Helper.encryptData(jsonEncode(body))})) : null,
             headers: headers ?? _defaultHeader,
           );
           break;
@@ -180,7 +187,7 @@ class ApiBaseHelper extends GetxController {
           LoggerService.logger!.i('API Delete, url $url');
           response = await http.delete(
             requestUrl,
-            body: body != null ? jsonEncode(body) : null,
+            body: body != null ? jsonEncode(Map.of({'encryptedData': Helper.encryptData(jsonEncode(body))})) : null,
             headers: headers ?? _defaultHeader,
           );
           break;
@@ -199,22 +206,28 @@ class ApiBaseHelper extends GetxController {
   String getCategoryImage(String pictureName) => '$baseUrl/public/images/category/$pictureName';
 
   dynamic _returnResponse(http.Response response) async {
+    dynamic body;
+    try {
+      body = Helper.decryptData(response.body);
+    } catch (e) {
+      body = response.body;
+    }
     switch (response.statusCode) {
       case 200:
-        //LoggerService.logger!.i('API Return 200 OK, length: ${jsonDecode(response.body)['count']}');
+        //LoggerService.logger!.i('API Return 200 OK, length: ${jsonDecode(body)['count']}');
         try {
-          return jsonDecode(response.body);
+          return jsonDecode(body);
         } catch (e) {
           return response;
         }
       case 201:
         return response.statusCode;
       case 400:
-        throw BadRequestException(jsonDecode(response.body)['message']);
+        throw BadRequestException(jsonDecode(body)['message']);
       case 401:
-        throw UnauthorisedException(response.body.toString());
+        throw UnauthorisedException(body.toString());
       case 403:
-        if (response.body.contains('session_expired')) {
+        if (body.contains('session_expired')) {
           if (!_isBlockingRenew) {
             _isBlockingRenew = true;
             if (kDebugMode) {
@@ -222,7 +235,7 @@ class ApiBaseHelper extends GetxController {
             }
             if (SharedPreferencesService.find.get(refreshTokenKey) != null) {
               final result = await AuthenticationService.find.renewToken();
-              return result ? await request(RequestTypeExtension.fromString(response.request!.method), response.request!.url.path, body: response.body, sendToken: true) : null;
+              return result ? await request(RequestTypeExtension.fromString(response.request!.method), response.request!.url.path, body: body, sendToken: true) : null;
             } else {
               AuthenticationService.find.logout();
             }
@@ -230,34 +243,34 @@ class ApiBaseHelper extends GetxController {
           }
         } else if (kDebugMode) {
           // Helper.snackBar(
-          // message: jsonDecode(response.body)['message'].toString().tr,
+          // message: jsonDecode(body)['message'].toString().tr,
           // title: 'debug oups!',
           // includeDismiss: false,
           // styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
-          throw UnauthorisedException(jsonDecode(response.body)['message'].toString());
+          throw UnauthorisedException(jsonDecode(body)['message'].toString());
         }
       case 404:
         if (kDebugMode) {
           // Helper.snackBar(
-          // message: jsonDecode(response.body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
+          // message: jsonDecode(body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
         }
-        throw NotFoundException(response.body.toString());
+        throw NotFoundException(body.toString());
       case 406:
         if (kDebugMode) {
           // Helper.snackBar(
-          // message: jsonDecode(response.body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
+          // message: jsonDecode(body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
         }
-        throw UnauthorisedException(jsonDecode(response.body)['message'].toString());
+        throw UnauthorisedException(jsonDecode(body)['message'].toString());
       case 409:
         if (kDebugMode) {
           // Helper.snackBar(
-          // message: jsonDecode(response.body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
+          // message: jsonDecode(body)['message'], title: 'debug oups!', includeDismiss: false, styleMessage: AppFonts.x12Regular.copyWith(color: kErrorColor));
         }
-        throw ConflictException(response.body.toString());
+        throw ConflictException(body.toString());
       case 500:
       default:
         throw FetchDataException(
-          'Error occured while Communication with Server with StatusCode : ${response.statusCode}\n${response.body}',
+          'Error occured while Communication with Server with StatusCode : ${response.statusCode}\n$body',
         );
     }
   }
@@ -273,66 +286,71 @@ class ApiBaseHelper extends GetxController {
 
   Future<(bool, String?)> checkConnectionToBackend() async {
     // ignore: avoid_print
-    print('baseUrl: $baseUrl');
-    void openIPAddressChanger() {
-      Helper.waitAndExecute(
-        () => SharedPreferencesService.find.isReady.value,
-        () => Get.bottomSheet(
-          Material(
-            color: kNeutralColor100,
-            child: Padding(
-              padding: const EdgeInsets.all(Paddings.large),
-              child: Column(
-                children: [
-                  const Center(child: Text('Change real device IP address', style: AppFonts.x15Bold)),
-                  const SizedBox(height: Paddings.exceptional),
-                  Text('Current baseURL: $baseUrl', style: AppFonts.x12Regular),
-                  const SizedBox(height: Paddings.regular),
-                  CustomTextField(
-                    hintText: 'IP address e.g. 192.168.1.23',
-                    onSubmitted: (value) {
-                      baseUrl = 'http://$value:3000';
-                      SharedPreferencesService.find.add(baseUrlKey, baseUrl);
-                      RestartWidget.restartApp(Get.context!);
-                      Helper.goBack();
-                    },
-                  ),
-                  const SizedBox(height: Paddings.regular),
-                  CustomTextField(
-                    hintText: 'Or full address e.g. http://192.168.1.23:3000',
-                    onSubmitted: (value) {
-                      baseUrl = value;
-                      SharedPreferencesService.find.add(baseUrlKey, baseUrl);
-                      RestartWidget.restartApp(Get.context!);
-                      Helper.goBack();
-                    },
-                  ),
-                  const SizedBox(height: Paddings.exceptional),
-                  CustomButtons.elevatePrimary(
-                    title: 'Cancel & Restart',
-                    width: 200,
-                    onPressed: () {
-                      RestartWidget.restartApp(Get.context!);
-                      Helper.goBack();
-                    },
-                  ),
-                  const SizedBox(height: Paddings.exceptional),
-                ],
+    if (!changeIpAddressOpened) {
+      changeIpAddressOpened = true;
+      // ignore: avoid_print
+      print('baseUrl: $baseUrl');
+      void openIPAddressChanger() {
+        Helper.waitAndExecute(
+          () => SharedPreferencesService.find.isReady.value && Get.currentRoute == MainScreenWithBottomNavigation.routeName,
+          () => Get.bottomSheet(
+            Material(
+              color: kNeutralColor100,
+              child: Padding(
+                padding: const EdgeInsets.all(Paddings.large),
+                child: Column(
+                  children: [
+                    const Center(child: Text('Change real device IP address', style: AppFonts.x15Bold)),
+                    const SizedBox(height: Paddings.exceptional),
+                    Text('Current baseURL: $baseUrl', style: AppFonts.x12Regular),
+                    const SizedBox(height: Paddings.regular),
+                    CustomTextField(
+                      hintText: 'IP address e.g. 192.168.1.23',
+                      onSubmitted: (value) {
+                        baseUrl = 'http://$value:3000';
+                        SharedPreferencesService.find.add(baseUrlKey, baseUrl);
+                        RestartWidget.restartApp(Get.context!);
+                        Helper.goBack();
+                      },
+                    ),
+                    const SizedBox(height: Paddings.regular),
+                    CustomTextField(
+                      hintText: 'Or full address e.g. http://192.168.1.23:3000',
+                      onSubmitted: (value) {
+                        baseUrl = value;
+                        SharedPreferencesService.find.add(baseUrlKey, baseUrl);
+                        RestartWidget.restartApp(Get.context!);
+                        Helper.goBack();
+                      },
+                    ),
+                    const SizedBox(height: Paddings.exceptional),
+                    CustomButtons.elevatePrimary(
+                      title: 'Cancel & Restart',
+                      width: 200,
+                      onPressed: () {
+                        RestartWidget.restartApp(Get.context!);
+                        Helper.goBack();
+                      },
+                    ),
+                    const SizedBox(height: Paddings.exceptional),
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-      );
-    }
+          ).then((value) => changeIpAddressOpened = false),
+        );
+      }
 
-    try {
-      final response = await request(RequestType.get, '/params/check-connection');
-      bool result = response?['result'] ?? false;
-      if (!result) openIPAddressChanger();
-      return (result, response?['version'] as String?);
-    } catch (e) {
-      openIPAddressChanger();
-      return (false, null);
+      try {
+        final response = await request(RequestType.get, '/params/check-connection');
+        bool result = response?['result'] ?? false;
+        if (!result) openIPAddressChanger();
+        return (result, response?['version'] as String?);
+      } catch (e) {
+        openIPAddressChanger();
+        return (false, null);
+      }
     }
+    return (false, null);
   }
 }

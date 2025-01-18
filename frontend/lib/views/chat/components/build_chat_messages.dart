@@ -147,17 +147,17 @@ class BuildChatMessages extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (contract.task != null) ...[
-                      Text('${'task'.tr}: ${contract.task!.title}', style: AppFonts.x12Regular),
-                      Text('${'description'.tr}: ${contract.task!.description}', style: AppFonts.x12Regular),
-                      Text('${'expected_delivrables'.tr}: ${contract.task!.delivrables ?? 'not_provided'.tr}', style: AppFonts.x12Regular),
-                      Text('${'price'.tr}: ${Helper.formatAmount(contract.finalPrice)} ${MainAppController.find.currency.value}', style: AppFonts.x12Regular),
-                      Text('${'due_date'.tr}: ${Helper.formatDate(contract.dueDate!)}', style: AppFonts.x12Regular),
+                      buildRichText('${'task'.tr}: ', contract.task!.title),
+                      buildRichText('${'description'.tr}: ', contract.task!.description),
+                      buildRichText('${'expected_delivrables'.tr}: ', contract.task!.delivrables ?? 'not_provided'.tr),
+                      buildRichText('${'price'.tr}: ', '${Helper.formatAmount(contract.finalPrice)} ${MainAppController.find.currency.value}'),
+                      buildRichText('${'due_date'.tr}: ', Helper.formatDate(contract.dueDate!)),
                     ] else if (contract.service != null) ...[
-                      Text('${'service'.tr}: ${contract.service!.name}', style: AppFonts.x12Regular),
-                      Text('${'description'.tr}: ${contract.service!.description}', style: AppFonts.x12Regular),
-                      Text('${'expected_delivrables'.tr}: ${contract.service!.included ?? 'not_provided'.tr}', style: AppFonts.x12Regular),
-                      Text('${'price'.tr}: ${Helper.formatAmount(contract.finalPrice)} ${MainAppController.find.currency.value}', style: AppFonts.x12Regular),
-                      Text('${'due_date'.tr}: ${Helper.formatDate(contract.dueDate!)}', style: AppFonts.x12Regular),
+                      buildRichText('${'service'.tr}: ', contract.service!.name!),
+                      buildRichText('${'description'.tr}: ', contract.service!.description!),
+                      buildRichText('${'expected_delivrables'.tr}: ', contract.service!.included ?? 'not_provided'.tr),
+                      buildRichText('${'price'.tr}: ', Helper.formatAmount(contract.finalPrice)),
+                      buildRichText('${'due_date'.tr}: ', Helper.formatDate(contract.dueDate!)),
                     ],
                   ],
                 ),
@@ -173,4 +173,16 @@ class BuildChatMessages extends StatelessWidget {
       ],
     );
   }
+
+  Widget buildRichText(String label, String value) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(text: label, style: AppFonts.x12Bold),
+              TextSpan(text: value, style: AppFonts.x12Regular),
+            ],
+          ),
+        ),
+      );
 }

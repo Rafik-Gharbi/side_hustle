@@ -1,8 +1,11 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+import '../../../constants/shared_preferences_keys.dart';
 import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/category.dart';
@@ -11,8 +14,13 @@ import '../../../models/governorate.dart';
 import '../../../models/task.dart';
 import '../../../repositories/task_repository.dart';
 import '../../../services/authentication_service.dart';
+import '../../../services/shared_preferences.dart';
+import '../../../services/tutorials/add_task_tutorial.dart';
 
 class AddTaskController extends GetxController {
+  /// Not permanent, use with caution!
+  static AddTaskController get find => Get.find<AddTaskController>();
+  final scrollController = ScrollController();
   final Task? task;
   final formKey = GlobalKey<FormState>();
   final FocusNode titleFocusNode = FocusNode();
@@ -28,6 +36,13 @@ class AddTaskController extends GetxController {
   RxBool isAdding = false.obs;
   List<XFile>? attachments;
   bool _isPriceRange = false;
+  List<TargetFocus> targets = [];
+  GlobalKey titleFieldKey = GlobalKey();
+  GlobalKey categoryKey = GlobalKey();
+  GlobalKey dueDateKey = GlobalKey();
+  GlobalKey priceKey = GlobalKey();
+  GlobalKey locationKey = GlobalKey();
+
 
   DateTime get createdDate => _createdDate;
 
@@ -66,10 +81,18 @@ class AddTaskController extends GetxController {
 
   AddTaskController({this.task}) {
     if (task != null) _loadTaskData();
+    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () {
+      if (!(SharedPreferencesService.find.get(hasFinishedAddTaskTutorialKey) == 'true')) {
+        Helper.waitAndExecute(() => Get.isBottomSheetOpen == true && Get.isRegistered<AddTaskController>(), () {
+          AddTaskTutorial.showTutorial();
+          update();
+        });
+      }
+    });
   }
 
   void setCreatedDate({bool next = false, bool previous = false}) {
-    if (next) createdDate = createdDate.add(const Duration(days: 1));
+    if (next && createdDate.isBefore(DateTime.now().add(const Duration(days: 29)))) createdDate = createdDate.add(const Duration(days: 1));
     if (previous && createdDate.isAfter(DateTime.now())) createdDate = createdDate.subtract(const Duration(days: 1));
   }
 
@@ -143,6 +166,13 @@ class AddTaskController extends GetxController {
           );
         } else {
           await TaskRepository.find.addTask(newtask, withBack: true);
+          FirebaseAnalytics.instance.logEvent(
+            name: 'create_task',
+            parameters: {
+              'category': newtask.category?.name ?? 'undefined',
+              'price': newtask.price ?? 0,
+            },
+          );
         }
       } else {
         if (newtask.price != null && newtask.price! > 0 && newtask.price! > (task!.price ?? 0)) {

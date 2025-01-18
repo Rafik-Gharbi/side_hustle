@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import '../controllers/main_app_controller.dart';
 import '../database/database.dart';
 import '../helpers/extensions/lat_lon_extension.dart';
+import '../helpers/helper.dart';
 import '../networking/api_base_helper.dart';
 import 'dto/image_dto.dart';
 import 'governorate.dart';
@@ -47,7 +48,7 @@ class Store {
         services: json['services'] != null ? (json['services'] as List).map((e) => Service.fromJson(e)).toList() : [],
         owner: json['owner'] != null ? User.fromJson(json['owner']) : null,
         isFavorite: json['isFavorite'] ?? false,
-        rating: json['rating'] ?? 0,
+        rating: Helper.resolveDouble(json['rating']),
       );
 
   Map<String, dynamic> toJson() {

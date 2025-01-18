@@ -13,6 +13,10 @@ const SupportMessage = sequelize.define(
       type: Sequelize.STRING,
       allowNull: false,
     },
+    guest_id: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
     attachment: { type: Sequelize.STRING },
   },
   {
@@ -24,7 +28,7 @@ const SupportMessage = sequelize.define(
 SupportMessage.belongsTo(User, {
   as: "user",
   foreignKey: "sender_id",
-  allowNull: false,
+  allowNull: true,
 });
 SupportMessage.belongsTo(SupportTicket, {
   foreignKey: "ticket_id",

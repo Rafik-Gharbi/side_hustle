@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../constants/colors.dart';
+import '../constants/shared_preferences_keys.dart';
 import '../constants/sizes.dart';
 import '../controllers/main_app_controller.dart';
 import '../helpers/buildables.dart';
 import '../helpers/helper.dart';
 import '../models/category.dart';
+import '../services/shared_preferences.dart';
 import '../services/theme/theme.dart';
+import '../services/tutorials/categories_tutorial.dart';
 import 'custom_buttons.dart';
 import 'custom_text_field.dart';
 import 'loading_card_effect.dart';
@@ -17,8 +21,9 @@ class CategoriesBottomsheet extends StatefulWidget {
   final int maxSelect;
   final List<Category>? selected;
   final DateTime? nextUpdate;
+  final bool isAdding;
 
-  const CategoriesBottomsheet({super.key, required this.onSelectCategory, this.maxSelect = 1, this.selected, this.nextUpdate});
+  const CategoriesBottomsheet({super.key, required this.onSelectCategory, this.maxSelect = 1, this.selected, this.nextUpdate, this.isAdding = false});
 
   @override
   State<CategoriesBottomsheet> createState() => _CategoriesBottomsheetState();
@@ -31,6 +36,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
   List<Category> selectedCategories = [];
   String searchCategory = '';
   RxBool isLoading = true.obs;
+  bool hasOpenedTutorial = false;
 
   @override
   void initState() {
@@ -45,6 +51,23 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
         setState(() {});
       },
     );
+    final hasFinishedCategoryTutorial = SharedPreferencesService.find.get(hasFinishedCategoryTutorialKey) == 'true';
+    Future.delayed(Durations.extralong2, () {
+      if (!hasFinishedCategoryTutorial) {
+        CategoriesTutorial.showTutorial();
+        Helper.waitAndExecute(() => CategoriesTutorial.targets.isNotEmpty, () {
+          if (!hasOpenedTutorial) {
+            hasOpenedTutorial = true;
+            TutorialCoachMark(
+              targets: CategoriesTutorial.targets,
+              colorShadow: kNeutralOpacityColor,
+              hideSkip: true,
+              onFinish: () => SharedPreferencesService.find.add(hasFinishedCategoryTutorialKey, 'true'),
+            ).show(context: context);
+          }
+        });
+      }
+    });
   }
 
   void filterCategories(String value) {
@@ -134,6 +157,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                     ],
                     const SizedBox(height: Paddings.regular),
                     CustomTextField(
+                      key: CategoriesTutorial.searchFieldKey,
                       hintText: 'search_category'.tr,
                       onChanged: (value) => Helper.onSearchDebounce(() => filterCategories(value)),
                     ),
@@ -212,6 +236,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                                           ),
                                         )
                                       : buildCategoryWidget(
+                                          key: index == 0 ? CategoriesTutorial.categoryKey : null,
                                           canUpdate: canUpdate,
                                           category: parentCategory,
                                           onTap: () => setStateCategory(() => toggleExpandParent(true)),
@@ -233,8 +258,9 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
     );
   }
 
-  Widget buildCategoryWidget({required bool canUpdate, bool isSelected = false, required void Function() onTap, required Category category, bool isChild = false}) {
+  Widget buildCategoryWidget({required bool canUpdate, bool isSelected = false, required void Function() onTap, required Category category, bool isChild = false, GlobalKey? key}) {
     return InkWell(
+      key: key,
       onTap: onTap,
       child: SingleChildScrollView(
         child: Tooltip(
@@ -267,7 +293,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
               ),
               const SizedBox(height: Paddings.small),
               Text(
-                '${category.name} (${category.subscribed})',
+                '${category.name} ${widget.isAdding ? '(${category.subscribed})' : ''}',
                 style: AppFonts.x12Regular,
                 softWrap: true,
                 textAlign: TextAlign.center,

@@ -18,10 +18,9 @@ import '../profile/profile_screen/profile_controller.dart';
 import '../profile/transactions/transactions_screen.dart';
 import '../review/add_review/add_review_bottomsheet.dart';
 import '../store/my_store/my_store_screen.dart';
-import '../store/service_history/service_history_screen.dart';
-import '../task/task_history/task_history_screen.dart';
+import '../task/my_offers/my_offers_screen.dart';
 import '../task/task_list/task_list_screen.dart';
-import '../task/task_request/task_request_screen.dart';
+import '../task/my_request/my_request_screen.dart';
 
 class NotificationsController extends GetxController {
   static NotificationsController get find => Get.find<NotificationsController>();
@@ -92,7 +91,8 @@ class NotificationsController extends GetxController {
           if (decodedAction?['isOwner'] != null && (decodedAction?['isOwner'] as bool)) {
             Get.toNamed(MyStoreScreen.routeName, arguments: decodedAction?['serviceId']);
           } else {
-            Get.toNamed(ServiceHistoryScreen.routeName, arguments: decodedAction?['bookingId']);
+            // TODO
+            // Get.toNamed(ServiceHistoryScreen.routeName, arguments: decodedAction?['bookingId']);
           }
         });
         MainAppController.find.manageNavigation(screenIndex: 3);
@@ -103,9 +103,9 @@ class NotificationsController extends GetxController {
       case NotificationType.reservation:
         Future.delayed(const Duration(milliseconds: 600), () {
           if (decodedAction?['isOwner'] != null && (decodedAction?['isOwner'] as bool)) {
-            Get.toNamed(TaskRequestScreen.routeName, arguments: decodedAction?['taskId']);
+            Get.toNamed(MyRequestScreen.routeName, arguments: decodedAction?['taskId']);
           } else {
-            Get.toNamed(TaskHistoryScreen.routeName, arguments: decodedAction?['reservationId']);
+            Get.toNamed(MyOffersScreen.routeName, arguments: decodedAction?['reservationId']);
           }
         });
         MainAppController.find.manageNavigation(screenIndex: 3);

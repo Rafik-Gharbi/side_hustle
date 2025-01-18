@@ -2,20 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:phone_form_field/phone_form_field.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../constants/assets.dart';
 import '../constants/colors.dart';
 import '../constants/constants.dart';
+import '../constants/shared_preferences_keys.dart';
 import '../constants/sizes.dart';
 import '../controllers/main_app_controller.dart';
 import '../models/contract.dart';
 import '../models/user.dart';
 import '../services/authentication_service.dart';
 import '../services/payment_service.dart';
+import '../services/shared_preferences.dart';
 import '../services/theme/theme.dart';
+import '../services/tutorials/create_contract_tutorial.dart';
 import '../views/profile/account/login_dialog.dart';
 import '../views/home/home_controller.dart';
 import '../widgets/coins_market.dart';
+import '../widgets/custom_bottomsheet.dart';
 import '../widgets/custom_buttons.dart';
 import '../widgets/custom_text_field.dart';
 import 'form_validators.dart';
@@ -49,7 +54,7 @@ class Buildables {
                 showFlag: true,
                 flagSize: 16,
                 textStyle: AppFonts.x14Regular,
-                padding: EdgeInsets.only(bottom: 8, right: 10, left: 15),
+                padding: EdgeInsets.only(bottom: 0, right: 10, left: 15),
               ),
               decoration: InputDecoration(
                 alignLabelWithHint: true,
@@ -57,6 +62,7 @@ class Buildables {
                 contentPadding: outlinedBorder
                     ? const EdgeInsets.symmetric(horizontal: Paddings.large).copyWith(top: Paddings.extraLarge)
                     : const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
+                hintText: '${'phone'.tr} (${'required'.tr})',
                 // label: enableFloatingLabel ? Text(hintText ?? '', style: hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor)) : null,
                 border: outlinedBorder
                     ? OutlineInputBorder(borderRadius: smallRadius, borderSide: const BorderSide(color: kNeutralLightColor))
@@ -197,75 +203,66 @@ class Buildables {
         : (proposedPriceController != null || deliveryDateController != null)
             ? 420
             : 360;
-    await Get.bottomSheet(
-      SizedBox(
-        height: height,
-        child: Material(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-          child: Padding(
-            padding: const EdgeInsets.all(Paddings.large),
-            child: Column(
-              children: [
-                const SizedBox(height: Paddings.regular),
-                Center(child: Text(isTask ? 'add_proposal'.tr : 'request_service'.tr, style: AppFonts.x16Bold)),
-                const SizedBox(height: Paddings.exceptional),
-                CustomTextField(
-                  fieldController: noteController,
-                  isTextArea: true,
-                  outlinedBorder: true,
-                  outlinedBorderColor: kNeutralColor,
-                  hintText: isTask ? 'add_note_task_owner'.tr : 'add_note_store_owner'.tr,
-                ),
-                if (proposedPriceController != null) ...[
-                  const SizedBox(height: Paddings.regular),
-                  CustomTextField(
-                    fieldController: proposedPriceController,
-                    outlinedBorder: true,
-                    outlinedBorderColor: kNeutralColor,
-                    hintText: 'propose_new_price'.tr,
-                  ),
-                ],
-                if (proposedPriceController != null) ...[
-                  const SizedBox(height: Paddings.regular),
-                  CustomTextField(
-                    fieldController: deliveryDateController,
-                    outlinedBorder: true,
-                    outlinedBorderColor: kNeutralColor,
-                    onTap: () => Helper.openDatePicker(
-                      isFutureDate: true,
-                      onConfirm: (date) => deliveryDateController!.text = Helper.formatDate(date),
-                    ),
-                    hintText: 'delivery_date'.tr,
-                  ),
-                ],
-                const SizedBox(height: Paddings.exceptional),
-                CustomButtons.elevatePrimary(
-                  title: isTask ? 'submit_proposal'.tr : 'submit_request'.tr,
-                  width: Get.width,
-                  onPressed: onSubmit,
-                  disabled: neededCoins <= 0 || neededCoins > (AuthenticationService.find.jwtUserData?.totalCoins ?? 0),
-                ),
-                const SizedBox(height: Paddings.small),
-                Text(
-                  '${isTask ? 'task'.tr : 'service'.tr} ${'costs_coins_msg'.trParams({
-                        'coins': neededCoins.toString(),
-                        'baseCoins': (AuthenticationService.find.jwtUserData?.totalCoins ?? 0).toString()
-                      })}',
-                  style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
-                ),
-                const SizedBox(height: Paddings.extraLarge),
-              ],
-            ),
+    await CustomBottomsheet(
+      height: height,
+      title: isTask ? 'add_proposal'.tr : 'request_service'.tr,
+      child: Column(
+        children: [
+          const SizedBox(height: Paddings.regular),
+          CustomTextField(
+            fieldController: noteController,
+            isTextArea: true,
+            outlinedBorder: true,
+            outlinedBorderColor: kNeutralColor,
+            hintText: isTask ? 'add_note_task_owner'.tr : 'add_note_store_owner'.tr,
           ),
-        ),
+          if (proposedPriceController != null) ...[
+            const SizedBox(height: Paddings.regular),
+            CustomTextField(
+              fieldController: proposedPriceController,
+              outlinedBorder: true,
+              outlinedBorderColor: kNeutralColor,
+              hintText: 'propose_new_price'.tr,
+            ),
+          ],
+          if (proposedPriceController != null) ...[
+            const SizedBox(height: Paddings.regular),
+            CustomTextField(
+              fieldController: deliveryDateController,
+              outlinedBorder: true,
+              outlinedBorderColor: kNeutralColor,
+              onTap: () => Helper.openDatePicker(
+                isFutureDate: true,
+                onConfirm: (date) => deliveryDateController!.text = Helper.formatDate(date),
+              ),
+              hintText: 'delivery_date'.tr,
+            ),
+          ],
+          const SizedBox(height: Paddings.exceptional),
+          CustomButtons.elevatePrimary(
+            title: isTask ? 'submit_proposal'.tr : 'submit_request'.tr,
+            width: Get.width,
+            onPressed: onSubmit,
+            disabled: neededCoins <= 0 || neededCoins > (AuthenticationService.find.jwtUserData?.totalCoins ?? 0),
+          ),
+          const SizedBox(height: Paddings.small),
+          Text(
+            '${isTask ? 'task'.tr : 'service'.tr} ${'costs_coins_msg'.trParams({
+                  'coins': neededCoins.toString(),
+                  'baseCoins': (AuthenticationService.find.jwtUserData?.totalCoins ?? 0).toString()
+                })}',
+            style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
+          ),
+          const SizedBox(height: Paddings.extraLarge),
+        ],
       ),
-      isScrollControlled: true,
-    );
+    ).showBottomSheet(isScrollControlled: true);
   }
 
   static Future<void> createContractBottomsheet({
     required Contract contract,
     required void Function(Contract) onSubmit,
+    required BuildContext context,
     bool isTask = false,
   }) async {
     final GlobalKey<FormState> formKey = GlobalKey();
@@ -273,89 +270,101 @@ class Buildables {
     final TextEditingController dueDateController = TextEditingController(text: contract.dueDate != null ? Helper.formatDate(contract.dueDate!) : '');
     final TextEditingController descriptionController = TextEditingController(text: isTask ? contract.task!.description : contract.service?.description ?? '');
     final TextEditingController delivrablesController = TextEditingController(text: isTask ? contract.task!.delivrables : contract.service?.included ?? '');
-    await Get.bottomSheet(
-      SizedBox(
-        height: 600,
-        child: Material(
-          color: kNeutralColor100,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-          child: Padding(
-            padding: const EdgeInsets.all(Paddings.large),
-            child: SingleChildScrollView(
-              child: Form(
-                key: formKey,
-                child: Column(
-                  children: [
-                    const SizedBox(height: Paddings.regular),
-                    Center(child: Text('create_contract'.tr, style: AppFonts.x16Bold)),
-                    const SizedBox(height: Paddings.exceptional),
-                    CustomTextField(
-                      fieldController: finalPriceController,
-                      outlinedBorder: true,
-                      outlinedBorderColor: kNeutralColor,
-                      hintText: 'price'.tr,
-                      validator: FormValidators.notEmptyOrNullFloatValidator,
+    final hasFinishedCreateContractTutorial = SharedPreferencesService.find.get(hasFinishedCreateContractTutorialKey) == 'true';
+    bool hasOpenedTutorial = false;
+    if (!hasFinishedCreateContractTutorial && !hasOpenedTutorial && CreateContractTutorial.targets.isNotEmpty) {
+      hasOpenedTutorial = true;
+      Future.delayed(
+        Durations.extralong2,
+        () => TutorialCoachMark(
+          targets: CreateContractTutorial.targets,
+          colorShadow: kNeutralOpacityColor,
+          hideSkip: true,
+          onFinish: () => SharedPreferencesService.find.add(hasFinishedCreateContractTutorialKey, 'true'),
+        ).show(context: context),
+      );
+    }
+    await CustomBottomsheet(
+      height: 600,
+      title: 'create_contract'.tr,
+      child: SingleChildScrollView(
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              const SizedBox(height: Paddings.regular),
+              Column(
+                key: CreateContractTutorial.contractFormKey,
+                children: [
+                  CustomTextField(
+                    fieldController: finalPriceController,
+                    outlinedBorder: true,
+                    isOptional: false,
+                    outlinedBorderColor: kNeutralColor,
+                    hintText: 'price'.tr,
+                    validator: FormValidators.notEmptyOrNullFloatValidator,
+                  ),
+                  const SizedBox(height: Paddings.regular),
+                  CustomTextField(
+                    fieldController: dueDateController,
+                    outlinedBorder: true,
+                    isOptional: false,
+                    outlinedBorderColor: kNeutralColor,
+                    onTap: () => Helper.openDatePicker(
+                      isFutureDate: true,
+                      onConfirm: (date) => dueDateController.text = Helper.formatDate(date),
                     ),
-                    const SizedBox(height: Paddings.regular),
-                    CustomTextField(
-                      fieldController: dueDateController,
-                      outlinedBorder: true,
-                      outlinedBorderColor: kNeutralColor,
-                      onTap: () => Helper.openDatePicker(
-                        isFutureDate: true,
-                        onConfirm: (date) => dueDateController.text = Helper.formatDate(date),
-                      ),
-                      hintText: 'delivery_date'.tr,
-                      validator: FormValidators.notEmptyOrNullValidator,
-                    ),
-                    const SizedBox(height: Paddings.regular),
-                    CustomTextField(
-                      fieldController: descriptionController,
-                      outlinedBorder: true,
-                      isTextArea: true,
-                      outlinedBorderColor: kNeutralColor,
-                      hintText: 'description'.tr,
-                      validator: FormValidators.notEmptyOrNullValidator,
-                    ),
-                    const SizedBox(height: Paddings.regular),
-                    CustomTextField(
-                      fieldController: delivrablesController,
-                      outlinedBorder: true,
-                      isTextArea: true,
-                      outlinedBorderColor: kNeutralColor,
-                      hintText: 'expected_delivrables'.tr,
-                      validator: FormValidators.notEmptyOrNullValidator,
-                    ),
-                    const SizedBox(height: Paddings.exceptional),
-                    CustomButtons.elevatePrimary(
-                      title: isTask ? 'submit_proposal'.tr : 'submit_request'.tr,
-                      width: Get.width,
-                      onPressed: () {
-                        if (formKey.currentState?.validate() ?? false) {
-                          onSubmit(
-                            Contract(
-                              finalPrice: double.tryParse(finalPriceController.text) ?? 0,
-                              dueDate: Helper.parseDisplayedDate(dueDateController.text),
-                              description: descriptionController.text,
-                              delivrables: delivrablesController.text,
-                              task: contract.task,
-                              service: contract.service,
-                              createdAt: DateTime.now(),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(height: Paddings.exceptional),
-                  ],
-                ),
+                    hintText: 'delivery_date'.tr,
+                    validator: FormValidators.notEmptyOrNullValidator,
+                  ),
+                  const SizedBox(height: Paddings.regular),
+                  CustomTextField(
+                    fieldController: descriptionController,
+                    outlinedBorder: true,
+                    isOptional: false,
+                    isTextArea: true,
+                    outlinedBorderColor: kNeutralColor,
+                    hintText: 'description'.tr,
+                    validator: FormValidators.notEmptyOrNullValidator,
+                  ),
+                  const SizedBox(height: Paddings.regular),
+                  CustomTextField(
+                    fieldController: delivrablesController,
+                    outlinedBorder: true,
+                    isTextArea: true,
+                    isOptional: false,
+                    outlinedBorderColor: kNeutralColor,
+                    hintText: 'expected_delivrables'.tr,
+                    validator: FormValidators.notEmptyOrNullValidator,
+                  ),
+                ],
               ),
-            ),
+              const SizedBox(height: Paddings.exceptional),
+              CustomButtons.elevatePrimary(
+                title: 'create'.tr,
+                width: Get.width,
+                onPressed: () {
+                  if (formKey.currentState?.validate() ?? false) {
+                    onSubmit(
+                      Contract(
+                        finalPrice: double.tryParse(finalPriceController.text) ?? 0,
+                        dueDate: Helper.parseDisplayedDate(dueDateController.text),
+                        description: descriptionController.text,
+                        delivrables: delivrablesController.text,
+                        task: contract.task,
+                        service: contract.service,
+                        createdAt: DateTime.now(),
+                      ),
+                    );
+                  }
+                },
+              ),
+              const SizedBox(height: Paddings.exceptional),
+            ],
           ),
         ),
       ),
-      isScrollControlled: true,
-    );
+    ).showBottomSheet(isScrollControlled: true);
   }
 
   static Widget buildTitle(String title, {void Function()? onSeeMore, Widget? overrideTitle}) => Padding(
@@ -377,9 +386,10 @@ class Buildables {
         ),
       );
 
-  static Widget buildAvailableCoins({void Function()? onBackFromMarket, bool withBuyButton = true}) => Padding(
+  static Widget buildAvailableCoins({void Function()? onBackFromMarket, bool withBuyButton = true, GlobalKey? key}) => Padding(
         padding: const EdgeInsets.all(Paddings.large),
         child: DecoratedBox(
+          key: key,
           decoration: BoxDecoration(borderRadius: smallRadius, color: kAccentColor),
           child: SizedBox(
             width: double.infinity,
@@ -507,7 +517,8 @@ class Buildables {
         ),
       );
 
-  static Widget buildActionTile({required String label, required IconData icon, required void Function() onTap, int actionRequired = 0}) => CustomButtons.text(
+  static Widget buildActionTile({Key? key, required String label, required IconData icon, required void Function() onTap, int actionRequired = 0}) => CustomButtons.text(
+        key: key,
         onPressed: onTap,
         child: ListTile(
           title: Text(label, style: AppFonts.x14Bold),
@@ -525,4 +536,33 @@ class Buildables {
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
       );
+
+  static TargetFocus buildTargetFocus({required GlobalKey<State<StatefulWidget>> keyTarget, List<Widget>? topContent, List<Widget>? bottomContent, bool isCircle = false}) {
+    return TargetFocus(
+      keyTarget: keyTarget,
+      identify: 'Target ${keyTarget.toString()}',
+      shape: isCircle ? ShapeLightFocus.Circle : ShapeLightFocus.RRect,
+      radius: 10,
+      contents: [
+        if (topContent != null)
+          TargetContent(
+            align: ContentAlign.top,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: topContent,
+            ),
+          ),
+        if (bottomContent != null)
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: bottomContent,
+            ),
+          )
+      ],
+    );
+  }
 }

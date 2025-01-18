@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const { User } = require("../models/user_model");
 const { decryptData } = require("../helper/encryption");
 const { verifyToken } = require("../helper/helpers");
@@ -11,11 +11,18 @@ const path = require("path");
 async function tokenVerification(req, res, next) {
   let token = req.headers["authorization"];
   if (token) {
-    const result = await verifyToken(token);
-    if (result) {
-      req.decoded = result;
-      next();
-    } else {
+    try {
+      const result = await verifyToken(token);
+      if (result) {
+        req.decoded = result;
+        next();
+      } else {
+        return res.status(403).json({
+          success: false,
+          message: "session_expired",
+        });
+      }
+    } catch (error) {
       return res.status(403).json({
         success: false,
         message: "session_expired",
@@ -30,13 +37,13 @@ async function tokenVerification(req, res, next) {
 
 async function checkContractPermission(req, res, next) {
   const user = await User.findByPk(req.decoded.id);
-  const contract = await Contract.findByPk(req.params.id);
-  if (user.id != contract.seeker_id && user.id != contract.provider_id) {
+  const contract = await Contract.findByPk(req.query.id);
+  if (user.id != contract?.seeker_id && user.id != contract?.provider_id) {
     return res.status(401).json({ message: "not_allowed" });
   }
   const filePath = path.join(
     __dirname,
-    `./public/contracts/contract_${user.language}_${req.params.id}.pdf`
+    `./public/contracts/contract_${user.language}_${req.query.id}.pdf`
   );
   if (!fs.existsSync(filePath)) {
     // File language is not created

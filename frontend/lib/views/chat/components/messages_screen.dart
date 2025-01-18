@@ -30,18 +30,22 @@ class MessagesScreen extends StatelessWidget {
         init: ChatController(),
         initState: (state) => Helper.waitAndExecute(
           () => state.controller != null,
-          () => state.controller!.selectedChatBubble == null ? state.controller!.init() : null,
+          () {
+            state.controller!.selectedChatBubble == null ? state.controller!.init() : null;
+            if (Get.arguments != null && Get.arguments is String && Get.arguments.toString().isNotEmpty) {
+              state.controller!.searchChatMessages(Get.arguments);
+            }
+          },
         ),
         builder: (controller) => Obx(
           () => CustomStandardScaffold(
             backgroundColor: kNeutralColor100,
             title: 'messages'.tr,
             onBack: controller.clearMessagesScreen,
-            actionButton: 
-              CustomButtons.icon(
-                icon: Icon(controller.openMessagesSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
-                onPressed: () => controller.openMessagesSearchBar.value = !controller.openMessagesSearchBar.value,
-              ),
+            actionButton: CustomButtons.icon(
+              icon: Icon(controller.openMessagesSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
+              onPressed: () => controller.openMessagesSearchBar.value = !controller.openMessagesSearchBar.value,
+            ),
             appBarBottom: controller.openMessagesSearchBar.value
                 ? AppBar(
                     backgroundColor: kNeutralColor100,
@@ -98,7 +102,7 @@ class MessagesScreen extends StatelessWidget {
                                         menuItems: [
                                           MenuOptionItem(icon: Icons.attach_file_rounded, label: 'attachments'.tr, onTap: controller.attachToMessage),
                                           if (controller.hasOngoingReservation)
-                                            MenuOptionItem(icon: Icons.assignment_outlined, label: 'create_contract'.tr, onTap: controller.createContract),
+                                            MenuOptionItem(icon: Icons.assignment_outlined, label: 'create_contract'.tr, onTap: () => controller.createContract(context)),
                                         ],
                                       ),
                                       suffixIcon: CustomButtons.icon(

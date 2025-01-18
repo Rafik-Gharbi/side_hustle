@@ -262,6 +262,7 @@ class _BuildDropDownButton<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final searchController = TextEditingController();
+    final hintText = (hint ?? '') + (isRequired ? ' (${'required'.tr})' : '');
     return DecoratedBox(
       decoration: BoxDecoration(color: kNeutralColor100, borderRadius: smallRadius),
       child: Row(
@@ -305,7 +306,7 @@ class _BuildDropDownButton<T> extends StatelessWidget {
                         Center(
                           widthFactor: 1,
                           child: Text(
-                            selectedItem != null && valueFrom != null ? valueFrom!.call(selectedItem as T) : selectedItem?.toString() ?? hint ?? '',
+                            selectedItem != null && valueFrom != null ? valueFrom!.call(selectedItem as T) : selectedItem?.toString() ?? hintText,
                             style: AppFonts.x14Regular.copyWith(color: selectedItem != null ? kBlackColor : kNeutralColor.withAlpha(150)),
                           ),
                         ),
@@ -365,7 +366,7 @@ class _BuildDropDownButton<T> extends StatelessWidget {
                                 flex: 3,
                                 child: Center(
                                   child: Text(
-                                    hint ?? '',
+                                    hintText,
                                     style: AppFonts.x14Regular.copyWith(color: selectedItem != null ? kBlackColor : kNeutralColor.withAlpha(150)),
                                   ),
                                 ),
@@ -374,12 +375,9 @@ class _BuildDropDownButton<T> extends StatelessWidget {
                           )
                         : SizedBox(
                             height: buttonHeight,
-                            child: Center(
-                              widthFactor: 1,
-                              child: Text(
-                                selectedItem != null && valueFrom != null ? valueFrom!.call(selectedItem as T) : selectedItem?.toString() ?? hint ?? '',
-                                style: AppFonts.x14Regular.copyWith(color: selectedItem != null ? kBlackColor : kNeutralColor.withAlpha(150)),
-                              ),
+                            child: Text(
+                              selectedItem != null && valueFrom != null ? valueFrom!.call(selectedItem as T) : selectedItem?.toString() ?? hintText,
+                              style: AppFonts.x14Regular.copyWith(color: selectedItem != null ? kBlackColor : kNeutralColor.withAlpha(150)),
                             ),
                           ),
                     buttonStyleData: ButtonStyleData(
@@ -400,7 +398,7 @@ class _BuildDropDownButton<T> extends StatelessWidget {
                       if (!isOpen) searchController.clear();
                     },
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular, vertical: Paddings.regular),
                       alignLabelWithHint: true,
                       border: dropDownWithDecoration
                           ? OutlineInputBorder(borderSide: BorderSide(color: outlinedBorderColor ?? kNeutralLightColor), borderRadius: smallRadius)

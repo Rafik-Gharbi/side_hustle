@@ -19,6 +19,7 @@ class SupportTicket {
   final TicketPriority priority;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final String? guestId;
   final User? user;
   final User? assigned;
   final XFile? logs;
@@ -31,6 +32,7 @@ class SupportTicket {
     required this.description,
     required this.priority,
     this.user,
+    this.guestId,
     this.assigned,
     this.status,
     this.createdAt,
@@ -45,6 +47,7 @@ class SupportTicket {
         priority: TicketPriority.values.singleWhere((element) => element.name == json['priority']),
         status: TicketStatus.values.singleWhere((element) => element.name == json['status']),
         subject: json['subject'],
+        guestId: json['guest_id'],
         description: json['description'],
         user: json['user'] != null ? User.fromJson(json['user']) : null,
         assigned: json['assigned'] != null ? User.fromJson(json['assigned']) : null,
@@ -59,6 +62,7 @@ class SupportTicket {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     if (id != null) data['id'] = id;
+    if (guestId != null) data['guest_id'] = guestId;
     if (status != null) data['status'] = status!.name;
     data['category'] = category.name;
     data['priority'] = priority.name;

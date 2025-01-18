@@ -17,6 +17,7 @@ import '../../../models/store.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/logger_service.dart';
 import '../../../services/theme/theme.dart';
+import '../../../viewmodel/reservation_viewmodel.dart';
 import '../../../widgets/custom_button_with_overlay.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_standard_scaffold.dart';
@@ -68,10 +69,9 @@ class ServiceDetailsScreen extends StatelessWidget {
                           decoration: BoxDecoration(borderRadius: smallRadius, color: kNeutralColor100),
                           child: SizedBox(
                             width: 200,
-                            height: isOwner ? 120 : 60,
                             child: Column(
                               children: [
-                                if (isOwner)
+                                if (isOwner) ...[
                                   ListTile(
                                     shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
                                     title: Text('boost'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
@@ -81,7 +81,19 @@ class ServiceDetailsScreen extends StatelessWidget {
                                       Get.bottomSheet(AddBoostBottomsheet(serviceId: service.id), isScrollControlled: true);
                                     },
                                   ),
-                                if (!isOwner)
+                                  ListTile(
+                                    shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                    title: Text('edit'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                    leading: const Icon(Icons.edit_outlined),
+                                    onTap: () => controller.editService(service),
+                                  ),
+                                  ListTile(
+                                    shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                    title: Text('delete'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                    leading: const Icon(Icons.delete_forever_outlined),
+                                    onTap: () => controller.deleteService(service),
+                                  ),
+                                ] else
                                   ListTile(
                                     shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
                                     title: Text('report'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
@@ -214,7 +226,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                           isVerified: true,
                           () => Buildables.requestBottomsheet(
                             noteController: controller.noteController,
-                            onSubmit: () => controller.bookService(service),
+                            onSubmit: () => ReservationViewmodel.bookService(service),
                             neededCoins: service.coins,
                           ).then((value) => controller.clearFormFields()),
                         ),

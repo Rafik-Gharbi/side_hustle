@@ -63,11 +63,8 @@ exports.filterStores = async (req, res) => {
       AND service.archived = false
       AND store.coordinates IS NOT NULL
       ${categoryId ? `AND service.category_id = :categoryId` : ``}
-      ${
-        priceMin && priceMax
-          ? `AND service.price >= :priceMin AND service.price <= :priceMax`
-          : ``
-      }
+      ${priceMin ? ` AND service.price >= :priceMin` : ``}
+      ${priceMax ? ` AND service.price <= :priceMax` : ``}
       GROUP BY store.id
     ;`;
 
@@ -87,11 +84,8 @@ exports.filterStores = async (req, res) => {
       WHERE (store.name LIKE :searchQuery OR store.description LIKE :searchQuery)
       AND service.archived = false
       ${categoryId ? `AND service.category_id = :categoryId` : ``}
-      ${
-        priceMin && priceMax
-          ? `AND service.price >= :priceMin AND service.price <= :priceMax`
-          : ``
-      }
+      ${priceMin ? ` AND service.price >= :priceMin` : ``}
+      ${priceMax ? ` AND service.price <= :priceMax` : ``}
       GROUP BY store.id
       LIMIT :limit OFFSET :offset
     ;`;
@@ -151,6 +145,7 @@ exports.filterStores = async (req, res) => {
         };
       })
     );
+    shuffleArray(formattedList);
     return res.status(200).json({ formattedList });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);

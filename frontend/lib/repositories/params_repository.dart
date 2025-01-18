@@ -132,4 +132,24 @@ class ParamsRepository extends GetxService {
     }
     return null;
   }
+
+  Future<double?> getMaxTaskPrice() async {
+    try {
+      final response = await ApiBaseHelper().request(RequestType.get, '/params/max-task-price');
+      return Helper.resolveDouble(response?['max']);
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getMaxTaskPrice:\n$e');
+    }
+    return null;
+  }
+
+  Future<double?> getMaxServicePrice() async {
+    try {
+      final response = await ApiBaseHelper().request(RequestType.get, '/params/max-service-price');
+      return Helper.resolveDouble(response?['max']);
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in getMaxServicePrice:\n$e');
+    }
+    return null;
+  }
 }

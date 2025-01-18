@@ -10,6 +10,7 @@ import '../../../../controllers/main_app_controller.dart';
 import '../../../../helpers/form_validators.dart';
 import '../../../../models/category.dart';
 import '../../../../services/theme/theme.dart';
+import '../../../../viewmodel/store_viewmodel.dart';
 import '../../../../widgets/custom_buttons.dart';
 import '../../../../widgets/custom_dropdown.dart';
 import '../../../../widgets/custom_text_field.dart';
@@ -22,7 +23,7 @@ class AddServiceBottomsheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<MyStoreController>(builder: (controller) {
         double attachmentSize = (Get.width - 50) / 3;
-        if ((controller.serviceGallery.length) > 2) attachmentSize = attachmentSize * 0.9;
+        if ((StoreViewmodel.serviceGallery.length) > 2) attachmentSize = attachmentSize * 0.9;
         return Padding(
           padding: const EdgeInsets.only(top: Paddings.exceptional * 2),
           child: SizedBox(
@@ -41,50 +42,61 @@ class AddServiceBottomsheet extends StatelessWidget {
                         Center(child: Text('add_service'.tr, style: AppFonts.x16Bold)),
                         const SizedBox(height: Paddings.extraLarge),
                         CustomTextField(
+                          outlinedBorder: true,
+                          isOptional: false,
                           hintText: 'service_name'.tr,
-                          fieldController: controller.serviceNameController,
+                          fieldController: StoreViewmodel.serviceNameController,
                           validator: FormValidators.notEmptyOrNullValidator,
                         ),
                         const SizedBox(height: Paddings.regular),
                         CustomTextField(
+                          isOptional: false,
+                          outlinedBorder: true,
                           hintText: 'service_description'.tr,
-                          fieldController: controller.serviceDescriptionController,
+                          fieldController: StoreViewmodel.serviceDescriptionController,
                           isTextArea: true,
                           validator: FormValidators.notEmptyOrNullValidator,
                         ),
                         const SizedBox(height: Paddings.regular),
                         CustomTextField(
+                          outlinedBorder: true,
                           hintText: 'whats_included'.tr,
-                          fieldController: controller.serviceIncludedController,
+                          fieldController: StoreViewmodel.serviceIncludedController,
                           isTextArea: true,
                         ),
                         const SizedBox(height: Paddings.regular),
                         CustomTextField(
+                          outlinedBorder: true,
                           hintText: 'whats_not_included'.tr,
-                          fieldController: controller.serviceNotIncludedController,
+                          fieldController: StoreViewmodel.serviceNotIncludedController,
                           isTextArea: true,
                         ),
                         const SizedBox(height: Paddings.regular),
                         CustomTextField(
+                          outlinedBorder: true,
                           hintText: 'note'.tr,
-                          fieldController: controller.serviceNoteController,
+                          fieldController: StoreViewmodel.serviceNoteController,
                           isTextArea: true,
                         ),
                         const SizedBox(height: Paddings.regular),
                         CustomDropDownMenu<Category>(
                           items: MainAppController.find.categories,
                           hint: 'select_category'.tr,
+                          dropDownWithDecoration: true,
                           maxWidth: true,
-                          selectedItem: controller.category,
+                          isRequired: true,
+                          selectedItem: StoreViewmodel.category?.value,
                           buttonHeight: 45,
                           valueFrom: (category) => category.name,
-                          onChanged: (value) => controller.category = value,
-                          validator: (_) => FormValidators.notEmptyOrNullValidator(controller.category?.name),
+                          onChanged: (value) => StoreViewmodel.category?.value = value,
+                          validator: (_) => FormValidators.notEmptyOrNullValidator(StoreViewmodel.category?.value?.name),
                         ),
                         const SizedBox(height: Paddings.regular),
                         CustomTextField(
+                          outlinedBorder: true,
                           hintText: 'service_price'.tr,
-                          fieldController: controller.servicePriceController,
+                          isOptional: false,
+                          fieldController: StoreViewmodel.servicePriceController,
                           textInputType: const TextInputType.numberWithOptions(decimal: true),
                           validator: FormValidators.notEmptyOrNullValidator,
                         ),
@@ -92,21 +104,23 @@ class AddServiceBottomsheet extends StatelessWidget {
                         Row(
                           children: [
                             CustomTextField(
+                              outlinedBorder: true,
                               width: (Get.width - 70) / 2,
                               hintText: 'time_estimation_from'.tr,
-                              fieldController: controller.serviceTimeFromController,
+                              fieldController: StoreViewmodel.serviceTimeFromController,
                               textInputType: const TextInputType.numberWithOptions(decimal: true),
                             ),
                             const SizedBox(width: Paddings.regular),
                             CustomTextField(
+                              outlinedBorder: true,
                               width: (Get.width - 70) / 2,
                               hintText: 'time_estimation_to'.tr,
-                              fieldController: controller.serviceTimeToController,
+                              fieldController: StoreViewmodel.serviceTimeToController,
                               textInputType: const TextInputType.numberWithOptions(decimal: true),
                             ),
                           ],
                         ),
-                        const SizedBox(height: Paddings.large),
+                        const SizedBox(height: Paddings.extraLarge),
                         Text('service_gallery'.tr, style: AppFonts.x14Bold),
                         const SizedBox(height: Paddings.regular),
                         SingleChildScrollView(
@@ -131,11 +145,11 @@ class AddServiceBottomsheet extends StatelessWidget {
                                 ),
                               ),
                               ...List.generate(
-                                controller.serviceGallery.length,
+                                StoreViewmodel.serviceGallery.length,
                                 (index) {
-                                  final picture = controller.serviceGallery[index];
+                                  final picture = StoreViewmodel.serviceGallery[index];
                                   return Padding(
-                                    padding: EdgeInsets.only(right: index < controller.serviceGallery.length - 1 ? Paddings.regular : 0),
+                                    padding: EdgeInsets.only(right: index < StoreViewmodel.serviceGallery.length - 1 ? Paddings.regular : 0),
                                     child: DecoratedBox(
                                       decoration: BoxDecoration(borderRadius: smallRadius, border: regularBorder),
                                       child: SizedBox(

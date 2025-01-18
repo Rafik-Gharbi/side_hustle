@@ -84,7 +84,7 @@ class ChatRepository extends GetxService {
 
   Future<File?> getContract(String id) async {
     try {
-      final result = await ApiBaseHelper().request(RequestType.get, '/public/contracts/$id', sendToken: true);
+      final result = await ApiBaseHelper().request(RequestType.get, '/public/contracts?id=$id&lang=${Get.locale?.languageCode ?? 'en'}', sendToken: true);
       if (result != null) {
         final bytes = result.bodyBytes;
         final dir = await getApplicationDocumentsDirectory();

@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -33,6 +34,7 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<CoinsMarketController>(
+      initState: (state) => FirebaseAnalytics.instance.logScreenView(screenName: 'CoinMarket'),
       builder: (controller) => CustomStandardScaffold(
         backgroundColor: kNeutralColor100,
         title: 'coin_shop'.tr,
@@ -141,6 +143,13 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
               onSuccessPayment: () {
                 TransactionRepository.find.buyCoinPack(pack).then((value) {
                   if (value) controller.update();
+                  FirebaseAnalytics.instance.logEvent(
+                    name: 'purchase_coins',
+                    parameters: {
+                      'pack_name': pack.title,
+                      'price': pack.price,
+                    },
+                  );
                 });
               },
             ),

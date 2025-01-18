@@ -62,7 +62,7 @@ class CustomTextField extends StatefulWidget {
     this.textInputType,
     this.isTextArea = false,
     this.isPassword = false,
-    this.isOptional = false,
+    this.isOptional = true,
     this.readOnly,
     this.height,
     this.width,
@@ -90,19 +90,27 @@ class CustomTextField extends StatefulWidget {
 
 class CustomTextFieldState extends State<CustomTextField> {
   bool _obscureText = true;
+  late String hintText;
+
   CustomTextFieldState(this._obscureText);
+  @override
+  void initState() {
+    super.initState();
+    hintText = (widget.hintText ?? '') + (widget.isOptional ? '' : ' (${'required'.tr})');
+  }
+
   @override
   Widget build(BuildContext context) => Stack(
         children: <Widget>[
-          if (widget.isOptional)
-            Positioned(
-              top: 10,
-              right: 5,
-              child: Text(
-                'lbl_optional'.tr,
-                style: const TextStyle(fontSize: 8),
-              ),
-            ),
+          // if (widget.isOptional)
+          //   Positioned(
+          //     top: 10,
+          //     right: 5,
+          //     child: Text(
+          //       'lbl_optional'.tr,
+          //       style: const TextStyle(fontSize: 8),
+          //     ),
+          //   ),
           ClipRRect(
             borderRadius: widget.borderRadius ?? smallRadius,
             child: Container(
@@ -137,7 +145,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                             : const EdgeInsets.symmetric(horizontal: Paddings.large, vertical: Paddings.regular),
                         labelText: widget.labelText,
                         alignLabelWithHint: true,
-                        label: widget.enableFloatingLabel ? Text(widget.hintText ?? '', style: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor)) : null,
+                        label: widget.enableFloatingLabel ? Text(hintText, style: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor.withAlpha(200))) : null,
                         border: widget.outlinedBorder
                             ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor))
                             : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
@@ -149,11 +157,11 @@ class CustomTextFieldState extends State<CustomTextField> {
                             : UnderlineInputBorder(borderSide: BorderSide(color: widget.outlinedBorderColor ?? kNeutralLightColor)),
                         floatingLabelBehavior: FloatingLabelBehavior.auto,
                         floatingLabelStyle: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(height: 0.2),
-                        hintText: widget.hintText,
-                        hintStyle: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor),
+                        hintText: hintText,
+                        hintStyle: widget.hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor.withAlpha(150)),
                         prefixIcon: widget.prefixIcon,
                         constraints: BoxConstraints(maxHeight: widget.height ?? double.infinity),
-                        suffixIconConstraints: BoxConstraints(maxHeight: widget.height ?? 40, maxWidth: 40),
+                        suffixIconConstraints: BoxConstraints(maxHeight: widget.height ?? 40, maxWidth: 50),
                         suffixIcon: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
                           child: widget.suffixIcon ??

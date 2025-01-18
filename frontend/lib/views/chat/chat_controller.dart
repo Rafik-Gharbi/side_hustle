@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+import '../../constants/shared_preferences_keys.dart';
 import '../../controllers/main_app_controller.dart';
 import '../../helpers/buildables.dart';
 import '../../helpers/helper.dart';
@@ -21,6 +23,8 @@ import '../../services/authentication_service.dart';
 import '../../services/logger_service.dart';
 import '../../services/shared_preferences.dart';
 import '../../services/stream_socket.dart';
+import '../../services/tutorials/chat_tutorial.dart';
+import '../../services/tutorials/create_contract_tutorial.dart';
 import 'components/messages_screen.dart';
 import 'components/payment_dialog.dart';
 
@@ -46,7 +50,6 @@ class ChatController extends GetxController {
   RxBool isLoadingNewChat = true.obs;
   bool isSearchMode = false;
   int page = 1;
-  bool openSearchInChat = false;
   bool isLoadingUser = true;
   bool endLoadMore = false;
   bool endLoadBefore = false;
@@ -59,6 +62,9 @@ class ChatController extends GetxController {
   RxBool openSearchBar = false.obs;
   RxBool openMessagesSearchBar = false.obs;
   Reservation? currentReservation;
+  List<TargetFocus> targets = [];
+  GlobalKey firstChatKey = GlobalKey();
+  GlobalKey searchIconKey = GlobalKey();
 
   DiscussionDTO? get selectedChatBubble => _selectedChatBubble;
 
@@ -74,7 +80,12 @@ class ChatController extends GetxController {
     }
     // Join the chat room when selecting a discussion
     if (selectedChatBubble != null) {
-      if (Get.currentRoute != MessagesScreen.routeName) Get.toNamed(MessagesScreen.routeName);
+      if (Get.currentRoute != MessagesScreen.routeName) {
+        Get.toNamed(
+          MessagesScreen.routeName,
+          arguments: searchDiscussionsController.text.isNotEmpty ? searchDiscussionsController.text : null,
+        );
+      }
       currentReservation = selectedChatBubble!.reservation;
       joinRoom();
     }
@@ -90,19 +101,52 @@ class ChatController extends GetxController {
         _loadMoreMessages();
       }
     });
+    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () {
+      if (!(SharedPreferencesService.find.get(hasFinishedChatTutorialKey) == 'true')) {
+        Helper.waitAndExecute(() => MainAppController.find.isChatScreen, () {
+          ChatTutorial.showTutorial();
+          update();
+        });
+      }
+      if (!(SharedPreferencesService.find.get(hasFinishedCreateContractTutorialKey) == 'true')) {
+        Helper.waitAndExecute(() => MainAppController.find.isChatScreen, () {
+          CreateContractTutorial.showTutorial();
+          update();
+        });
+      }
+    });
     init();
   }
 
   Future<void> init() async {
     loggedInUser ??= (await AuthenticationService.find.fetchUserData())?.user;
     initSocket();
+    searchMessagesController.text = '';
+    searchDiscussionsController.text = '';
     userChatPropertiesOriginal = await getUserChatHistory();
     userChatPropertiesFiltered = List.of(userChatPropertiesOriginal);
     if (Get.arguments != null && Get.arguments is Reservation) {
-      selectedChatBubble = _getSelectedDiscussionFromUserBubbles(Get.arguments.id);
+      final reservation = Get.arguments as Reservation;
+      selectedChatBubble = _getSelectedDiscussionFromUserBubbles(reservation.id!);
       selectedChatBubble ??= DiscussionDTO(
-          id: -1, ownerId: loggedInUser!.id, ownerName: loggedInUser!.name, userId: Get.arguments.provider.id, userName: Get.arguments.provider.name, reservation: Get.arguments);
+        id: -1,
+        ownerId: loggedInUser!.id,
+        ownerName: loggedInUser!.name,
+        reservation: reservation,
+        userId: reservation.isTask
+            ? reservation.provider.id
+            : reservation.isService
+                ? reservation.user.id
+                : -1,
+        userName: reservation.isTask
+            ? reservation.provider.name
+            : reservation.isService
+                ? reservation.user.name
+                : 'error_occured'.tr,
+      );
     }
+    openSearchBar.value = false;
+    openMessagesSearchBar.value = false;
     isLoading.value = false;
     update();
   }
@@ -165,7 +209,7 @@ class ChatController extends GetxController {
             .map((e) => e['id'] is String && Helper.isUUID(e['id'])
                 ? ChatModel(
                     id: -1,
-                    message: jsonEncode(Contract.fromJson(e).toJson(includeOwner: true)),
+                    message: jsonEncode(Contract.fromChatJson(e).toJson(includeOwner: true)),
                     createdAt: DateTime.now(),
                     updatedAt: DateTime.now(),
                     recieverId: selectedChatBubble!.userId!,
@@ -190,7 +234,7 @@ class ChatController extends GetxController {
         update();
       });
       MainAppController.find.socket!.on('newContract', (data) {
-        final contract = Contract.fromJson(data['contract']);
+        final contract = Contract.fromChatJson(data['contract']);
         discussionHistory.insert(
           0,
           ChatModel(
@@ -261,7 +305,7 @@ class ChatController extends GetxController {
     if (MainAppController.find.socket != null) {
       MainAppController.find.socket!.emit('join', {
         'connected': AuthenticationService.find.jwtUserData?.id,
-        'sender': selectedChatBubble!.userId,
+        'sender': selectedChatBubble!.userId == AuthenticationService.find.jwtUserData?.id ? selectedChatBubble!.ownerId : selectedChatBubble!.userId,
         'discussionId': selectedChatBubble?.id,
       });
     }
@@ -357,7 +401,9 @@ class ChatController extends GetxController {
     update();
   }
 
-  searchChatMessages(String value) {}
+  void searchChatMessages(String value) {
+    // TODO search current Discussion for past messages
+  }
 
   void clear() {
     userChatPropertiesFiltered = [];
@@ -377,11 +423,12 @@ class ChatController extends GetxController {
     await init();
   }
 
-  void createContract() {
+  void createContract(BuildContext context) {
     if (hasOngoingReservation) {
       Helper.goBack();
       Buildables.createContractBottomsheet(
         isTask: currentTask != null,
+        context: context,
         contract: Contract(
           description: currentTask?.description ?? currentService?.description ?? '',
           delivrables: currentTask?.delivrables ?? currentService?.included ?? '',

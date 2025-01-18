@@ -32,28 +32,29 @@ module.exports = (app) => {
   );
   router.get(
     "/support-tickets",
-    tokenVerification,
+    tokenVerificationOptional,
     userController.getSupportTickets
   );
   router.post(
     "/support-ticket",
-    tokenVerification,
+    tokenVerificationOptional,
     fileUploadSupport,
     userController.addSupportTicket
   );
   router.put(
     "/support-ticket",
-    tokenVerification,
+    tokenVerificationOptional,
     userController.updateSupportTicket
   );
+  router.put("/guest-data", tokenVerification, userController.updateGuestData);
   router.get(
-    "/support-messages/:id",
-    tokenVerification,
+    "/support-messages",
+    tokenVerificationOptional,
     userController.getSupportMessages
   );
   router.post(
     "/support-message",
-    tokenVerification,
+    tokenVerificationOptional,
     fileUploadSupport,
     userController.sendSupportMessage
   );

@@ -47,6 +47,21 @@ class Contract {
         isPayed: json['isPayed'] ?? false,
       );
 
+  factory Contract.fromChatJson(Map<String, dynamic> json) => Contract(
+        id: json['id'],
+        description: json['description'],
+        delivrables: json['delivrables'],
+        finalPrice: Helper.resolveDouble(json['finalPrice']),
+        createdAt: DateTime.parse(json['createdAt']),
+        dueDate: DateTime.parse(json['dueDate']),
+        task: json['reservation']['task'] != null ? Task.fromJson(json['reservation']['task']) : null,
+        service: json['reservation']['service'] != null ? Service.fromJson(json['reservation']['service']) : null,
+        provider: User.fromJson(json['provider']),
+        seeker: User.fromJson(json['seeker']),
+        isSigned: json['isSigned'] ?? false,
+        isPayed: json['isPayed'] ?? false,
+      );
+
   Map<String, dynamic> toJson({bool includeOwner = false}) {
     final Map<String, dynamic> data = {};
     if (id != null) data['id'] = id;

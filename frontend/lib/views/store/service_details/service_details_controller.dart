@@ -1,12 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-import '../../../helpers/helper.dart';
-import '../../../models/reservation.dart';
 import '../../../models/service.dart';
 
-import '../../../repositories/reservation_repository.dart';
-import '../../../services/authentication_service.dart';
+import '../../../viewmodel/store_viewmodel.dart';
 
 class ServiceDetailsController extends GetxController {
   final TextEditingController noteController = TextEditingController();
@@ -16,22 +13,13 @@ class ServiceDetailsController extends GetxController {
     noteController.clear();
   }
 
-  Future<void> bookService(Service service) async {
-    final result = await ReservationRepository.find.addServiceReservation(
-      reservation: Reservation(
-        service: service,
-        date: DateTime.now(),
-        totalPrice: service.price ?? 0,
-        user: AuthenticationService.find.jwtUserData!,
-        provider: service.owner!,
-        note: noteController.text,
-        coins: service.coins,
-        // coupon: coupon,
-      ),
-    );
-    if (result) {
-      Helper.goBack();
-      Helper.snackBar(message: 'service_booked_successfully'.tr);
-    }
+  void editService(Service service) {
+    Get.back();
+    StoreViewmodel.editService(service, onFinish: update);
+  }
+
+  void deleteService(Service service) {
+    Get.back();
+    StoreViewmodel.deleteService(service, onFinish: update);
   }
 }

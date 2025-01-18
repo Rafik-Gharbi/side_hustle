@@ -99,18 +99,50 @@ class CategoryLoadingEffect extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: List.generate(
-        isBottomSheet ? 2 : 1,
+        isBottomSheet ? 3 : 1,
         (index) => Padding(
-          padding: EdgeInsets.only(bottom: isBottomSheet ? Paddings.regular : 0),
+          padding: EdgeInsets.symmetric(vertical: isBottomSheet ? Paddings.regular : 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(
               isBottomSheet ? 3 : 4,
-              (index) => CardLoading(
-                height: (Get.width - 60) / 4,
-                width: (Get.width - 60) / 4,
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                margin: const EdgeInsets.only(bottom: 10),
+              (index) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Paddings.small),
+                child: Stack(
+                  children: [
+                    if (!isBottomSheet)
+                      Positioned.fill(
+                        child: CardLoading(
+                          height: (Get.width - 100) / 4,
+                          width: (Get.width - 100) / 4,
+                          borderRadius: const BorderRadius.all(Radius.circular(10)),
+                          margin: const EdgeInsets.only(bottom: 10),
+                          cardLoadingTheme: CardLoadingTheme(colorOne: kNeutralLightColor, colorTwo: kNeutralLightOpacityColor),
+                        ),
+                      ),
+                    Padding(
+                      padding: EdgeInsets.all(isBottomSheet ? 0 : Paddings.regular),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CardLoading(
+                            height: isBottomSheet ? (Get.width - 100) / 6 : (Get.width - 100) / 7,
+                            width: isBottomSheet ? (Get.width - 100) / 6 : (Get.width - 100) / 7,
+                            borderRadius: circularRadius,
+                            margin: const EdgeInsets.only(bottom: 10),
+                          ),
+                          const SizedBox(height: Paddings.small),
+                          CardLoading(
+                            height: 20,
+                            width: isBottomSheet ? (Get.width - 100) / 3 : (Get.width - 100) / 5,
+                            borderRadius: smallRadius,
+                            margin: const EdgeInsets.only(bottom: 10),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

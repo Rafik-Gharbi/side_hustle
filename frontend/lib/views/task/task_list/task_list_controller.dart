@@ -44,8 +44,8 @@ class TaskListController extends GetxController {
 
   Future<void> fetchSearchedTasks({FilterModel? filter, String? searchQuery, String? taskId, bool boosted = false}) async {
     fetchBoostedTasks = boosted;
-    if (searchQuery != null && searchQuery.isNotEmpty) {
-      openSearchBar.value = true;
+    if (searchQuery != null) {
+      openSearchBar.value = searchQuery.isNotEmpty;
       searchTaskController.text = searchQuery;
     }
     if (filter != null) _filterModel = filter;

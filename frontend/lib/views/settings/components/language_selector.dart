@@ -35,7 +35,7 @@ class LanguageSelectorState extends State<LanguageSelector> {
     for (final locale in AppLocalization().supportedLocal) {
       list.add(
         ListTile(
-          title: Text(Helper.getReadableLanguage(locale.languageCode)),
+          title: Text(Helper.getReadableLanguage(locale.languageCode, locale.countryCode)),
           trailing: _current == locale ? const Icon(Icons.check, color: Colors.green) : null,
           selected: _current == locale,
           onTap: () {

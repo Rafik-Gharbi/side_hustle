@@ -38,6 +38,9 @@ class Reservation {
     this.note = '',
   });
 
+  bool get isTask => task != null;
+  bool get isService => service != null;
+
   factory Reservation.fromJson(Map<String, dynamic> json) => Reservation(
         id: json['id'],
         task: json['task'] != null ? Task.fromJson(json['task'], attachments: json['taskAttachments']) : null,

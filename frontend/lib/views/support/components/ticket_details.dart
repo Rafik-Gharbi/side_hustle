@@ -5,6 +5,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../constants/colors.dart';
+import '../../../constants/shared_preferences_keys.dart';
 import '../../../constants/sizes.dart';
 import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
@@ -15,6 +16,7 @@ import '../../../models/user.dart';
 import '../../../networking/api_base_helper.dart';
 import '../../../repositories/user_repository.dart';
 import '../../../services/authentication_service.dart';
+import '../../../services/shared_preferences.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_dropdown.dart';
@@ -45,8 +47,9 @@ class TicketDetails extends StatelessWidget {
               ticketId: ticketId,
               message: messageController.text,
               attachment: attachment,
+              guestId: SharedPreferencesService.find.get(guestIdKey),
             ))
-            .then((value) => setState(() {}));
+            .then((value) => setState(() => attachment = null));
         messageController.clear();
       }
 
@@ -72,6 +75,7 @@ class TicketDetails extends StatelessWidget {
                     subject: currentTicket.subject,
                     description: currentTicket.description,
                     priority: ticketPriority,
+                    guestId: SharedPreferencesService.find.get(guestIdKey),
                   ));
                   if (result != null) setState(() => currentTicket = result);
                 },

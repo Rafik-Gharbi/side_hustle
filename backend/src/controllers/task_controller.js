@@ -130,14 +130,21 @@ exports.filterTasks = async (req, res) => {
     const querySearch = req.query.searchQuery ?? "";
     let governorateId = req.query.governorateId;
     const searchMode = req.query.searchMode;
-    const minPrice = req.query.priceMin;
-    const maxPrice = req.query.priceMax;
+    let minPrice = req.query.priceMin;
+    let maxPrice = req.query.priceMax;
     const page = req.query.page;
     const limitEntry = req.query.limit;
     const currentUserId = req.decoded?.id;
     let categoryIdFilter = req.query.categoryId;
     let nearby = req.query.nearby;
     let taskIdFilter = req.query.taskId;
+
+    if (minPrice) {
+      minPrice = parseFloat(minPrice);
+    }
+    if (maxPrice) {
+      maxPrice = parseFloat(maxPrice);
+    }
 
     const pageQuery = !page || page === "0" ? 1 : page;
     const limitQuery = limitEntry ? parseInt(limitEntry) : 9;
@@ -213,25 +220,25 @@ exports.taskRequest = async (req, res) => {
 
     const query = `
       SELECT
-        task.*,
-        user.id AS user_id,
-        user.name,
-        user.email,
-        user.gender,
-        user.birthdate,
-        user.picture,
-        user.governorate_id AS user_governorate_id,
-        user.phone_number,
-        user.role,
-        CASE WHEN COUNT(CASE WHEN reservation.status IN('confirmed', 'finished') THEN 1 END) > 0 
-          THEN -1 ELSE COUNT(reservation.id) END AS condidates
+      task.*,
+      user.id AS user_id,
+      user.name,
+      user.email,
+      user.gender,
+      user.birthdate,
+      user.picture,
+      user.governorate_id AS user_governorate_id,
+      user.phone_number,
+      user.role,
+      CASE WHEN COUNT(CASE WHEN reservation.status IN('confirmed', 'finished') THEN 1 END) > 0 
+        THEN -1 ELSE COUNT(reservation.id) END AS condidates
       FROM task JOIN user ON task.owner_id = user.id 
       LEFT JOIN reservation ON reservation.task_id = task.id 
       WHERE task.owner_id = :userId
       GROUP BY task.id
-      ORDER BY condidates DESC
+      ORDER BY condidates DESC, task.createdAt DESC
       LIMIT :limit OFFSET :offset
-;`;
+  ;`;
     const tasks = await sequelize.query(query, {
       type: sequelize.QueryTypes.SELECT,
       replacements: {

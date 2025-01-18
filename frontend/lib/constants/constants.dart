@@ -8,6 +8,8 @@ import '../models/category.dart';
 import 'assets.dart';
 import 'colors.dart';
 
+const double serviceFees = 0.06;
+
 const String playStoreUrl = 'https://play.google.com/store/apps/details?id=com.sparkedgesolution.dootify&hl=en-US&ah=tuR7bT-vrcA-nkaHiSuMxo8njw4';
 const String appStoreUrl = 'https://play.google.com/store/apps/details?id=com.sparkedgesolution.dootify&hl=en-US&ah=tuR7bT-vrcA-nkaHiSuMxo8njw4';
 const LatLng defaultLocation = LatLng(34.7403, 10.7604);
@@ -27,7 +29,7 @@ final anyCategory = Category(id: -1, name: 'any'.tr, description: '', icon: Asse
 
 const String phoneRegex = r'^(?:[+0][1-9])?[0-9]{10,12}$';
 
-const double kMinPriceRange = 20;
+const double kMinPriceRange = 0;
 const double kMaxPriceRange = 2200;
 
 // Define when screens adabt Mobile version UI

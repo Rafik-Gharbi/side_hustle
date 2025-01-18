@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -5,6 +6,7 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../../constants/assets.dart';
 import '../../constants/colors.dart';
 import '../../constants/constants.dart';
+import '../../constants/shared_preferences_keys.dart';
 import '../../constants/sizes.dart';
 import '../../controllers/main_app_controller.dart';
 import '../../helpers/buildables.dart';
@@ -13,6 +15,7 @@ import '../../models/filter_model.dart';
 import '../../services/authentication_service.dart';
 import '../../services/shared_preferences.dart';
 import '../../services/theme/theme.dart';
+import '../../viewmodel/reservation_viewmodel.dart';
 import '../../widgets/booking_card.dart';
 import '../../widgets/categories_bottomsheet.dart';
 import '../../widgets/catgory_card.dart';
@@ -37,41 +40,29 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasFinishedHomeTutorial = SharedPreferencesService.find.get(hasFinishedHomeTutorialKey) == 'true';
     return GetBuilder<HomeController>(
-      init: HomeController(),
-      // initState: (state) => Helper.waitAndExecute(
-      //   () => state.controller != null,
-      //   () => TutorialCoachMark(
-      //     targets: state.controller!.targets,
-      //     colorShadow: kNeutralOpacityColor,
-      //     // alignSkip: Alignment.bottomRight,
-      //     textSkip: 'SKIP',
-      //     // paddingFocus: 10,
-      //     // opacityShadow: 0.8,
-      //     onClickTarget: (target) {
-      //       print(target);
-      //     },
-      //     onClickTargetWithTapPosition: (target, tapDetails) {
-      //       print('target: $target');
-      //       print('clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}');
-      //     },
-      //     onClickOverlay: (target) {
-      //       print(target);
-      //     },
-      //     onSkip: () {
-      //       print('skip');
-      //       return true;
-      //     },
-      //     onFinish: () {
-      //       print('finish');
-      //     },
-      //   )..show(context: context),
-      // ),
+      initState: (state) => Helper.waitAndExecute(
+        () => state.controller != null,
+        () {
+          FirebaseAnalytics.instance.logScreenView(screenName: 'HomeScreen');
+          hasFinishedHomeTutorial
+              ? null
+              : (TutorialCoachMark(
+                  targets: state.controller!.targets,
+                  colorShadow: kNeutralOpacityColor,
+                  hideSkip: true,
+                  onFinish: () => SharedPreferencesService.find.add(hasFinishedHomeTutorialKey, 'true'),
+                )..show(context: context));
+        },
+      ),
       didChangeDependencies: (state) => MainAppController.find.isHomeScreen ? Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()) : {},
       builder: (controller) {
-        controller.categoryRowKey = GlobalKey();
-        controller.searchFieldKey = GlobalKey();
-        controller.advancedFilterKey = GlobalKey();
+        if (hasFinishedHomeTutorial) {
+          controller.categoryRowKey = GlobalKey();
+          controller.searchFieldKey = GlobalKey();
+          controller.advancedFilterKey = GlobalKey();
+        }
 
         return Padding(
           padding: const EdgeInsets.all(Paddings.large),
@@ -118,6 +109,7 @@ class HomeScreen extends StatelessWidget {
                                       }),
                                     ),
                               CustomButtons.icon(
+                                key: controller.mapViewKey,
                                 icon: const Icon(Icons.map_outlined),
                                 onPressed: () => Get.bottomSheet(const MapScreen(isTasks: true), isScrollControlled: true),
                               ),
@@ -146,6 +138,7 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                       CustomButtonWithOverlay(
+                        key: controller.searchModeDropdownKey,
                         buttonWidth: 140,
                         offset: Offset(Helper.isArabic ? -80 : -10, 35),
                         button: Align(
@@ -331,7 +324,7 @@ class HomeScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: Paddings.small),
                             child: BookingCard(
                               reservation: controller.serviceReservations[index],
-                              onMarkDone: () => controller.markServiceReservationAsDone(controller.serviceReservations[index]),
+                              onMarkDone: () => ReservationViewmodel.markServiceReservationAsDone(controller.serviceReservations[index], onFinish: controller.init),
                             ),
                           ),
                         ),
@@ -399,9 +392,8 @@ class HomeScreen extends StatelessWidget {
                         if (SharedPreferencesService.find.isReady.value)
                           Buildables.buildTitle(
                             '${'new_tasks'.tr} ${'nearby'.tr}',
-                            onSeeMore: controller.nearbyTasks.isEmpty
-                                ? null
-                                : () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: controller.filterModel)),
+                            onSeeMore:
+                                controller.nearbyTasks.isEmpty ? null : () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: controller.filterModel)),
                           ),
                         LoadingCardEffect(
                           isLoading: controller.isLoading,
@@ -439,7 +431,7 @@ class HomeScreen extends StatelessWidget {
                             itemCount: controller.governorateTasks.length,
                             itemBuilder: (context, index) => Padding(
                               padding: const EdgeInsets.only(bottom: Paddings.small),
-                              child: TaskCard(task: controller.governorateTasks[index]),
+                              child: TaskCard(key: index == 0 ? controller.firstTaskKey : null, task: controller.governorateTasks[index]),
                             ),
                           ),
                         ),

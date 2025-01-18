@@ -10,8 +10,12 @@ import 'package:path_provider/path_provider.dart';
 Future<File> get databaseFile async {
   // We use `path_provider` to find a suitable path to store our data in.
   final Directory appDir = await getApplicationDocumentsDirectory();
-  final String dbPath = p.join(appDir.path, 'dootify.db');
-  return File(dbPath);
+  final file = File(p.join(appDir.path, 'dootify.db'));
+  await file.delete();
+  await file.create();
+  // ignore: avoid_print
+  print('Database has been recreated');
+  return file;
 }
 
 /// Obtains a database connection for running drift in a Dart VM.

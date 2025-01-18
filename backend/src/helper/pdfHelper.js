@@ -280,7 +280,7 @@ const generateContractPDF = async (data, language = "en") => {
             .replace(/\)/g, "(") // Replace ")" with "("
             .replace(/TEMP_RIGHT_PAREN/g, ")"); // Replace temp placeholder with ")"
 
-        if (match) {
+        if (match && language === "ar") {
           // If the line is a title, reverse the title text separately
           const number = match[1]; // Extract the number
           const text = match[2]; // Extract the title text
@@ -291,11 +291,14 @@ const generateContractPDF = async (data, language = "en") => {
             alignment: language === "ar" ? "right" : "left",
             margin: [0, 5, 0, 5],
           };
-        }
+        } else return { text: line, margin: [0, 5, 0, 5] };
 
         // For regular lines, reverse all words and handle parentheses
         return {
-          text: reverseParentheses(line.split(" ").reverse().join(" ")),
+          text:
+            language === "ar"
+              ? reverseParentheses(line.split(" ").reverse().join(" "))
+              : line,
           alignment: language === "ar" ? "right" : "left",
           margin: [0, 5, 0, 5],
         };

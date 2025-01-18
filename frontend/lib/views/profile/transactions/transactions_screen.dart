@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/constants.dart';
+import '../../../constants/shared_preferences_keys.dart';
 import '../../../constants/sizes.dart';
 import '../../../helpers/buildables.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/transaction.dart';
+import '../../../services/shared_preferences.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
@@ -20,15 +23,32 @@ class TransactionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasFinishedChatTutorial = SharedPreferencesService.find.get(hasFinishedTransactionsTutorialKey) == 'true';
+    bool hasOpenedTutorial = false;
     return HoldInSafeArea(
       child: GetBuilder<TransactionsController>(
+        initState: (state) => Helper.waitAndExecute(() => state.controller != null, () {
+          if (!hasFinishedChatTutorial &&
+              Get.currentRoute == routeName &&
+              !hasOpenedTutorial &&
+              state.controller!.transactions.isNotEmpty &&
+              state.controller!.targets.isNotEmpty) {
+            hasOpenedTutorial = true;
+            TutorialCoachMark(
+              targets: state.controller!.targets,
+              colorShadow: kNeutralOpacityColor,
+              hideSkip: true,
+              onFinish: () => SharedPreferencesService.find.add(hasFinishedTransactionsTutorialKey, 'true'),
+            ).show(context: context);
+          }
+        }),
         builder: (controller) => CustomStandardScaffold(
           backgroundColor: kNeutralColor100,
           title: 'my_transactions'.tr,
           body: SingleChildScrollView(
             child: Column(
               children: [
-                Buildables.buildAvailableCoins(onBackFromMarket: controller.init),
+                Buildables.buildAvailableCoins(key: controller.coinsOverview, onBackFromMarket: controller.init),
                 LoadingRequest(
                   isLoading: controller.isLoading,
                   child: Padding(
@@ -149,6 +169,7 @@ class TransactionsScreen extends StatelessWidget {
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 2),
                                     child: ListTile(
+                                      key: index == 0 ? controller.firstTransactionsKey : null,
                                       title: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [

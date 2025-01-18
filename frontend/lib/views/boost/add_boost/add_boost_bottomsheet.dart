@@ -76,6 +76,7 @@ class AddBoostBottomsheet extends StatelessWidget {
                                   CustomTextField(
                                     width: 100,
                                     textFontSize: 14,
+                                    isOptional: false,
                                     fieldController: TextEditingController(text: '${controller.budgetRange.value.toStringAsFixed(0)} ${MainAppController.find.currency.value}'),
                                     textInputType: const TextInputType.numberWithOptions(decimal: true),
                                     onChanged: (value) => Helper.onSearchDebounce(
