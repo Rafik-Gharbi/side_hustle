@@ -11,7 +11,7 @@ Future<File> get databaseFile async {
   // We use `path_provider` to find a suitable path to store our data in.
   final Directory appDir = await getApplicationDocumentsDirectory();
   final file = File(p.join(appDir.path, 'dootify.db'));
-  await file.delete();
+  if (await file.exists()) await file.delete();
   await file.create();
   // ignore: avoid_print
   print('Database has been recreated');

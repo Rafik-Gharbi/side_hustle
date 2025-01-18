@@ -25,7 +25,7 @@ class TermsConditionScreen extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('error_occurred'.tr));
           } else if (!snapshot.hasData) {
-            return const Center(child: Text('No terms and conditions available'));
+            return Center(child: Text('no_file_available'.tr));
           } else {
             return SfPdfViewer.file(snapshot.data!, pageSpacing: 1);
           }

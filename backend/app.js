@@ -48,12 +48,24 @@ app.use(express.static(path.join(__dirname, "public")));
 // Add encryption in transit
 app.use((req, res, next) => {
   const originalSend = res.send;
+  const isTrustedSource = req.ip === "127.0.0.1";
+  const encryptionEnabled =
+    process.env.ENCRYPTION_ENABLED === "true" && isTrustedSource;
+  if (!encryptionEnabled) {
+    console.warn(
+      "Encryption is disabled for this request. Debug mode is active."
+    );
+  }
   res.send = function (data) {
-    try {
-      const parsedData = JSON.parse(data);
-      const encrypted = encryptData(JSON.stringify(parsedData));
-      return originalSend.call(this, encrypted);
-    } catch (e) {
+    if (encryptionEnabled) {
+      try {
+        const parsedData = JSON.parse(data);
+        const encrypted = encryptData(JSON.stringify(parsedData));
+        return originalSend.call(this, encrypted);
+      } catch (e) {
+        return originalSend.call(this, data);
+      }
+    } else {
       return originalSend.call(this, data);
     }
   };
@@ -63,7 +75,6 @@ app.use((req, res, next) => {
   }
   next();
 });
-
 
 // API for getting created contract
 app.get(

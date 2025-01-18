@@ -157,12 +157,13 @@ Future<void> main() async {
         null,
         [
           NotificationChannel(
-              channelGroupKey: 'basic_channel_group',
-              channelKey: 'basic_channel',
-              channelName: 'Basic notifications',
-              channelDescription: 'Notification channel for basic tests',
-              defaultColor: kPrimaryColor,
-              ledColor: Colors.white)
+            channelGroupKey: 'basic_channel_group',
+            channelKey: 'basic_channel',
+            channelName: 'Basic notifications',
+            channelDescription: 'Notification channel for basic tests',
+            defaultColor: kPrimaryColor,
+            ledColor: Colors.white,
+          )
         ],
         channelGroups: [NotificationChannelGroup(channelGroupKey: 'basic_channel_group', channelGroupName: 'Basic group')],
         debug: true,

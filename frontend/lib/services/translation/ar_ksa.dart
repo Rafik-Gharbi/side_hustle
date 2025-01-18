@@ -824,6 +824,9 @@ final Map<String, String> arKSA = <String, String>{
   'first_coin_transaction_msg':
       'عرض سجل معاملات العملات الخاصة بك على هذه الشاشة. يبدأ كل مستخدم بـ 50 عملة أساسية، ويمكنك كسب ما يصل إلى 100 عملة أساسية عن طريق دعوة الأصدقاء والعائلة للانضمام.',
   'required': 'مطلوب',
+  'and': 'و',
+  'by_using_you_agree': 'باستخدامك لهذا التطبيق، فإنك توافق على ',
+  'no_file_available': 'لا يوجد ملف متاح!',
   // Validation messages
   'valid_for_x_days': 'متاح ل@days يوم',
   'max_value_is': 'القيمة القصوى هي @value!',

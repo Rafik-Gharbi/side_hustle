@@ -858,6 +858,9 @@ final Map<String, String> frFr = <String, String>{
   'diffrent_new_password': 'Veuillez entrer un nouveau mot de passe différent !',
   'field_should_include': 'Le champ doit inclure au moins @number caractères !',
   'invalid_confirmation': 'Confirmation invalide !',
+  'and': 'et',
+  'by_using_you_agree': 'En utilisant cette application, vous acceptez nos ',
+  'no_file_available': 'Aucun fichier disponible!',
   // Backend response messages
   'mail_verif_failed': 'Échec de la vérification de votre compte',
   'otp_verif_failed': 'Échec de la vérification du code OTP',
