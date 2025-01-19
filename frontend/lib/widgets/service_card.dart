@@ -57,20 +57,24 @@ class ServiceCard extends StatelessWidget {
           ? SwipeActionCell(
               key: ObjectKey(service),
               backgroundColor: Colors.transparent,
-              trailingActions: [
-                SwipeAction(
-                  performsFirstActionWithFullSwipe: true,
-                  icon: const Icon(Icons.delete_forever_rounded, color: kNeutralColor100),
-                  onTap: (handler) => onDeleteService?.call(),
-                  color: kErrorColor,
-                ),
-                SwipeAction(
-                  performsFirstActionWithFullSwipe: true,
-                  icon: const Icon(Icons.edit_outlined, color: kNeutralColor100),
-                  onTap: (handler) => onEditService?.call(),
-                  color: kSelectedColor,
-                ),
-              ],
+              trailingActions: onDeleteService == null && onEditService == null
+                  ? null
+                  : [
+                      if (onDeleteService != null)
+                        SwipeAction(
+                          performsFirstActionWithFullSwipe: true,
+                          icon: const Icon(Icons.delete_forever_rounded, color: kNeutralColor100),
+                          onTap: (handler) => onDeleteService?.call(),
+                          color: kErrorColor,
+                        ),
+                      if (onEditService != null)
+                        SwipeAction(
+                          performsFirstActionWithFullSwipe: true,
+                          icon: const Icon(Icons.edit_outlined, color: kNeutralColor100),
+                          onTap: (handler) => onEditService?.call(),
+                          color: kSelectedColor,
+                        ),
+                    ],
               child: buildServiceCard(),
             )
           : buildServiceCard(),
@@ -112,6 +116,7 @@ class ServiceCard extends StatelessWidget {
                   label: Text(requests > 99 ? '+99' : requests.toString(), style: AppFonts.x11Bold.copyWith(color: kNeutralColor100)),
                   backgroundColor: isOwner ? kErrorColor : Colors.transparent,
                   child: CustomButtons.icon(
+                    disabled: onBookService == null,
                     icon: Icon(isOwner ? Icons.three_p_outlined : Icons.shopping_cart_outlined, size: 18),
                     onPressed: () => onBookService != null ? onBookService!() : {},
                   ),

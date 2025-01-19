@@ -35,6 +35,7 @@ class AnimatedListTileState extends State<AnimatedListTile> with SingleTickerPro
   late AnimationController _animationController;
   late Animation<Offset> _animation;
   bool _isAnimated = false;
+  bool disabled = false;
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class AnimatedListTileState extends State<AnimatedListTile> with SingleTickerPro
     _animation = Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+    disabled = widget.onTap == null;
   }
 
   @override
@@ -67,19 +69,22 @@ class AnimatedListTileState extends State<AnimatedListTile> with SingleTickerPro
           position: _animation,
           child: DecoratedBox(
             decoration: widget.tileDecoration ?? BoxDecoration(borderRadius: smallRadius, color: kNeutralLightOpacityColor),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
-              minVerticalPadding: 0,
-              leading: widget.leading,
-              trailing: widget.trailing,
-              title: widget.widget ??
-                  Text(
-                    widget.title ?? '',
-                    overflow: TextOverflow.ellipsis,
-                    style: widget.titleStyle ?? AppFonts.x16Bold,
-                  ),
-              subtitle: widget.subtitle != null ? Text(widget.subtitle!, style: AppFonts.x14Regular) : null,
-              onTap: () => widget.onTap?.call(),
+            child: Opacity(
+              opacity: disabled ? 0.3 : 1,
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
+                minVerticalPadding: 0,
+                leading: widget.leading,
+                trailing: widget.trailing,
+                title: widget.widget ??
+                    Text(
+                      widget.title ?? '',
+                      overflow: TextOverflow.ellipsis,
+                      style: widget.titleStyle ?? AppFonts.x16Bold,
+                    ),
+                subtitle: widget.subtitle != null ? Text(widget.subtitle!, style: AppFonts.x14Regular) : null,
+                onTap: () => widget.onTap?.call(),
+              ),
             ),
           ),
         ),

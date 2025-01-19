@@ -42,7 +42,12 @@ class ProfileScreen extends StatelessWidget {
         initState: (state) => Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()),
         builder: (controller) => Obx(
           () {
-            if (!hasFinishedProfileTutorial && MainAppController.find.isProfileScreen && !hasOpenedTutorial && controller.targets.isNotEmpty && controller.loggedInUser != null) {
+            if (!hasFinishedProfileTutorial &&
+                MainAppController.find.isProfileScreen &&
+                !hasOpenedTutorial &&
+                controller.targets.isNotEmpty &&
+                controller.loggedInUser != null &&
+                !controller.isLoading.value) {
               hasOpenedTutorial = true;
               TutorialCoachMark(
                 targets: controller.targets,
@@ -215,6 +220,7 @@ class ProfileScreen extends StatelessWidget {
                                                           onTap: () => Get.toNamed(AdminDashboardScreen.routeName)?.then((value) => controller.init()),
                                                         ),
                                                       Buildables.buildActionTile(
+                                                        enabled: MainAppController.find.isConnected,
                                                         label: 'edit_profile'.tr,
                                                         icon: Icons.edit_outlined,
                                                         onTap: () {
@@ -233,6 +239,7 @@ class ProfileScreen extends StatelessWidget {
                                                       ),
                                                       if (AuthenticationService.find.jwtUserData?.isVerified != VerifyIdentityStatus.verified)
                                                         Buildables.buildActionTile(
+                                                          enabled: MainAppController.find.isConnected,
                                                           key: controller.verifyAccountKey,
                                                           actionRequired: AuthenticationService.find.jwtUserData?.isVerified == VerifyIdentityStatus.pending ? 0 : 1,
                                                           label: 'verify_profile'.tr,
@@ -242,6 +249,7 @@ class ProfileScreen extends StatelessWidget {
                                                               : Helper.snackBar(message: 'complete_profile_first'.tr),
                                                         ),
                                                       Buildables.buildActionTile(
+                                                        enabled: MainAppController.find.isConnected,
                                                         label: 'change_password'.tr,
                                                         icon: Icons.password_outlined,
                                                         onTap: () {
@@ -259,6 +267,7 @@ class ProfileScreen extends StatelessWidget {
                                                         onTap: () => Get.toNamed(FavoriteScreen.routeName),
                                                       ),
                                                       Buildables.buildActionTile(
+                                                        enabled: MainAppController.find.isConnected,
                                                         key: controller.subscribeCategoryKey,
                                                         actionRequired: controller.subscribedCategories.isEmpty ? 1 : 0,
                                                         label: 'subscribe_categories'.tr,
@@ -286,6 +295,7 @@ class ProfileScreen extends StatelessWidget {
                                                       ),
                                                       if (controller.userHasBoosts)
                                                         Buildables.buildActionTile(
+                                                          enabled: MainAppController.find.isConnected,
                                                           label: 'my_boosts'.tr,
                                                           icon: Icons.rocket_launch_outlined,
                                                           onTap: () => Get.toNamed(ListBoostScreen.routeName),

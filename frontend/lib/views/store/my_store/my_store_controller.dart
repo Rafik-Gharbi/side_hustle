@@ -62,7 +62,7 @@ class MyStoreController extends GetxController {
   }
 
   MyStoreController({Store? store}) {
-        Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () {
+    Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () {
       if (!(SharedPreferencesService.find.get(hasFinishedCreateStoreTutorialKey) == 'true')) {
         Helper.waitAndExecute(() => Get.currentRoute == MyStoreScreen.routeName && Get.isRegistered<MyStoreController>(), () {
           CreateStoreTutorial.showTutorial();
@@ -70,7 +70,7 @@ class MyStoreController extends GetxController {
         });
       }
     });
-init(store: store);
+    init(store: store);
   }
 
   Future<void> init({Store? store}) async {

@@ -89,10 +89,9 @@ class NotificationsController extends GetxController {
       case NotificationType.booking:
         Future.delayed(const Duration(milliseconds: 600), () {
           if (decodedAction?['isOwner'] != null && (decodedAction?['isOwner'] as bool)) {
-            Get.toNamed(MyStoreScreen.routeName, arguments: decodedAction?['serviceId']);
+            Get.toNamed(MyStoreScreen.routeName, arguments: {'serviceId': decodedAction?['serviceId']});
           } else {
-            // TODO
-            // Get.toNamed(ServiceHistoryScreen.routeName, arguments: decodedAction?['bookingId']);
+            Get.toNamed(MyRequestScreen.routeName, arguments: {'bookingId': decodedAction?['bookingId']});
           }
         });
         MainAppController.find.manageNavigation(screenIndex: 3);

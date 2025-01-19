@@ -7,20 +7,24 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../../controllers/main_app_controller.dart';
+
 Future<File> get databaseFile async {
   // We use `path_provider` to find a suitable path to store our data in.
   final Directory appDir = await getApplicationDocumentsDirectory();
   final file = File(p.join(appDir.path, 'dootify.db'));
-  if (await file.exists()) await file.delete();
-  await file.create();
-  // ignore: avoid_print
-  print('Database has been recreated');
+  if (MainAppController.find.isConnected) {
+    if (await file.exists()) await file.delete();
+    await file.create();
+    // ignore: avoid_print
+    print('Database file has been recreated');
+  }
   return file;
 }
 
 /// Obtains a database connection for running drift in a Dart VM.
 DatabaseConnection connect() => DatabaseConnection.delayed(
-      Future(() async => NativeDatabase.createBackgroundConnection(await databaseFile, logStatements: true)),
+      Future(() async => NativeDatabase.createBackgroundConnection(await databaseFile, logStatements: false)),
     );
 
 // Future<void> validateDatabaseSchema(GeneratedDatabase database) async {

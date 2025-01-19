@@ -35,6 +35,7 @@ class NotificationScreen extends StatelessWidget {
           onBack: () => MainAppController.find.getNotSeenNotifications(),
           title: 'notifications'.tr,
           actionButton: CustomButtons.icon(
+            disabled: !controller.notificationList.any((element) => !element.seen),
             icon: const Icon(Icons.mark_chat_read_outlined, size: 18),
             onPressed: controller.markAllAsRead,
           ),

@@ -10,8 +10,8 @@ import 'colors.dart';
 
 const double serviceFees = 0.06;
 
-const String playStoreUrl = 'https://play.google.com/store/apps/details?id=com.sparkedgesolution.dootify&hl=en-US&ah=tuR7bT-vrcA-nkaHiSuMxo8njw4';
-const String appStoreUrl = 'https://play.google.com/store/apps/details?id=com.sparkedgesolution.dootify&hl=en-US&ah=tuR7bT-vrcA-nkaHiSuMxo8njw4';
+const String playStoreUrl = 'https://play.google.com/store/apps/details?id=com.sparkedgesolutions.dootify&hl=en-US&ah=tuR7bT-vrcA-nkaHiSuMxo8njw4';
+const String appStoreUrl = 'https://play.google.com/store/apps/details?id=com.sparkedgesolutions.dootify&hl=en-US&ah=tuR7bT-vrcA-nkaHiSuMxo8njw4';
 const LatLng defaultLocation = LatLng(34.7403, 10.7604);
 
 const String defaultPrefix = '+216';

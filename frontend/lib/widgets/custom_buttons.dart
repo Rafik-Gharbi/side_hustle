@@ -281,11 +281,7 @@ class CustomButtons extends StatelessWidget {
       case ButtonType.text:
         return OnHover(
           builder: (isHovered) => TextButton(
-            onPressed: disabled
-                ? () {}
-                : () {
-                    onPressed();
-                  },
+            onPressed: disabled ? null : onPressed,
             style: ButtonStyle(
               padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: Paddings.regular)),
               minimumSize: minimumSize != null ? WidgetStateProperty.all(minimumSize) : null,

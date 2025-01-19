@@ -823,9 +823,11 @@ final Map<String, String> enUs = <String, String>{
   'first_coin_transaction': 'This is your first coins transaction',
   'first_coin_transaction_msg': 'View your coin transaction history on this screen. Every user starts with 50 base coins, and you can earn up to 100 base coins by inviting friends and family to join.',
   'required': 'required',
+  // new
   'and': 'and',
   'by_using_you_agree': 'By using this app you agree to our ',
   'no_file_available': 'No file is available!',
+  'later': 'Later',
   // Validation messages
   'max_value_is': 'Max value is @value !',
   'valid_for_x_days': 'Valid for @days days',

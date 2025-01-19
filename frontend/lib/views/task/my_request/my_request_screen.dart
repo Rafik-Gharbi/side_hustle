@@ -36,12 +36,12 @@ class _MyRequestScreenState extends State<MyRequestScreen> with TickerProviderSt
     bool hasListener = false;
     return HoldInSafeArea(
       child: GetBuilder<MyRequestController>(
+        initState: (state) => Get.arguments?['bookingId'] != null ? Future.delayed(Durations.long4, () => tabController.animateTo(1)) : {},
         builder: (controller) {
           if (!hasListener) {
             hasListener = true;
             tabController.addListener(() => controller.tabControllerIndex.value = tabController.index);
           }
-          // TODO when service highlighted go to service tab: tabController.animateTo(1);
           return CustomStandardScaffold(
             backgroundColor: kNeutralColor100,
             onBack: () => ProfileController.find.init(),
@@ -91,7 +91,7 @@ class _MyRequestScreenState extends State<MyRequestScreen> with TickerProviderSt
                                   },
                                 ),
                                 Obx(
-                                  () => controller.isLoadingMore.value && !controller.isEndServiceList
+                                  () => controller.isLoadingMore.value && !controller.isEndReservationList
                                       ? Padding(
                                           padding: const EdgeInsets.only(bottom: Paddings.extraLarge),
                                           child: SizedBox(height: 60, width: Get.width, child: Center(child: Buildables.buildLoadingWidget(height: 80))),
@@ -123,17 +123,13 @@ class _MyRequestScreenState extends State<MyRequestScreen> with TickerProviderSt
                                         reservation: reservation,
                                         spacing: 5,
                                         backgroundColor: kNeutralColor100,
-                                        // onEditService: () => controller.editService(service),
-                                        // onDeleteService: () => controller.deleteService(service),
-                                        // onOpenProposals: () => controller.openProposals(service),
-                                        // condidates: controller.getServiceCondidates(service),
-                                        isHighlighted: controller.highlightedService?.id == reservation.id,
+                                        isHighlighted: controller.highlightedReservation?.id == reservation.id,
                                       ),
                                     );
                                   },
                                 ),
                                 Obx(
-                                  () => controller.isLoadingMore.value && !controller.isEndServiceList
+                                  () => controller.isLoadingMore.value && !controller.isEndReservationList
                                       ? Padding(
                                           padding: const EdgeInsets.only(bottom: Paddings.extraLarge),
                                           child: SizedBox(height: 60, width: Get.width, child: Center(child: Buildables.buildLoadingWidget(height: 80))),

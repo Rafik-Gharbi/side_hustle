@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import '../constants/colors.dart';
 import '../constants/shared_preferences_keys.dart';
 import '../constants/sizes.dart';
+import '../controllers/main_app_controller.dart';
 import '../helpers/helper.dart';
 import '../main.dart';
 import '../services/authentication_service.dart';
@@ -90,6 +91,7 @@ class ApiBaseHelper extends GetxController {
     String? imageName,
     bool sendToken = false,
   }) async {
+    if (!MainAppController.find.isConnected && url != '/params/check-connection') return null;
     if (url == _lastRequestedUrl) LoggerService.logger?.w('Duplicated Request $url');
     _lastRequestedUrl = url;
     late http.Response response;
@@ -285,12 +287,12 @@ class ApiBaseHelper extends GetxController {
   }
 
   Future<(bool, String?)> checkConnectionToBackend() async {
-    // ignore: avoid_print
     if (!changeIpAddressOpened) {
       changeIpAddressOpened = true;
       // ignore: avoid_print
       print('baseUrl: $baseUrl');
       void openIPAddressChanger() {
+        if (kReleaseMode || kDebugMode) return;
         Helper.waitAndExecute(
           () => SharedPreferencesService.find.isReady.value && Get.currentRoute == MainScreenWithBottomNavigation.routeName,
           () => Get.bottomSheet(

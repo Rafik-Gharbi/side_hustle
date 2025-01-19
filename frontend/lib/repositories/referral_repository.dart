@@ -10,7 +10,7 @@ class ReferralRepository extends GetxService {
   Future<List<Referral>?> listReferral() async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/referral/list', sendToken: true);
-      final referrals = (result['referrals'] as List).map((e) => Referral.fromJson(e)).toList();
+      final referrals = (result?['referrals'] as List?)?.map((e) => Referral.fromJson(e)).toList();
       return referrals;
     } catch (e) {
       LoggerService.logger?.e('Error occured in listReferral:\n$e');

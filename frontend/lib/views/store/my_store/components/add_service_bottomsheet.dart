@@ -32,7 +32,7 @@ class AddServiceBottomsheet extends StatelessWidget {
               borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
               color: kNeutralColor100,
               child: Form(
-                key: controller.formKey,
+                key: StoreViewmodel.formKey,
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(Paddings.large),
@@ -79,17 +79,19 @@ class AddServiceBottomsheet extends StatelessWidget {
                           isTextArea: true,
                         ),
                         const SizedBox(height: Paddings.regular),
-                        CustomDropDownMenu<Category>(
-                          items: MainAppController.find.categories,
-                          hint: 'select_category'.tr,
-                          dropDownWithDecoration: true,
-                          maxWidth: true,
-                          isRequired: true,
-                          selectedItem: StoreViewmodel.category?.value,
-                          buttonHeight: 45,
-                          valueFrom: (category) => category.name,
-                          onChanged: (value) => StoreViewmodel.category?.value = value,
-                          validator: (_) => FormValidators.notEmptyOrNullValidator(StoreViewmodel.category?.value?.name),
+                        Obx(
+                          () => CustomDropDownMenu<Category>(
+                            items: MainAppController.find.categories,
+                            hint: 'select_category'.tr,
+                            dropDownWithDecoration: true,
+                            maxWidth: true,
+                            isRequired: true,
+                            selectedItem: StoreViewmodel.category.value.empty ? null : StoreViewmodel.category.value,
+                            buttonHeight: 45,
+                            valueFrom: (category) => category.name,
+                            onChanged: (value) => StoreViewmodel.category.value = value ?? Category.empty(),
+                            validator: (_) => FormValidators.notEmptyOrNullValidator(StoreViewmodel.category.value.name),
+                          ),
                         ),
                         const SizedBox(height: Paddings.regular),
                         CustomTextField(

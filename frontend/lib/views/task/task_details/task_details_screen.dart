@@ -69,8 +69,9 @@ class TaskDetailsScreen extends StatelessWidget {
                                   child: Column(
                                     children: [
                                       ListTile(
+                                        enabled: MainAppController.find.isConnected,
                                         shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                        title: Text('bookmark'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                        title: Text('bookmark'.tr, style: AppFonts.x14Bold.copyWith(color: MainAppController.find.isConnected ? kBlackColor : kDisabledColor)),
                                         leading: Icon(task.isFavorite ? Icons.bookmark_outlined : Icons.bookmark_add_outlined),
                                         onTap: () {
                                           Helper.goBack();
@@ -82,8 +83,9 @@ class TaskDetailsScreen extends StatelessWidget {
                                       ),
                                       if (isOwner)
                                         ListTile(
+                                          enabled: MainAppController.find.isConnected,
                                           shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                          title: Text('boost'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                          title: Text('boost'.tr, style: AppFonts.x14Bold.copyWith(color: MainAppController.find.isConnected ? kBlackColor : kDisabledColor)),
                                           leading: const Icon(Icons.rocket_launch_outlined),
                                           onTap: () {
                                             Helper.goBack();
@@ -92,8 +94,9 @@ class TaskDetailsScreen extends StatelessWidget {
                                         ),
                                       if (task.owner.id != AuthenticationService.find.jwtUserData?.id)
                                         ListTile(
+                                          enabled: MainAppController.find.isConnected,
                                           shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                          title: Text('report'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                          title: Text('report'.tr, style: AppFonts.x14Bold.copyWith(color: MainAppController.find.isConnected ? kBlackColor : kDisabledColor)),
                                           leading: const Icon(Icons.report_outlined),
                                           onTap: () async {
                                             Helper.goBack();
@@ -102,8 +105,9 @@ class TaskDetailsScreen extends StatelessWidget {
                                         )
                                       else
                                         ListTile(
+                                          enabled: MainAppController.find.isConnected,
                                           shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                          title: Text('edit'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                          title: Text('edit'.tr, style: AppFonts.x14Bold.copyWith(color: MainAppController.find.isConnected ? kBlackColor : kDisabledColor)),
                                           leading: const Icon(Icons.edit_outlined),
                                           onTap: () async {
                                             Helper.goBack();
@@ -227,6 +231,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           CustomButtons.elevateSecondary(
+                                            disabled: !MainAppController.find.isConnected,
                                             title: '${'chat_with'.tr} ${controller.confirmedTaskUser.value?.name ?? 'user'.tr}',
                                             titleStyle: AppFonts.x14Regular,
                                             icon: const Icon(Icons.chat_outlined),
@@ -235,6 +240,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                           ),
                                           const SizedBox(height: Paddings.regular),
                                           CustomButtons.elevatePrimary(
+                                            disabled: !MainAppController.find.isConnected,
                                             title: 'mark_task_done'.tr,
                                             titleStyle: AppFonts.x14Regular,
                                             icon: const Icon(Icons.done, color: kNeutralColor100),
@@ -245,12 +251,14 @@ class TaskDetailsScreen extends StatelessWidget {
                                       )
                                     else if (AuthenticationService.find.jwtUserData?.id == task.owner.id)
                                       CustomButtons.elevatePrimary(
+                                        disabled: !MainAppController.find.isConnected,
                                         title: 'check_proposal'.tr,
                                         onPressed: () => Get.toNamed(TaskProposalScreen.routeName, arguments: task),
                                         width: Get.width,
                                       )
                                     else
                                       CustomButtons.elevatePrimary(
+                                        disabled: !MainAppController.find.isConnected,
                                         title: 'Im_interested'.tr,
                                         onPressed: () => Helper.verifyUser(
                                           isVerified: true,
@@ -281,6 +289,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                         children: [
                                           const Icon(Icons.chat_outlined),
                                           CustomButtons.text(
+                                            disabled: !MainAppController.find.isConnected,
                                             title: '${'chat_with'.tr} ${task.owner.name ?? 'user'.tr}',
                                             titleStyle: AppFonts.x14Regular,
                                             onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: controller.reservation),

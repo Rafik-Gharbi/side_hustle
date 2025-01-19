@@ -87,11 +87,12 @@ class RatingOverview extends StatelessWidget {
                   ],
                 ),
               ),
-              CustomButtons.text(
-                title: 'check_all_reviews'.tr,
-                titleStyle: AppFonts.x14Bold,
-                onPressed: onShowAllReviews,
-              ),
+              if (reviews.isNotEmpty)
+                CustomButtons.text(
+                  title: 'check_all_reviews'.tr,
+                  titleStyle: AppFonts.x14Bold,
+                  onPressed: onShowAllReviews,
+                ),
             ],
           );
         });

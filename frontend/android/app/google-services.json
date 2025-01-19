@@ -14,19 +14,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "141879224852-2mtae1o18u4a3ta96fhqmla4epj9lb0l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sparkedgesolutions.dootify",
+            "certificate_hash": "6273e6f4db10b54263455a51e062fb9fb0db6a0d"
+          }
+        },
+        {
+          "client_id": "141879224852-hpt5odigerqfsvoii7u5tv6hqas5jhke.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sparkedgesolutions.dootify",
+            "certificate_hash": "3de54efbf8f1b858d99f1839e7b39f41ee3cbf06"
+          }
+        },
+        {
           "client_id": "141879224852-osfoa8lh2g03f8o9qh24sl591ssautm4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.sparkedgesolutions.dootify",
             "certificate_hash": "f92ca7f4b6e1adf7fa430ffa5da13f09e441dd2a"
-          }
-        },
-        {
-          "client_id": "141879224852-q6oob9anfo33q9ds4tduefudkpfrupev.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.sparkedgesolutions.dootify",
-            "certificate_hash": "00c49a8f9b2f963bd78e1e38a279853e306595a1"
           }
         },
         {

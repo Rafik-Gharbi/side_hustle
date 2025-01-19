@@ -5,7 +5,9 @@ WORKDIR /app
 COPY package.json .
 COPY package-lock.json .
 
-RUN npm ci --only=production 
+RUN apk --no-cache add build-base python3
+RUN npm ci --only=production
+RUN npm rebuild bcrypt --build-from-source
 
 COPY . .
 

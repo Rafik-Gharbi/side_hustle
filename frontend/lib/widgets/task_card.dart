@@ -74,7 +74,7 @@ class TaskCard extends StatelessWidget {
     bool highlightTile = false;
     bool isInitialized = false;
     return StatefulBuilder(builder: (_, setState) {
-      if (context.mounted && !isInitialized) Future.delayed(const Duration(milliseconds: 600), () => context.mounted ? setState(() => highlightTile = isHighlighted) : null);
+      if (context.mounted && !isInitialized && highlightTile != isHighlighted) Future.delayed(const Duration(milliseconds: 600), () => context.mounted ? setState(() => highlightTile = isHighlighted) : null);
       isInitialized = true;
       return Padding(
         padding: EdgeInsets.only(bottom: dense ? 0 : Paddings.regular),

@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
     final hasFinishedHomeTutorial = SharedPreferencesService.find.get(hasFinishedHomeTutorialKey) == 'true';
     return GetBuilder<HomeController>(
       initState: (state) => Helper.waitAndExecute(
-        () => state.controller != null,
+        () => state.controller != null && !(state.controller?.isLoading.value ?? true),
         () {
           FirebaseAnalytics.instance.logScreenView(screenName: 'HomeScreen');
           hasFinishedHomeTutorial
@@ -109,6 +109,7 @@ class HomeScreen extends StatelessWidget {
                                       }),
                                     ),
                               CustomButtons.icon(
+                                disabled: !MainAppController.find.isConnected,
                                 key: controller.mapViewKey,
                                 icon: const Icon(Icons.map_outlined),
                                 onPressed: () => Get.bottomSheet(const MapScreen(isTasks: true), isScrollControlled: true),

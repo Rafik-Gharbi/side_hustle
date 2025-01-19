@@ -21,7 +21,7 @@ class NotificationRepository extends GetxService {
   Future<int> getNotSeenNotificationsCount() async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/notification/count', sendToken: true);
-      return result['count'];
+      return result?['count'] ?? 0;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getNotSeenNotificationsCount:\n$e');
     }
@@ -30,9 +30,9 @@ class NotificationRepository extends GetxService {
 
   Future<List<NotificationModel>?> getNotifications({int page = 0, int limit = kLoadMoreLimit}) async {
     try {
-      List<NotificationModel> notifications = [];
+      List<NotificationModel>? notifications;
       final result = await ApiBaseHelper().request(RequestType.get, '/notification/list?pageQuery=$page&limitQuery=$limit', sendToken: true);
-      notifications = (result['notificationList'] as List).map((e) => NotificationModel.fromJson(e)).toList();
+      notifications = (result?['notificationList'] as List?)?.map((e) => NotificationModel.fromJson(e)).toList();
       return notifications;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getNotifications:\n$e');

@@ -21,8 +21,8 @@ class ChatRepository extends GetxService {
         sendToken: true,
       );
       return (
-        (result['result'] as List).map((e) => DiscussionDTO.fromJson(e)).toList(),
-        (result['reservations'] as List).map((e) => Reservation.fromJson(e)).toList(),
+        (result?['result'] as List?)?.map((e) => DiscussionDTO.fromJson(e)).toList(),
+        (result?['reservations'] as List?)?.map((e) => Reservation.fromJson(e)).toList(),
       );
     } catch (e) {
       LoggerService.logger?.e('Error occured in getChat:\n$e');

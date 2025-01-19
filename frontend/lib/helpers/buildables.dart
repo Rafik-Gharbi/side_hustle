@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -417,7 +418,7 @@ class Buildables {
                 const SizedBox(height: Paddings.regular),
                 if (withBuyButton)
                   InkWell(
-                    onTap: () => Get.toNamed(CoinsMarket.routeName)?.then((value) => onBackFromMarket?.call()),
+                    onTap: MainAppController.find.isConnected ? () => Get.toNamed(CoinsMarket.routeName)?.then((value) => onBackFromMarket?.call()) : null,
                     child: Text(
                       'buy_more_coins'.tr,
                       style: AppFonts.x12Bold
@@ -430,14 +431,14 @@ class Buildables {
         ),
       );
 
-  static Widget buildCategoryIcon(String icon, {double size = 30, Color? color}) => Image.network(
-        icon,
+  static Widget buildCategoryIcon(String icon, {double size = 30, Color? color}) => CachedNetworkImage(
+        imageUrl: icon,
         width: size,
         color: color ?? kBlackColor,
-        errorBuilder: (context, error, stackTrace) {
-          debugPrint('Error getting category icon: $error\n$stackTrace');
-          return const Icon(Icons.error);
-        },
+        fit: BoxFit.cover,
+        progressIndicatorBuilder: (context, url, downloadProgress) => Lottie.asset(Assets.pictureLoading, fit: BoxFit.cover),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+        // errorListener: (error) => LoggerService.logger?.e(error),
       );
 
   /// Should be called on a screen and not a dialog or a bottomsheet opened
@@ -517,11 +518,21 @@ class Buildables {
         ),
       );
 
-  static Widget buildActionTile({Key? key, required String label, required IconData icon, required void Function() onTap, int actionRequired = 0}) => CustomButtons.text(
+  static Widget buildActionTile({
+    Key? key,
+    required String label,
+    required IconData icon,
+    required void Function() onTap,
+    int actionRequired = 0,
+    bool enabled = true,
+  }) =>
+      CustomButtons.text(
         key: key,
+        disabled: !enabled,
         onPressed: onTap,
         child: ListTile(
-          title: Text(label, style: AppFonts.x14Bold),
+          enabled: enabled,
+          title: Text(label, style: AppFonts.x14Bold.copyWith(color: enabled ? kBlackColor : kDisabledColor)),
           contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.large),
           leading: Badge(
             offset: const Offset(5, -5),
@@ -531,7 +542,11 @@ class Buildables {
               actionRequired.toString(),
               style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
             ),
-            child: CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: Icon(icon, size: 24)),
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: kNeutralLightColor,
+              child: Icon(icon, size: 24, color: enabled ? kPrimaryColor : kDisabledColor),
+            ),
           ),
           trailing: const Icon(Icons.chevron_right_rounded),
         ),

@@ -79,7 +79,7 @@ class SettingsScreen extends StatelessWidget {
                       leading: const Icon(Icons.mail_outline),
                       subtitle: 'msg_share_thoughts'.tr,
                       title: 'send_feedback'.tr,
-                      onTap: () => Get.bottomSheet(const EmotionSliderBottomsheet(), isScrollControlled: true),
+                      onTap: MainAppController.find.isConnected ? () => Get.bottomSheet(const EmotionSliderBottomsheet(), isScrollControlled: true) : null,
                     ),
                     AnimatedListTile(
                       leading: const Icon(Icons.privacy_tip_outlined),
@@ -154,7 +154,7 @@ class SettingsScreen extends StatelessWidget {
                     //     ],
                     //   ),
                     // ),
-                    if (!kReleaseMode)
+                    if (kDebugMode)
                       AnimatedListTile(
                         title: 'delete_cache'.tr,
                         onTap: controller.deleteCache,
@@ -168,7 +168,7 @@ class SettingsScreen extends StatelessWidget {
                     AnimatedListTile(
                       title: 'support'.tr,
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => Get.toNamed(CustomerSupport.routeName),
+                      onTap: MainAppController.find.isConnected ? () => Get.toNamed(CustomerSupport.routeName) : null,
                     ),
                     // AnimatedListTile(
                     //   title: 'help'.tr,
@@ -186,7 +186,7 @@ class SettingsScreen extends StatelessWidget {
                         titleStyle: AppFonts.x14Bold.copyWith(color: kErrorColor),
                         tileDecoration: BoxDecoration(color: kErrorColor.withOpacity(0.1), borderRadius: smallRadius),
                         trailing: const Icon(Icons.chevron_right, color: kErrorColor),
-                        onTap: () => Get.toNamed(DeleteProfile.routeName),
+                        onTap: MainAppController.find.isConnected ? () => Get.toNamed(DeleteProfile.routeName) : null,
                       ),
                     const SizedBox(height: Paddings.exceptional),
                   ],

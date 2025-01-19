@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:get/get.dart';
 
 import '../../models/category.dart';
@@ -16,13 +17,9 @@ class CategoryDatabaseRepository extends GetxService {
   }
 
   Future<Category?> getCategoryById(int categoryId) async {
-    try {
-      final CategoryTableData category = (await (database.select(database.categoryTable)..where((tbl) => tbl.id.equals(categoryId))).get()).first;
-      return Category.fromCategoryData(category: category);
-    } catch (e) {
-      LoggerService.logger?.e(e);
-      return null;
-    }
+    final result = await (database.select(database.categoryTable)..where((tbl) => tbl.id.equals(categoryId))).get();
+    final CategoryTableData? category = result.isNotEmpty ? result.first : null;
+    return category != null ? Category.fromCategoryData(category: category) : null;
   }
 
   Future<int> delete(Category category) async => await database.delete(database.categoryTable).delete(category.toCategoryCompanion());
@@ -32,14 +29,19 @@ class CategoryDatabaseRepository extends GetxService {
   Future<void> update(CategoryTableCompanion categoryCompanion) async => await database.update(database.categoryTable).replace(categoryCompanion);
 
   Future<Category?> insert(CategoryTableCompanion categoryCompanion) async {
-    final int categoryId = await database.into(database.categoryTable).insert(categoryCompanion);
+    final existingItem = await getCategoryById(categoryCompanion.id.value);
+    if (existingItem != null) return existingItem;
+    final int categoryId = await database.into(database.categoryTable).insert(categoryCompanion, mode: InsertMode.insertOrReplace);
     final categoryCategory = await getCategoryById(categoryId);
     return categoryCategory;
   }
 
   Future<void> backupCategories(List<Category> categories) async {
     LoggerService.logger?.i('Backing up categories...');
-    await deleteAll();
+    final tableExists = await Database.doesTableExist(database, 'category_table');
+    if (tableExists) {
+      await deleteAll();
+    }
     for (var element in categories) {
       await insert(element.toCategoryCompanion());
     }

@@ -49,7 +49,7 @@ class ReservationRepository extends GetxService {
   Future<TaskReservationDetailsDTO?> getTaskReservationDetails(Task task) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/reservation/details?taskId=${task.id}');
-      return TaskReservationDetailsDTO.fromJson(result);
+      return result != null ? TaskReservationDetailsDTO.fromJson(result) : null;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getTaskReservationDetails:\n$e');
     }
@@ -151,7 +151,7 @@ class ReservationRepository extends GetxService {
     }
   }
 
-  Future<List<Reservation>> getUserRequestedServices({int page = 0, int limit = kLoadMoreLimit}) async {
+  Future<List<Reservation>> getUserRequestedReservations({int page = 0, int limit = kLoadMoreLimit}) async {
     try {
       List<Reservation> bookings = [];
       if (MainAppController.find.isConnected) {

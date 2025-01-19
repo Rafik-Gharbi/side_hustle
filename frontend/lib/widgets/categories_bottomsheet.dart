@@ -55,7 +55,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
     Future.delayed(Durations.extralong2, () {
       if (!hasFinishedCategoryTutorial) {
         CategoriesTutorial.showTutorial();
-        Helper.waitAndExecute(() => CategoriesTutorial.targets.isNotEmpty, () {
+        Helper.waitAndExecute(() => CategoriesTutorial.targets.isNotEmpty && !isLoading.value, () {
           if (!hasOpenedTutorial) {
             hasOpenedTutorial = true;
             TutorialCoachMark(

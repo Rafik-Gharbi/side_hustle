@@ -37,7 +37,7 @@ class MarketScreen extends StatelessWidget {
       ),
       builder: (controller) => Obx(
         () {
-          if (!hasFinishedMarketTutorial && MainAppController.find.isMarketScreen && !hasOpenedTutorial && controller.targets.isNotEmpty) {
+          if (!hasFinishedMarketTutorial && MainAppController.find.isMarketScreen && !hasOpenedTutorial && controller.targets.isNotEmpty && !controller.isLoading.value) {
             hasOpenedTutorial = true;
             TutorialCoachMark(
               targets: controller.targets,

@@ -142,11 +142,13 @@ class MainScreenWithBottomNavigation extends StatelessWidget {
           floatingActionButton: hideBottomNavigation
               ? null
               : FloatingActionButton(
-                  onPressed: () => Helper.verifyUser(
-                    isVerified: true,
-                    loginErrorMsg: 'login_add_task_msg'.tr,
-                    () => Get.bottomSheet(const AddTaskBottomsheet(), isScrollControlled: true, backgroundColor: Colors.transparent),
-                  ),
+                  onPressed: MainAppController.find.isConnected
+                      ? () => Helper.verifyUser(
+                            isVerified: true,
+                            loginErrorMsg: 'login_add_task_msg'.tr,
+                            () => Get.bottomSheet(const AddTaskBottomsheet(), isScrollControlled: true, backgroundColor: Colors.transparent),
+                          )
+                      : null,
                   mini: true,
                   shape: const CircleBorder(),
                   child: const Icon(Icons.add, color: kNeutralColor100),

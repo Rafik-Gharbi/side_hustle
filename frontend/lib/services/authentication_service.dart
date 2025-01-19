@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_config/flutter_config.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -151,7 +151,7 @@ class AuthenticationService extends GetxController {
 
   AuthenticationService() {
     _googleSignIn = GoogleSignIn(
-      clientId: GetPlatform.isIOS || GetPlatform.isMacOS ? FlutterConfig.get('GOOGLE_CLIENT_ID') : null,
+      clientId: GetPlatform.isIOS || GetPlatform.isMacOS ? dotenv.env['GOOGLE_CLIENT_ID_IOS']! : null,
       scopes: ['email', 'openid', 'profile'],
     );
     // Check if exist a saved token and relogin the user
@@ -399,11 +399,11 @@ class AuthenticationService extends GetxController {
   Future<void> _handleLogin(User user) async {
     final loginResponse = await UserRepository.find.login(user: user);
     await FirebaseAnalytics.instance.logEvent(
-        name: 'login',
-        parameters: {
-          'method': user.getSignupMethod,
-        },
-      );
+      name: 'login',
+      parameters: {
+        'method': user.getSignupMethod,
+      },
+    );
     isLoggingIn = false;
     if (loginResponse?.token != null) {
       if (loginResponse?.refreshToken != null) {

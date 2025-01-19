@@ -15,7 +15,7 @@ const SupportMessage = sequelize.define(
     },
     guest_id: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     attachment: { type: Sequelize.STRING },
   },

@@ -36,6 +36,14 @@ class Database extends _$Database {
   // Factory method to get the singleton instance
   factory Database.getInstance() => _instance ??= Database._(impl.connect());
 
+  static Future<bool> doesTableExist(Database db, String tableName) async {
+    final result = await db.customSelect(
+      "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?",
+      variables: [Variable(tableName)],
+    ).get();
+    return result.isNotEmpty;
+  }
+
   @override
   int get schemaVersion => 1;
 

@@ -47,7 +47,6 @@ class MyOffersController extends GetxController {
 
   Future<void> init() async {
     await _fetchTaskOffers();
-    _serviceHistoryList = []; // TODO
     if (Get.arguments != null) highlightedTaskReservation = _taskHistoryList.cast<Reservation?>().singleWhere((element) => element?.id == Get.arguments, orElse: () => null);
     if (highlightedTaskReservation != null) {
       Future.delayed(const Duration(milliseconds: 1600), () {

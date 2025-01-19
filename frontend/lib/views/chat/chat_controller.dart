@@ -197,6 +197,7 @@ class ChatController extends GetxController {
 
   void attachToMessage() {
     // TODO add attaching files to a message
+    Helper.snackBar(message: 'feature_not_available_yet'.tr);
   }
 
   void initSocket() {
@@ -287,7 +288,7 @@ class ChatController extends GetxController {
   }
 
   void _connectSocket() {
-    if (MainAppController.find.socket!.connected) return;
+    if (MainAppController.find.socket!.connected || !MainAppController.find.isConnected) return;
     MainAppController.find.socket!.onConnect((data) => LoggerService.logger?.i('connection established'));
     MainAppController.find.socket!.onConnectError((data) => LoggerService.logger?.e('error connection $data'));
     MainAppController.find.socket!.onDisconnect((data) => LoggerService.logger?.i('disconnect $data'));
@@ -402,6 +403,7 @@ class ChatController extends GetxController {
   }
 
   void searchChatMessages(String value) {
+    Helper.snackBar(message: 'feature_not_available_yet'.tr);
     // TODO search current Discussion for past messages
   }
 

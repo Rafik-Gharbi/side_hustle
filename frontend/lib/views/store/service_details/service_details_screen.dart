@@ -73,8 +73,9 @@ class ServiceDetailsScreen extends StatelessWidget {
                               children: [
                                 if (isOwner) ...[
                                   ListTile(
+                                    enabled: MainAppController.find.isConnected,
                                     shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                    title: Text('boost'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                    title: Text('boost'.tr, style: AppFonts.x14Bold.copyWith(color: MainAppController.find.isConnected ? kBlackColor : kDisabledColor)),
                                     leading: const Icon(Icons.rocket_launch_outlined),
                                     onTap: () {
                                       Helper.goBack();
@@ -82,21 +83,24 @@ class ServiceDetailsScreen extends StatelessWidget {
                                     },
                                   ),
                                   ListTile(
+                                    enabled: MainAppController.find.isConnected,
                                     shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                    title: Text('edit'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                    title: Text('edit'.tr, style: AppFonts.x14Bold.copyWith(color: MainAppController.find.isConnected ? kBlackColor : kDisabledColor)),
                                     leading: const Icon(Icons.edit_outlined),
                                     onTap: () => controller.editService(service),
                                   ),
                                   ListTile(
+                                    enabled: MainAppController.find.isConnected,
                                     shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                    title: Text('delete'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                    title: Text('delete'.tr, style: AppFonts.x14Bold.copyWith(color: MainAppController.find.isConnected ? kBlackColor : kDisabledColor)),
                                     leading: const Icon(Icons.delete_forever_outlined),
                                     onTap: () => controller.deleteService(service),
                                   ),
                                 ] else
                                   ListTile(
+                                    enabled: MainAppController.find.isConnected,
                                     shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                    title: Text('report'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                                    title: Text('report'.tr, style: AppFonts.x14Bold.copyWith(color: MainAppController.find.isConnected ? kBlackColor : kDisabledColor)),
                                     leading: const Icon(Icons.report_outlined),
                                     onTap: () async {
                                       Helper.goBack();
@@ -214,12 +218,14 @@ class ServiceDetailsScreen extends StatelessWidget {
                     const SizedBox(height: Paddings.exceptional * 2),
                     if (isOwner && store != null)
                       CustomButtons.elevatePrimary(
+                        disabled: !MainAppController.find.isConnected,
                         title: 'check_request'.tr,
                         onPressed: () => Get.toNamed(ServiceRequestScreen.routeName, arguments: service),
                         width: Get.width,
                       )
                     else if (bookingStatus == null && !isOwner)
                       CustomButtons.elevatePrimary(
+                        disabled: !MainAppController.find.isConnected,
                         title: 'book_service'.tr,
                         width: Get.width,
                         onPressed: () => Helper.verifyUser(
@@ -233,6 +239,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                       )
                     else if (bookingStatus == RequestStatus.confirmed && onMarkDone != null)
                       CustomButtons.elevatePrimary(
+                        disabled: !MainAppController.find.isConnected,
                         title: 'mark_service_done'.tr,
                         titleStyle: AppFonts.x14Regular,
                         icon: const Icon(Icons.done, color: kNeutralColor100),

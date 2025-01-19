@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+import '../../../constants/assets.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/constants.dart';
 import '../../../constants/shared_preferences_keys.dart';
@@ -39,7 +42,7 @@ class MyStoreScreen extends StatelessWidget {
     return HoldInSafeArea(
       child: GetBuilder<MyStoreController>(
         init: MyStoreController(store: store),
-        initState: (state) => Helper.waitAndExecute(() => state.controller != null, () {
+        initState: (state) => Helper.waitAndExecute(() => state.controller != null && !(state.controller?.isLoading.value ?? true), () {
           if (!hasFinishedCreateStoreTutorial && Get.currentRoute == routeName && !hasOpenedTutorial && state.controller!.targets.isNotEmpty) {
             hasOpenedTutorial = true;
             TutorialCoachMark(
@@ -82,8 +85,9 @@ class MyStoreScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     ListTile(
+                      enabled: MainAppController.find.isConnected,
                       shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                      title: Text('bookmark'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                      title: Text('bookmark'.tr, style: AppFonts.x14Bold.copyWith(color: MainAppController.find.isConnected ? kBlackColor : kDisabledColor)),
                       leading: Icon(store?.isFavorite ?? false ? Icons.bookmark_outlined : Icons.bookmark_add_outlined),
                       onTap: () {
                         Helper.goBack();
@@ -102,14 +106,16 @@ class MyStoreScreen extends StatelessWidget {
                       ),
                     if (isOwner) ...[
                       ListTile(
+                        enabled: MainAppController.find.isConnected,
                         shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                        title: Text('edit'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                        title: Text('edit'.tr, style: AppFonts.x14Bold.copyWith(color: MainAppController.find.isConnected ? kBlackColor : kDisabledColor)),
                         leading: const Icon(Icons.edit_outlined),
                         onTap: controller.editStore,
                       ),
                       ListTile(
+                        enabled: MainAppController.find.isConnected,
                         shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                        title: Text('delete'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                        title: Text('delete'.tr, style: AppFonts.x14Bold.copyWith(color: MainAppController.find.isConnected ? kBlackColor : kDisabledColor)),
                         leading: const Icon(Icons.delete_forever_outlined),
                         onTap: controller.deleteStore,
                       ),
@@ -137,10 +143,17 @@ class MyStoreScreen extends StatelessWidget {
                   Text('have_no_store'.tr, style: AppFonts.x14Regular),
                   const Spacer(),
                   CustomButtons.elevatePrimary(
+                    disabled: !MainAppController.find.isConnected,
                     key: controller.createStoreBtnKey,
                     title: 'create_store'.tr,
                     width: Get.width,
                     onPressed: controller.createStore,
+                  ),
+                  const SizedBox(height: Paddings.regular),
+                  CustomButtons.elevateSecondary(
+                    title: 'later'.tr,
+                    width: Get.width,
+                    onPressed: Get.back,
                   ),
                   const SizedBox(height: Paddings.exceptional * 2),
                 ],
@@ -163,16 +176,25 @@ class MyStoreScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  if (StoreViewmodel.currentStore?.picture?.file.path != null)
-                    Image.network(StoreViewmodel.currentStore!.picture!.file.path, height: 200, width: Get.width, fit: BoxFit.cover)
+                  if (!Helper.isNullOrEmpty(StoreViewmodel.currentStore?.picture?.file.path))
+                    CachedNetworkImage(
+                      imageUrl: StoreViewmodel.currentStore!.picture!.file.path,
+                      height: 200, width: Get.width, fit: BoxFit.cover,
+                      progressIndicatorBuilder: (context, url, downloadProgress) => Lottie.asset(Assets.pictureLoading, fit: BoxFit.cover),
+                      errorWidget: (context, url, error) => DecoratedBox(
+                        decoration: BoxDecoration(color: kNeutralOpacityColor),
+                        child: const Center(child: Icon(Icons.error, color: kNeutralLightColor)),
+                      ),
+                      // errorListener: (error) => LoggerService.logger?.e(error),
+                    )
                   else if (!isOwner)
                     DecoratedBox(
-                      decoration: BoxDecoration(color: kNeutralLightOpacityColor),
-                      child: SizedBox(height: 200, child: Center(child: Text('no_image'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)))),
+                      decoration: BoxDecoration(color: kNeutralOpacityColor),
+                      child: SizedBox(height: 200, child: Center(child: ClipRRect(borderRadius: smallRadius, child: Image.asset(Assets.noImage, height: 140)))),
                     )
                   else
                     InkWell(
-                      onTap: controller.addStorePicture,
+                      onTap: MainAppController.find.isConnected ? controller.addStorePicture : null,
                       child: DecoratedBox(
                         decoration: BoxDecoration(color: kNeutralLightOpacityColor),
                         child: SizedBox(
@@ -224,19 +246,21 @@ class MyStoreScreen extends StatelessWidget {
                                 store: store ?? StoreViewmodel.currentStore!,
                                 service: service!,
                                 requests: service.requests,
-                                onBookService: () => isOwner
-                                    ? Get.toNamed(ServiceRequestScreen.routeName, arguments: service)
-                                    : Helper.verifyUser(
-                                        isVerified: true,
-                                        () => Buildables.requestBottomsheet(
-                                          noteController: ReservationViewmodel.noteController,
-                                          onSubmit: () => ReservationViewmodel.bookService(service),
-                                          neededCoins: service.coins,
-                                        ).then((value) => ReservationViewmodel.clearRequestFormFields()),
-                                      ),
+                                onBookService: MainAppController.find.isConnected
+                                    ? () => isOwner
+                                        ? Get.toNamed(ServiceRequestScreen.routeName, arguments: service)
+                                        : Helper.verifyUser(
+                                            isVerified: true,
+                                            () => Buildables.requestBottomsheet(
+                                              noteController: ReservationViewmodel.noteController,
+                                              onSubmit: () => ReservationViewmodel.bookService(service),
+                                              neededCoins: service.coins,
+                                            ).then((value) => ReservationViewmodel.clearRequestFormFields()),
+                                          )
+                                    : null,
                                 isOwner: AuthenticationService.find.jwtUserData?.id == StoreViewmodel.currentStore?.owner?.id,
-                                onDeleteService: () => controller.deleteService(service),
-                                onEditService: () => controller.editService(service),
+                                onDeleteService: MainAppController.find.isConnected ? () => controller.deleteService(service) : null,
+                                onEditService: MainAppController.find.isConnected ? () => controller.editService(service) : null,
                                 isHighlighted: controller.highlightedService?.id == service.id,
                               );
                             },
@@ -247,6 +271,7 @@ class MyStoreScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: Paddings.exceptional),
                             child: CustomButtons.elevatePrimary(
                               title: 'add_service'.tr,
+                              disabled: !MainAppController.find.isConnected,
                               width: Get.width,
                               onPressed: () => StoreViewmodel.addService(),
                             ),

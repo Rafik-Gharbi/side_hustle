@@ -35,7 +35,7 @@ class BalanceScreen extends StatelessWidget {
       child: GetBuilder<BalanceController>(
         initState: (state) {
           FirebaseAnalytics.instance.logScreenView(screenName: 'BalanceScreen');
-          Helper.waitAndExecute(() => state.controller != null, () {
+          Helper.waitAndExecute(() => state.controller != null && !(state.controller?.isLoading.value ?? true), () {
             if (!hasFinishedBalanceTutorial && Get.currentRoute == routeName && !hasOpenedTutorial && state.controller!.targets.isNotEmpty) {
               hasOpenedTutorial = true;
               TutorialCoachMark(
@@ -87,6 +87,7 @@ class BalanceScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   CustomButtons.icon(
+                                    disabled: !MainAppController.find.isConnected,
                                     key: controller.withdrawBtnKey,
                                     onPressed: () => Get.bottomSheet(const WithdrawalBottomsheet(), isScrollControlled: true),
                                     child: DecoratedBox(
@@ -108,6 +109,7 @@ class BalanceScreen extends StatelessWidget {
                                     ),
                                   ),
                                   CustomButtonWithOverlay(
+                                    disabled: !MainAppController.find.isConnected,
                                     buttonWidth: 140,
                                     button: DecoratedBox(
                                       key: controller.depositBtnKey,
@@ -190,8 +192,10 @@ class BalanceScreen extends StatelessWidget {
                                       ),
                                     ),
                                   InkWell(
-                                    onTap: () => Get.bottomSheet(AddBankNumberBottomsheet(bankNumber: controller.loggedUser.bankNumber), isScrollControlled: true)
-                                        .then((value) => controller.bankNumberController.text = ''),
+                                    onTap: MainAppController.find.isConnected
+                                        ? () => Get.bottomSheet(AddBankNumberBottomsheet(bankNumber: controller.loggedUser.bankNumber), isScrollControlled: true)
+                                            .then((value) => controller.bankNumberController.text = '')
+                                        : null,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: Paddings.small),
                                       child: Text(

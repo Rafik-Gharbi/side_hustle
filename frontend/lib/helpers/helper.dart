@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:geolocator/geolocator.dart';
@@ -182,13 +182,18 @@ class Helper {
 
   static String decryptData(String encryptedData) {
     String decrypted = encryptedData;
-    if (encryptedData.isNotEmpty) {
-      final key = enc.Key.fromUtf8(dotenv.env['SECRET_KEY']!);
-      final iv = enc.IV(Uint8List.fromList(List<int>.filled(16, 0)));
-      final encrypter = enc.Encrypter(enc.AES(key, mode: enc.AESMode.cbc));
-      decrypted = encrypter.decrypt64(encryptedData, iv: iv);
+    if (kDebugMode) return decrypted;
+    try {
+      if (encryptedData.isNotEmpty) {
+        final key = enc.Key.fromUtf8(dotenv.env['SECRET_KEY']!);
+        final iv = enc.IV(Uint8List.fromList(List<int>.filled(16, 0)));
+        final encrypter = enc.Encrypter(enc.AES(key, mode: enc.AESMode.cbc));
+        decrypted = encrypter.decrypt64(encryptedData, iv: iv);
+      }
+      return decrypted;
+    } catch (e) {
+      return decrypted;
     }
-    return decrypted;
   }
 
   static String getNameInitials(String? name) {

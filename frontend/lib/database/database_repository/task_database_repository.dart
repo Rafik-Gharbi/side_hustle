@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:drift/drift.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../constants/shared_preferences_keys.dart';
 import '../../helpers/helper.dart';
@@ -10,6 +12,7 @@ import '../../models/dto/image_dto.dart';
 import '../../models/filter_model.dart';
 import '../../models/task.dart';
 import '../../models/user.dart';
+import '../../services/authentication_service.dart';
 import '../../services/logger_service.dart';
 import '../../services/shared_preferences.dart';
 import '../database.dart';
@@ -22,13 +25,15 @@ class TaskDatabaseRepository extends GetxService {
 
   // Insert a task  in the database
   Future<Task?> insert(TaskTableCompanion task) async {
-    final String taskId = (await database.into(database.taskTable).insert(task)).toString(); // TODO fix this
-    Task? result = await getTaskById(taskId);
+    final existingItem = await getTaskById(task.id.value);
+    if (existingItem != null) return existingItem;
+    await database.into(database.taskTable).insert(task, mode: InsertMode.insertOrReplace);
+    Task? result = await getTaskById(task.id.value);
     return result;
   }
 
   Future<TaskAttachmentTableCompanion?> insertAttachment(TaskAttachmentTableCompanion attachment) async {
-    final int attachmentId = await database.into(database.taskAttachmentTable).insert(attachment);
+    final int attachmentId = await database.into(database.taskAttachmentTable).insert(attachment, mode: InsertMode.insertOrReplace);
     TaskAttachmentTableCompanion? result = await getAttachmentById(attachmentId);
     return result;
   }
@@ -124,7 +129,10 @@ class TaskDatabaseRepository extends GetxService {
   Future<void> deleteOldTasks(List<Task> tasks) async {
     LoggerService.logger?.i('Deleting old tasks...');
     for (var task in tasks) {
-      await delete(task);
+      final tableExists = await Database.doesTableExist(database, 'task_table');
+      if (tableExists) {
+        await delete(task);
+      }
       task.attachments?.forEach((element) async => await deleteAttachment(element.toAttachmentCompanion(taskId: task.id)));
     }
   }
@@ -138,14 +146,17 @@ class TaskDatabaseRepository extends GetxService {
     if (searchQuery.isEmpty && (filter == null || !filter.isNotEmpty)) {
       return allTasks;
     } else {
+      LatLng? userCoordinates = AuthenticationService.find.jwtUserData?.coordinates;
       final filtered = allTasks
           .where(
             (task) =>
                 (searchQuery.isNotEmpty ? task.title.contains(searchQuery) : false) ||
                 (searchQuery.isNotEmpty ? task.description.contains(searchQuery) : false) ||
                 (task.category != null && filter!.category != null ? task.category?.id == filter.category?.id : false) ||
-                (task.price != null && filter!.minPrice != null && filter.maxPrice != null ? task.price! < filter.maxPrice! && task.price! > filter.minPrice! : false),
-            // TODO add nearby filtering
+                (task.price != null && filter!.minPrice != null && filter.maxPrice != null ? task.price! < filter.maxPrice! && task.price! > filter.minPrice! : false) ||
+                (filter!.nearby != null && task.coordinates != null && userCoordinates != null
+                    ? Helper.calculateDistance(task.coordinates!.latitude, task.coordinates!.longitude, userCoordinates.latitude, userCoordinates.longitude) <= filter.nearby!
+                    : false),
           )
           .toList();
       return filtered;
@@ -228,20 +239,21 @@ class TaskDatabaseRepository extends GetxService {
     if (tasks['nearbyTasks'] != null && (tasks['nearbyTasks'] as List).isNotEmpty) {
       SharedPreferencesService.find.add(nearbyTasksKey, jsonEncode((tasks['nearbyTasks'] as List).map((e) => e.id).toList()));
     }
-    if (tasks['reservation'] != null && (tasks['reservation'] as List).isNotEmpty) {
-      SharedPreferencesService.find.add(reservationKey, jsonEncode((tasks['reservation'] as List).map((e) => e.id).toList()));
+    if (tasks['governorateTasks'] != null && (tasks['governorateTasks'] as List).isNotEmpty) {
+      SharedPreferencesService.find.add(governorateTasksKey, jsonEncode((tasks['governorateTasks'] as List).map((e) => e.id).toList()));
     }
     final List<Task> tasksForBackup = [];
     tasksForBackup.addAll((tasks['hotTasks'] as List).map((e) => e as Task));
     tasksForBackup.addAll((tasks['nearbyTasks'] as List).map((e) => e as Task));
-    // TODO backup reservations
+    tasksForBackup.addAll((tasks['governorateTasks'] as List).map((e) => e as Task));
     await backupTasks(tasksForBackup);
   }
 
-  Future<Map<String, List<Task>>> getHomeTasks() async {
-    LoggerService.logger?.i('Getting hot tasks...');
+  Future<Map<String, List<dynamic>>> getHomeTasks() async {
+    LoggerService.logger?.i('Getting home tasks...');
     List<Task> hotTasks = [];
     List<Task> nearbyTasks = [];
+    List<Task> governorateTasks = [];
     final savedIds = SharedPreferencesService.find.get(hotTasksKey);
     List<String> hotTasksId = (jsonDecode(savedIds ?? '[]') as List).map((e) => e.toString()).toList();
     if (hotTasksId.isNotEmpty) {
@@ -258,7 +270,14 @@ class TaskDatabaseRepository extends GetxService {
         if (task != null) nearbyTasks.add(task);
       }
     }
-    // TODO get saved reservations
-    return {'hotTasks': hotTasks, 'nearbyTasks': nearbyTasks};
+    final savedGovernorateIds = SharedPreferencesService.find.get(governorateTasksKey);
+    List<String> governorateTasksId = (jsonDecode(savedGovernorateIds ?? '[]') as List).map((e) => e.toString()).toList();
+    if (governorateTasksId.isNotEmpty) {
+      for (var taskId in governorateTasksId) {
+        final task = await getTaskById(taskId);
+        if (task != null) governorateTasks.add(task);
+      }
+    }
+    return {'hotTasks': hotTasks, 'nearbyTasks': nearbyTasks, 'governorateTasks': governorateTasks};
   }
 }

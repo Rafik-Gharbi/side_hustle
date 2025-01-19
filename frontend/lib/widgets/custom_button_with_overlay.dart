@@ -12,6 +12,7 @@ class CustomButtonWithOverlay extends StatefulWidget {
   final double buttonWidth;
   final void Function()? onCloseOverlay;
   final void Function()? onOpenOverlay;
+  final bool disabled;
 
   const CustomButtonWithOverlay({
     required this.button,
@@ -21,6 +22,7 @@ class CustomButtonWithOverlay extends StatefulWidget {
     this.buttonWidth = 60,
     this.onCloseOverlay,
     this.onOpenOverlay,
+    this.disabled = false,
   });
 
   @override
@@ -113,7 +115,7 @@ class _CustomButtonWithOverlayState extends State<CustomButtonWithOverlay> {
           link: _layerLink,
           child: InkWell(
             borderRadius: smallRadius,
-            onTap: () => toggleOverlay(context),
+            onTap: widget.disabled ? null : () => toggleOverlay(context),
             child: widget.button,
           ),
         ),

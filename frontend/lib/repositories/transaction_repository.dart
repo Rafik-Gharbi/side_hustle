@@ -14,8 +14,8 @@ class TransactionRepository extends GetxService {
   Future<(List<Transaction>?, List<CoinPackPurchase>?)> listTransactionsAndCoinPacks() async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/transaction/list', sendToken: true);
-      final transactions = (result['transactions'] as List).map((e) => Transaction.fromJson(e)).toList();
-      final coinPacks = result['coinPacks'] != null ? (result['coinPacks'] as List).map((e) => CoinPackPurchase.fromJson(e)).toList() : null;
+      final transactions = (result?['transactions'] as List?)?.map((e) => Transaction.fromJson(e)).toList();
+      final coinPacks = result?['coinPacks'] != null ? (result['coinPacks'] as List).map((e) => CoinPackPurchase.fromJson(e)).toList() : null;
       return (transactions, coinPacks);
     } catch (e) {
       LoggerService.logger?.e('Error occured in listTransaction:\n$e');

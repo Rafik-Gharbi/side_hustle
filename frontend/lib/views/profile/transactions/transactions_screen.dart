@@ -27,7 +27,7 @@ class TransactionsScreen extends StatelessWidget {
     bool hasOpenedTutorial = false;
     return HoldInSafeArea(
       child: GetBuilder<TransactionsController>(
-        initState: (state) => Helper.waitAndExecute(() => state.controller != null, () {
+        initState: (state) => Helper.waitAndExecute(() => state.controller != null && !(state.controller?.isLoading.value ?? true), () {
           if (!hasFinishedChatTutorial &&
               Get.currentRoute == routeName &&
               !hasOpenedTutorial &&

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -42,13 +43,8 @@ class LoggerService extends GetxService {
     }
     _logger = Logger(
       output: MultiOutput(<LogOutput?>[ConsoleOutput(), _logOutput]),
-      printer: PrettyPrinter(
-        printEmojis: false,
-        dateTimeFormat: DateTimeFormat.dateAndTime,
-        noBoxingByDefault: true,
-        methodCount: 1,
-        lineLength: 50,
-      ),
+      printer: MyPrinter(),
+      filter: PermissiveFilter(),
     );
     return this;
   }
@@ -155,15 +151,44 @@ class FileOutput extends MyLoggerOutput {
 }
 
 class LogFileOutputWeb extends MyLoggerOutput {
-  // @override
-  // void init() {}
+  final StringBuffer _logBuffer = StringBuffer();
 
   @override
-  void output(OutputEvent event) {}
-
-  // @override
-  // void destroy() async {}
+  void output(OutputEvent event) {
+    for (var line in event.lines) {
+      _logBuffer.writeln(line);
+    }
+  }
 
   @override
-  Future<String> getLog() async => '';
+  Future<String> getLog() async => _logBuffer.toString();
+}
+
+class MyPrinter extends LogPrinter {
+  final bool printTime;
+
+  MyPrinter({this.printTime = true});
+
+  @override
+  List<String> log(LogEvent event) {
+    final messageStr = _stringifyMessage(event.message);
+    final formattedLevel = '[${event.level.name.toUpperCase()}]';
+    final timestamp = printTime ? DateFormat('yyyy-MM-dd HH:mm:ss').format(event.time) : '';
+    final logOutput = '$timestamp $formattedLevel $messageStr';
+    return [logOutput];
+  }
+
+  String _stringifyMessage(dynamic message) {
+    final finalMessage = message is Function ? message() : message;
+    if (finalMessage is Map || finalMessage is Iterable) {
+      return const JsonEncoder.withIndent(null).convert(finalMessage);
+    } else {
+      return finalMessage.toString();
+    }
+  }
+}
+
+class PermissiveFilter extends LogFilter {
+  @override
+  bool shouldLog(LogEvent event) => true; // change to kDebugMode for disabling logs on release mode
 }

@@ -40,8 +40,8 @@ class BalanceRepository extends GetxService {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/balance/transactions', sendToken: true);
       return (
-        result['transactions'] != null ? (result['transactions'] as List).map((e) => BalanceTransaction.fromJson(e)).toList() : null,
-        result['withdrawalCount'] as int
+        result?['transactions'] != null ? (result['transactions'] as List).map((e) => BalanceTransaction.fromJson(e)).toList() : null,
+        result?['withdrawalCount'] as int? ?? 0
       );
     } catch (e) {
       LoggerService.logger?.e('Error occured in getBalanceTransactions:\n$e');

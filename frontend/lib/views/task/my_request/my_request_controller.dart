@@ -5,7 +5,6 @@ import '../../../constants/constants.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/dto/task_request_dto.dart';
 import '../../../models/reservation.dart';
-import '../../../models/service.dart';
 import '../../../models/task.dart';
 import '../../../networking/api_base_helper.dart';
 import '../../../repositories/reservation_repository.dart';
@@ -19,13 +18,13 @@ class MyRequestController extends GetxController {
   RxBool isLoading = true.obs;
   List<Task> myTaskList = [];
   List<Reservation> myReservationList = [];
-  bool isEndServiceList = false;
+  bool isEndReservationList = false;
   bool isEndTaskList = false;
   int taskPage = 0;
   int servicePage = 0;
   RxBool isLoadingMore = true.obs;
   Task? highlightedTask;
-  Service? highlightedService;
+  Reservation? highlightedReservation;
   RxInt tabControllerIndex = 0.obs;
 
   MyRequestController() {
@@ -35,7 +34,7 @@ class MyRequestController extends GetxController {
     ever(
       tabControllerIndex,
       (callback) => tabControllerIndex.value == 1 && myReservationList.isEmpty
-          ? _fetchServiceRequest(fixPage: 1)
+          ? _fetchReservationRequest(fixPage: 1)
           : tabControllerIndex.value == 0 && myTaskList.isEmpty
               ? _fetchTaskRequest(fixPage: 1)
               : null,
@@ -51,13 +50,18 @@ class MyRequestController extends GetxController {
 
   Future<void> _init() async {
     taskPage = 0;
-    isEndServiceList = false;
+    isEndReservationList = false;
     isEndTaskList = false;
     await _fetchTaskRequest();
-    if (Get.arguments != null) highlightedTask = myTaskList.cast<Task?>().singleWhere((element) => element?.id == Get.arguments, orElse: () => null);
-    if (highlightedTask != null) {
+    if (Get.arguments?['serviceId'] != null) highlightedTask = myTaskList.cast<Task?>().singleWhere((element) => element?.id == Get.arguments['serviceId'], orElse: () => null);
+    if (Get.arguments?['bookingId'] != null) {
+      await _fetchReservationRequest();
+      highlightedReservation = myReservationList.cast<Reservation?>().singleWhere((element) => element?.id == Get.arguments['bookingId'], orElse: () => null);
+    }
+    if (highlightedTask != null || highlightedReservation != null) {
       Future.delayed(const Duration(milliseconds: 1600), () {
         highlightedTask = null;
+        highlightedReservation = null;
         update();
       });
     }
@@ -73,8 +77,8 @@ class MyRequestController extends GetxController {
       if (isEndTaskList) return;
       _fetchTaskRequest().then((value) => Future.delayed(Durations.long1, () => ApiBaseHelper.find.blockRequest = false));
     } else {
-      if (isEndServiceList) return;
-      _fetchServiceRequest().then((value) => Future.delayed(Durations.long1, () => ApiBaseHelper.find.blockRequest = false));
+      if (isEndReservationList) return;
+      _fetchReservationRequest().then((value) => Future.delayed(Durations.long1, () => ApiBaseHelper.find.blockRequest = false));
     }
   }
 
@@ -97,13 +101,13 @@ class MyRequestController extends GetxController {
     update();
   }
 
-  Future<void> _fetchServiceRequest({int? fixPage}) async {
+  Future<void> _fetchReservationRequest({int? fixPage}) async {
     if (fixPage != null) {
       taskPage = fixPage;
-      isEndServiceList = false;
+      isEndReservationList = false;
     }
-    final serviceRequests = await ReservationRepository.find.getUserRequestedServices(page: fixPage ?? ++servicePage);
-    if ((serviceRequests.isEmpty) || serviceRequests.length < kLoadMoreLimit) isEndServiceList = true;
+    final serviceRequests = await ReservationRepository.find.getUserRequestedReservations(page: fixPage ?? ++servicePage);
+    if ((serviceRequests.isEmpty) || serviceRequests.length < kLoadMoreLimit) isEndReservationList = true;
     if (taskPage == 1) {
       myReservationList = serviceRequests;
       isLoading.value = false;

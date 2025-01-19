@@ -44,3 +44,13 @@
 
 # Keep annotations
 -keepattributes *Annotation*
+
+# GooglePlay Services
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+-keep class com.google.common.** { *; }
+-dontwarn com.google.common.**
+
+# awesome_notifications
+-keep class com.google.common.reflect.TypeToken
+-keep class * extends com.google.common.reflect.TypeToken

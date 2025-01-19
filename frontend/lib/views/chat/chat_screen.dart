@@ -32,7 +32,8 @@ class ChatScreen extends StatelessWidget {
               MainAppController.find.isChatScreen &&
               !hasOpenedTutorial &&
               controller.userChatPropertiesFiltered.isNotEmpty &&
-              controller.targets.isNotEmpty) {
+              controller.targets.isNotEmpty &&
+              !controller.isLoading.value) {
             hasOpenedTutorial = true;
             TutorialCoachMark(
               targets: controller.targets,

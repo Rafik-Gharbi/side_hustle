@@ -142,11 +142,17 @@ class StoreRepository extends GetxService {
   }
 
   Future<StoreReviewDTO?> getStoreById(int? id) async {
+    if (id == null) return null;
     try {
-      final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/store/id/$id');
-      return result != null ? StoreReviewDTO.fromJson(result) : null;
+      if (MainAppController.find.isConnected) {
+        final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/store/id/$id');
+        return result != null ? StoreReviewDTO.fromJson(result) : null;
+      } else {
+        final store = await StoreDatabaseRepository().getStoreById(id);
+        return StoreReviewDTO(store: store, reviews: []);
+      }
     } catch (e) {
-      LoggerService.logger?.e('Error occured in getUserStore:\n$e');
+      LoggerService.logger?.e('Error occured in getStoreById:\n$e');
     }
     return null;
   }
@@ -155,8 +161,8 @@ class StoreRepository extends GetxService {
     try {
       List<ServiceDTO>? services;
       final result = await ApiBaseHelper().request(RequestType.get, sendToken: true, '/store/hot-services');
-      services = (result['hotServices'] as List).map((e) => ServiceDTO.fromJson(e)).toList();
-      return services;
+      services = (result?['hotServices'] as List?)?.map((e) => ServiceDTO.fromJson(e)).toList();
+      return services ?? [];
     } catch (e) {
       LoggerService.logger?.e('Error occured in getHotServices:\n$e');
     }

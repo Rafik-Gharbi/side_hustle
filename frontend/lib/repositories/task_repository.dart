@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 import '../constants/constants.dart';
 import '../controllers/main_app_controller.dart';
+import '../database/database_repository/reservation_database_repository.dart';
 import '../database/database_repository/task_database_repository.dart';
 import '../helpers/helper.dart';
 import '../models/dto/task_request_dto.dart';
@@ -36,8 +37,13 @@ class TaskRepository extends GetxService {
         }
       } else {
         tasks = await TaskDatabaseRepository.find.getHomeTasks();
+        final reservations = await ReservationDatabaseRepository.find.getHomeReservations();
+        tasks.addAll(reservations);
       }
-      if (tasks.isNotEmpty && MainAppController.find.isConnected) TaskDatabaseRepository.find.backupHomeTasks(tasks);
+      if (tasks.isNotEmpty && MainAppController.find.isConnected) {
+        TaskDatabaseRepository.find.backupHomeTasks(tasks);
+        ReservationDatabaseRepository.find.backupHomeReservations(tasks);
+      }
       return tasks;
     } catch (e) {
       LoggerService.logger?.e('Error occured in getHomeTasks:\n$e');

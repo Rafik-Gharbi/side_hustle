@@ -129,7 +129,7 @@ class MainAppController extends GetxController {
             hasVersionUpdate.value = Helper.compareVersions(version, currentVersion);
             LoggerService.logger?.i(hasVersionUpdate.value ? 'Version update is required' : 'Current version is compatible');
           } else {
-            Helper.snackBar(message: 'Couldn\'t check version update');
+            if (isConnected) Helper.snackBar(message: 'Couldn\'t check version update');
           }
         },
       );

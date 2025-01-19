@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:get/get.dart';
 
 import '../../models/governorate.dart';
@@ -18,13 +19,9 @@ class GovernorateDatabaseRepository extends GetxService {
   }
 
   Future<Governorate?> getGovernorateById(int governorateId) async {
-    try {
-      final GovernorateTableData governorate = (await (database.select(database.governorateTable)..where((tbl) => tbl.id.equals(governorateId))).get()).first;
-      return Governorate.fromGovernorateData(governorate: governorate.toCompanion(true));
-    } catch (e) {
-      LoggerService.logger?.e(e);
-      return null;
-    }
+    final result = await (database.select(database.governorateTable)..where((tbl) => tbl.id.equals(governorateId))).get();
+    final GovernorateTableData? governorate = result.isNotEmpty ? result.first : null;
+    return governorate != null ? Governorate.fromGovernorateData(governorate: governorate.toCompanion(true)) : null;
   }
 
   Future<int> delete(Governorate governorate) async {
@@ -46,7 +43,9 @@ class GovernorateDatabaseRepository extends GetxService {
     if (isSyncing) {
       governorateGovernorate = Governorate.fromGovernorateData(governorate: governorateCompanion);
     } else {
-      final int governorateId = await database.into(database.governorateTable).insert(governorateCompanion);
+      final existingItem = await getGovernorateById(governorateCompanion.id.value);
+      if (existingItem != null) return existingItem;
+      final int governorateId = await database.into(database.governorateTable).insert(governorateCompanion, mode: InsertMode.insertOrReplace);
       governorateGovernorate = await getGovernorateById(governorateId);
     }
     return governorateGovernorate;
@@ -54,7 +53,10 @@ class GovernorateDatabaseRepository extends GetxService {
 
   Future<void> backupGovernorates(List<Governorate> governorates) async {
     LoggerService.logger?.i('Backing up governorates...');
-    await deleteAll();
+    final tableExists = await Database.doesTableExist(database, 'governorate_table');
+    if (tableExists) {
+      await deleteAll();
+    }
     for (var element in governorates) {
       await insert(element.toGovernorateCompanion());
     }

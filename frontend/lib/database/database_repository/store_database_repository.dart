@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:drift/drift.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../constants/shared_preferences_keys.dart';
 import '../../helpers/helper.dart';
@@ -10,6 +12,7 @@ import '../../models/filter_model.dart';
 import '../../models/service.dart';
 import '../../models/store.dart';
 import '../../models/user.dart';
+import '../../services/authentication_service.dart';
 import '../../services/logger_service.dart';
 import '../../services/shared_preferences.dart';
 import '../database.dart';
@@ -21,20 +24,22 @@ class StoreDatabaseRepository extends GetxService {
 
   // Insert a store  in the database
   Future<Store?> insert(StoreTableCompanion store) async {
-    final int storeId = await database.into(database.storeTable).insert(store);
+    final existingItem = await getStoreById(store.id.value);
+    if (existingItem != null) return existingItem;
+    final int storeId = await database.into(database.storeTable).insert(store, mode: InsertMode.insertOrReplace);
     Store? result = await getStoreById(storeId);
     return result;
   }
 
   Future<ServiceGalleryTableCompanion?> insertGalleryPicture(ServiceGalleryTableCompanion gallery) async {
-    final int galleryId = await database.into(database.serviceGalleryTable).insert(gallery);
+    final int galleryId = await database.into(database.serviceGalleryTable).insert(gallery, mode: InsertMode.insertOrReplace);
     ServiceGalleryTableCompanion? result = await getGalleryById(galleryId);
     return result;
   }
 
   Future<ServiceTableCompanion?> insertService(ServiceTableCompanion service) async {
-    final String serviceId = (await database.into(database.serviceTable).insert(service)).toString(); // TODO fix this
-    ServiceTableCompanion? result = await getServiceById(serviceId);
+    await database.into(database.serviceTable).insert(service, mode: InsertMode.insertOrReplace);
+    ServiceTableCompanion? result = await getServiceById(service.id.value);
     return result;
   }
 
@@ -79,6 +84,10 @@ class StoreDatabaseRepository extends GetxService {
 
   Future<int> deleteGallery(ServiceGalleryTableCompanion gallery) async {
     return await database.delete(database.serviceGalleryTable).delete(gallery);
+  }
+
+  Future<int> deleteService(ServiceTableCompanion service) async {
+    return await database.delete(database.serviceTable).delete(service);
   }
 
   Future<Store?> getStoreById(int storeId) async {
@@ -153,21 +162,28 @@ class StoreDatabaseRepository extends GetxService {
   Future<void> deleteOldStores(List<Store> stores) async {
     LoggerService.logger?.i('Deleting old stores...');
     for (var store in stores) {
-      await delete(store);
-      // TODO delete store services and gallery
-      // store.gallerys?.forEach((element) async => await deleteGallery(element.toGalleryCompanion(storeId: store.id)));
+      final tableExists = await Database.doesTableExist(database, 'store_table');
+      if (tableExists) {
+        await delete(store);
+      }
+      final services = await _getStoreServices(store.toStoreCompanion());
+      for (var service in services) {
+        final gallery = await _getServiceGallery(service.toServiceCompanion(storeId: store.id!));
+        for (var picture in gallery) {
+          await deleteGallery(picture.toCompanion(true));
+        }
+        await deleteService(service.toServiceCompanion(storeId: store.id!));
+      }
     }
   }
 
   Future<List<Store>> filterStores(String searchQuery, FilterModel? filter) async {
     LoggerService.logger?.i('Filtering stores (searchQuery: $searchQuery, filter: ${filter.toString()})...');
     final allStores = await select();
-    // final allGallerys = await selectGallerys();
-    // Helper.snackBar(message: 'All saved gallerys length: ${allGallerys.length}');
-    // final allStores = await selectWithFilter((tbl) => tbl.title.contains(searchQuery), withFeedback: true);
     if (searchQuery.isEmpty && (filter == null || !filter.isNotEmpty)) {
       return allStores;
     } else {
+      LatLng? userCoordinates = AuthenticationService.find.jwtUserData?.coordinates;
       final filtered = allStores
           .where(
             (store) =>
@@ -176,8 +192,10 @@ class StoreDatabaseRepository extends GetxService {
                 (filter!.category != null && store.services != null ? store.services!.any((element) => element.category?.id == filter.category?.id) : false) ||
                 (store.services != null && filter.minPrice != null && filter.maxPrice != null
                     ? store.services!.any((element) => element.price! < filter.maxPrice! && element.price! > filter.minPrice!)
+                    : false) ||
+                (filter.nearby != null && store.coordinates != null && userCoordinates != null
+                    ? Helper.calculateDistance(store.coordinates!.latitude, store.coordinates!.longitude, userCoordinates.latitude, userCoordinates.longitude) <= filter.nearby!
                     : false),
-            // TODO add nearby filtering
           )
           .toList();
       return filtered;

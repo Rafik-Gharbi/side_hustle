@@ -19,6 +19,14 @@ class Category {
     this.parentId = 0,
     this.subscribed = 0,
   });
+  Category.empty({
+    this.id = -1,
+    this.name = '',
+    this.description = '',
+    this.icon = '',
+    this.parentId = 0,
+    this.subscribed = 0,
+  });
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
         id: json['id'],
@@ -47,6 +55,8 @@ class Category {
         parentId: category.parent,
         subscribed: category.subscribed,
       );
+
+  bool get empty => id == -1 && name.isEmpty && description.isEmpty && icon.isEmpty;
 
   CategoryTableCompanion toCategoryCompanion() => CategoryTableCompanion(
         id: Value(id),
