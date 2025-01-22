@@ -122,7 +122,7 @@ class ParamsRepository extends GetxService {
       if (response != null) {
         final bytes = response.bodyBytes;
         final dir = await getApplicationDocumentsDirectory();
-        final file = File(path.join(dir.path, 'terms & condition.pdf'));
+        final file = File(path.join(dir.path, 'privacy policy.pdf'));
         await file.writeAsBytes(bytes);
         return file;
       }

@@ -28,7 +28,7 @@ const Survey = sequelize.define(
     premiumSubscription: { type: Sequelize.STRING, allowNull: false },
     payPremium: { type: Sequelize.STRING, allowNull: false },
     testUser: { type: Sequelize.STRING, allowNull: false },
-    notifyPublic: { type: Sequelize.STRING, allowNull: false },
+    notifyPublic: { type: Sequelize.STRING, allowNull: true },
     otherInternetAccess: { type: Sequelize.STRING, allowNull: false },
     otherPaymentMethod: { type: Sequelize.STRING, allowNull: false },
     serviceOffering: { type: Sequelize.STRING, allowNull: false },

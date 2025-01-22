@@ -1091,6 +1091,7 @@ exports.updateProfile = async (req, res) => {
       email,
       picture,
       governorate_id: governorate,
+      phone_number: formattedPhoneNumber,
       birthdate,
       gender,
       coordinates,
@@ -1106,16 +1107,16 @@ exports.updateProfile = async (req, res) => {
         user_id: userFound.id,
       });
     });
-    if (formattedPhoneNumber != userFound.phone_number) {
-      const foundedCode = await VerificationCode.findOne({
-        where: {
-          user_id: userFound.id,
-        },
-      });
-      if (foundedCode && foundedCode.attempt > 4) {
-        return res.status(401).json({ message: "too_many_otp" });
-      }
-    }
+    // if (formattedPhoneNumber != userFound.phone_number) {
+    //   const foundedCode = await VerificationCode.findOne({
+    //     where: {
+    //       user_id: userFound.id,
+    //     },
+    //   });
+    //   if (foundedCode && foundedCode.attempt > 4) {
+    //     return res.status(401).json({ message: "too_many_otp" });
+    //   }
+    // }
     const jwt = await generateJWT(updatedUser);
     return res.status(200).json({ updatedUser, jwt });
   } catch (error) {
