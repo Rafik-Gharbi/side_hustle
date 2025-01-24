@@ -20,6 +20,7 @@ class ContractPaymentDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    RxBool isLoading = false.obs;
     return AlertDialog(
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(RadiusSize.regular))),
       backgroundColor: kNeutralColor100,
@@ -68,6 +69,7 @@ class ContractPaymentDialog extends StatelessWidget {
           Center(
             child: CustomButtons.elevatePrimary(
               title: 'pay_contract'.tr,
+              loading: isLoading,
               width: 150,
               disabled: !contract.isSigned,
               onPressed: () {
@@ -81,7 +83,7 @@ class ContractPaymentDialog extends StatelessWidget {
                       MainAppController.find.socket!.emit('payContract', {'contractId': contract.id, 'discussionId': discussionId});
                     },
                   ),
-                );
+                ).then((_) => isLoading.value = false);
               },
             ),
           ),

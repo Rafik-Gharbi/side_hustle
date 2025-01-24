@@ -34,8 +34,12 @@ class EmotionSliderBottomsheetState extends State<EmotionSliderBottomsheet> {
   final TextEditingController commentController = TextEditingController();
   double _currentValue = 2;
   bool isCommentExpanded = false;
+  RxBool isLoading = false.obs;
 
-  void submitFeedback() => ParamsRepository.find.submitFeedback(FeedbackEmotion.values[_currentValue.round()], commentController.text);
+  void submitFeedback() {
+    isLoading.value = true;
+    ParamsRepository.find.submitFeedback(FeedbackEmotion.values[_currentValue.round()], commentController.text).then((_) => isLoading.value = false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +55,7 @@ class EmotionSliderBottomsheetState extends State<EmotionSliderBottomsheet> {
             onExpandComment: (value) => setState(() => isCommentExpanded = value),
             commentController: commentController,
             onSubmitFeedback: submitFeedback,
+            isLoading: isLoading,
           ),
           Positioned(
             top: 40,
@@ -70,6 +75,7 @@ class EmotionSlider extends StatelessWidget {
   final ValueChanged<bool> onExpandComment;
   final TextEditingController commentController;
   final void Function() onSubmitFeedback;
+  final RxBool isLoading;
 
   const EmotionSlider({
     super.key,
@@ -79,6 +85,7 @@ class EmotionSlider extends StatelessWidget {
     required this.onExpandComment,
     required this.commentController,
     required this.onSubmitFeedback,
+    required this.isLoading,
   });
 
   @override
@@ -159,6 +166,7 @@ class EmotionSlider extends StatelessWidget {
                     const SizedBox(height: Paddings.exceptional),
                     CustomButtons.elevatePrimary(
                       title: 'submit_feedback'.tr,
+                      loading: isLoading,
                       titleStyle: AppFonts.x16Bold,
                       buttonColor: kNeutralLightColor,
                       width: double.infinity,

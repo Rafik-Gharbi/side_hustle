@@ -48,9 +48,11 @@ app.use(express.static(path.join(__dirname, "public")));
 // Add encryption in transit
 app.use((req, res, next) => {
   const originalSend = res.send;
-  const isTrustedSource = req.ip === "127.0.0.1";
+  const isTrustedSource =
+    req.ip.includes("127.0.0.1") ||
+    (req.headers["user-agent"]?.includes("insomnia") ?? false);
   const encryptionEnabled =
-    process.env.ENCRYPTION_ENABLED === "true" && isTrustedSource;
+    process.env.ENCRYPTION_ENABLED === "true" && !isTrustedSource;
   if (!encryptionEnabled) {
     console.warn(
       "Encryption is disabled for this request. Debug mode is active."

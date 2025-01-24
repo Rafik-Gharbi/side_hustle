@@ -107,12 +107,14 @@ class AddReviewBottomsheet extends StatelessWidget {
                                     children: [
                                       CustomButtons.elevateSecondary(
                                         title: 'skip_details'.tr,
+                                        loading: controller.isLoading,
                                         width: (Get.width - 40) / 2,
                                         onPressed: () => controller.upsertReview(),
                                       ),
                                       const SizedBox(width: Paddings.regular),
                                       CustomButtons.elevatePrimary(
                                         title: '${review != null ? 'update'.tr : 'add'.tr} ${'review'.tr}',
+                                        loading: controller.isLoading,
                                         width: (Get.width - 40) / 2,
                                         onPressed: () => controller.upsertReview(),
                                       ),

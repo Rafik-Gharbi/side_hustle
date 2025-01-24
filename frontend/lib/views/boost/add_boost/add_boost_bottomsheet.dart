@@ -200,6 +200,7 @@ class AddBoostBottomsheet extends StatelessWidget {
                         CustomButtons.elevatePrimary(
                           title: '${isUpdate ? 'update'.tr : 'create'.tr} ${'boost'.tr}',
                           width: Get.width,
+                          loading: controller.isLoading,
                           onPressed: controller.upsertBoost,
                         ),
                         const SizedBox(height: Paddings.exceptional),

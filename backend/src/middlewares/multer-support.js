@@ -15,7 +15,6 @@ function ensureDirectoryExists(dir) {
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let dir;
-
     ensureDecryptBody(req);
     // Check file type to determine destination
     const ext = path.extname(file.originalname).toLowerCase();

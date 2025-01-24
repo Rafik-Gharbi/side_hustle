@@ -41,6 +41,7 @@ class BuildSelfiePicturePicker extends StatelessWidget {
                       )
                     : CustomButtons.elevateSecondary(
                         title: 'open_camera'.tr,
+                        loading: controller.isLoading,
                         width: (Get.width - 60) / 2,
                         height: (Get.width - 60) / 2,
                         onPressed: () => controller.uploadVerifUserPicture(type: VerifPicture.selfie),

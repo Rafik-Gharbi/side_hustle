@@ -47,13 +47,17 @@ class ApproveUserController extends GetxController {
       });
       MainAppController.find.socket!.on(
         'adminApproveStatus',
-        (data) => Helper.snackBar(message: data?['done'] == true ? 'user_updated_successfully'.tr : 'user_not_updated'.tr),
+        (data) {
+          Helper.snackBar(message: data?['done'] == true ? 'user_updated_successfully'.tr : 'user_not_updated'.tr);
+          isLoading.value = false;
+        },
       );
     });
   }
 
   Future<void> approveUser(User? user) async {
     if (user == null) return;
+    isLoading.value = true;
     MainAppController.find.socket!.emit('acceptApproveUser', {
       'jwt': ApiBaseHelper.find.getToken(),
       'id': user.id!,
@@ -62,6 +66,7 @@ class ApproveUserController extends GetxController {
 
   Future<void> couldNotApprove(User? user) async {
     if (user == null) return;
+    isLoading.value = true;
     MainAppController.find.socket!.emit('rejectApproveUser', {
       'jwt': ApiBaseHelper.find.getToken(),
       'id': user.id!,

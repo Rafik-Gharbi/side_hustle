@@ -31,6 +31,7 @@ class AddSupportTicket extends StatelessWidget {
     List<XFile>? attachments;
     bool hasError = false;
     bool attachLogs = true;
+    RxBool isLoading = false.obs;
     return StatefulBuilder(builder: (context, setState) {
       Future<void> uploadAttachments() async {
         final files = await Helper.pickFiles();
@@ -223,24 +224,29 @@ class AddSupportTicket extends StatelessWidget {
                         Center(
                           child: CustomButtons.elevatePrimary(
                             title: 'submit'.tr,
+                            loading: isLoading,
                             width: 250,
                             onPressed: () async {
                               if (formKey.currentState?.validate() ?? false) {
+                                isLoading.value = true;
                                 hasError = false;
                                 final logFile = await LoggerService.find.getLogFile();
                                 UserRepository.find
                                     .submitSupportTicket(
-                                      SupportTicket(
-                                        guestId: Helper.getOrCreateGuestId(),
-                                        category: ticketCategory!,
-                                        subject: subjectController.text,
-                                        description: descriptionController.text,
-                                        priority: ticketPriority!,
-                                        logs: attachLogs ? logFile : null,
-                                      ),
-                                      attachments,
-                                    )
-                                    .then((value) => value ? Get.back(result: true) : null);
+                                  SupportTicket(
+                                    guestId: Helper.getOrCreateGuestId(),
+                                    category: ticketCategory!,
+                                    subject: subjectController.text,
+                                    description: descriptionController.text,
+                                    priority: ticketPriority!,
+                                    logs: attachLogs ? logFile : null,
+                                  ),
+                                  attachments,
+                                )
+                                    .then((value) {
+                                  isLoading.value = false;
+                                  if (value) Get.back(result: true);
+                                });
                               } else {
                                 setState(() => hasError = true);
                               }

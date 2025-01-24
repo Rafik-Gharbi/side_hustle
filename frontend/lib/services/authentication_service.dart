@@ -22,6 +22,8 @@ import '../repositories/user_repository.dart';
 import '../views/chat/chat_controller.dart';
 import '../views/chat/components/messages_screen.dart';
 import '../views/profile/profile_screen/profile_controller.dart';
+import '../views/settings/components/privacy_policy_screen.dart';
+import '../views/settings/components/terms_condition_screen.dart';
 import 'logger_service.dart';
 import 'shared_preferences.dart';
 
@@ -55,16 +57,20 @@ class AuthenticationService extends GetxController {
   ForgotPasswordStep _screenState = ForgotPasswordStep.sendEmail;
   LoginWidgetState _currentState = LoginWidgetState.login;
   bool _isPhoneInput = true;
-  bool _sendingEmail = false;
+  RxBool sendingEmail = false.obs;
   bool stayLoggedIn = false;
   bool _firstMailSent = false;
-  bool _isLoggingIn = false;
+  RxBool isLoggingIn = false.obs;
   bool _chatRoomInitiated = false;
   bool isReady = false;
   String? phoneNumber;
   Gender? _gender;
   Governorate? _governorate;
   LatLng? _coordinates;
+  RxBool isLoading = false.obs;
+  RxBool isGettingCoordinates = false.obs;
+  RxBool isUpdatingProfile = false.obs;
+  RxBool acceptedTermsPrivacy = false.obs;
 
   // Available logged in user data from JWT token
   bool? isUserMailVerified;
@@ -84,11 +90,9 @@ class AuthenticationService extends GetxController {
 
   LoginWidgetState get currentState => _currentState;
 
-  bool get isLoggingIn => _isLoggingIn;
-
-  bool get sendingEmail => _sendingEmail;
-
   bool get firstMailSent => _firstMailSent;
+
+  bool get isLoggedIn => _jwtUserData != null;
 
   ForgotPasswordStep get screenState => _screenState;
 
@@ -120,17 +124,7 @@ class AuthenticationService extends GetxController {
 
   set firstMailSent(bool value) {
     _firstMailSent = value;
-    if (_firstMailSent) _sendingEmail = false;
-    update();
-  }
-
-  set sendingEmail(bool value) {
-    _sendingEmail = value;
-    update();
-  }
-
-  set isLoggingIn(bool value) {
-    _isLoggingIn = value;
+    if (_firstMailSent) sendingEmail.value = false;
     update();
   }
 
@@ -200,14 +194,8 @@ class AuthenticationService extends GetxController {
 
   Future<Map<String, String?>?> signInWithGoogle({bool isLinking = false, bool isSignUp = false}) async {
     try {
+      isLoggingIn.value = true;
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      // final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-      // if (googleAuth != null) {}
-      // final credential = GoogleAuthProvider.credential(
-      //   accessToken: googleAuth?.accessToken,
-      //   idToken: googleAuth?.idToken,
-      // );
-      // final result = await FirebaseAuth.instance.signInWithCredential(credential);
       if (googleUser?.id != null) {
         return _silentGoogleLogin(isLinking: isLinking, isSignUp: isSignUp);
       } else {
@@ -217,6 +205,7 @@ class AuthenticationService extends GetxController {
       Helper.snackBar(message: 'error_occurred'.tr);
       LoggerService.logger?.e('Error: $error'); // Handle general errors
     }
+    isLoggingIn.value = false;
     return null;
   }
 
@@ -260,13 +249,13 @@ class AuthenticationService extends GetxController {
     mainAppController.socket?.disconnect();
     _jwtUserData = null;
     _chatRoomInitiated = false;
-    _isLoggingIn = false;
+    isLoggingIn.value = false;
     update();
   }
 
   Future<void> classicLogin() async {
     if (formLoginKey.currentState?.validate() ?? false) {
-      isLoggingIn = true;
+      isLoggingIn.value = true;
       final user = User(
         email: emailController.text,
         phone: phoneNumber,
@@ -278,7 +267,7 @@ class AuthenticationService extends GetxController {
 
   Future<void> signUpUser({User? user}) async {
     if (user == null && (formSignupKey.currentState?.validate() ?? false) || user != null) {
-      isLoggingIn = true;
+      isLoggingIn.value = true;
       user ??= User(
         name: nameController.text.isEmpty ? null : nameController.text,
         email: emailController.text.isEmpty ? null : emailController.text,
@@ -300,7 +289,7 @@ class AuthenticationService extends GetxController {
           'method': user.getSignupMethod,
         },
       );
-      isLoggingIn = false;
+      isLoggingIn.value = false;
       if (jwt != null) {
         Helper.goBack();
         // if (!Helper.isNullOrEmpty(phoneNumber)) {
@@ -337,7 +326,8 @@ class AuthenticationService extends GetxController {
     governorate = null;
     gender = null;
     _currentState = LoginWidgetState.login;
-    _isLoggingIn = false;
+    isLoggingIn.value = false;
+    acceptedTermsPrivacy.value = false;
     _isPhoneInput = true;
     resetForgotPassword();
   }
@@ -350,7 +340,7 @@ class AuthenticationService extends GetxController {
     _currentState = LoginWidgetState.login;
     _screenState = ForgotPasswordStep.sendEmail;
     _firstMailSent = false;
-    _sendingEmail = false;
+    sendingEmail.value = false;
   }
 
   Future<void> _facebookLogout() async => await FacebookAuth.instance.logOut();
@@ -404,7 +394,7 @@ class AuthenticationService extends GetxController {
         'method': user.getSignupMethod,
       },
     );
-    isLoggingIn = false;
+    isLoggingIn.value = false;
     if (loginResponse?.token != null) {
       if (loginResponse?.refreshToken != null) {
         SharedPreferencesService.find.add(refreshTokenKey, loginResponse!.refreshToken!);
@@ -442,7 +432,7 @@ class AuthenticationService extends GetxController {
         jwtUserData?.isMailVerified = userFromToken.isMailVerified;
         jwtUserData?.hasSharedPosition = userFromToken.hasSharedPosition;
         jwtUserData?.password = null;
-        _isLoggingIn = true;
+        isLoggingIn.value = true;
       }
       // init chat messages standBy room
       _initChatStandByRoom();
@@ -463,6 +453,7 @@ class AuthenticationService extends GetxController {
 
   Future<void> updateUserData() async {
     if ((formSignupKey.currentState?.validate() ?? false) && (nameController.text.isNotEmpty || emailController.text.isNotEmpty || phoneNumber != null)) {
+      isUpdatingProfile.value = true;
       await UserRepository.find.updateUser(
         User(
           id: _jwtUserData!.id,
@@ -477,19 +468,22 @@ class AuthenticationService extends GetxController {
         ),
         withBack: true,
       );
+      isUpdatingProfile.value = false;
     }
   }
 
   Future<void> forgotPassword() async {
     if (formSignupKey.currentState?.validate() ?? false) {
+      isLoading.value = true;
       await UserRepository.find.forgotPassword(passwordController.text, validationKeyController.text);
       resetForgotPassword();
+      isLoading.value = false;
     }
   }
 
   Future<void> sendVerificationKey() async {
     if (formSignupKey.currentState?.validate() ?? false) {
-      sendingEmail = true;
+      sendingEmail.value = true;
       final success = await UserRepository.find.sendChangePasswordCode(emailController.text);
       firstMailSent = true;
       if (success) screenState = ForgotPasswordStep.changePassword;
@@ -537,7 +531,9 @@ class AuthenticationService extends GetxController {
 
   Future<void> changePassword(GlobalKey<FormState> formKey) async {
     if (formKey.currentState?.validate() ?? false) {
+      isLoading.value = true;
       await UserRepository.find.changePassword(newPasswordController.text, currentPasswordController.text);
+      isLoading.value = false;
     }
   }
 
@@ -553,6 +549,7 @@ class AuthenticationService extends GetxController {
   }
 
   Future<void> getUserCoordinates({bool withSave = false}) async {
+    isGettingCoordinates.value = true;
     coordinates = await Helper.getPosition();
     if (withSave) {
       final user = AuthenticationService.find.jwtUserData;
@@ -561,6 +558,7 @@ class AuthenticationService extends GetxController {
         await UserRepository.find.updateUserCoordinates(user, silent: true);
       }
     }
+    isGettingCoordinates.value = false;
     if (coordinates != null) Helper.snackBar(message: 'location_successfully_shared'.tr);
   }
 
@@ -585,4 +583,8 @@ class AuthenticationService extends GetxController {
     MainAppController.find.getNotSeenNotifications();
     MainAppController.find.resolveProfileActionRequired();
   }
+
+  void openTerms() => Get.toNamed(TermsConditionScreen.routeName);
+
+  void openPrivacy() => Get.toNamed(PrivacyPolicyScreen.routeName);
 }

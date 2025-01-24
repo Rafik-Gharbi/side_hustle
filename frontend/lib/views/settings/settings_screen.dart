@@ -180,7 +180,7 @@ class SettingsScreen extends StatelessWidget {
                     //   trailing: const Icon(Icons.chevron_right),
                     //   onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
                     // ),
-                    if (AuthenticationService.find.isLoggingIn)
+                    if (AuthenticationService.find.isLoggedIn)
                       AnimatedListTile(
                         title: 'delete_profile'.tr,
                         titleStyle: AppFonts.x14Bold.copyWith(color: kErrorColor),

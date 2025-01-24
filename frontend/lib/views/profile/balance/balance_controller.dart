@@ -93,13 +93,16 @@ class BalanceController extends GetxController {
         () => Get.dialog(
           WithdrawalDialog(
             amount: amount,
+            isLoading: isLoading,
             onWithdraw: () async {
+              isLoading.value = true;
               final result = await BalanceRepository.find.requestWithdrawal(amount: amount - amount * serviceFees);
               if (result) {
                 Helper.snackBar(message: 'withdrawal_requested_success');
               } else {
                 Helper.snackBar(message: 'withdrawal_request_failed');
               }
+              isLoading.value = false;
               init();
               clearWithdrawalFields();
             },
@@ -113,14 +116,17 @@ class BalanceController extends GetxController {
 
   Future<void> requestDeposit(DepositType type) async {
     if ((formKey.currentState?.validate() ?? false) && (type == DepositType.installment ? depositSlip != null : true)) {
+      isLoading.value = true;
       if (type == DepositType.bankCard) {
         Helper.snackBar(message: 'bank_card_not_supported_yet'.tr);
+        isLoading.value = false;
         return;
       }
       Get.back(); // close bottomsheet
       hasValidatorError = false;
       hasValidatorErrorSlipDeposit = false;
       final result = await BalanceRepository.find.requestDeposit(type: type.name, amount: double.parse(amountController.text), depositSlip: depositSlip);
+      isLoading.value = false;
       if (result) {
         Helper.snackBar(message: 'deposit_requested_success');
       } else {
@@ -135,10 +141,12 @@ class BalanceController extends GetxController {
 
   Future<void> upsertBankNumber() async {
     if (formKey.currentState?.validate() ?? false) {
+      isLoading.value = true;
       Get.back(); // close bottomsheet
       hasValidatorError = false;
       loggedUser.bankNumber = bankNumberController.text;
       final result = await UserRepository.find.updateUser(loggedUser);
+      isLoading.value = true;
       if (result != null) {
         loggedUser = result;
       } else {

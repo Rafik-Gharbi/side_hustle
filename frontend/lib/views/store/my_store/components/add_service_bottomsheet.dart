@@ -174,6 +174,7 @@ class AddServiceBottomsheet extends StatelessWidget {
                         const SizedBox(height: Paddings.exceptional * 2),
                         CustomButtons.elevatePrimary(
                           title: '${isUpdate ? 'update'.tr : 'create'.tr} ${'service'.tr}',
+                          loading: StoreViewmodel.isLoading,
                           width: Get.width,
                           onPressed: () => controller.upsertService(isUpdate: isUpdate),
                         ),

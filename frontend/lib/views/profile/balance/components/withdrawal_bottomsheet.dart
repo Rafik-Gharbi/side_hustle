@@ -87,6 +87,7 @@ class WithdrawalBottomsheet extends StatelessWidget {
                     const SizedBox(height: Paddings.exceptional),
                     Center(
                       child: CustomButtons.elevatePrimary(
+                        loading: controller.isLoading,
                         width: 200,
                         title: 'request_withdraw'.tr,
                         disabled: !controller.couldRequestWithdrawal,

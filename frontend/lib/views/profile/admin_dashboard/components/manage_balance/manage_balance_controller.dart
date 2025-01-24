@@ -43,7 +43,10 @@ class ManageBalanceController extends GetxController {
       });
       MainAppController.find.socket!.on(
         'adminBalanceStatus',
-        (data) => Helper.snackBar(message: data?['done'] == true ? 'balance_updated_successfully'.tr : 'balance_update_failed'.tr),
+        (data) {
+          Helper.snackBar(message: data?['done'] == true ? 'balance_updated_successfully'.tr : 'balance_update_failed'.tr);
+          isLoading.value = false;
+        },
       );
     });
   }
@@ -52,6 +55,7 @@ class ManageBalanceController extends GetxController {
 
   Future<void> rejectBalanceRequest(BalanceTransaction balanceTransaction) async {
     if (balanceTransaction.id == null) return;
+    isLoading.value = true;
     // TODO add resons too choose from with optionally providing a note to get delivered to the user
     MainAppController.find.socket!.emit('rejectBalanceRequest', {
       'jwt': ApiBaseHelper.find.getToken(),
@@ -62,6 +66,7 @@ class ManageBalanceController extends GetxController {
 
   Future<void> acceptBalanceRequest(BalanceTransaction balanceTransaction) async {
     if (balanceTransaction.id == null) return;
+    isLoading.value = true;
     MainAppController.find.socket!.emit('acceptBalanceRequest', {
       'jwt': ApiBaseHelper.find.getToken(),
       'id': balanceTransaction.id!,

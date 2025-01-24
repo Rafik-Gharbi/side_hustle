@@ -42,6 +42,7 @@ class TaskProposalScreen extends StatelessWidget {
                             user: reservation.provider,
                             reservation: reservation,
                             requestStatus: reservation.status,
+                            isLoading: controller.isLoading,
                             onAccept: () => controller.acceptProposal(reservation),
                             onReject: () => controller.rejectProposals(reservation),
                             onMarkDone: () => controller.markDoneProposals(reservation),

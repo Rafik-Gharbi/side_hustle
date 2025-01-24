@@ -49,6 +49,7 @@ class ForgotPassword extends StatelessWidget {
           CustomButtons.elevatePrimary(
             title: 'change_password'.tr,
             width: double.infinity,
+            loading: controller.isLoading,
             onPressed: controller.forgotPassword,
           ),
           const SizedBox(height: Paddings.regular),

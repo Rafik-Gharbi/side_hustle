@@ -27,6 +27,7 @@ class VerifyUserController extends GetxController {
   RxBool isLoadingDataUpload = false.obs;
   bool? uploadDocumentResult;
   bool showTimer = true;
+  RxBool isLoading = false.obs;
 
   bool get hasProvidedDocument => documentType == DocumentType.identityCard ? frontIdentityPicture != null && backIdentityPicture != null : passportPicture != null;
 
@@ -76,6 +77,7 @@ class VerifyUserController extends GetxController {
 
   Future<void> uploadVerifUserPicture({required VerifPicture type}) async {
     try {
+      isLoading.value = true;
       XFile? image;
       final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
       if (kIsWeb) {
@@ -102,8 +104,10 @@ class VerifyUserController extends GetxController {
         }
         update();
       }
+      isLoading.value = false;
     } catch (e) {
       LoggerService.logger?.e('Error occured in uploadVerifUserPicture:\n$e');
+      isLoading.value = false;
     }
   }
 

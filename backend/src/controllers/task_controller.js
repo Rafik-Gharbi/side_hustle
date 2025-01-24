@@ -9,8 +9,6 @@ const {
   fetchAndSortNearbyTasks,
   fetchUserReservation,
   fetchUserBooking,
-  fetchUserOngoingReservation,
-  fetchUserOngoingBooking,
   getRandomHotTasks,
   populateOneTask,
   fetchAndSortGovernorateTasks,

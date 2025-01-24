@@ -32,6 +32,7 @@ class _ReportUserDialogState extends State<ReportUserDialog> {
   final GlobalKey<FormState> formKey = GlobalKey();
   final TextEditingController explanationController = TextEditingController();
   ReportReasons? _selectedReportReasons;
+  RxBool isLoading = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -103,10 +104,12 @@ class _ReportUserDialogState extends State<ReportUserDialog> {
                   const SizedBox(height: Paddings.exceptional),
                   CustomButtons.elevatePrimary(
                     title: 'submit_report'.tr,
+                    loading: isLoading,
                     width: isMobile ? Get.width : 400,
                     disabled: _selectedReportReasons == null,
                     onPressed: () {
                       if (formKey.currentState?.validate() ?? false) {
+                        isLoading.value = true;
                         ParamsRepository.find.reportUser(
                           ReportDTO(
                             reportedUser: widget.user,
@@ -116,7 +119,7 @@ class _ReportUserDialogState extends State<ReportUserDialog> {
                             reasons: _selectedReportReasons!,
                             explanation: explanationController.text,
                           ),
-                        );
+                        ).then((value) => isLoading.value = false);
                       }
                     },
                   ),

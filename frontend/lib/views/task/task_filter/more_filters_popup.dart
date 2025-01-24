@@ -96,9 +96,12 @@ class MoreFiltersPopup extends StatelessWidget {
                         const SizedBox(width: Paddings.regular),
                         CustomButtons.elevatePrimary(
                           title: 'filter'.tr,
+                          loading: controller.isLoading,
                           width: Get.width / 3,
                           onPressed: () {
+                            controller.isLoading.value = true;
                             updateFilter.call(controller.getFilterModel());
+                            controller.isLoading.value = false;
                             Helper.goBack();
                           },
                         ),

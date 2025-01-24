@@ -69,7 +69,9 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to location in the background.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Upload task attachments</string>
+	<string>This app requires access to the photos.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app requires access to the photos.</string>
 	<key>NWPathMonitor</key>
 	<true/>
 	<key>REVERSED_CLIENT_ID</key>

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../constants/colors.dart';
 import '../constants/sizes.dart';
 import '../helpers/helper.dart';
@@ -16,7 +17,7 @@ class CustomButtons extends StatelessWidget {
   final Widget? child;
   final double? width;
   final double? height;
-  final bool loading;
+  final RxBool? loading;
   final bool disabled;
   final Widget? icon;
   final bool? isIconLeft;
@@ -35,7 +36,7 @@ class CustomButtons extends StatelessWidget {
     this.child,
     this.width,
     this.height,
-    this.loading = false,
+    this.loading,
     this.disabled = false,
     this.buttonColor,
     this.padding,
@@ -55,7 +56,7 @@ class CustomButtons extends StatelessWidget {
     this.child,
     this.width,
     this.height,
-    this.loading = false,
+    this.loading,
     this.disabled = false,
     this.padding,
     this.icon,
@@ -77,7 +78,7 @@ class CustomButtons extends StatelessWidget {
     this.minimumSize,
   })  : assert(title != null || child != null, 'Text button should have a title or a child!'),
         buttonType = ButtonType.text,
-        loading = false,
+        loading = null,
         icon = null,
         isIconLeft = null,
         borderSide = null,
@@ -105,7 +106,7 @@ class CustomButtons extends StatelessWidget {
         isIconLeft = null,
         height = null,
         borderSide = null,
-        loading = false,
+        loading = null,
         buttonColor = null,
         minimumSize = null;
 
@@ -125,103 +126,22 @@ class CustomButtons extends StatelessWidget {
         titleStyle = null,
         borderSide = null,
         isIconLeft = null,
-        loading = false,
+        loading = null,
         iconSize = null,
         iconColor = null,
         minimumSize = null;
 
   @override
   Widget build(BuildContext context) {
-    switch (buttonType) {
-      case ButtonType.elevatePrimary:
-        return ElevatedButton(
-          style: ButtonStyle(
-            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(5)),
-                side: borderSide ?? BorderSide.none,
-              ),
-            ),
-            padding: WidgetStateProperty.all(padding ?? EdgeInsets.zero),
-            minimumSize: WidgetStateProperty.all(
-              Size(
-                width ?? 50,
-                height ?? 50,
-              ),
-            ),
-            backgroundColor: buttonColor != null
-                ? WidgetStateProperty.all(buttonColor)
-                : disabled
-                    ? WidgetStateProperty.all(kNeutralColor)
-                    : WidgetStateProperty.all(kPrimaryColor),
-          ),
-          onPressed: disabled || loading
-              ? null
-              : () {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  onPressed();
-                },
-          child: loading
-              ? SizedBox(
-                  width: (height ?? 50) - 20,
-                  height: (height ?? 50) - 20,
-                  child: const CircularProgressIndicator(color: Colors.white),
-                )
-              : icon != null
-                  ? SizedBox(
-                      width: width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          if (isIconLeft!)
-                            Padding(
-                              padding: const EdgeInsets.only(left: Paddings.regular),
-                              child: icon,
-                            ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                            child: Text(
-                              title ?? '',
-                              style: (titleStyle ?? AppFonts.x16Bold).copyWith(
-                                color: buttonColor != null
-                                    ? Helper.isColorDarkEnoughForWhiteText(buttonColor!)
-                                        ? kBlackColor
-                                        : kNeutralColor100
-                                    : kNeutralColor100,
-                              ),
-                            ),
-                          ),
-                          if (!isIconLeft!)
-                            Padding(
-                              padding: const EdgeInsets.only(right: Paddings.regular),
-                              child: icon,
-                            ),
-                        ],
-                      ),
-                    )
-                  : child ??
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          title ?? '',
-                          style: (titleStyle ?? AppFonts.x16Bold).copyWith(
-                            color: buttonColor != null
-                                ? Helper.isColorDarkEnoughForWhiteText(buttonColor!)
-                                    ? kBlackColor
-                                    : kNeutralColor100
-                                : kNeutralColor100,
-                          ),
-                        ),
-                      ),
-        );
-      case ButtonType.elevateSecondary:
-        return OnHover(
-          builder: (isHovered) => ElevatedButton(
+    Widget getButton(bool? loading) {
+      switch (buttonType) {
+        case ButtonType.elevatePrimary:
+          return ElevatedButton(
             style: ButtonStyle(
               shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                   borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  side: borderSide ?? const BorderSide(color: kNeutralLightColor),
+                  side: borderSide ?? BorderSide.none,
                 ),
               ),
               padding: WidgetStateProperty.all(padding ?? EdgeInsets.zero),
@@ -231,110 +151,236 @@ class CustomButtons extends StatelessWidget {
                   height ?? 50,
                 ),
               ),
-              surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
-              backgroundColor: disabled ? WidgetStateProperty.all(Theme.of(context).scaffoldBackgroundColor) : WidgetStateProperty.all(buttonColor ?? Colors.white),
+              backgroundColor: buttonColor != null
+                  ? WidgetStateProperty.all(buttonColor)
+                  : disabled
+                      ? WidgetStateProperty.all(kNeutralColor)
+                      : WidgetStateProperty.all(kPrimaryColor),
             ),
-            onPressed: disabled || loading
+            onPressed: disabled || (loading ?? false)
                 ? null
                 : () {
                     FocusManager.instance.primaryFocus?.unfocus();
                     onPressed();
                   },
-            child: loading
-                ? const CircularProgressIndicator(color: kPrimaryColor)
-                : icon != null
-                    ? SizedBox(
-                        width: width,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            if (isIconLeft!)
-                              Padding(
-                                padding: const EdgeInsets.only(left: Paddings.regular),
-                                child: icon,
-                              ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                              child: Text(
-                                title ?? '',
-                                style: titleStyle ?? AppFonts.x15Bold,
-                              ),
-                            ),
-                            if (!isIconLeft!)
-                              Padding(
-                                padding: const EdgeInsets.only(right: Paddings.regular),
-                                child: icon,
-                              ),
-                          ],
-                        ),
-                      )
-                    : child ??
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            title ?? '',
-                            style: titleStyle ?? AppFonts.x15Bold.copyWith(fontWeight: isHovered ? FontWeight.bold : FontWeight.normal),
+            child: icon != null
+                ? SizedBox(
+                    width: width,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        if (isIconLeft!)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                            child: icon,
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: (loading ?? false)
+                                ? Center(
+                                    child: SizedBox(
+                                      width: (height ?? 50) - 20,
+                                      height: (height ?? 50) - 20,
+                                      child: const CircularProgressIndicator(color: Colors.white),
+                                    ),
+                                  )
+                                : Text(
+                                    title ?? '',
+                                    style: (titleStyle ?? AppFonts.x16Bold).copyWith(
+                                      color: buttonColor != null
+                                          ? Helper.isColorDarkEnoughForWhiteText(buttonColor!)
+                                              ? kBlackColor
+                                              : kNeutralColor100
+                                          : kNeutralColor100,
+                                    ),
+                                  ),
                           ),
                         ),
-          ),
-        );
-      case ButtonType.text:
-        return OnHover(
-          builder: (isHovered) => TextButton(
-            onPressed: disabled ? null : onPressed,
-            style: ButtonStyle(
-              padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: Paddings.regular)),
-              minimumSize: minimumSize != null ? WidgetStateProperty.all(minimumSize) : null,
-            ),
-            child: child ??
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(border: Border(bottom: BorderSide(color: isHovered ? kSelectedColor : (titleStyle?.color ?? kSecondaryColor)))),
-                    child: Text(
-                      title ?? '',
-                      style: disabled
-                          ? Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: titleStyle?.fontSize ?? 17)
-                          : (titleStyle ?? AppFonts.x16Regular).copyWith(
-                              color: isHovered ? kSelectedColor : titleStyle?.color,
-                              decorationColor: isHovered ? kSelectedColor : titleStyle?.color,
+                        if (!isIconLeft!)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                            child: icon,
+                          ),
+                      ],
+                    ),
+                  )
+                : child ??
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: (loading ?? false)
+                          ? Center(
+                              child: SizedBox(
+                                width: (height ?? 50) - 20,
+                                height: (height ?? 50) - 20,
+                                child: const CircularProgressIndicator(color: Colors.white),
+                              ),
+                            )
+                          : Text(
+                              title ?? '',
+                              style: (titleStyle ?? AppFonts.x16Bold).copyWith(
+                                color: buttonColor != null
+                                    ? Helper.isColorDarkEnoughForWhiteText(buttonColor!)
+                                        ? kBlackColor
+                                        : kNeutralColor100
+                                    : kNeutralColor100,
+                              ),
                             ),
                     ),
+          );
+        case ButtonType.elevateSecondary:
+          return OnHover(
+            builder: (isHovered) => ElevatedButton(
+              style: ButtonStyle(
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(5)),
+                    side: borderSide ?? const BorderSide(color: kNeutralLightColor),
                   ),
                 ),
-          ),
-        );
-      case ButtonType.icon:
-        return IconButton(
-          icon: child ?? icon!,
-          disabledColor: kNeutralColor,
-          padding: padding ?? EdgeInsets.zero,
-          iconSize: iconSize != null && iconSize! > 0 ? iconSize! : 24.0,
-          color: iconColor ?? kSecondaryColor,
-          onPressed: disabled
-              ? null
-              : () {
-                  onPressed();
-                },
-        );
-      case ButtonType.iconWithBackground:
-        return ElevatedButton(
-          onPressed: disabled
-              ? () {}
-              : () {
-                  onPressed();
-                },
-          style: ElevatedButton.styleFrom(
-            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(RadiusSize.regular))),
-            minimumSize: Size(width ?? 50, height ?? 50),
-            elevation: 0,
-            padding: padding ?? const EdgeInsets.all(Paddings.regular),
-            backgroundColor: disabled ? Theme.of(context).scaffoldBackgroundColor : buttonColor ?? kPrimaryColor,
-          ),
-          child: child ?? icon,
-        );
-      default:
-        return Container();
+                padding: WidgetStateProperty.all(padding ?? EdgeInsets.zero),
+                minimumSize: WidgetStateProperty.all(
+                  Size(
+                    width ?? 50,
+                    height ?? 50,
+                  ),
+                ),
+                surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
+                backgroundColor: disabled ? WidgetStateProperty.all(Theme.of(context).scaffoldBackgroundColor) : WidgetStateProperty.all(buttonColor ?? Colors.white),
+              ),
+              onPressed: disabled || (loading ?? false)
+                  ? null
+                  : () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      onPressed();
+                    },
+              child: icon != null
+                  ? SizedBox(
+                      width: width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          if (isIconLeft!)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                              child: icon,
+                            ),
+                          (loading ?? false)
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: Paddings.exceptional),
+                                  child: SizedBox(
+                                    width: (height ?? 50) - 20,
+                                    height: (height ?? 50) - 20,
+                                    child: const CircularProgressIndicator(color: kPrimaryColor),
+                                  ),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                                  child: Text(
+                                    title ?? '',
+                                    style: titleStyle ?? AppFonts.x15Bold,
+                                  ),
+                                ),
+                          if (!isIconLeft!)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                              child: icon,
+                            ),
+                        ],
+                      ),
+                    )
+                  : child ??
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: (loading ?? false)
+                            ? Center(
+                                child: SizedBox(
+                                  width: (height ?? 50) - 20,
+                                  height: (height ?? 50) - 20,
+                                  child: const CircularProgressIndicator(color: kPrimaryColor),
+                                ),
+                              )
+                            : Text(
+                                title ?? '',
+                                style: titleStyle ?? AppFonts.x15Bold.copyWith(fontWeight: isHovered ? FontWeight.bold : FontWeight.normal),
+                              ),
+                      ),
+            ),
+          );
+        case ButtonType.text:
+          return OnHover(
+            builder: (isHovered) => TextButton(
+              onPressed: disabled || (loading ?? false)
+                  ? null
+                  : () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      onPressed();
+                    },
+              style: ButtonStyle(
+                padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: Paddings.regular)),
+                minimumSize: minimumSize != null ? WidgetStateProperty.all(minimumSize) : null,
+              ),
+              child: child ??
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: isHovered ? kSelectedColor : (titleStyle?.color ?? kSecondaryColor)))),
+                      child: Text(
+                        title ?? '',
+                        style: disabled
+                            ? Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: titleStyle?.fontSize ?? 17)
+                            : (titleStyle ?? AppFonts.x16Regular).copyWith(
+                                color: isHovered ? kSelectedColor : titleStyle?.color,
+                                decorationColor: isHovered ? kSelectedColor : titleStyle?.color,
+                              ),
+                      ),
+                    ),
+                  ),
+            ),
+          );
+        case ButtonType.icon:
+          return IconButton(
+            icon: child ?? icon!,
+            disabledColor: kNeutralColor,
+            padding: padding ?? EdgeInsets.zero,
+            iconSize: iconSize != null && iconSize! > 0 ? iconSize! : 24.0,
+            color: iconColor ?? kSecondaryColor,
+            onPressed: disabled || (loading ?? false)
+                ? null
+                : () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    onPressed();
+                  },
+          );
+        case ButtonType.iconWithBackground:
+          return ElevatedButton(
+            onPressed: disabled || (loading ?? false)
+                ? null
+                : () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    onPressed();
+                  },
+            style: ElevatedButton.styleFrom(
+              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(RadiusSize.regular))),
+              minimumSize: Size(width ?? 50, height ?? 50),
+              elevation: 0,
+              padding: padding ?? const EdgeInsets.all(Paddings.regular),
+              backgroundColor: disabled ? Theme.of(context).scaffoldBackgroundColor : buttonColor ?? kPrimaryColor,
+            ),
+            child: child ?? icon,
+          );
+        default:
+          return Container();
+      }
     }
+
+    return loading != null
+        ? Obx(() {
+            print('isLoading: ${loading!.value}');
+            return getButton(loading!.value);
+          })
+        : getButton(null);
   }
 }

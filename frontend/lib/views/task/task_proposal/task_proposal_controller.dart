@@ -30,7 +30,9 @@ class TaskProposalController extends GetxController {
   void acceptProposal(Reservation reservation) => Helper.openConfirmationDialog(
         content: 'accept_proposal_msg'.tr,
         onConfirm: () async {
+          isLoading.value = true;
           await ReservationRepository.find.updateTaskReservationStatus(reservation, RequestStatus.confirmed);
+          isLoading.value = false;
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
         },
       );
@@ -38,7 +40,9 @@ class TaskProposalController extends GetxController {
   void rejectProposals(Reservation reservation) => Helper.openConfirmationDialog(
         content: 'reject_proposal_msg'.tr,
         onConfirm: () async {
+          isLoading.value = true;
           await ReservationRepository.find.updateTaskReservationStatus(reservation, RequestStatus.rejected);
+          isLoading.value = false;
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
         },
       );
@@ -46,7 +50,9 @@ class TaskProposalController extends GetxController {
   void markDoneProposals(Reservation reservation) => Helper.openConfirmationDialog(
         content: 'mark_task_done_msg'.tr,
         onConfirm: () async {
+          isLoading.value = true;
           await ReservationRepository.find.updateTaskReservationStatus(reservation, RequestStatus.finished);
+          isLoading.value = false;
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
           MainAppController.find.resolveProfileActionRequired();
           Get.bottomSheet(AddReviewBottomsheet(user: reservation.user), isScrollControlled: true);

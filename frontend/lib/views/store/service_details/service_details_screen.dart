@@ -232,6 +232,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                           isVerified: true,
                           () => Buildables.requestBottomsheet(
                             noteController: controller.noteController,
+                            isLoading: ReservationViewmodel.isLoading,
                             onSubmit: () => ReservationViewmodel.bookService(service),
                             neededCoins: service.coins,
                           ).then((value) => controller.clearFormFields()),
@@ -240,6 +241,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                     else if (bookingStatus == RequestStatus.confirmed && onMarkDone != null)
                       CustomButtons.elevatePrimary(
                         disabled: !MainAppController.find.isConnected,
+                        loading: ReservationViewmodel.isLoading,
                         title: 'mark_service_done'.tr,
                         titleStyle: AppFonts.x14Regular,
                         icon: const Icon(Icons.done, color: kNeutralColor100),

@@ -3,11 +3,12 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
-const { adjustString } = require("../helper/helpers");
+const { adjustString, ensureDecryptBody } = require("../helper/helpers");
 
 //config
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    ensureDecryptBody(req);
     if (!fs.existsSync(path.join(__dirname, "../../public/review/"))) {
       execSync(`mkdir "${path.join(__dirname, "../../public/review/")}"`);
     }
@@ -35,8 +36,6 @@ const upload = multer({
   },
 });
 
-const reviewImageUpload = upload.fields([
-  { name: "photo", maxCount: 1 },
-]);
+const reviewImageUpload = upload.fields([{ name: "photo", maxCount: 1 }]);
 
 module.exports = { reviewImageUpload };

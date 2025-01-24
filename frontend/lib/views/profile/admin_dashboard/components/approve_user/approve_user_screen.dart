@@ -136,6 +136,7 @@ class ApproveUserScreen extends StatelessWidget {
                                       ),
                                       CustomButtons.elevatePrimary(
                                         title: 'approve'.tr,
+                                        loading: controller.isLoading,
                                         width: (Get.width - 120) / 2,
                                         onPressed: () => controller.approveUser(userApprove.user),
                                       )

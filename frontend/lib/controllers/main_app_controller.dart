@@ -78,7 +78,7 @@ class MainAppController extends GetxController {
 
   MainAppController._internal() {
     Helper.waitAndExecute(
-      () => Get.context != null,
+      () => SharedPreferencesService.find.isReady.value && Get.context != null,
       () => MainAppController.find.changeLanguage(lang: Localizations.localeOf(Get.context!)),
     );
     ever(hasVersionUpdate, (_) {

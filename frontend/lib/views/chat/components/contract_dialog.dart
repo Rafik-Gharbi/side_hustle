@@ -18,7 +18,8 @@ class ContractDialog extends StatelessWidget {
   final Contract contract;
   final void Function() onRejectContract;
   final void Function() onSignContract;
-  const ContractDialog({super.key, required this.contract, required this.onRejectContract, required this.onSignContract});
+  final RxBool isLoading;
+  const ContractDialog({super.key, required this.contract, required this.onRejectContract, required this.onSignContract, required this.isLoading});
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +91,7 @@ class ContractDialog extends StatelessWidget {
                                 child: CustomButtons.elevatePrimary(
                                   title: 'done'.tr,
                                   width: 200,
-                                  onPressed: () => Helper.goBack(),
+                                  onPressed: Helper.goBack,
                                 ),
                               )
                             else
@@ -99,6 +100,7 @@ class ContractDialog extends StatelessWidget {
                                 children: [
                                   CustomButtons.elevateSecondary(
                                     title: 'reject'.tr,
+                                    loading: isLoading,
                                     width: 150,
                                     onPressed: () {
                                       onRejectContract();
@@ -107,6 +109,7 @@ class ContractDialog extends StatelessWidget {
                                   ),
                                   CustomButtons.elevatePrimary(
                                     title: 'done'.tr,
+                                    loading: isLoading,
                                     width: 150,
                                     onPressed: () {
                                       if (isContractAccepted) {
@@ -126,13 +129,14 @@ class ContractDialog extends StatelessWidget {
                                 child: CustomButtons.elevatePrimary(
                                   title: 'done'.tr,
                                   width: 200,
-                                  onPressed: () => Helper.goBack(),
+                                  onPressed: Helper.goBack,
                                 ),
                               )
                             else
                               Center(
                                 child: CustomButtons.elevatePrimary(
                                   title: 'pay_contract'.tr,
+                                  loading: isLoading,
                                   width: 150,
                                   disabled: !contract.isSigned,
                                   onPressed: () {

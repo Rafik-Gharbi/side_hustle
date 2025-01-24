@@ -3,11 +3,16 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
-const { adjustString, getDate } = require("../helper/helpers");
+const {
+  adjustString,
+  getDate,
+  ensureDecryptBody,
+} = require("../helper/helpers");
 
 //config
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    ensureDecryptBody(req);
     if (!fs.existsSync(path.join(__dirname, "../../public/deposit/"))) {
       execSync(`mkdir "${path.join(__dirname, "../../public/deposit/")}"`);
     }

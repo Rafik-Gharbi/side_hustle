@@ -8,15 +8,18 @@ const logoDataSig = fs.readFileSync(logoPathSig);
 const logoBase64Sig = Buffer.from(logoDataSig).toString("base64");
 
 const sendConfirmationMail = (fullName, token, isMobile) => `
-  <!DOCTYPE html>
-  <html>
+<!DOCTYPE html>
+<html>
   <head>
     <style>
         body {
           background-color: #f1f1f1;
           font-family: Arial, sans-serif;
+          display: flex;
           justify-content: center;
           align-items: center;
+          margin: 0;
+          padding: 0;
         }
         .container {
           max-width: 600px;
@@ -24,8 +27,8 @@ const sendConfirmationMail = (fullName, token, isMobile) => `
           background-color: #fff;
           border-radius: 10px;
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+          margin: 20px;
         }
-  
         h1 {
           font-size: 24px;
           margin-top: 0;
@@ -59,6 +62,7 @@ const sendConfirmationMail = (fullName, token, isMobile) => `
           cursor: pointer;
           display: block;
           margin: 0 auto;
+          text-decoration: none;
         }
         button:hover {
           background-color: #FF9931; /* Accent Color */
@@ -68,14 +72,29 @@ const sendConfirmationMail = (fullName, token, isMobile) => `
           font-weight: bold;
           text-decoration: underline;
           color: #0074FE; /* Primary Color */
+          text-align: center;
         }
-      </style>
+        .signature {
+          border-top: 1px solid #ddd;
+          margin-top: 20px;
+          padding-top: 20px;
+          font-size: 14px;
+          color: #666;
+          text-align: center;
+        }
+        .signature .logo {
+          margin-bottom: 10px;
+        }
+        .signature img {
+          max-width: 100px;
+          height: auto;
+        }
+    </style>
   </head>
   <body>
     <div class="container">
       <div class="logo">
         <img src="data:image/png;base64,${logoBase64}" width="30%" alt="Dootify Logo" />
-        <br />
       </div>
       <h1>Bienvenue sur Dootify!</h1>
       <h2>${fullName ? `Bonjour ${fullName},` : `Bonjour,`}</h2>
@@ -108,6 +127,15 @@ const sendConfirmationMail = (fullName, token, isMobile) => `
         <strong>L'équipe Dootify</strong><br />
         <em>Achieve More with Dootify</em>
       </p>
+      <div class="signature">
+        <div class="logo">
+          <img src="data:image/png;base64,${logoBase64}" alt="Dootify Logo" />
+        </div>
+        <p>
+          Votre compagnon pour atteindre vos objectifs.<br />
+          <a href="mailto:contact@dootify.com">contact@dootify.com</a> | <a href="https://dootify.com">www.dootify.com</a>
+        </p>
+      </div>
     </div>
   </body>
 </html>
@@ -170,6 +198,21 @@ const forgotPasswordEmailTemplate = (reset_code) => `
         color: #FF9931; 
         font-weight: bold; /* Gras pour souligner l'importance */
       }
+      .signature {
+        border-top: 1px solid #ddd;
+        margin-top: 20px;
+        padding-top: 20px;
+        font-size: 14px;
+        color: #666;
+        text-align: center;
+      }
+      .signature .logo {
+        margin-bottom: 10px;
+      }
+      .signature img {
+        max-width: 100px;
+        height: auto;
+      }
     </style>
   </head>
   <body>
@@ -199,6 +242,15 @@ const forgotPasswordEmailTemplate = (reset_code) => `
         meilleure expérience possible.
       </p>
       <p>L'équipe de Dootify</p>
+      <div class="signature">
+        <div class="logo">
+          <img src="data:image/png;base64,${logoBase64}" alt="Dootify Logo" />
+        </div>
+        <p>
+          Votre compagnon pour atteindre vos objectifs.<br />
+          <a href="mailto:contact@dootify.com">contact@dootify.com</a> | <a href="https://dootify.com">www.dootify.com</a>
+        </p>
+      </div>
     </div>
   </body>
 </html>
@@ -285,6 +337,21 @@ const contactUsMail = (email, name, subject, body, phone) => `
       td {
         width: 67%;
       }
+      .signature {
+        border-top: 1px solid #ddd;
+        margin-top: 20px;
+        padding-top: 20px;
+        font-size: 14px;
+        color: #666;
+        text-align: center;
+      }
+      .signature .logo {
+        margin-bottom: 10px;
+      }
+      .signature img {
+        max-width: 100px;
+        height: auto;
+      }
     </style>
   </head>
   <body>
@@ -326,11 +393,21 @@ const contactUsMail = (email, name, subject, body, phone) => `
       <div class="footer">
         <p>Thank you,<br />Dootify Team</p>
       </div>
+      <div class="signature">
+        <div class="logo">
+          <img src="data:image/png;base64,${logoBase64}" alt="Dootify Logo" />
+        </div>
+        <p>
+          Votre compagnon pour atteindre vos objectifs.<br />
+          <a href="mailto:contact@dootify.com">contact@dootify.com</a> | <a href="https://dootify.com">www.dootify.com</a>
+        </p>
+      </div>
     </div>
   </body>
 </html>
-
 `;
+
+//*********************************** Below templates are not used ******************************************
 
 const notificationMessage = (sender, message, property) => `
 <!DOCTYPE html>

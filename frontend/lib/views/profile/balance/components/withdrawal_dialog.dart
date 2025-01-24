@@ -11,9 +11,10 @@ import '../../../../widgets/custom_buttons.dart';
 
 class WithdrawalDialog extends StatelessWidget {
   final double amount;
+  final RxBool isLoading;
   final void Function() onWithdraw;
 
-  const WithdrawalDialog({super.key, required this.amount, required this.onWithdraw});
+  const WithdrawalDialog({super.key, required this.amount, required this.onWithdraw, required this.isLoading});
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +66,7 @@ class WithdrawalDialog extends StatelessWidget {
           Center(
             child: CustomButtons.elevatePrimary(
               title: 'withdraw'.tr,
+              loading: isLoading,
               width: 150,
               onPressed: () {
                 Helper.goBack();

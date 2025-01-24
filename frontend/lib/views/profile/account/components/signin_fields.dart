@@ -84,6 +84,7 @@ class SignInFields extends StatelessWidget {
               borderSide: const BorderSide(color: kNeutralColor),
               icon: Image.asset(Assets.facebookIcon, width: 25),
               title: 'continue_facebook'.tr,
+              loading: controller.isLoggingIn,
             ),
             const SizedBox(height: Paddings.large),
             CustomButtons.elevateSecondary(
@@ -92,6 +93,7 @@ class SignInFields extends StatelessWidget {
               borderSide: const BorderSide(color: kNeutralColor),
               icon: Image.asset(Assets.googleIcon, width: 25),
               title: 'continue_google'.tr,
+              loading: controller.isLoggingIn,
             ),
             const SizedBox(height: Paddings.large),
             CustomButtons.elevateSecondary(

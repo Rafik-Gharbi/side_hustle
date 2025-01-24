@@ -16,6 +16,7 @@ import 'custom_standard_scaffold.dart';
 
 class CoinsMarketController extends GetxController {
   List<CoinPack> coinPacks = [];
+  RxBool isLoading = false.obs;
 
   CoinsMarketController() {
     _init();
@@ -25,6 +26,33 @@ class CoinsMarketController extends GetxController {
     coinPacks = (await ParamsRepository.find.getCoinsPack()) ?? [];
     update();
   }
+
+  void purchaseCoins(CoinPack pack) => Helper.openConfirmationDialog(
+      content: 'buy_coins_costs_msg'.trParams({'totalCoins': pack.totalCoins.toString(), 'price': pack.price.toString()}),
+      onConfirm: () {
+        isLoading.value = true;
+        Future.delayed(const Duration(milliseconds: 100)).then(
+          (value) => Get.bottomSheet(
+            isScrollControlled: true,
+            Buildables.buildPaymentOptionsBottomsheet(
+              totalPrice: pack.price.toDouble(),
+              coinPackId: pack.id,
+              onSuccessPayment: () {
+                TransactionRepository.find.buyCoinPack(pack).then((value) {
+                  if (value) update();
+                  FirebaseAnalytics.instance.logEvent(
+                    name: 'purchase_coins',
+                    parameters: {
+                      'pack_name': pack.title,
+                      'price': pack.price,
+                    },
+                  );
+                });
+              },
+            ),
+          ).then((_) => isLoading.value = false),
+        );
+      });
 }
 
 class CoinsMarket extends GetWidget<CoinsMarketController> {
@@ -69,7 +97,7 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
 
   // Coin pack card widget
   Widget _buildCoinPackCard(CoinPack pack) => InkWell(
-        onTap: () => _purchaseCoins(pack),
+        onTap: () => controller.purchaseCoins(pack),
         child: SizedBox(
           width: double.infinity,
           child: DecoratedBox(
@@ -99,11 +127,12 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
                         children: [
                           Text('valid_for_x_days'.trParams({'days': (pack.validMonths * 30).toString()}), style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                           CustomButtons.elevatePrimary(
+                            loading: controller.isLoading,
                             width: 200,
                             height: 40,
                             title: 'buy_for_price'.trParams({'price': pack.price.toString()}),
                             titleStyle: AppFonts.x14Bold.copyWith(color: kNeutralColor100),
-                            onPressed: () => _purchaseCoins(pack),
+                            onPressed: () => controller.purchaseCoins(pack),
                           ),
                         ],
                       ),
@@ -130,30 +159,4 @@ class CoinsMarket extends GetWidget<CoinsMarketController> {
           ),
         ),
       );
-
-  void _purchaseCoins(CoinPack pack) => Helper.openConfirmationDialog(
-      content: 'buy_coins_costs_msg'.trParams({'totalCoins': pack.totalCoins.toString(), 'price': pack.price.toString()}),
-      onConfirm: () {
-        Future.delayed(const Duration(milliseconds: 100)).then(
-          (value) => Get.bottomSheet(
-            isScrollControlled: true,
-            Buildables.buildPaymentOptionsBottomsheet(
-              totalPrice: pack.price.toDouble(),
-              coinPackId: pack.id,
-              onSuccessPayment: () {
-                TransactionRepository.find.buyCoinPack(pack).then((value) {
-                  if (value) controller.update();
-                  FirebaseAnalytics.instance.logEvent(
-                    name: 'purchase_coins',
-                    parameters: {
-                      'pack_name': pack.title,
-                      'price': pack.price,
-                    },
-                  );
-                });
-              },
-            ),
-          ),
-        );
-      });
 }

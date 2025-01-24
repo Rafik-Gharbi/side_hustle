@@ -40,6 +40,7 @@ class ChatController extends GetxController {
   final StreamSocket streamSocket = StreamSocket();
   final ScrollController chatScrollController = ScrollController();
   RxBool isLoading = true.obs;
+  RxBool isLoadingRequest = false.obs;
   User? loggedInUser;
   bool isSearchingBubbles = false;
   List<DiscussionDTO> userChatPropertiesOriginal = [];
@@ -192,6 +193,7 @@ class ChatController extends GetxController {
     });
     messageController.clear();
     messageFocusNode.requestFocus();
+    isLoadingRequest.value = false;
     update();
   }
 
@@ -430,6 +432,7 @@ class ChatController extends GetxController {
       Helper.goBack();
       Buildables.createContractBottomsheet(
         isTask: currentTask != null,
+        isLoading: isLoadingRequest,
         context: context,
         contract: Contract(
           description: currentTask?.description ?? currentService?.description ?? '',
@@ -441,6 +444,7 @@ class ChatController extends GetxController {
           createdAt: DateTime.now(),
         ),
         onSubmit: (contract) {
+          isLoadingRequest.value = true;
           Helper.goBack();
           final sender = AuthenticationService.find.jwtUserData?.id;
           final reciever = selectedChatBubble!.userId == sender ? selectedChatBubble!.ownerId : selectedChatBubble!.userId;
@@ -451,6 +455,7 @@ class ChatController extends GetxController {
             'sender': sender,
             'contract': contract,
           });
+          isLoadingRequest.value = false;
         },
       );
     }
@@ -500,5 +505,6 @@ class ChatController extends GetxController {
     } else {
       payContract(contract);
     }
+    isLoadingRequest.value = false;
   }
 }

@@ -130,6 +130,7 @@ class DepositBottomsheet extends StatelessWidget {
             const SizedBox(height: Paddings.exceptional),
             Center(
               child: CustomButtons.elevatePrimary(
+                loading: controller.isLoading,
                 width: 200,
                 title: resolveDepositTypeBtnTitle(),
                 onPressed: () => controller.requestDeposit(type),

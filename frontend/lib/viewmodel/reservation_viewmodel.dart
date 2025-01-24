@@ -18,7 +18,10 @@ class ReservationViewmodel {
   static final TextEditingController proposedPriceController = TextEditingController();
   static final TextEditingController deliveryDateController = TextEditingController();
 
+  static RxBool isLoading = false.obs;
+
   static Future<void> bookService(Service service) async {
+    isLoading.value = true;
     final result = await ReservationRepository.find.addServiceReservation(
       reservation: Reservation(
         service: service,
@@ -31,6 +34,7 @@ class ReservationViewmodel {
         // coupon: coupon,
       ),
     );
+    isLoading.value = false;
     if (result) {
       Helper.goBack();
       Helper.snackBar(message: 'service_booked_successfully'.tr);
@@ -47,7 +51,9 @@ class ReservationViewmodel {
   static void markServiceReservationAsDone(Reservation serviceReservation, {void Function()? onFinish}) => Helper.openConfirmationDialog(
         content: 'mark_service_done_msg'.tr,
         onConfirm: () async {
+          isLoading.value = true;
           await ReservationRepository.find.updateServiceReservationStatus(serviceReservation, RequestStatus.finished);
+          isLoading.value = false;
           Helper.goBack();
           onFinish?.call();
           MainAppController.find.resolveProfileActionRequired();
@@ -71,7 +77,9 @@ class ReservationViewmodel {
       ? Helper.openConfirmationDialog(
           content: 'mark_task_done_msg'.tr,
           onConfirm: () async {
+            isLoading.value = true;
             await ReservationRepository.find.updateTaskReservationStatus(reservation, RequestStatus.finished);
+            isLoading.value = false;
             Helper.goBack();
             HomeController.find.init();
             MainAppController.find.resolveProfileActionRequired();
@@ -87,6 +95,7 @@ class ReservationViewmodel {
       : null;
 
   static Future<void> submitProposal(Task task, {void Function()? onFinish}) async {
+    isLoading.value = true;
     final result = await ReservationRepository.find.addReservation(
       reservation: Reservation(
         task: task,
@@ -101,6 +110,7 @@ class ReservationViewmodel {
         user: task.owner,
       ),
     );
+    isLoading.value = false;
     if (result) {
       Helper.goBack();
       Helper.snackBar(message: 'proposal_sent_successfully'.tr);

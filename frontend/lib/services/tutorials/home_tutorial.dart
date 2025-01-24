@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../constants/sizes.dart';
 import '../../helpers/buildables.dart';
 import '../../views/home/home_controller.dart';
 import '../theme/theme.dart';
@@ -22,9 +23,8 @@ class HomeTutorial {
                 'earn_income_msg'.tr,
                 style: AppFonts.x14Regular.copyWith(color: Colors.white),
               ),
-            )
-          ],
-          bottomContent: [
+            ),
+            const SizedBox(height: Paddings.exceptional),
             Text(
               'task_example'.tr,
               style: AppFonts.x18Bold.copyWith(color: Colors.white),

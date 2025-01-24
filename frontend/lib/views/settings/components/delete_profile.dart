@@ -18,6 +18,7 @@ class DeleteProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    RxBool isLoading = false.obs;
     final TextEditingController shareThoughts = TextEditingController();
     final TextEditingController otherFeedback = TextEditingController();
     bool hasSubmittedRequest = false;
@@ -85,8 +86,11 @@ class DeleteProfile extends StatelessWidget {
                       Center(
                         child: CustomButtons.elevatePrimary(
                           width: 250,
+                          loading: isLoading,
                           title: 'done'.tr,
-                          onPressed: () => UserRepository.find.submitLeaveFeedback(
+                          onPressed: () {
+                            isLoading.value = true;
+                            UserRepository.find.submitLeaveFeedback(
                             {
                               'reasons': leaveFeedbacks.entries
                                   .where((element) => element.value == true)
@@ -94,10 +98,12 @@ class DeleteProfile extends StatelessWidget {
                                   .followedBy([if (leaveFeedbacks.entries.elementAt(5).value) 'OtherFeedback: ${otherFeedback.text}']).join(', '),
                               'thoughts': shareThoughts.text,
                             },
-                          ).then((value) {
+                          ).then((_) {
+                            isLoading.value = false;
                             Get.back();
                             Helper.snackBar(message: 'feedback_thanks_msg'.tr);
-                          }),
+                          });
+                          },
                         ),
                       ),
                       const SizedBox(height: Paddings.extraLarge),
@@ -127,12 +133,17 @@ class DeleteProfile extends StatelessWidget {
                     Center(
                       child: CustomButtons.elevateSecondary(
                         width: 250,
+                        loading: isLoading,
                         title: 'delete_profile'.tr,
-                        onPressed: () => UserRepository.find.deleteProfile().then(
-                          (value) {
-                            if (value) setState(() => hasSubmittedRequest = true);
-                          },
-                        ),
+                        onPressed: () {
+                          isLoading.value = true;
+                          UserRepository.find.deleteProfile().then(
+                            (value) {
+                              isLoading.value = false;
+                              if (value) setState(() => hasSubmittedRequest = true);
+                            },
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(height: Paddings.extraLarge),

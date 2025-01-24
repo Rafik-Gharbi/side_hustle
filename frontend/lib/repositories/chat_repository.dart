@@ -8,6 +8,7 @@ import '../models/chat.dart';
 import '../models/dto/discussion_dto.dart';
 import '../models/reservation.dart';
 import '../networking/api_base_helper.dart';
+import '../services/authentication_service.dart';
 import '../services/logger_service.dart';
 
 class ChatRepository extends GetxService {
@@ -15,15 +16,18 @@ class ChatRepository extends GetxService {
 
   Future<(List<DiscussionDTO>?, List<Reservation>?)> getUserDiscussions({String? search}) async {
     try {
-      final result = await ApiBaseHelper().request(
-        RequestType.get,
-        '/chat/get-chat${search != null ? '?searchText=$search' : ''}',
-        sendToken: true,
-      );
-      return (
-        (result?['result'] as List?)?.map((e) => DiscussionDTO.fromJson(e)).toList(),
-        (result?['reservations'] as List?)?.map((e) => Reservation.fromJson(e)).toList(),
-      );
+      if (AuthenticationService.find.isLoggedIn) {
+        final result = await ApiBaseHelper().request(
+          RequestType.get,
+          '/chat/get-chat${search != null ? '?searchText=$search' : ''}',
+          sendToken: true,
+        );
+        return (
+          (result?['result'] as List?)?.map((e) => DiscussionDTO.fromJson(e)).toList(),
+          (result?['reservations'] as List?)?.map((e) => Reservation.fromJson(e)).toList(),
+        );
+      }
+      return (null, null);
     } catch (e) {
       LoggerService.logger?.e('Error occured in getChat:\n$e');
     }

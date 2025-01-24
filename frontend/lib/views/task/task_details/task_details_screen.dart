@@ -242,6 +242,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                           CustomButtons.elevatePrimary(
                                             disabled: !MainAppController.find.isConnected,
                                             title: 'mark_task_done'.tr,
+                                            loading: ReservationViewmodel.isLoading,
                                             titleStyle: AppFonts.x14Regular,
                                             icon: const Icon(Icons.done, color: kNeutralColor100),
                                             width: Get.width - 40,
@@ -267,6 +268,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                             proposedPriceController: ReservationViewmodel.proposedPriceController,
                                             deliveryDateController: ReservationViewmodel.deliveryDateController,
                                             onSubmit: () => ReservationViewmodel.submitProposal(task, onFinish: controller.init),
+                                            isLoading: ReservationViewmodel.isLoading,
                                             isTask: true,
                                             neededCoins: task.coins,
                                           ).then((value) => ReservationViewmodel.clearRequestFormFields()),

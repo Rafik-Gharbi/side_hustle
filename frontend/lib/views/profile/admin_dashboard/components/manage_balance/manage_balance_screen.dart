@@ -115,6 +115,7 @@ class ManageBalanceScreen extends StatelessWidget {
                                         onPressed: () => controller.callUser(balanceTransaction.user),
                                       ),
                                       CustomButtons.elevatePrimary(
+                                        loading: controller.isLoading,
                                         title: 'approve'.tr,
                                         width: (Get.width - 120) / 2,
                                         onPressed: () => controller.acceptBalanceRequest(balanceTransaction),

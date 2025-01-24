@@ -29,7 +29,9 @@ class ServiceRequestController extends GetxController {
   void acceptProposal(Reservation reservation) => Helper.openConfirmationDialog(
         content: 'accept_request_msg'.tr,
         onConfirm: () async {
+          isLoading.value = true;
           await ReservationRepository.find.updateServiceReservationStatus(reservation, RequestStatus.confirmed);
+          isLoading.value = false;
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
           MainAppController.find.resolveProfileActionRequired();
         },
@@ -38,8 +40,10 @@ class ServiceRequestController extends GetxController {
   void rejectProposals(Reservation reservation) => Helper.openConfirmationDialog(
         content: 'reject_request_msg'.tr,
         onConfirm: () async {
+          isLoading.value = true;
           await ReservationRepository.find.updateServiceReservationStatus(reservation, RequestStatus.rejected);
           NavigationHistoryObserver.instance.goToPreviousRoute(result: true);
+          isLoading.value = false;
           MainAppController.find.resolveProfileActionRequired();
         },
       );

@@ -16,6 +16,7 @@ class MoreFilterController extends GetxController {
   RxDouble nearbyRange = 10.0.obs;
   FilterModel? filter;
   double maxPrice = kMaxPriceRange;
+  RxBool isLoading = false.obs;
 
   Category get category => _category;
 
@@ -25,6 +26,7 @@ class MoreFilterController extends GetxController {
   }
 
   static final MoreFilterController _singleton = MoreFilterController._internal();
+
 
   factory MoreFilterController() => _singleton;
 
@@ -79,7 +81,7 @@ class MoreFilterController extends GetxController {
       );
 
   Future<void> shareLocation() async {
-    if (AuthenticationService.find.isLoggingIn) {
+    if (AuthenticationService.find.isLoggedIn) {
       await AuthenticationService.find.getUserCoordinates(withSave: true);
       update();
     } else {

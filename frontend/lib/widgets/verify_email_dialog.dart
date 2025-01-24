@@ -29,7 +29,7 @@ class VerifyEmailDialog extends StatelessWidget {
               Center(child: Text('email_verify_msg'.tr, style: AppFonts.x14Regular)),
               const SizedBox(height: Paddings.exceptional),
               CustomButtons.elevatePrimary(
-                onPressed: () => Helper.goBack(),
+                onPressed: Helper.goBack,
                 width: 150,
                 title: 'ok'.tr,
               ),

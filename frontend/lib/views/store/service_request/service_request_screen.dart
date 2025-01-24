@@ -47,6 +47,7 @@ class ServiceRequestScreen extends StatelessWidget {
                             reservation: reservation,
                             requestStatus: reservation.status,
                             isService: true,
+                            isLoading: controller.isLoading,
                             onAccept: () => controller.acceptProposal(reservation),
                             onReject: () => controller.rejectProposals(reservation),
                           ),

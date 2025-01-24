@@ -20,6 +20,7 @@ class AddBoostController extends GetxController {
   Gender? _gender;
   DateTime _endDate = DateTime.now().add(const Duration(days: 7));
   int _maxUsers = 1000;
+  RxBool isLoading = false.obs;
 
   int? get minAge => _minAge;
 
@@ -70,6 +71,7 @@ class AddBoostController extends GetxController {
   }
 
   Future<void> upsertBoost() async {
+    isLoading.value = true;
     final newBoost = Boost(
       id: boost?.id,
       budget: budgetRange.value.toInt().toDouble(),
@@ -100,7 +102,7 @@ class AddBoostController extends GetxController {
           }
         },
       ),
-    );
+    ).then((_) => isLoading.value = false);
   }
 
   void manageAgeAudience({required RangeValues range}) {

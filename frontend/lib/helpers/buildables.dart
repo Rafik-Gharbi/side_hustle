@@ -195,6 +195,7 @@ class Buildables {
     required TextEditingController noteController,
     required void Function() onSubmit,
     required int neededCoins,
+    required RxBool isLoading,
     TextEditingController? proposedPriceController,
     TextEditingController? deliveryDateController,
     bool isTask = false,
@@ -243,6 +244,7 @@ class Buildables {
           CustomButtons.elevatePrimary(
             title: isTask ? 'submit_proposal'.tr : 'submit_request'.tr,
             width: Get.width,
+            loading: isLoading,
             onPressed: onSubmit,
             disabled: neededCoins <= 0 || neededCoins > (AuthenticationService.find.jwtUserData?.totalCoins ?? 0),
           ),
@@ -264,6 +266,7 @@ class Buildables {
     required Contract contract,
     required void Function(Contract) onSubmit,
     required BuildContext context,
+    required RxBool isLoading,
     bool isTask = false,
   }) async {
     final GlobalKey<FormState> formKey = GlobalKey();
@@ -272,15 +275,19 @@ class Buildables {
     final TextEditingController descriptionController = TextEditingController(text: isTask ? contract.task!.description : contract.service?.description ?? '');
     final TextEditingController delivrablesController = TextEditingController(text: isTask ? contract.task!.delivrables : contract.service?.included ?? '');
     final hasFinishedCreateContractTutorial = SharedPreferencesService.find.get(hasFinishedCreateContractTutorialKey) == 'true';
-    bool hasOpenedTutorial = false;
-    if (!hasFinishedCreateContractTutorial && !hasOpenedTutorial && CreateContractTutorial.targets.isNotEmpty) {
-      hasOpenedTutorial = true;
+    RxBool hasOpenedTutorial = false.obs;
+    if (!hasFinishedCreateContractTutorial && !hasOpenedTutorial.value && CreateContractTutorial.targets.isNotEmpty) {
+      hasOpenedTutorial.value = true;
       Future.delayed(
         Durations.extralong2,
         () => TutorialCoachMark(
           targets: CreateContractTutorial.targets,
           colorShadow: kNeutralOpacityColor,
-          hideSkip: true,
+          textSkip: 'skip'.tr,
+          onSkip: () {
+            hasOpenedTutorial.value = false;
+            return true;
+          },
           onFinish: () => SharedPreferencesService.find.add(hasFinishedCreateContractTutorialKey, 'true'),
         ).show(context: context),
       );
@@ -288,80 +295,86 @@ class Buildables {
     await CustomBottomsheet(
       height: 600,
       title: 'create_contract'.tr,
-      child: SingleChildScrollView(
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: Paddings.regular),
-              Column(
-                key: CreateContractTutorial.contractFormKey,
+      child: Obx(
+        () => PopScope(
+          canPop: !hasOpenedTutorial.value,
+          child: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
                 children: [
-                  CustomTextField(
-                    fieldController: finalPriceController,
-                    outlinedBorder: true,
-                    isOptional: false,
-                    outlinedBorderColor: kNeutralColor,
-                    hintText: 'price'.tr,
-                    validator: FormValidators.notEmptyOrNullFloatValidator,
-                  ),
                   const SizedBox(height: Paddings.regular),
-                  CustomTextField(
-                    fieldController: dueDateController,
-                    outlinedBorder: true,
-                    isOptional: false,
-                    outlinedBorderColor: kNeutralColor,
-                    onTap: () => Helper.openDatePicker(
-                      isFutureDate: true,
-                      onConfirm: (date) => dueDateController.text = Helper.formatDate(date),
-                    ),
-                    hintText: 'delivery_date'.tr,
-                    validator: FormValidators.notEmptyOrNullValidator,
+                  Column(
+                    key: CreateContractTutorial.contractFormKey,
+                    children: [
+                      CustomTextField(
+                        fieldController: finalPriceController,
+                        outlinedBorder: true,
+                        isOptional: false,
+                        outlinedBorderColor: kNeutralColor,
+                        hintText: 'price'.tr,
+                        validator: FormValidators.notEmptyOrNullFloatValidator,
+                      ),
+                      const SizedBox(height: Paddings.regular),
+                      CustomTextField(
+                        fieldController: dueDateController,
+                        outlinedBorder: true,
+                        isOptional: false,
+                        outlinedBorderColor: kNeutralColor,
+                        onTap: () => Helper.openDatePicker(
+                          isFutureDate: true,
+                          onConfirm: (date) => dueDateController.text = Helper.formatDate(date),
+                        ),
+                        hintText: 'delivery_date'.tr,
+                        validator: FormValidators.notEmptyOrNullValidator,
+                      ),
+                      const SizedBox(height: Paddings.regular),
+                      CustomTextField(
+                        fieldController: descriptionController,
+                        outlinedBorder: true,
+                        isOptional: false,
+                        isTextArea: true,
+                        outlinedBorderColor: kNeutralColor,
+                        hintText: 'description'.tr,
+                        validator: FormValidators.notEmptyOrNullValidator,
+                      ),
+                      const SizedBox(height: Paddings.regular),
+                      CustomTextField(
+                        fieldController: delivrablesController,
+                        outlinedBorder: true,
+                        isTextArea: true,
+                        isOptional: false,
+                        outlinedBorderColor: kNeutralColor,
+                        hintText: 'expected_delivrables'.tr,
+                        validator: FormValidators.notEmptyOrNullValidator,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: Paddings.regular),
-                  CustomTextField(
-                    fieldController: descriptionController,
-                    outlinedBorder: true,
-                    isOptional: false,
-                    isTextArea: true,
-                    outlinedBorderColor: kNeutralColor,
-                    hintText: 'description'.tr,
-                    validator: FormValidators.notEmptyOrNullValidator,
+                  const SizedBox(height: Paddings.exceptional),
+                  CustomButtons.elevatePrimary(
+                    title: 'create'.tr,
+                    loading: isLoading,
+                    width: Get.width,
+                    onPressed: () {
+                      if (formKey.currentState?.validate() ?? false) {
+                        onSubmit(
+                          Contract(
+                            finalPrice: double.tryParse(finalPriceController.text) ?? 0,
+                            dueDate: Helper.parseDisplayedDate(dueDateController.text),
+                            description: descriptionController.text,
+                            delivrables: delivrablesController.text,
+                            task: contract.task,
+                            service: contract.service,
+                            createdAt: DateTime.now(),
+                          ),
+                        );
+                      }
+                    },
                   ),
-                  const SizedBox(height: Paddings.regular),
-                  CustomTextField(
-                    fieldController: delivrablesController,
-                    outlinedBorder: true,
-                    isTextArea: true,
-                    isOptional: false,
-                    outlinedBorderColor: kNeutralColor,
-                    hintText: 'expected_delivrables'.tr,
-                    validator: FormValidators.notEmptyOrNullValidator,
-                  ),
+                  const SizedBox(height: Paddings.exceptional),
                 ],
               ),
-              const SizedBox(height: Paddings.exceptional),
-              CustomButtons.elevatePrimary(
-                title: 'create'.tr,
-                width: Get.width,
-                onPressed: () {
-                  if (formKey.currentState?.validate() ?? false) {
-                    onSubmit(
-                      Contract(
-                        finalPrice: double.tryParse(finalPriceController.text) ?? 0,
-                        dueDate: Helper.parseDisplayedDate(dueDateController.text),
-                        description: descriptionController.text,
-                        delivrables: delivrablesController.text,
-                        task: contract.task,
-                        service: contract.service,
-                        createdAt: DateTime.now(),
-                      ),
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: Paddings.exceptional),
-            ],
+            ),
           ),
         ),
       ),

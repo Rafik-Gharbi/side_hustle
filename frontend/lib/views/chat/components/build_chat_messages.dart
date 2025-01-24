@@ -121,6 +121,7 @@ class BuildChatMessages extends StatelessWidget {
               transitionDuration: const Duration(milliseconds: 600),
               openBuilder: (_, __) => ContractDialog(
                 contract: contract,
+                isLoading: controller.isLoadingRequest,
                 onRejectContract: () {
                   controller.messageController.text = 'reject_contract_msg'.tr;
                   controller.sendMessage();

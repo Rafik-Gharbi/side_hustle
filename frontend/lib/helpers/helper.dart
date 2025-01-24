@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:uuid/uuid.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../models/notification.dart';
 import '../constants/colors.dart';
@@ -182,7 +183,7 @@ class Helper {
 
   static String decryptData(String encryptedData) {
     String decrypted = encryptedData;
-    if (kDebugMode) return decrypted;
+    // if (kDebugMode) return decrypted;
     try {
       if (encryptedData.isNotEmpty) {
         final key = enc.Key.fromUtf8(dotenv.env['SECRET_KEY']!);
@@ -531,6 +532,25 @@ class Helper {
       return formatNumberSync(number);
     } catch (e) {
       return number;
+    }
+  }
+
+  static Future<void> requestStoragePermission() async {
+    final permission = GetPlatform.isAndroid ? Permission.storage : Permission.photos;
+    final status = await permission.status;
+    if (status.isDenied || status.isPermanentlyDenied) {
+      if (!(await permission.request().isGranted)) {
+        if (status.isPermanentlyDenied) {
+          Helper.snackBar(
+            message: 'provide_permission'.tr,
+            overrideButton: TextButton(
+              onPressed: () => openAppSettings(),
+              child: Text('settings'.tr),
+            ),
+          );
+          LoggerService.logger?.w('Storage/Photos permission is permanently denied');
+        }
+      }
     }
   }
 }

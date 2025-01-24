@@ -14,6 +14,7 @@ import '../../../services/shared_preferences.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_bottomsheet.dart';
 import '../../../widgets/loading_card_effect.dart';
+import '../../../widgets/main_screen_with_bottom_navigation.dart';
 import '../../boost/list_boost/list_boost_screen.dart';
 import '../account/components/signup_fields.dart';
 import '../admin_dashboard/admin_dashboard_screen.dart';
@@ -34,7 +35,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasFinishedProfileTutorial = SharedPreferencesService.find.get(hasFinishedProfileTutorialKey) == 'true';
-    bool hasOpenedTutorial = false;
+    RxBool hasOpenedTutorial = false.obs;
     return GetBuilder<AuthenticationService>(
       builder: (authService) => GetBuilder<ProfileController>(
         init: ProfileController(),
@@ -44,18 +45,23 @@ class ProfileScreen extends StatelessWidget {
           () {
             if (!hasFinishedProfileTutorial &&
                 MainAppController.find.isProfileScreen &&
-                !hasOpenedTutorial &&
+                !hasOpenedTutorial.value &&
                 controller.targets.isNotEmpty &&
                 controller.loggedInUser != null &&
                 !controller.isLoading.value) {
-              hasOpenedTutorial = true;
+              hasOpenedTutorial.value = true;
+              MainScreenWithBottomNavigation.isOnTutorial.value = true;
               TutorialCoachMark(
                 targets: controller.targets,
                 colorShadow: kNeutralOpacityColor,
-                hideSkip: true,
+                textSkip: 'skip'.tr,
                 onClickTarget: (target) => target.keyTarget == controller.profileHeaderKey
                     ? controller.scrollController.animateTo(controller.scrollController.position.maxScrollExtent, duration: Durations.long2, curve: Curves.bounceIn)
                     : null,
+                onSkip: () {
+                  MainScreenWithBottomNavigation.isOnTutorial.value = false;
+                  return true;
+                },
                 onFinish: () => SharedPreferencesService.find.add(hasFinishedProfileTutorialKey, 'true'),
               ).show(context: context);
             }
@@ -225,7 +231,7 @@ class ProfileScreen extends StatelessWidget {
                                                         icon: Icons.edit_outlined,
                                                         onTap: () {
                                                           AuthenticationService.find.loadUserData(controller.loggedInUser);
-                                                          AuthenticationService.find.isLoggingIn = false;
+                                                          AuthenticationService.find.isLoggingIn.value = false;
                                                           CustomBottomsheet(
                                                             title: 'edit_profile'.tr,
                                                             height: Get.height * 0.73,
@@ -255,7 +261,6 @@ class ProfileScreen extends StatelessWidget {
                                                         onTap: () {
                                                           if (controller.loggedInUser != null) {
                                                             CustomBottomsheet(
-                                                              margin: const EdgeInsets.only(top: Paddings.exceptional * 2),
                                                               child: ChangePasswordBottomsheet(user: controller.loggedInUser!),
                                                             ).showBottomSheet().then((_) => controller.init());
                                                           }

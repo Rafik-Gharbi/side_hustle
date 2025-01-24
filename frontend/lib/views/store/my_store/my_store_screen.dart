@@ -38,35 +38,44 @@ class MyStoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasFinishedCreateStoreTutorial = SharedPreferencesService.find.get(hasFinishedCreateStoreTutorialKey) == 'true';
-    bool hasOpenedTutorial = false;
+    RxBool hasOpenedTutorial = false.obs;
     return HoldInSafeArea(
       child: GetBuilder<MyStoreController>(
         init: MyStoreController(store: store),
         initState: (state) => Helper.waitAndExecute(() => state.controller != null && !(state.controller?.isLoading.value ?? true), () {
-          if (!hasFinishedCreateStoreTutorial && Get.currentRoute == routeName && !hasOpenedTutorial && state.controller!.targets.isNotEmpty) {
-            hasOpenedTutorial = true;
+          if (!hasFinishedCreateStoreTutorial && Get.currentRoute == routeName && !hasOpenedTutorial.value && state.controller!.targets.isNotEmpty) {
+            hasOpenedTutorial.value = true;
             TutorialCoachMark(
               targets: state.controller!.targets,
               colorShadow: kNeutralOpacityColor,
-              hideSkip: true,
+              textSkip: 'skip'.tr,
+              onSkip: () {
+                hasOpenedTutorial.value = false;
+                return true;
+              },
               onFinish: () => SharedPreferencesService.find.add(hasFinishedCreateStoreTutorialKey, 'true'),
             ).show(context: context);
           }
         }),
         builder: (controller) {
           final isOwner = StoreViewmodel.currentStore == null || StoreViewmodel.currentStore?.owner?.id == AuthenticationService.find.jwtUserData?.id;
-          return store != null
-              ? Scaffold(
-                  backgroundColor: kNeutralColor100,
-                  body: buildStoreContent(controller, isOwner),
-                )
-              : CustomStandardScaffold(
-                  backgroundColor: kNeutralColor100,
-                  title: 'my_store'.tr,
-                  onBack: () => ProfileController.find.init(),
-                  actionButton: buildMoreButton(isOwner, controller),
-                  body: buildStoreContent(controller, isOwner),
-                );
+          return Obx(
+            () => PopScope(
+              canPop: !hasOpenedTutorial.value,
+              child: store != null
+                  ? Scaffold(
+                      backgroundColor: kNeutralColor100,
+                      body: buildStoreContent(controller, isOwner),
+                    )
+                  : CustomStandardScaffold(
+                      backgroundColor: kNeutralColor100,
+                      title: 'my_store'.tr,
+                      onBack: () => ProfileController.find.init(),
+                      actionButton: buildMoreButton(isOwner, controller),
+                      body: buildStoreContent(controller, isOwner),
+                    ),
+            ),
+          );
         },
       ),
     );
@@ -146,6 +155,7 @@ class MyStoreScreen extends StatelessWidget {
                     disabled: !MainAppController.find.isConnected,
                     key: controller.createStoreBtnKey,
                     title: 'create_store'.tr,
+                    loading: StoreViewmodel.isLoading,
                     width: Get.width,
                     onPressed: controller.createStore,
                   ),
@@ -254,6 +264,7 @@ class MyStoreScreen extends StatelessWidget {
                                             () => Buildables.requestBottomsheet(
                                               noteController: ReservationViewmodel.noteController,
                                               onSubmit: () => ReservationViewmodel.bookService(service),
+                                              isLoading: ReservationViewmodel.isLoading,
                                               neededCoins: service.coins,
                                             ).then((value) => ReservationViewmodel.clearRequestFormFields()),
                                           )

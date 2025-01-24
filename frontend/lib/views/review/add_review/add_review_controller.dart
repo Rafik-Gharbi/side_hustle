@@ -21,6 +21,7 @@ class AddReviewController extends GetxController {
   RxDouble punctuality = 0.0.obs;
   RxDouble politeness = 0.0.obs;
   RxBool isDetailedReviewing = false.obs;
+  RxBool isLoading = false.obs;
   XFile? picture;
 
   AddReviewController({required this.user, this.review}) {
@@ -28,6 +29,7 @@ class AddReviewController extends GetxController {
   }
 
   Future<void> upsertReview() async {
+    isLoading.value = true;
     final upsertedReview = Review(
       id: review?.id,
       message: messageController.text,
@@ -44,6 +46,7 @@ class AddReviewController extends GetxController {
     } else {
       await ReviewRepository.find.updateReview(upsertedReview, withBack: true);
     }
+    isLoading.value = false;
     clearFormFields();
   }
 

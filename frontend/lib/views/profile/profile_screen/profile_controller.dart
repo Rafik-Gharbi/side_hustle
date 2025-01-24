@@ -94,6 +94,7 @@ class ProfileController extends GetxController {
   Future<void> uploadFilePicture({GlobalKey<FormState>? formKey}) async {
     try {
       XFile? image;
+      await Helper.requestStoragePermission();
       final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
       if (foundation.kIsWeb) {
         image = await pickerPlatform.getImageFromSource(source: ImageSource.gallery);

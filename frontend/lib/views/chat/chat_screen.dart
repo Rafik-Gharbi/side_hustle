@@ -14,6 +14,7 @@ import '../../services/authentication_service.dart';
 import '../../services/shared_preferences.dart';
 import '../../services/theme/theme.dart';
 import '../../widgets/loading_card_effect.dart';
+import '../../widgets/main_screen_with_bottom_navigation.dart';
 import '../../widgets/overflowed_text_with_tooltip.dart';
 import 'chat_controller.dart';
 
@@ -35,10 +36,15 @@ class ChatScreen extends StatelessWidget {
               controller.targets.isNotEmpty &&
               !controller.isLoading.value) {
             hasOpenedTutorial = true;
+            MainScreenWithBottomNavigation.isOnTutorial.value = true;
             TutorialCoachMark(
               targets: controller.targets,
               colorShadow: kNeutralOpacityColor,
-              hideSkip: true,
+              textSkip: 'skip'.tr,
+              onSkip: () {
+                MainScreenWithBottomNavigation.isOnTutorial.value = false;
+                return true;
+              },
               onFinish: () => SharedPreferencesService.find.add(hasFinishedChatTutorialKey, 'true'),
             ).show(context: context);
           }

@@ -26,6 +26,7 @@ class UserProfileScreen extends StatelessWidget {
   final void Function()? onAccept;
   final void Function()? onMarkDone;
   final bool isService;
+  final RxBool? isLoading;
 
   const UserProfileScreen({
     super.key,
@@ -36,6 +37,7 @@ class UserProfileScreen extends StatelessWidget {
     this.onMarkDone,
     this.requestStatus = RequestStatus.finished,
     this.isService = false,
+    this.isLoading,
   });
 
   @override
@@ -126,12 +128,14 @@ class UserProfileScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           CustomButtons.elevateSecondary(
+                            loading: isLoading,
                             title: 'reject'.tr,
                             width: (Get.width - 40) / 2,
                             onPressed: () => onReject!.call(),
                           ),
                           const SizedBox(width: Paddings.regular),
                           CustomButtons.elevatePrimary(
+                            loading: isLoading,
                             title: 'accept'.tr,
                             width: (Get.width - 40) / 2,
                             onPressed: () => onAccept!.call(),
@@ -155,17 +159,18 @@ class UserProfileScreen extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                          CustomButtons.elevateSecondary(
-                            title: '${'chat_with'.tr} ${user?.name ?? 'user'.tr}',
-                            titleStyle: AppFonts.x14Regular,
-                            icon: const Icon(Icons.chat_outlined),
-                            width: Get.width - 40,
-                            onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: reservation),
-                          ),
+                        CustomButtons.elevateSecondary(
+                          title: '${'chat_with'.tr} ${user?.name ?? 'user'.tr}',
+                          titleStyle: AppFonts.x14Regular,
+                          icon: const Icon(Icons.chat_outlined),
+                          width: Get.width - 40,
+                          onPressed: () => Get.toNamed(MessagesScreen.routeName, arguments: reservation),
+                        ),
                         if (onMarkDone != null) ...[
                           const SizedBox(height: Paddings.regular),
                           if (!isService)
                             CustomButtons.elevatePrimary(
+                              loading: isLoading,
                               title: 'mark_task_done'.tr,
                               titleStyle: AppFonts.x14Regular,
                               icon: const Icon(Icons.done, color: kNeutralColor100),

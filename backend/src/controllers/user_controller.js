@@ -61,8 +61,8 @@ exports.sendTestMail = async (req, res) => {
   try {
     let code = generateRandomCode();
     // const template = forgotPasswordEmailTemplate(code);
-    const template = contactUsMail("email", "name", "subject", "body", "phone");
-    // const template = sendConfirmationMail("Rafik Test", code, true);
+    // const template = contactUsMail("email", "name", "subject", "body", "phone");
+    const template = sendConfirmationMail("Rafik Test", code, true);
     sendMail(
       "rafik.gharbi@icloud.com",
       "Contact Us Dootify - Testing",

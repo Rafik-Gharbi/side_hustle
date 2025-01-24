@@ -19,7 +19,7 @@ class ChangePasswordBottomsheet extends StatelessWidget {
     final confirmPasswordController = TextEditingController();
     return CustomBottomsheet(
       title: 'change_password'.tr,
-      height: 470,
+      height: 530,
       child: Form(
         key: formKey,
         child: Column(
@@ -63,6 +63,7 @@ class ChangePasswordBottomsheet extends StatelessWidget {
             Center(
               child: CustomButtons.elevatePrimary(
                 title: 'save'.tr,
+                loading: AuthenticationService.find.isLoading,
                 width: Get.width,
                 padding: const EdgeInsets.symmetric(horizontal: Paddings.exceptional),
                 onPressed: () => AuthenticationService.find.changePassword(formKey),

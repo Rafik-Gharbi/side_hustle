@@ -23,6 +23,7 @@ import '../../widgets/custom_button_with_overlay.dart';
 import '../../widgets/draggable_bottomsheet.dart';
 import '../../widgets/governorates_bottomsheet.dart';
 import '../../widgets/loading_card_effect.dart';
+import '../../widgets/main_screen_with_bottom_navigation.dart';
 import '../../widgets/reservation_card.dart';
 import '../../widgets/task_card.dart';
 import '../map/map_screen.dart';
@@ -41,19 +42,30 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasFinishedHomeTutorial = SharedPreferencesService.find.get(hasFinishedHomeTutorialKey) == 'true';
+    bool hasOpenedTutorial = false;
     return GetBuilder<HomeController>(
       initState: (state) => Helper.waitAndExecute(
         () => state.controller != null && !(state.controller?.isLoading.value ?? true),
         () {
           FirebaseAnalytics.instance.logScreenView(screenName: 'HomeScreen');
-          hasFinishedHomeTutorial
-              ? null
-              : (TutorialCoachMark(
-                  targets: state.controller!.targets,
-                  colorShadow: kNeutralOpacityColor,
-                  hideSkip: true,
-                  onFinish: () => SharedPreferencesService.find.add(hasFinishedHomeTutorialKey, 'true'),
-                )..show(context: context));
+          if (!hasFinishedHomeTutorial &&
+              MainAppController.find.isHomeScreen &&
+              !hasOpenedTutorial &&
+              state.controller!.targets.isNotEmpty &&
+              !state.controller!.isLoading.value) {
+            hasOpenedTutorial = true;
+            MainScreenWithBottomNavigation.isOnTutorial.value = true;
+            TutorialCoachMark(
+              targets: state.controller!.targets,
+              colorShadow: kNeutralOpacityColor,
+              textSkip: 'skip'.tr,
+              onSkip: () {
+                  MainScreenWithBottomNavigation.isOnTutorial.value = false;
+                  return true;
+                },
+              onFinish: () => SharedPreferencesService.find.add(hasFinishedHomeTutorialKey, 'true'),
+            ).show(context: context);
+          }
         },
       ),
       didChangeDependencies: (state) => MainAppController.find.isHomeScreen ? Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()) : {},
@@ -63,7 +75,7 @@ class HomeScreen extends StatelessWidget {
           controller.searchFieldKey = GlobalKey();
           controller.advancedFilterKey = GlobalKey();
         }
-
+    
         return Padding(
           padding: const EdgeInsets.all(Paddings.large),
           child: RefreshIndicator(
@@ -393,8 +405,9 @@ class HomeScreen extends StatelessWidget {
                         if (SharedPreferencesService.find.isReady.value)
                           Buildables.buildTitle(
                             '${'new_tasks'.tr} ${'nearby'.tr}',
-                            onSeeMore:
-                                controller.nearbyTasks.isEmpty ? null : () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: controller.filterModel)),
+                            onSeeMore: controller.nearbyTasks.isEmpty
+                                ? null
+                                : () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: controller.filterModel)),
                           ),
                         LoadingCardEffect(
                           isLoading: controller.isLoading,

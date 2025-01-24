@@ -101,6 +101,7 @@ class AddStoreBottomsheet extends StatelessWidget {
                             const SizedBox(height: Paddings.exceptional * 2),
                             CustomButtons.elevatePrimary(
                               title: '${isUpdate ? 'update'.tr : 'create'.tr} ${'store'.tr}',
+                              loading: StoreViewmodel.isLoading,
                               width: Get.width,
                               onPressed: controller.upsertStore,
                             ),

@@ -28,9 +28,11 @@ class StoreViewmodel {
   static Rx<Category> category = Category.empty().obs;
   static String? updateServiceId;
   static Store? currentStore;
+  static RxBool isLoading = false.obs;
 
   static Future<void> upsertService({bool isUpdate = false, void Function()? onFinish}) async {
     if (formKey.currentState?.validate() ?? false) {
+      isLoading.value = true;
       Service? result;
       final service = Service(
         id: updateServiceId,
@@ -57,6 +59,7 @@ class StoreViewmodel {
       } else {
         result = await StoreRepository.find.updateService(service, currentStore!, withBack: true);
       }
+      isLoading.value = false;
       if (result != null) {
         currentStore!.services = [...currentStore!.services?.where((element) => element.id != result?.id).toList() ?? [], result];
         onFinish?.call();
@@ -65,12 +68,12 @@ class StoreViewmodel {
   }
 
   static Future<void> editService(Service service, {void Function()? onFinish}) async {
+    isLoading.value = true;
     serviceNameController.text = service.name ?? '';
     serviceDescriptionController.text = service.description ?? '';
     servicePriceController.text = service.price.toString();
     serviceGallery = service.gallery?.map((e) => e.file).toList() ?? [];
     category.value = service.category ?? Category.empty();
-    updateServiceId = service.id;
     await addService(update: true);
     onFinish?.call();
   }
@@ -78,7 +81,9 @@ class StoreViewmodel {
   static void deleteService(Service service, {void Function()? onFinish}) => Helper.openConfirmationDialog(
         content: 'delete_service_msg'.trParams({'serviceName': service.name!}),
         onConfirm: () async {
+          isLoading.value = true;
           final result = await StoreRepository.find.deleteService(service);
+          isLoading.value = false;
           if (result) currentStore!.services!.removeWhere((element) => element.id == service.id);
           onFinish?.call();
         },
