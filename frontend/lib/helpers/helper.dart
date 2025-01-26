@@ -38,6 +38,7 @@ import '../views/profile/account/login_dialog.dart';
 import '../views/profile/admin_dashboard/components/stats_screen/components/pie_chart.dart';
 import '../views/profile/verification_screen.dart';
 import '../widgets/custom_popup.dart';
+import '../widgets/main_screen_with_bottom_navigation.dart';
 import '../widgets/phone_otp_dialog.dart';
 import '../widgets/verify_email_dialog.dart';
 import 'extensions/date_time_extension.dart';
@@ -453,10 +454,18 @@ class Helper {
       // Patch update: suggest update with a snackbar
       if (lastCheckedVersion == null) {
         Helper.waitAndExecute(
-          () => Get.locale != null,
-          () => snackBar(title: 'new_update_available'.tr, message: 'new_update_available_msg'.tr, duration: const Duration(seconds: 5)),
+          () => Get.locale != null && Get.currentRoute == MainScreenWithBottomNavigation.routeName,
+          () => snackBar(
+            title: 'new_update_available'.tr,
+            message: 'new_update_available_msg'.tr,
+            duration: const Duration(seconds: 5),
+            overrideButton: TextButton(
+              onPressed: () => launchUrlHelper(GetPlatform.isAndroid ? playStoreUrl : appStoreUrl),
+              child: Text('update'.tr),
+            ),
+          ),
         );
-        LoggerService.logger?.i('New update available');
+        LoggerService.logger?.i('New update available $currentVersion -> $latestVersion');
         Future.delayed(const Duration(minutes: 1), () => lastCheckedVersion = null);
       }
     }

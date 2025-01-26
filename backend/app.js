@@ -50,6 +50,7 @@ app.use((req, res, next) => {
   const originalSend = res.send;
   const isTrustedSource =
     req.ip.includes("127.0.0.1") ||
+    // req.hostname == "localhost" ||
     (req.headers["user-agent"]?.includes("insomnia") ?? false);
   const encryptionEnabled =
     process.env.ENCRYPTION_ENABLED === "true" && !isTrustedSource;

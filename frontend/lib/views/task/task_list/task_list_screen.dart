@@ -86,10 +86,8 @@ class TaskListScreen extends StatelessWidget {
                       fillColor: Colors.white,
                       onChanged: (value) => Helper.onSearchDebounce(
                         () {
-                          if (value.length >= 3 || value.isEmpty) {
-                            controller.page = 0;
-                            controller.fetchSearchedTasks();
-                          }
+                          controller.page = 0;
+                          controller.fetchSearchedTasks();
                         },
                       ),
                     ),

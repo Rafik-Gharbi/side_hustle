@@ -840,6 +840,7 @@ final Map<String, String> enUs = <String, String>{
   'phone_invalid': 'Invalid phone number !',
   'diffrent_new_password': 'Please enter a different new password !',
   'field_should_include': 'Field should include at least @number characters !',
+  'field_length_exact': 'Field should be exactly @number characters long!',
   'invalid_confirmation': 'Invalid confirmation !',
   // Backend response messages
   'mail_verif_failed': 'Failed to verify your account',

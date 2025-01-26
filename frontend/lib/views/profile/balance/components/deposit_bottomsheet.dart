@@ -22,21 +22,23 @@ class DepositBottomsheet extends StatelessWidget {
     return GetBuilder<BalanceController>(
       builder: (controller) => StatefulBuilder(
         builder: (context, setState) {
-          double bottomsheetHeight = resolveDepositTypeHeight(isExpansionTileOpen, controller.hasValidatorError, controller.hasValidatorErrorSlipDeposit);
-          return AnimatedContainer(
-            duration: Durations.short4,
-            height: bottomsheetHeight > (Get.height - 100) ? Get.height - 100 : bottomsheetHeight,
-            child: Material(
-              color: kNeutralColor100,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-              child: bottomsheetHeight > (Get.height - 100)
-                  ? SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: Paddings.extraLarge),
-                        child: buildContent(controller, (value) => setState(() => isExpansionTileOpen = value), isExpansionTileOpen),
-                      ),
-                    )
-                  : buildContent(controller, (value) => setState(() => isExpansionTileOpen = value), isExpansionTileOpen),
+          double bottomsheetHeight(RxBool error) => resolveDepositTypeHeight(isExpansionTileOpen, error.value, controller.hasValidatorErrorSlipDeposit.value);
+          return Obx(
+            () => AnimatedContainer(
+              duration: Durations.short4,
+              height: bottomsheetHeight(controller.hasValidatorError) > (Get.height - 100) ? Get.height - 100 : bottomsheetHeight(controller.hasValidatorError),
+              child: Material(
+                color: kNeutralColor100,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                child: bottomsheetHeight(controller.hasValidatorError) > (Get.height - 100)
+                    ? SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: Paddings.extraLarge),
+                          child: buildContent(controller, (value) => setState(() => isExpansionTileOpen = value), isExpansionTileOpen),
+                        ),
+                      )
+                    : buildContent(controller, (value) => setState(() => isExpansionTileOpen = value), isExpansionTileOpen),
+              ),
             ),
           );
         },
@@ -82,49 +84,51 @@ class DepositBottomsheet extends StatelessWidget {
               validator: FormValidators.notEmptyOrNullFloatValidator,
             ),
             if (type == DepositType.installment)
-              Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: Paddings.large),
-                      child: InkWell(
-                        onTap: controller.addDepositSlipPicture,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: kNeutralLightColor,
-                            borderRadius: smallRadius,
-                            border: controller.hasValidatorErrorSlipDeposit ? regularErrorBorder : regularBorder,
-                          ),
-                          child: SizedBox(
-                            width: 150,
-                            height: 150,
-                            child: ClipRRect(
+              Obx(
+                () => Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: Paddings.large),
+                        child: InkWell(
+                          onTap: controller.addDepositSlipPicture,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: kNeutralLightColor,
                               borderRadius: smallRadius,
-                              child: controller.depositSlip != null
-                                  ? Image.file(File(controller.depositSlip!.path), height: 150, width: 150, fit: BoxFit.cover)
-                                  : Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(Icons.add_a_photo_outlined),
-                                        const SizedBox(height: Paddings.regular),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                                          child: Text('deposit_slip_picture'.tr, style: AppFonts.x12Regular, softWrap: true),
-                                        ),
-                                      ],
-                                    ),
+                              border: controller.hasValidatorErrorSlipDeposit.value ? regularErrorBorder : regularBorder,
+                            ),
+                            child: SizedBox(
+                              width: 150,
+                              height: 150,
+                              child: ClipRRect(
+                                borderRadius: smallRadius,
+                                child: controller.depositSlip != null
+                                    ? Image.file(File(controller.depositSlip!.path), height: 150, width: 150, fit: BoxFit.cover)
+                                    : Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(Icons.add_a_photo_outlined),
+                                          const SizedBox(height: Paddings.regular),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                                            child: Text('deposit_slip_picture'.tr, style: AppFonts.x12Regular, softWrap: true),
+                                          ),
+                                        ],
+                                      ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    if (controller.hasValidatorErrorSlipDeposit)
-                      Padding(
-                        padding: const EdgeInsets.only(top: Paddings.small),
-                        child: Text('deposit_slip_picture_required'.tr, style: AppFonts.x12Regular.copyWith(color: kErrorColor)),
-                      )
-                  ],
+                      if (controller.hasValidatorErrorSlipDeposit.value)
+                        Padding(
+                          padding: const EdgeInsets.only(top: Paddings.small),
+                          child: Text('deposit_slip_picture_required'.tr, style: AppFonts.x12Regular.copyWith(color: kErrorColor)),
+                        )
+                    ],
+                  ),
                 ),
               ),
             const SizedBox(height: Paddings.exceptional),
@@ -180,7 +184,7 @@ class DepositBottomsheet extends StatelessWidget {
       case DepositType.bankCard:
         return (isExpansionTileOpen ? 560 : 390) + (hasValidatorError ? 20 : 0);
       case DepositType.installment:
-        return (isExpansionTileOpen ? 790 : 585) + (hasValidatorError ? 20 : 0) + (hasValidatorErrorSlipDeposit ? 20 : 0);
+        return (isExpansionTileOpen ? 790 : 600) + (hasValidatorError ? 20 : 0) + (hasValidatorErrorSlipDeposit ? 20 : 0);
       default:
         return Get.height - 100;
     }

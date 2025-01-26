@@ -37,5 +37,8 @@ class FormValidators {
   static String? minNumberOfCharsValidator(String? value, int N, {bool isNumber = false}) =>
       (isNumber ? notEmptyOrNullFloatValidator(value) : notEmptyOrNullValidator(value)) ?? (value!.length < N ? 'field_should_include'.trParams({'number': N.toString()}) : null);
 
+  static String? exactNumberOfIntValidator(String? value, int N, {bool isNumber = false}) =>
+      (isNumber ? notEmptyOrNullIntValidator(value) : notEmptyOrNullValidator(value)) ?? (value!.length != N ? 'field_length_exact'.trParams({'number': N.toString()}) : null);
+
   static String? confirmPasswordValidator(String? value, String? newPassword) => notEmptyOrNullValidator(value) ?? (value != newPassword ? 'invalid_confirmation'.tr : null);
 }

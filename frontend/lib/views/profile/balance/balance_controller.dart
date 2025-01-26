@@ -31,8 +31,8 @@ class BalanceController extends GetxController {
   int withdrawalsCount = 0;
   bool get hasBankNumber => loggedUser.bankNumber != null;
   late User loggedUser;
-  bool _hasValidatorError = false;
-  bool _hasValidatorErrorSlipDeposit = false;
+  RxBool hasValidatorError = false.obs;
+  RxBool hasValidatorErrorSlipDeposit = false.obs;
   XFile? depositSlip;
   List<BalanceTransaction> balanceTransactions = [];
   RxBool isBankNumberConfiscated = false.obs;
@@ -40,20 +40,6 @@ class BalanceController extends GetxController {
   GlobalKey withdrawBtnKey = GlobalKey();
   GlobalKey depositBtnKey = GlobalKey();
   GlobalKey balanceOverview = GlobalKey();
-
-  bool get hasValidatorErrorSlipDeposit => _hasValidatorErrorSlipDeposit;
-
-  set hasValidatorErrorSlipDeposit(bool value) {
-    _hasValidatorErrorSlipDeposit = value;
-    update();
-  }
-
-  bool get hasValidatorError => _hasValidatorError;
-
-  set hasValidatorError(bool value) {
-    _hasValidatorError = value;
-    update();
-  }
 
   static final BalanceController _singleton = BalanceController._internal();
 
@@ -86,7 +72,7 @@ class BalanceController extends GetxController {
   Future<void> requestWithdrawal() async {
     if (formKey.currentState?.validate() ?? false) {
       Get.back(); // close bottomsheet
-      hasValidatorError = false;
+      hasValidatorError.value = false;
       final amount = double.parse(amountController.text);
       Future.delayed(
         Durations.medium1,
@@ -110,7 +96,7 @@ class BalanceController extends GetxController {
         ),
       );
     } else {
-      hasValidatorError = true;
+      hasValidatorError.value = true;
     }
   }
 
@@ -123,8 +109,8 @@ class BalanceController extends GetxController {
         return;
       }
       Get.back(); // close bottomsheet
-      hasValidatorError = false;
-      hasValidatorErrorSlipDeposit = false;
+      hasValidatorError.value = false;
+      hasValidatorErrorSlipDeposit.value = false;
       final result = await BalanceRepository.find.requestDeposit(type: type.name, amount: double.parse(amountController.text), depositSlip: depositSlip);
       isLoading.value = false;
       if (result) {
@@ -134,8 +120,8 @@ class BalanceController extends GetxController {
       }
       init();
     } else {
-      if (type == DepositType.installment ? depositSlip == null : false) hasValidatorErrorSlipDeposit = true;
-      hasValidatorError = true;
+      if (type == DepositType.installment ? depositSlip == null : false) hasValidatorErrorSlipDeposit.value = true;
+      hasValidatorError.value = true;
     }
   }
 
@@ -143,10 +129,10 @@ class BalanceController extends GetxController {
     if (formKey.currentState?.validate() ?? false) {
       isLoading.value = true;
       Get.back(); // close bottomsheet
-      hasValidatorError = false;
+      hasValidatorError.value = false;
       loggedUser.bankNumber = bankNumberController.text;
       final result = await UserRepository.find.updateUser(loggedUser);
-      isLoading.value = true;
+      isLoading.value = false;
       if (result != null) {
         loggedUser = result;
       } else {
@@ -154,13 +140,14 @@ class BalanceController extends GetxController {
       }
       update();
     } else {
-      hasValidatorError = true;
+      hasValidatorError.value = true;
     }
   }
 
   Future<void> addDepositSlipPicture() async {
     try {
       XFile? image;
+      await Helper.requestStoragePermission();
       final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
       if (foundation.kIsWeb) {
         image = await pickerPlatform.getImageFromSource(source: ImageSource.gallery);
@@ -177,14 +164,14 @@ class BalanceController extends GetxController {
   }
 
   void clearDepositFields() {
-    hasValidatorError = false;
-    hasValidatorErrorSlipDeposit = false;
+    hasValidatorError.value = false;
+    hasValidatorErrorSlipDeposit.value = false;
     amountController.text = '';
     depositSlip = null;
   }
 
   void clearWithdrawalFields() {
-    hasValidatorError = false;
+    hasValidatorError.value = false;
     amountController.text = '';
   }
 }

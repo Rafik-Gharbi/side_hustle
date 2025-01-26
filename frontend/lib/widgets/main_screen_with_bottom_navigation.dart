@@ -293,10 +293,8 @@ class MainScreenWithBottomNavigation extends StatelessWidget {
                 fillColor: Colors.white,
                 onChanged: (value) => Helper.onSearchDebounce(
                   () {
-                    if (value.length >= 3 || value.isEmpty) {
-                      MarketController.find.page = 0;
-                      MarketController.find.fetchSearchedStores();
-                    }
+                    MarketController.find.page = 0;
+                    MarketController.find.fetchSearchedStores();
                   },
                 ),
               ),

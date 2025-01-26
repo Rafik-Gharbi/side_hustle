@@ -68,7 +68,6 @@ class StoreViewmodel {
   }
 
   static Future<void> editService(Service service, {void Function()? onFinish}) async {
-    isLoading.value = true;
     serviceNameController.text = service.name ?? '';
     serviceDescriptionController.text = service.description ?? '';
     servicePriceController.text = service.price.toString();
@@ -95,6 +94,7 @@ class StoreViewmodel {
   static Future<void> addServicePictures({void Function()? onFinish}) async {
     try {
       List<XFile>? imageList;
+      await Helper.requestStoragePermission();
       final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
       if (foundation.kIsWeb) {
         imageList = await pickerPlatform.getMedia();

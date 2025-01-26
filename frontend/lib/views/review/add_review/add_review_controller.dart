@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../helpers/helper.dart';
 import '../../../helpers/image_picker_by_platform/image_picker_platform.dart';
 import '../../../models/dto/image_dto.dart';
 import '../../../models/review.dart';
@@ -75,6 +76,7 @@ class AddReviewController extends GetxController {
   Future<void> uploadReviewPicture() async {
     try {
       XFile? image;
+      await Helper.requestStoragePermission();
       final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
       if (foundation.kIsWeb) {
         image = await pickerPlatform.getImageFromSource(source: ImageSource.gallery);

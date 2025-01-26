@@ -841,6 +841,7 @@ final Map<String, String> arKSA = <String, String>{
   'phone_invalid': 'رقم الهاتف غير صالح!',
   'diffrent_new_password': 'يرجى إدخال كلمة مرور جديدة مختلفة!',
   'field_should_include': 'يجب أن يتضمن الحقل على الأقل @number أحرف!',
+  'field_length_exact': 'يجب أن يكون طول الحقل بالضبط @number أحرف!',
   'invalid_confirmation': 'تأكيد غير صالح!',
   // Backend response messages
   'mail_verif_failed': 'فشل في التحقق من حسابك',

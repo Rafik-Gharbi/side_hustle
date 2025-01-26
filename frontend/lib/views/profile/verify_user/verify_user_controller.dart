@@ -79,6 +79,7 @@ class VerifyUserController extends GetxController {
     try {
       isLoading.value = true;
       XFile? image;
+      await Helper.requestStoragePermission();
       final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
       if (kIsWeb) {
         image = await pickerPlatform.getImageFromSource(source: kReleaseMode ? ImageSource.camera : ImageSource.gallery);

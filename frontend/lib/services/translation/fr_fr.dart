@@ -863,6 +863,7 @@ final Map<String, String> frFr = <String, String>{
   'phone_invalid': 'Numéro de téléphone invalide !',
   'diffrent_new_password': 'Veuillez entrer un nouveau mot de passe différent !',
   'field_should_include': 'Le champ doit inclure au moins @number caractères !',
+  'field_length_exact': 'Le champ doit comporter exactement @number caractères !',
   'invalid_confirmation': 'Confirmation invalide !',
   // Backend response messages
   'mail_verif_failed': 'Échec de la vérification de votre compte',

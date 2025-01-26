@@ -132,6 +132,7 @@ class MyStoreController extends GetxController {
   Future<void> addStorePicture() async {
     try {
       XFile? image;
+      await Helper.requestStoragePermission();
       final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
       if (foundation.kIsWeb) {
         image = await pickerPlatform.getImageFromSource(source: ImageSource.gallery);

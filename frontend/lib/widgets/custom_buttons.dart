@@ -377,10 +377,7 @@ class CustomButtons extends StatelessWidget {
     }
 
     return loading != null
-        ? Obx(() {
-            print('isLoading: ${loading!.value}');
-            return getButton(loading!.value);
-          })
+        ? Obx(() => getButton(loading!.value))
         : getButton(null);
   }
 }

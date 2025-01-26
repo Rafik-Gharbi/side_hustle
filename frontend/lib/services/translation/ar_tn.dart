@@ -836,6 +836,7 @@ final Map<String, String> arTN = <String, String>{
   'phone_invalid': 'رقم الهاتف غير صالح !',
   'diffrent_new_password': 'يرجى إدخال كلمة مرور جديدة مختلفة !',
   'field_should_include': 'يجب أن يحتوي الحقل على @number على الأقل من الأحرف !',
+  'field_length_exact': 'الحقل لازم يكون فيه @number حرف بالضبط!',
   'invalid_confirmation': 'تأكيد غير صالح !',
   // Backend response messages
   'mail_verif_failed': 'فشل في التحقق من حسابك',
