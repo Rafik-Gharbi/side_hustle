@@ -57,6 +57,7 @@ class User {
   String? bankNumber;
   DateTime? createdAt;
   String? language;
+  String? fcmToken;
 
   User({
     this.id,
@@ -85,10 +86,11 @@ class User {
     this.availablePurchasedCoins = 0,
     this.createdAt,
     this.language,
+    this.fcmToken,
   });
 
   int get totalCoins => availableCoins + availablePurchasedCoins;
-  bool get isProfileCompleted => email != null && name != null && phone != null && birthdate != null && (isMailVerified ?? false) && governorate != null;
+  bool get isProfileCompleted => email != null && name != null && phone != null && birthdate != null && (isMailVerified ?? false) && governorate != null && gender != null;
 
   factory User.fromToken(Map<String, dynamic> payload) => User(
         id: payload['id'],
@@ -125,6 +127,7 @@ class User {
         googleId: json['googleId'],
         governorate: json['governorate_id'] != null ? MainAppController.find.getGovernorateById(json['governorate_id']) : null,
         bio: json['bio'],
+        fcmToken: json['fcmToken'],
         bankNumber: json['bankNumber'],
         referralCode: json['referral_code'],
         baseCoins: json['coins'] ?? 0,

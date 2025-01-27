@@ -47,6 +47,7 @@ module.exports = (app) => {
     userController.updateSupportTicket
   );
   router.put("/guest-data", tokenVerification, userController.updateGuestData);
+  router.put("/fcm-token", tokenVerification, userController.updateUserFcmToken);
   router.get(
     "/support-messages",
     tokenVerificationOptional,

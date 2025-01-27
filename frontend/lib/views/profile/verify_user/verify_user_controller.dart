@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,6 +29,7 @@ class VerifyUserController extends GetxController {
   bool? uploadDocumentResult;
   bool showTimer = true;
   RxBool isLoading = false.obs;
+  bool hasEnabledNotification = false;
 
   bool get hasProvidedDocument => documentType == DocumentType.identityCard ? frontIdentityPicture != null && backIdentityPicture != null : passportPicture != null;
 
@@ -48,6 +50,7 @@ class VerifyUserController extends GetxController {
       isOnBoarding = false;
       showTimer = false;
     }
+    _checkUserNotificationEnabled();
   }
 
   void startVerification() {
@@ -136,5 +139,33 @@ class VerifyUserController extends GetxController {
       Helper.snackBar(message: 'document_upload_failed'.tr);
     }
     isLoadingDataUpload.value = false;
+  }
+
+  Future<void> enableNotifications() async {
+    NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(criticalAlert: true);
+    debugPrint('User granted permission: ${settings.authorizationStatus}');
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      await _updateUserNotificationToken();
+    }
+  }
+
+  Future<void> _updateUserNotificationToken({bool silent = false}) async {
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        final result = await UserRepository.find.updateUserFcmToken(fcmToken);
+        if (result && !silent) {
+          Helper.snackBar(message: 'notifications_enabled_successfully'.tr);
+          hasEnabledNotification = true;
+          update();
+        }
+      }
+    } catch (e, s) {
+      LoggerService.logger?.e('Error in subscribeToCategories!\nError: $e\nStacktrace: $s');
+    }
+  }
+
+  void _checkUserNotificationEnabled() {
+    hasEnabledNotification = AuthenticationService.find.jwtUserData!.fcmToken == null;
   }
 }

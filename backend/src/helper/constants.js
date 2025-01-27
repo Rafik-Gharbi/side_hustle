@@ -8,7 +8,7 @@ const constantId = {
       id: 1,
       name: "Admin User",
       email: "admin.user@gmail.com",
-      password: "123",
+      password: "123", // $2b$10$lz8Nc6btoQr3mbnYvNTHqunq013ROZBYs1Vtkh8KK6.N6wTvfQrOC
       gender: "male",
       birthdate: "1992-09-23",
       phone_number: "+21653543541",

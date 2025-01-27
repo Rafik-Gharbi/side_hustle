@@ -10,8 +10,9 @@ class MessageBubble extends StatelessWidget {
   final String searchText;
   final DateTime date;
   final bool loggedUser;
+  final bool showDate;
 
-  const MessageBubble({super.key, required this.msgText, required this.date, required this.loggedUser, this.searchText = ''});
+  const MessageBubble({super.key, required this.msgText, required this.date, required this.loggedUser, this.searchText = '', required this.showDate});
 
   @override
   Widget build(BuildContext context) => Container(
@@ -23,10 +24,11 @@ class MessageBubble extends StatelessWidget {
             child: Column(
               crossAxisAlignment: loggedUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                  child: Text(DateFormat.Hm().format(date), style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
-                ),
+                if (showDate)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                    child: Text(DateFormat.Hm().format(date), style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
+                  ),
                 Material(
                   borderRadius: BorderRadius.only(
                     bottomLeft: const Radius.circular(30),

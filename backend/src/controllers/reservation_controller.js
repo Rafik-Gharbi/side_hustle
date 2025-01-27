@@ -9,7 +9,6 @@ const {
 } = require("../helper/helpers");
 const { User } = require("../models/user_model");
 const {
-  fetchUserReservation,
   populateOneTask,
   populateOneService,
   getServiceOwner,
@@ -71,7 +70,7 @@ exports.addTaskReservation = async (req, res) => {
 
     let existReservation = await Reservation.findOne({
       where: {
-        user_id: userFound.id,
+        provider_id: userFound.id,
         task_id: taskId,
       },
     });

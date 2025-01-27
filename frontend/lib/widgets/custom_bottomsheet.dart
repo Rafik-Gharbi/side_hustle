@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../constants/colors.dart';
 import '../constants/sizes.dart';
+import '../helpers/helper.dart';
 import '../services/theme/theme.dart';
 import 'custom_buttons.dart';
 
@@ -37,7 +38,7 @@ class CustomBottomsheet extends StatelessWidget {
                     children: [
                       const SizedBox(width: 40),
                       Text(title ?? '', style: AppFonts.x16Bold),
-                      CustomButtons.icon(icon: const Icon(Icons.close), onPressed: Get.back),
+                      const CustomButtons.icon(icon: Icon(Icons.close), onPressed: Helper.goBack),
                     ],
                   ),
                 ),

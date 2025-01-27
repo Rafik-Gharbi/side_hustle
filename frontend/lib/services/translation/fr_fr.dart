@@ -330,6 +330,7 @@ final Map<String, String> frFr = <String, String>{
   'share_your_location': 'Partagez votre position',
   'share_location_msg': 'En partageant votre position, nous pouvons vous fournir des résultats plus précis.',
   'new_tasks': 'Nouvelles tâches',
+  'new_task': 'Nouvelle tâche',
   'in': 'en',
   'all_tunisia': 'Tunisie',
   'messages': 'Messages',
@@ -737,6 +738,7 @@ final Map<String, String> frFr = <String, String>{
   'profile_completed': 'Profil complété !',
   'complete_profile': 'Complétez votre profil',
   'add_email_task': 'Ajoutez votre e-mail',
+  'add_gender_task': 'Ajoutez votre sexe',
   'add_name_task': 'Ajoutez votre nom',
   'add_phone_number_task': 'Ajoutez votre numéro de téléphone',
   'add_birthdate_task': 'Ajoutez votre date de naissance',
@@ -851,6 +853,7 @@ final Map<String, String> frFr = <String, String>{
   'no_file_available': 'Aucun fichier disponible!',
   'later': 'Plus tard',
   'provide_permission': 'Permission refusée. Veuillez l\'activer dans les paramètres de votre appareil pour continuer',
+  'notifications_enabled_successfully': 'Les notifications ont été activées avec succès',
   // Validation messages
   'max_value_is': 'La valeur maximale est @value !',
   'valid_for_x_days': 'Valide pour @days jours',

@@ -49,6 +49,10 @@ function adjustString(inputString) {
   return sanitizedString;
 }
 
+function normalizeCode(input) {
+  return input.replace(/[٠١٢٣٤٥٦٧٨٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+}
+
 function isUUID(str) {
   const uuidRegex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -756,4 +760,5 @@ module.exports = {
   checkReferralActiveUserRewards,
   verifyToken,
   ensureDecryptBody,
+  normalizeCode,
 };

@@ -84,7 +84,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   CustomButtons.icon(icon: const Icon(Icons.close), onPressed: () => Helper.goBack()),
-                                  Text('${task != null ? 'edit'.tr : 'new'.tr} ${'task'.tr}', style: AppFonts.x16Bold),
+                                  Text(task != null ? '${'edit'.tr} ${'task'.tr}' : 'new_task'.tr, style: AppFonts.x16Bold),
                                   const SizedBox(width: 40),
                                 ],
                               ),
@@ -205,6 +205,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                     hintText: 'task_price_min'.tr,
                                     fieldController: controller.priceController,
                                     outlinedBorderColor: Colors.transparent,
+                                    validator: FormValidators.notEmptyOrNullFloatValidator,
                                     textInputType: const TextInputType.numberWithOptions(decimal: true),
                                   ),
                                   Buildables.verticalDivider(color: kNeutralColor, padding: const EdgeInsets.symmetric(horizontal: Paddings.small), thickness: 0.4),
@@ -213,6 +214,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                     hintText: 'task_price_max'.tr,
                                     fieldController: controller.priceMaxController,
                                     outlinedBorderColor: Colors.transparent,
+                                    validator: FormValidators.notEmptyOrNullFloatValidator,
                                     textInputType: const TextInputType.numberWithOptions(decimal: true),
                                     suffixIcon: InkWell(
                                       onTap: () => controller.isPriceRange = !controller.isPriceRange,
@@ -228,6 +230,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                 isOptional: false,
                                 fieldController: controller.priceController,
                                 outlinedBorderColor: Colors.transparent,
+                                validator: FormValidators.notEmptyOrNullFloatValidator,
                                 textInputType: const TextInputType.numberWithOptions(decimal: true),
                                 suffixIcon:
                                     CustomButtons.icon(icon: const Icon(Icons.compare_arrows_outlined), onPressed: () => controller.isPriceRange = !controller.isPriceRange),
@@ -252,6 +255,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                             ),
                             Buildables.lightDivider(),
                             ListTile(
+                              contentPadding: const EdgeInsets.only(left: 16),
                               title: Row(
                                 children: [
                                   Text('${'attachments'.tr}: ', style: AppFonts.x14Regular),
@@ -329,15 +333,13 @@ class AddTaskBottomsheet extends StatelessWidget {
                                     ),
                                   ),
                                 Expanded(
-                                  child: Obx(
-                                    () => CustomButtons.elevatePrimary(
-                                      title: task != null ? 'update'.tr : 'add'.tr,
-                                      buttonColor: kPrimaryColor,
-                                      titleStyle: AppFonts.x16Bold,
-                                      width: double.infinity,
-                                      loading: controller.isAdding,
-                                      onPressed: controller.upsertTask,
-                                    ),
+                                  child: CustomButtons.elevatePrimary(
+                                    title: task != null ? 'update'.tr : 'add'.tr,
+                                    buttonColor: kPrimaryColor,
+                                    titleStyle: AppFonts.x16Bold,
+                                    width: double.infinity,
+                                    loading: controller.isAdding,
+                                    onPressed: controller.upsertTask,
                                   ),
                                 ),
                               ],

@@ -9,6 +9,7 @@ import '../constants/sizes.dart';
 import '../helpers/form_validators.dart';
 import '../helpers/helper.dart';
 import '../services/theme/theme.dart';
+import 'custom_buttons.dart';
 import 'custom_text_field.dart';
 
 class CoordinatesPicker extends StatefulWidget {
@@ -56,26 +57,40 @@ class _CoordinatesPickerState extends State<CoordinatesPicker> {
 
   void _showLocationPicker() => Get.dialog(
         Material(
-          child: FlutterLocationPicker(
-            initZoom: 11,
-            initPosition: const LatLong(34.740556, 10.762222), // Sfax coordinates
-            minZoomLevel: 5,
-            maxZoomLevel: 16,
-            zoomButtonsColor: kNeutralLightColor,
-            locationButtonsColor: kNeutralLightColor,
-            searchBarBackgroundColor: kNeutralLightColor,
-            locationButtonBackgroundColor: kPrimaryColor,
-            zoomButtonsBackgroundColor: kPrimaryColor,
-            showSearchBar: false,
-            selectedLocationButtonTextstyle: AppFonts.x15Bold.copyWith(color: kNeutralColor100),
-            selectLocationButtonStyle: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(kPrimaryColor)),
-            //trackMyPosition: true,
-            onPicked: (pickedData) {
-              longitudeController.text = pickedData.latLong.longitude.toString();
-              latitudeController.text = pickedData.latLong.latitude.toString();
-              widget.onSubmit?.call(LatLng(pickedData.latLong.latitude, pickedData.latLong.longitude));
-              Helper.goBack();
-            },
+          child: Stack(
+            children: [
+              FlutterLocationPicker(
+                initZoom: 11,
+                initPosition: const LatLong(34.740556, 10.762222), // Sfax coordinates
+                minZoomLevel: 5,
+                maxZoomLevel: 16,
+                zoomButtonsColor: kNeutralLightColor,
+                locationButtonsColor: kNeutralLightColor,
+                searchBarBackgroundColor: kNeutralLightColor,
+                locationButtonBackgroundColor: kPrimaryColor,
+                zoomButtonsBackgroundColor: kPrimaryColor,
+                showSearchBar: false,
+                selectedLocationButtonTextstyle: AppFonts.x15Bold.copyWith(color: kNeutralColor100),
+                selectLocationButtonStyle: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(kPrimaryColor)),
+                //trackMyPosition: true,
+                onPicked: (pickedData) {
+                  longitudeController.text = pickedData.latLong.longitude.toString();
+                  latitudeController.text = pickedData.latLong.latitude.toString();
+                  widget.onSubmit?.call(LatLng(pickedData.latLong.latitude, pickedData.latLong.longitude));
+                  Helper.goBack();
+                },
+              ),
+              Positioned.directional(
+                textDirection: Helper.isArabic ? TextDirection.ltr : TextDirection.rtl,
+                top: 10,
+                start: 10,
+                child: CircleAvatar(
+                  backgroundColor: kPrimaryColor,
+                  radius: 15,
+                  child: Center(child: CustomButtons.icon(icon: const Icon(Icons.close, color: kNeutralColor100, size: 18), onPressed: Get.back)),
+                ),
+              )
+            ],
           ),
         ),
       );

@@ -62,7 +62,7 @@ class ParamsRepository extends GetxService {
   Future<void> reportUser(ReportDTO reportDTO) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/params/report', body: reportDTO.toJson(), sendToken: true);
-      if (result['done']) {
+      if (result?['done'] ?? false) {
         Helper.goBack(); // close report dialog
         Helper.snackBar(message: 'report_submitted_successfully'.tr);
       } else {
@@ -76,7 +76,7 @@ class ParamsRepository extends GetxService {
   Future<void> submitFeedback(FeedbackEmotion feedback, String comment) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/params/feedback', body: {'feedback': feedback.name, 'comment': comment}, sendToken: true);
-      if (result['done']) {
+      if (result?['done'] ?? false) {
         Helper.goBack();
         Get.dialog(const ThankYouPopup());
       } else {

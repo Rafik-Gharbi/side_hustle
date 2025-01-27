@@ -9,6 +9,8 @@ extension DateTimeExtension on DateTime {
 
   String get formatDisplay => DateFormat('MMM d, h:mm a').format(this);
 
+  bool isSameTime(DateTime other) => hour == other.hour && minute == other.minute;
+
   bool isSameDate(DateTime other) => year == other.year && month == other.month && day == other.day;
 
   bool isSameMonth(DateTime other) => year == other.year && month == other.month;

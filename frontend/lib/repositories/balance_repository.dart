@@ -11,7 +11,7 @@ class BalanceRepository extends GetxService {
   Future<bool> requestWithdrawal({required double amount}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/balance/request-withdrawal', body: {'amount': amount}, sendToken: true);
-      return result['done'];
+      return result?['done'] ?? false;
     } catch (e) {
       LoggerService.logger?.e('Error occured in requestWithdrawal:\n$e');
     }
@@ -29,7 +29,7 @@ class BalanceRepository extends GetxService {
         files: depositSlip != null ? [depositSlip] : null,
         sendToken: true,
       );
-      return result['done'];
+      return result?['done'] ?? false;
     } catch (e) {
       LoggerService.logger?.e('Error occured in requestDeposit:\n$e');
     }

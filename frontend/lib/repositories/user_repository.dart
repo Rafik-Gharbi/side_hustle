@@ -191,6 +191,7 @@ class UserRepository extends GetxService {
       if (!silent) Helper.snackBar(title: 'success'.tr, message: 'update_profile_success'.tr);
       final currentUser = User.fromJson(result['updatedUser']);
       if (result['jwt'] != null) AuthenticationService.find.initiateCurrentUser(result['jwt'], user: currentUser, silent: true);
+      if (MainAppController.find.isProfileScreen) MainAppController.find.showProfileCompletionIndicator.value = !currentUser.isProfileCompleted;
       return currentUser;
     } catch (e) {
       LoggerService.logger?.e('Error occured in updateUser:\n$e');
@@ -315,7 +316,7 @@ class UserRepository extends GetxService {
   Future<bool> deleteProfile() async {
     try {
       final result = await ApiBaseHelper().request(RequestType.delete, '/user/delete', sendToken: true);
-      return result['done'];
+      return result?['done'] ?? false;
     } catch (e) {
       if (e.toString().contains('already_exist')) {
         Helper.snackBar(title: 'error'.tr, message: 'request_already_sent'.tr);
@@ -336,7 +337,7 @@ class UserRepository extends GetxService {
   Future<List<SupportTicket>?> getUserSupportTickets() async {
     try {
       final guestId = SharedPreferencesService.find.get(guestIdKey);
-      final result = await ApiBaseHelper().request(RequestType.get, '/user/support-tickets?guest_id=$guestId', sendToken: true);
+      final result = await ApiBaseHelper().request(RequestType.get, '/user/support-tickets${guestId != null ? '?guest_id=$guestId' : ''}', sendToken: true);
       final tickets = (result['tickets'] as List).map((e) => SupportTicket.fromJson(e)).toList();
       return tickets;
     } catch (e) {
@@ -376,7 +377,7 @@ class UserRepository extends GetxService {
       final List<XFile?> files = supportTicket.logs != null ? [supportTicket.logs] : [];
       if (attachments != null && attachments.isNotEmpty) files.addAll(attachments);
       final result = await ApiBaseHelper().request(RequestType.post, '/user/support-ticket', body: supportTicket.toJson(), files: files, sendToken: true);
-      return result['done'];
+      return result?['done'] ?? false;
     } catch (e) {
       LoggerService.logger?.e('Error occured in submitSupportTicket:\n$e');
     }
@@ -396,9 +397,19 @@ class UserRepository extends GetxService {
   Future<bool> updateGuestData({required String guestId}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.put, '/user/guest-data', body: {'guest_id': guestId}, sendToken: true);
-      return result['done'];
+      return result?['done'] ?? false;
     } catch (e) {
       LoggerService.logger?.e('Error occured in updateGuestData:\n$e');
+    }
+    return false;
+  }
+
+  Future<bool> updateUserFcmToken(String? fcmToken) async {
+    try {
+      final result = await ApiBaseHelper().request(RequestType.put, '/user/fcm-token', body: {'token': fcmToken}, sendToken: true);
+      return result?['done'] ?? false;
+    } catch (e) {
+      LoggerService.logger?.e('Error occured in updateUserFcmToken:\n$e');
     }
     return false;
   }

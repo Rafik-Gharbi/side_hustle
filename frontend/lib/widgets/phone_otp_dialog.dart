@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:otp_text_field/otp_field.dart';
-import 'package:otp_text_field/otp_field_style.dart';
-import 'package:otp_text_field/style.dart';
 
 import '../constants/assets.dart';
 import '../constants/colors.dart';
 import '../constants/constants.dart';
 import '../constants/sizes.dart';
+import '../helpers/form_validators.dart';
 import '../services/theme/theme.dart';
+import 'custom_text_field.dart';
 
 class PhoneOTPDialog extends StatelessWidget {
   final String phone;
@@ -58,16 +57,15 @@ class PhoneOTPDialog extends StatelessWidget {
                   Text(isEmail ? 'verify_email_msg'.tr : 'verify_phone_msg'.tr, style: AppFonts.x16Regular),
                   Text(phone, style: AppFonts.x16Bold),
                   const SizedBox(height: Paddings.exceptional),
-                  OTPTextField(
-                    length: 6,
+                  CustomTextField(
+                    validator: (value) => FormValidators.exactNumberOfIntValidator(value, 6),
                     width: GetPlatform.isMobile ? Get.width - 60 : Get.width,
-                    fieldWidth: GetPlatform.isMobile ? 40 : 60,
-                    otpFieldStyle: OtpFieldStyle(enabledBorderColor: kNeutralColor.withOpacity(0.6), focusBorderColor: kPrimaryColor, backgroundColor: kNeutralLightColor),
-                    style: AppFonts.x15Bold,
-                    textFieldAlignment: MainAxisAlignment.spaceAround,
-                    fieldStyle: FieldStyle.underline,
-                    onCompleted: (pin) => Get.back(result: pin),
-                    onChanged: (value) {},
+                    textInputType: const TextInputType.numberWithOptions(),
+                    hintText: 'verification_key'.tr,
+                    outlinedBorder: true,
+                    onChanged: (value) {
+                      if (value.length == 6) Get.back(result: value);
+                    },
                   ),
                   const SizedBox(height: Paddings.exceptional),
                 ],

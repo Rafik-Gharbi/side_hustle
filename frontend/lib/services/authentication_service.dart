@@ -285,7 +285,7 @@ class AuthenticationService extends GetxController {
       await FirebaseAnalytics.instance.logEvent(
         name: 'sign_up',
         parameters: {
-          'referee': referralCodeController.text.isNotEmpty,
+          'referee': referralCodeController.text.isNotEmpty ? 'true' : 'false',
           'method': user.getSignupMethod,
         },
       );
@@ -432,7 +432,7 @@ class AuthenticationService extends GetxController {
         jwtUserData?.isMailVerified = userFromToken.isMailVerified;
         jwtUserData?.hasSharedPosition = userFromToken.hasSharedPosition;
         jwtUserData?.password = null;
-        isLoggingIn.value = true;
+        isLoggingIn.value = false;
       }
       // init chat messages standBy room
       _initChatStandByRoom();

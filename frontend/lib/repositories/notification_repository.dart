@@ -11,7 +11,7 @@ class NotificationRepository extends GetxService {
   Future<bool> markAsReadNotification({required String idNotification}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/notification/mark-read', body: {'idNotification': idNotification}, sendToken: true);
-      return result['done'];
+      return result?['done'] ?? false;
     } catch (e) {
       LoggerService.logger?.e('Error occured in markAsReadNotification:\n$e');
     }
@@ -43,7 +43,7 @@ class NotificationRepository extends GetxService {
   Future<bool> markAsReadAllNotification({required List<NotificationModel> notifications}) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/notification/mark-read-all', body: notifications.map((e) => e.toJson()).toList(), sendToken: true);
-      return result['done'];
+      return result?['done'] ?? false;
     } catch (e) {
       LoggerService.logger?.e('Error occured in markAsReadAllNotification:\n$e');
     }
@@ -53,7 +53,7 @@ class NotificationRepository extends GetxService {
   testNotification() async {
     try {
       final result = await ApiBaseHelper().request(RequestType.get, '/notification/test', sendToken: true);
-      return result['done'];
+      return result?['done'] ?? false;
     } catch (e) {
       LoggerService.logger?.e('Error occured in testNotification:\n$e');
     }

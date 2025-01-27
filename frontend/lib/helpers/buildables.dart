@@ -224,10 +224,11 @@ class Buildables {
               fieldController: proposedPriceController,
               outlinedBorder: true,
               outlinedBorderColor: kNeutralColor,
+              textInputType: const TextInputType.numberWithOptions(decimal: true),
               hintText: 'propose_new_price'.tr,
             ),
           ],
-          if (proposedPriceController != null) ...[
+          if (deliveryDateController != null) ...[
             const SizedBox(height: Paddings.regular),
             CustomTextField(
               fieldController: deliveryDateController,
@@ -235,7 +236,7 @@ class Buildables {
               outlinedBorderColor: kNeutralColor,
               onTap: () => Helper.openDatePicker(
                 isFutureDate: true,
-                onConfirm: (date) => deliveryDateController!.text = Helper.formatDate(date),
+                onConfirm: (date) => deliveryDateController.text = Helper.formatDate(date),
               ),
               hintText: 'delivery_date'.tr,
             ),

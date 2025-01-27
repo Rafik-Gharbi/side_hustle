@@ -61,6 +61,7 @@ class MainAppController extends GetxController {
   RxInt notSeenMessages = 0.obs;
   RxInt notSeenNotifications = 0.obs;
   RxInt profileActionRequired = 0.obs;
+  RxBool showProfileCompletionIndicator = true.obs;
 
   bool get isConnected => hasInternetConnection.value && isBackReachable.value;
   bool get isProfileScreen => bottomNavIndex.value == 3;
@@ -74,12 +75,13 @@ class MainAppController extends GetxController {
 
   static final MainAppController _singleton = MainAppController._internal();
 
+
   factory MainAppController() => _singleton;
 
   MainAppController._internal() {
     Helper.waitAndExecute(
       () => SharedPreferencesService.find.isReady.value && Get.context != null,
-      () => MainAppController.find.changeLanguage(lang: Localizations.localeOf(Get.context!)),
+      () => changeLanguage(lang: Localizations.localeOf(Get.context!)),
     );
     ever(hasVersionUpdate, (_) {
       if (hasVersionUpdate.value && (GetPlatform.isAndroid || GetPlatform.isIOS)) {

@@ -57,7 +57,7 @@ class AddTaskTutorial {
         ),
         Buildables.buildTargetFocus(
           keyTarget: AddTaskController.find.dueDateKey,
-          bottomContent: [
+          topContent: [
             Text(
               'set_due_date'.tr,
               style: AppFonts.x18Bold.copyWith(color: Colors.white),
@@ -73,7 +73,7 @@ class AddTaskTutorial {
         ),
         Buildables.buildTargetFocus(
           keyTarget: AddTaskController.find.priceKey,
-          bottomContent: [
+          topContent: [
             Text(
               'set_budget'.tr,
               style: AppFonts.x18Bold.copyWith(color: Colors.white),

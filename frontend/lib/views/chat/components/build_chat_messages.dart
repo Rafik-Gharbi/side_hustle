@@ -45,6 +45,8 @@ class BuildChatMessages extends StatelessWidget {
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
                           final msg = snapshot.data![index];
+                          final showDate =
+                              index == snapshot.data!.length - 1 || (index < snapshot.data!.length - 2 && !snapshot.data![index + 1].createdAt.isSameTime(msg.createdAt));
                           final isSearch = controller.searchMessagesController.text.isNotEmpty;
                           final contract = msg.message.startsWith('{') && msg.message.endsWith('}') ? Contract.fromJson(jsonDecode(msg.message)) : null;
                           return Column(
@@ -75,6 +77,7 @@ class BuildChatMessages extends StatelessWidget {
                               else
                                 MessageBubble(
                                   date: msg.createdAt,
+                                  showDate: showDate,
                                   searchText: controller.searchMessagesController.text,
                                   msgText: msg.message,
                                   loggedUser: AuthenticationService.find.jwtUserData!.id != msg.recieverId,

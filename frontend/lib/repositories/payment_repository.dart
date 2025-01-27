@@ -89,7 +89,7 @@ class PaymentRepository extends GetxService {
           'paymentType': 'balance',
         },
       );
-      if (result['done'] == true) {
+      if ((result?['done'] ?? false) == true) {
         AuthenticationService.find.initiateCurrentUser(result['token'], silent: true);
         return true;
       }

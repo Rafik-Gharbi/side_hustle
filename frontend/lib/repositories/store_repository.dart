@@ -134,7 +134,7 @@ class StoreRepository extends GetxService {
   Future<bool> deleteService(Service service) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.delete, sendToken: true, '/store/service?serviceId=${service.id}');
-      return result['done'];
+      return result?['done'] ?? false;
     } catch (e) {
       LoggerService.logger?.e('Error occured in deleteService:\n$e');
     }
@@ -172,7 +172,7 @@ class StoreRepository extends GetxService {
   Future<bool> deleteStore() async {
     try {
       final result = await ApiBaseHelper().request(RequestType.delete, sendToken: true, '/store/');
-      return result['done'];
+      return result?['done'] ?? false;
     } catch (e) {
       LoggerService.logger?.e('Error occured in deleteStore:\n$e');
     }

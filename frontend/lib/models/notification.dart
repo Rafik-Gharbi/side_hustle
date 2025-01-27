@@ -26,7 +26,11 @@ class NotificationModel {
         type: NotificationType.values.singleWhere((element) => element.name == json['type']),
         date: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
         seen: json['seen'] == 1,
-        action: json['action'],
+        action: json['action'] != null
+            ? json['action'] is String
+                ? json['action']
+                : json['action'].toString()
+            : null,
       );
 
   Map<String, dynamic> toJson() {

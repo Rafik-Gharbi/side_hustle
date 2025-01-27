@@ -266,7 +266,13 @@ class MainScreenWithBottomNavigation extends StatelessWidget {
       ];
     } else if (MainAppController.find.isProfileScreen) {
       return [
-        if (!(ProfileController.find.loggedInUser?.isProfileCompleted ?? true)) ProfileCompletionIndicator(user: ProfileController.find.loggedInUser!),
+        Obx(
+          () {
+            return MainAppController.find.showProfileCompletionIndicator.value && !(ProfileController.find.loggedInUser?.isProfileCompleted ?? true)
+                ? ProfileCompletionIndicator(user: ProfileController.find.loggedInUser!)
+                : const SizedBox.shrink();
+          },
+        ),
       ];
     }
     return null;

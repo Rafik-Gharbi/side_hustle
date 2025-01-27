@@ -26,7 +26,7 @@ class TransactionRepository extends GetxService {
   Future<bool> buyCoinPack(CoinPack pack) async {
     try {
       final result = await ApiBaseHelper().request(RequestType.post, '/transaction/buy-coins/${pack.id}', sendToken: true);
-      if (result['done'] == true) {
+      if ((result?['done'] ?? false) == true) {
         AuthenticationService.find.initiateCurrentUser(result['token'], silent: true);
         Helper.snackBar(title: 'success'.tr, message: 'bought_x_coins'.trParams({'coins': pack.totalCoins.toString()}));
         return true;

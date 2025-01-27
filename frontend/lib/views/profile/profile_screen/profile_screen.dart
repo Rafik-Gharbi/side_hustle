@@ -47,6 +47,9 @@ class ProfileScreen extends StatelessWidget {
                 MainAppController.find.isProfileScreen &&
                 !hasOpenedTutorial.value &&
                 controller.targets.isNotEmpty &&
+                Get.currentRoute == MainScreenWithBottomNavigation.routeName &&
+                !(Get.isDialogOpen ?? false) &&
+                !(Get.isBottomSheetOpen ?? false) &&
                 controller.loggedInUser != null &&
                 !controller.isLoading.value) {
               hasOpenedTutorial.value = true;
@@ -236,7 +239,9 @@ class ProfileScreen extends StatelessWidget {
                                                             title: 'edit_profile'.tr,
                                                             height: Get.height * 0.73,
                                                             margin: const EdgeInsets.only(top: Paddings.exceptional * 3),
-                                                            child: SignUpFields(maxHeight: Get.height * 0.7, user: controller.loggedInUser, isBottomSheet: true),
+                                                            child: SingleChildScrollView(
+                                                              child: SignUpFields(maxHeight: Get.height * 0.7, user: controller.loggedInUser, isBottomSheet: true),
+                                                            ),
                                                           ).showBottomSheet(isScrollControlled: true).then((_) {
                                                             AuthenticationService.find.clearFormFields();
                                                             controller.init();

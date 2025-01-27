@@ -325,6 +325,7 @@ final Map<String, String> enUs = <String, String>{
   'share_your_location': 'Share your location',
   'share_location_msg': 'By sharing your location we can provide you with more accurate result.',
   'new_tasks': 'New Tasks',
+  'new_task': 'New Task',
   'in': 'in',
   'all_tunisia': 'Tunisia',
   'messages': 'Messages',
@@ -729,6 +730,7 @@ final Map<String, String> enUs = <String, String>{
   'complete_profile': 'Complete Your Profile',
   'add_email_task': 'Add your email',
   'add_name_task': 'Add your name',
+  'add_gender_task': 'Add your gender',
   'add_phone_number_task': 'Add your phone number',
   'add_birthdate_task': 'Add your birthdate',
   'verify_email_task': 'Verify your email',
@@ -828,6 +830,7 @@ final Map<String, String> enUs = <String, String>{
   'no_file_available': 'No file is available!',
   'later': 'Later',
   'provide_permission': 'Permission denied. Please enable it in your device settings to continue',
+  'notifications_enabled_successfully': 'Notifications has been enabled successfully',
   // Validation messages
   'max_value_is': 'Max value is @value !',
   'valid_for_x_days': 'Valid for @days days',

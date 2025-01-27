@@ -21,6 +21,7 @@ const {
   adjustString,
   generateUniqueReferralCode,
   getFileType,
+  normalizeCode,
 } = require("../helper/helpers");
 const {
   downloadImage,
@@ -776,6 +777,27 @@ exports.updateGuestData = async (req, res) => {
   }
 };
 
+exports.updateUserFcmToken = async (req, res) => {
+  try {
+    const userId = req.decoded.id;
+    const token = req.body.token;
+    const userFound = await User.findByPk(userId);
+    if (!token || token === "") {
+      return res.status(400).json({ message: "missing" });
+    }
+    if (!userFound) {
+      return res.status(404).json({ message: "account_not_found" });
+    }
+    userFound.fcmToken = token;
+    userFound.save();
+    return res.status(200).json({ done: true });
+  } catch (error) {
+    console.log(`Error at ${req.route.path}`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return res.status(500).json({ message: error });
+  }
+};
+
 exports.getSupportMessages = async (req, res) => {
   try {
     const userId = req.decoded?.id;
@@ -846,7 +868,8 @@ exports.verifyMail = async (req, res) => {
   try {
     const userId = req.decoded.user_id;
     const userEmail = req.decoded.email;
-    const code = req.decoded.code ? req.decoded.code : req.decoded;
+    let code = req.decoded.code ? req.decoded.code : req.decoded;
+    code = normalizeCode(code);
     const user = userId
       ? await User.findByPk(userId)
       : await User.findOne({
@@ -873,7 +896,7 @@ exports.verifyMail = async (req, res) => {
       token = await generateJWT(user);
       return res.status(200).json({ token });
     } else {
-      return res.status(400).send({ message: "already_verified" });
+      return res.status(400).send({ message: "wrong_code" });
     }
   } catch (error) {
     console.log(`Error at ${req.route.path}`);

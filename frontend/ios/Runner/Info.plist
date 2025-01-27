@@ -102,5 +102,11 @@
 	</array>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
+	<!-- TODO Enable notifications when publishing in AppStore -->
+	<!-- <key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+    	<string>critical-alerts</string>
+	</array> -->
 </dict>
 </plist>

@@ -188,7 +188,10 @@ class AddSupportTicket extends StatelessWidget {
                                             height: attachmentSize,
                                             child: Center(
                                               child: Helper.isImage(xFile.name.toLowerCase())
-                                                  ? ClipRRect(borderRadius: smallRadius, child: Image.file(File(xFile.path), fit: BoxFit.cover))
+                                                  ? Padding(
+                                                      padding: const EdgeInsets.all(1.0),
+                                                      child: ClipRRect(borderRadius: smallRadius, child: Image.file(File(xFile.path), fit: BoxFit.cover)),
+                                                    )
                                                   : Padding(
                                                       padding: const EdgeInsets.all(Paddings.small),
                                                       child: Text(

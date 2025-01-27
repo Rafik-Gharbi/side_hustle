@@ -292,21 +292,19 @@ class CustomButtons extends StatelessWidget {
                       ),
                     )
                   : child ??
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: (loading ?? false)
-                            ? Center(
-                                child: SizedBox(
-                                  width: (height ?? 50) - 20,
-                                  height: (height ?? 50) - 20,
-                                  child: const CircularProgressIndicator(color: kPrimaryColor),
-                                ),
-                              )
-                            : Text(
+                      ((loading ?? false)
+                          ? SizedBox(
+                              width: height != null && height! > 50 ? 50 : (height ?? 50) - 20,
+                              height: height != null && height! > 50 ? 50 : (height ?? 50) - 20,
+                              child: const CircularProgressIndicator(color: kPrimaryColor),
+                            )
+                          : FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
                                 title ?? '',
                                 style: titleStyle ?? AppFonts.x15Bold.copyWith(fontWeight: isHovered ? FontWeight.bold : FontWeight.normal),
                               ),
-                      ),
+                            )),
             ),
           );
         case ButtonType.text:
@@ -376,8 +374,6 @@ class CustomButtons extends StatelessWidget {
       }
     }
 
-    return loading != null
-        ? Obx(() => getButton(loading!.value))
-        : getButton(null);
+    return loading != null ? Obx(() => getButton(loading!.value)) : getButton(null);
   }
 }

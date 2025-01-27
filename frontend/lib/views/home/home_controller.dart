@@ -15,6 +15,7 @@ import '../../repositories/task_repository.dart';
 import '../../services/authentication_service.dart';
 import '../../services/shared_preferences.dart';
 import '../../services/tutorials/home_tutorial.dart';
+import '../../widgets/main_screen_with_bottom_navigation.dart';
 import '../task/task_list/task_list_screen.dart';
 
 enum SearchMode { nearby, regional, national, worldwide }
@@ -93,7 +94,7 @@ class HomeController extends GetxController {
     init();
     Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value, () {
       if (!(SharedPreferencesService.find.get(hasFinishedHomeTutorialKey) == 'true')) {
-        Helper.waitAndExecute(() => MainAppController.find.isHomeScreen, () {
+        Helper.waitAndExecute(() => MainAppController.find.isHomeScreen && Get.currentRoute == MainScreenWithBottomNavigation.routeName, () {
           HomeTutorial.showTutorial();
           update();
         });

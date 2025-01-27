@@ -326,6 +326,7 @@ final Map<String, String> arKSA = <String, String>{
   'share_your_location': 'شارك موقعك',
   'share_location_msg': 'من خلال مشاركة موقعك، يمكننا تزويدك بنتيجة أكثر دقة.',
   'new_tasks': 'مهام جديدة',
+  'new_task': 'مهمة جديدة',
   'in': 'في',
   'all_tunisia': 'كل تونس',
   'messages': 'الرسائل',
@@ -728,6 +729,7 @@ final Map<String, String> arKSA = <String, String>{
   'profile_completed': 'تم اكتمال الملف الشخصي!',
   'complete_profile': 'أكمل ملفك الشخصي',
   'add_email_task': 'أضف بريدك الإلكتروني',
+  'add_gender_task': 'أضف جنسك',
   'add_name_task': 'أضف اسمك',
   'add_phone_number_task': 'أضف رقم هاتفك',
   'add_birthdate_task': 'أضف تاريخ ميلادك',
@@ -829,6 +831,7 @@ final Map<String, String> arKSA = <String, String>{
   'no_file_available': 'لا يوجد ملف متاح!',
   'later': 'لاحقًا',
   'provide_permission': 'تم رفض الإذن. يرجى تمكينه في إعدادات جهازك للمتابعة',
+  'notifications_enabled_successfully': 'تم تفعيل الإشعارات بنجاح',
   // Validation messages
   'valid_for_x_days': 'متاح ل@days يوم',
   'max_value_is': 'القيمة القصوى هي @value!',

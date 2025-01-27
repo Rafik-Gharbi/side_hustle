@@ -9,6 +9,7 @@ import '../../../../controllers/main_app_controller.dart';
 import '../../../../helpers/buildables.dart';
 import '../../../../services/theme/theme.dart';
 import '../../../../widgets/custom_buttons.dart';
+import '../../../../widgets/main_screen_with_bottom_navigation.dart';
 import '../verify_user_controller.dart';
 
 class BuildFinishVerificationProcess extends StatelessWidget {
@@ -47,10 +48,21 @@ class BuildFinishVerificationProcess extends StatelessWidget {
                       const SizedBox(height: Paddings.regular),
                       Text('appreciate_patience_cooperation'.tr, style: AppFonts.x14Regular),
                       const SizedBox(height: Paddings.exceptional * 2),
-                      CustomButtons.elevatePrimary(
+                      if (!controller.hasEnabledNotification) ...[
+                        CustomButtons.elevatePrimary(
+                          title: 'enable_notifications'.tr,
+                          width: Get.width,
+                          onPressed: controller.enableNotifications,
+                        ),
+                        const SizedBox(height: Paddings.regular),
+                      ],
+                      CustomButtons.elevateSecondary(
                         title: 'back_home'.tr,
                         width: Get.width,
-                        onPressed: () => MainAppController.find.bottomNavIndex.value = 0,
+                        onPressed: () {
+                          Get.offAllNamed(MainScreenWithBottomNavigation.routeName);
+                          MainAppController.find.bottomNavIndex.value = 0;
+                        },
                       ),
                     ],
                   ),
