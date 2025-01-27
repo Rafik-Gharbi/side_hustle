@@ -64,43 +64,47 @@ class _MyOffersScreenState extends State<MyOffersScreen> with TickerProviderStat
                 children: [
                   controller.hasNoTasksYet
                       ? Center(child: Text('done_no_task_yet'.tr, style: AppFonts.x14Regular))
-                      : SizedBox(
-                          height: Get.height - 200,
-                          width: Get.width,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: Paddings.large),
-                            child: SingleChildScrollView(
-                              controller: controller.scrollController,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge),
-                                child: Column(
-                                  children: [
-                                    buildStatusGroup('ongoing_tasks'.tr, controller.ongoingTasks, initiallyOpen: true),
-                                    buildStatusGroup('pending_tasks'.tr, controller.pendingTasks, initiallyOpen: true),
-                                    buildStatusGroup('finished_tasks'.tr, controller.finishedTasks),
-                                    buildStatusGroup('rejected_tasks'.tr, controller.rejectedTasks),
-                                  ],
+                      : Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: Paddings.large),
+                              child: SingleChildScrollView(
+                                controller: controller.scrollController,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge),
+                                  child: Column(
+                                    children: [
+                                      buildStatusGroup('ongoing_tasks'.tr, controller.ongoingTasks, initiallyOpen: true),
+                                      buildStatusGroup('pending_tasks'.tr, controller.pendingTasks, initiallyOpen: true),
+                                      buildStatusGroup('finished_tasks'.tr, controller.finishedTasks),
+                                      buildStatusGroup('rejected_tasks'.tr, controller.rejectedTasks),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                   controller.hasNoServicesYet
                       ? Center(child: Text('done_no_service_yet'.tr, style: AppFonts.x14Regular))
-                      : Padding(
-                          padding: const EdgeInsets.only(top: Paddings.large),
-                          child: SingleChildScrollView(
-                            controller: controller.scrollController,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge),
-                              child: Column(
-                                children: [
-                                  buildStatusGroup('finished_services'.tr, controller.finishedServices, isTask: false),
-                                  buildStatusGroup('rejected_services'.tr, controller.rejectedServices, isTask: false),
-                                ],
+                      : Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: Paddings.large),
+                              child: SingleChildScrollView(
+                                controller: controller.scrollController,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge),
+                                  child: Column(
+                                    children: [
+                                      buildStatusGroup('finished_services'.tr, controller.finishedServices, isTask: false),
+                                      buildStatusGroup('rejected_services'.tr, controller.rejectedServices, isTask: false),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                 ],
               ),

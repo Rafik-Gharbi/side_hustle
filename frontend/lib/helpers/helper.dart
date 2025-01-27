@@ -184,7 +184,7 @@ class Helper {
 
   static String decryptData(String encryptedData) {
     String decrypted = encryptedData;
-    // if (kDebugMode) return decrypted;
+    if (kDebugMode) return decrypted;
     try {
       if (encryptedData.isNotEmpty) {
         final key = enc.Key.fromUtf8(dotenv.env['SECRET_KEY']!);

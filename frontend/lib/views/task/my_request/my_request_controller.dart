@@ -15,14 +15,14 @@ import '../task_proposal/task_proposal_screen.dart';
 class MyRequestController extends GetxController {
   final ScrollController scrollController = ScrollController();
   List<TaskRequestDTO> _taskRequestList = [];
-  RxBool isLoading = true.obs;
   List<Task> myTaskList = [];
   List<Reservation> myReservationList = [];
   bool isEndReservationList = false;
   bool isEndTaskList = false;
+  RxBool isLoading = true.obs;
+  RxBool isLoadingMore = false.obs;
   int taskPage = 0;
   int servicePage = 0;
-  RxBool isLoadingMore = true.obs;
   Task? highlightedTask;
   Reservation? highlightedReservation;
   RxInt tabControllerIndex = 0.obs;

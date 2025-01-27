@@ -27,7 +27,8 @@ class ReservationDatabaseRepository extends GetxService {
 
   Future<Reservation?> getReservationById(String reservationId) async {
     try {
-      final ReservationTableData reservation = (await (database.select(database.reservationTable)..where((tbl) => tbl.id.equals(reservationId))).get()).first;
+      final ReservationTableData? reservation = (await (database.select(database.reservationTable)..where((tbl) => tbl.id.equals(reservationId))).getSingleOrNull());
+      if (reservation == null) return null;
       final task = await TaskDatabaseRepository.find.getTaskById(reservation.task!);
       return Reservation.fromReservationData(reservation: reservation.toCompanion(true), task: task!);
     } catch (e) {

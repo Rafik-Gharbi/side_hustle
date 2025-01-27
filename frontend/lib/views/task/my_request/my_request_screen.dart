@@ -64,81 +64,90 @@ class _MyRequestScreenState extends State<MyRequestScreen> with TickerProviderSt
                   // User created tasks
                   controller.myTaskList.isEmpty
                       ? Center(child: Text('requested_no_task_yet'.tr, style: AppFonts.x14Regular))
-                      : Padding(
-                          padding: const EdgeInsets.only(top: Paddings.large),
-                          child: SingleChildScrollView(
-                            controller: controller.scrollController,
-                            child: Column(
-                              children: [
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: controller.myTaskList.length,
-                                  itemBuilder: (context, index) {
-                                    final task = controller.myTaskList[index];
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.small),
-                                      child: TaskCard(
-                                        backgroundColor: kNeutralColor100,
-                                        task: task,
-                                        onEditTask: () => controller.editTask(task),
-                                        onDeleteTask: () => controller.deleteTask(task),
-                                        onOpenProposals: () => controller.openProposals(task),
-                                        condidates: controller.getTaskCondidates(task),
-                                        isHighlighted: controller.highlightedTask?.id == task.id,
-                                      ),
-                                    );
-                                  },
+                      : Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: Paddings.large),
+                              child: SingleChildScrollView(
+                                controller: controller.scrollController,
+                                child: Column(
+                                  children: [
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      itemCount: controller.myTaskList.length,
+                                      itemBuilder: (context, index) {
+                                        final task = controller.myTaskList[index];
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.small),
+                                          child: TaskCard(
+                                            backgroundColor: kNeutralColor100,
+                                            task: task,
+                                            onEditTask: () => controller.editTask(task),
+                                            onDeleteTask: () => controller.deleteTask(task),
+                                            onOpenProposals: () => controller.openProposals(task),
+                                            condidates: controller.getTaskCondidates(task),
+                                            isHighlighted: controller.highlightedTask?.id == task.id,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    Obx(
+                                      () => controller.isLoadingMore.value && !controller.isEndReservationList
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(bottom: Paddings.extraLarge),
+                                              child: SizedBox(height: 60, width: Get.width, child: Center(child: Buildables.buildLoadingWidget(height: 80))),
+                                            )
+                                          : const SizedBox(),
+                                    ),
+                                  ],
                                 ),
-                                Obx(
-                                  () => controller.isLoadingMore.value && !controller.isEndReservationList
-                                      ? Padding(
-                                          padding: const EdgeInsets.only(bottom: Paddings.extraLarge),
-                                          child: SizedBox(height: 60, width: Get.width, child: Center(child: Buildables.buildLoadingWidget(height: 80))),
-                                        )
-                                      : const SizedBox(),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                   // User booked services (other users services requests)
                   controller.myReservationList.isEmpty
                       ? Center(child: Text('requested_no_service_yet'.tr, style: AppFonts.x14Regular))
-                      : Padding(
-                          padding: const EdgeInsets.only(top: Paddings.large),
-                          child: SingleChildScrollView(
-                            controller: controller.scrollController,
-                            child: Column(
-                              children: [
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: controller.myReservationList.length,
-                                  itemBuilder: (context, index) {
-                                    final reservation = controller.myReservationList[index];
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: 2),
-                                      child: BookingCard(
-                                        reservation: reservation,
-                                        spacing: 5,
-                                        backgroundColor: kNeutralColor100,
-                                        isHighlighted: controller.highlightedReservation?.id == reservation.id,
-                                      ),
-                                    );
-                                  },
+                      : Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: Paddings.large),
+                              child: SingleChildScrollView(
+                                controller: controller.scrollController,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      itemCount: controller.myReservationList.length,
+                                      itemBuilder: (context, index) {
+                                        final reservation = controller.myReservationList[index];
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: 2),
+                                          child: BookingCard(
+                                            reservation: reservation,
+                                            spacing: 5,
+                                            backgroundColor: kNeutralColor100,
+                                            isHighlighted: controller.highlightedReservation?.id == reservation.id,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    Obx(
+                                      () => controller.isLoadingMore.value && !controller.isEndReservationList
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(bottom: Paddings.extraLarge),
+                                              child: SizedBox(height: 60, width: Get.width, child: Center(child: Buildables.buildLoadingWidget(height: 80))),
+                                            )
+                                          : const SizedBox(),
+                                    ),
+                                  ],
                                 ),
-                                Obx(
-                                  () => controller.isLoadingMore.value && !controller.isEndReservationList
-                                      ? Padding(
-                                          padding: const EdgeInsets.only(bottom: Paddings.extraLarge),
-                                          child: SizedBox(height: 60, width: Get.width, child: Center(child: Buildables.buildLoadingWidget(height: 80))),
-                                        )
-                                      : const SizedBox(),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                 ],
               ),
