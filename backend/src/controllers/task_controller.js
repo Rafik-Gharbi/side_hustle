@@ -12,6 +12,7 @@ const {
   getRandomHotTasks,
   populateOneTask,
   fetchAndSortGovernorateTasks,
+  fetchPopularCategories,
 } = require("../sql/sql_request");
 const { TaskAttachmentModel } = require("../models/task_attachment_model");
 const {
@@ -104,6 +105,12 @@ exports.getHomeTasks = async (req, res) => {
         (status = "confirmed")
       );
     }
+
+    const popularCategories = await fetchPopularCategories(
+      searchMode,
+      foundUser
+    );
+
     return res.status(200).json({
       hotTasks,
       nearbyTasks,
@@ -112,6 +119,7 @@ exports.getHomeTasks = async (req, res) => {
       booking,
       ongoingReservation,
       ongoingBooking,
+      popularCategories,
     });
   } catch (error) {
     console.log(`Error at ${req.route.path}`);

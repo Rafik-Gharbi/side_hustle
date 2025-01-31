@@ -1,11 +1,11 @@
-const fs = require("fs");
-const path = require("path");
-const logoPath = path.join(__dirname, "../../public/images/dootify-logo.png");
-const logoData = fs.readFileSync(logoPath);
-const logoBase64 = Buffer.from(logoData).toString("base64");
-const logoPathSig = path.join(__dirname, "../../public/images/sign-admin.png");
-const logoDataSig = fs.readFileSync(logoPathSig);
-const logoBase64Sig = Buffer.from(logoDataSig).toString("base64");
+// const fs = require("fs");
+// const path = require("path");
+// const logoPath = path.join(__dirname, "../../public/images/dootify-logo.png");
+// const logoData = fs.readFileSync(logoPath);
+// const logoBase64 = Buffer.from(logoData).toString("base64");
+// const logoPathSig = path.join(__dirname, "../../public/images/sign-admin.png");
+// const logoDataSig = fs.readFileSync(logoPathSig);
+// const logoBase64Sig = Buffer.from(logoDataSig).toString("base64");
 
 const sendConfirmationMail = (fullName, token, isMobile) => `
 <!DOCTYPE html>
@@ -94,7 +94,7 @@ const sendConfirmationMail = (fullName, token, isMobile) => `
   <body>
     <div class="container">
       <div class="logo">
-        <img src="data:image/png;base64,${logoBase64}" width="30%" alt="Dootify Logo" />
+        <img src="https://dootify.com/icons/dootify-logo.png" width="30%" alt="Dootify Logo" />
       </div>
       <h1>Bienvenue sur Dootify!</h1>
       <h2>${fullName ? `Bonjour ${fullName},` : `Bonjour,`}</h2>
@@ -129,7 +129,7 @@ const sendConfirmationMail = (fullName, token, isMobile) => `
       </p>
       <div class="signature">
         <div class="logo">
-          <img src="data:image/png;base64,${logoBase64}" alt="Dootify Logo" />
+          <img src="https://dootify.com/icons/dootify-logo.png" width="20%" alt="Dootify Logo" />
         </div>
         <p>
           Votre compagnon pour atteindre vos objectifs.<br />
@@ -218,7 +218,7 @@ const forgotPasswordEmailTemplate = (reset_code) => `
   <body>
     <div class="container">
       <div class="logo">
-        <img src="data:image/png;base64,${logoBase64}" width="30%" alt="Dootify Logo" />
+        <img src="https://dootify.com/icons/dootify-logo.png" width="30%" alt="Dootify Logo" />
       </div>
       <h1>Réinitialisez votre mot de passe</h1>
       <div class="card">
@@ -244,7 +244,7 @@ const forgotPasswordEmailTemplate = (reset_code) => `
       <p>L'équipe de Dootify</p>
       <div class="signature">
         <div class="logo">
-          <img src="data:image/png;base64,${logoBase64}" alt="Dootify Logo" />
+          <img src="https://dootify.com/icons/dootify-logo.png" width="20%" alt="Dootify Logo" />
         </div>
         <p>
           Votre compagnon pour atteindre vos objectifs.<br />
@@ -357,7 +357,7 @@ const contactUsMail = (email, name, subject, body, phone) => `
   <body>
     <div class="container">
       <div class="header">
-        <img src="data:image/png;base64,${logoBase64}" width="30%" alt="Dootify Logo" />
+        <img src="https://dootify.com/icons/dootify-logo.png" width="30%" alt="Dootify Logo" />
       </div>
       <div class="content">
         <h1>New Contact Us Form Submission</h1>
@@ -395,7 +395,7 @@ const contactUsMail = (email, name, subject, body, phone) => `
       </div>
       <div class="signature">
         <div class="logo">
-          <img src="data:image/png;base64,${logoBase64}" alt="Dootify Logo" />
+          <img src="https://dootify.com/icons/dootify-logo.png" width="20%" alt="Dootify Logo" />
         </div>
         <p>
           Votre compagnon pour atteindre vos objectifs.<br />

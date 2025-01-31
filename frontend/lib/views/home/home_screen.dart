@@ -48,21 +48,35 @@ class HomeScreen extends StatelessWidget {
         () => state.controller != null && !(state.controller?.isLoading.value ?? true),
         () {
           FirebaseAnalytics.instance.logScreenView(screenName: 'HomeScreen');
-          if (!hasFinishedHomeTutorial &&
-              MainAppController.find.isHomeScreen &&
-              !hasOpenedTutorial &&
-              state.controller!.targets.isNotEmpty &&
-              !state.controller!.isLoading.value) {
+          if (!hasFinishedHomeTutorial && MainAppController.find.isHomeScreen && !hasOpenedTutorial && state.controller!.targets.isNotEmpty && !state.controller!.isLoading.value) {
             hasOpenedTutorial = true;
             MainScreenWithBottomNavigation.isOnTutorial.value = true;
             TutorialCoachMark(
               targets: state.controller!.targets,
               colorShadow: kNeutralOpacityColor,
               textSkip: 'skip'.tr,
+              additionalWidget: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
+                child: Obx(
+                  () => CheckboxListTile(
+                    dense: true,
+                    checkColor: kNeutralColor100,
+                    contentPadding: EdgeInsets.zero,
+                    side: const BorderSide(color: kNeutralColor100),
+                    title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
+                    value: MainScreenWithBottomNavigation.notShowAgain.value,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    onChanged: (bool? value) => MainScreenWithBottomNavigation.notShowAgain.value = value ?? false,
+                  ),
+                ),
+              ),
               onSkip: () {
-                  MainScreenWithBottomNavigation.isOnTutorial.value = false;
-                  return true;
-                },
+                if (MainScreenWithBottomNavigation.notShowAgain.value) {
+                  SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                }
+                MainScreenWithBottomNavigation.isOnTutorial.value = false;
+                return true;
+              },
               onFinish: () => SharedPreferencesService.find.add(hasFinishedHomeTutorialKey, 'true'),
             ).show(context: context);
           }
@@ -75,7 +89,7 @@ class HomeScreen extends StatelessWidget {
           controller.searchFieldKey = GlobalKey();
           controller.advancedFilterKey = GlobalKey();
         }
-    
+
         return Padding(
           padding: const EdgeInsets.all(Paddings.large),
           child: RefreshIndicator(
@@ -172,50 +186,43 @@ class HomeScreen extends StatelessWidget {
                           decoration: BoxDecoration(borderRadius: smallRadius, color: kNeutralColor100),
                           child: SizedBox(
                             width: 140,
-                            height: 230,
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                  title: Text(
-                                    SearchMode.nearby.name.tr,
-                                    style: AppFonts.x14Bold.copyWith(color: (AuthenticationService.find.jwtUserData?.hasSharedPosition ?? false) ? kBlackColor : kDisabledColor),
+                            height: 235,
+                            child: Padding(
+                              padding: const EdgeInsets.all(Paddings.small),
+                              child: Column(
+                                children: List.generate(
+                                  SearchMode.values.length,
+                                  (index) => DecoratedBox(
+                                    decoration: BoxDecoration(color: controller.searchMode == SearchMode.values[index] ? kPrimaryColor : null, borderRadius: smallRadius),
+                                    child: ListTile(
+                                      shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                                      title: Text(
+                                        SearchMode.values[index].name.tr,
+                                        style: AppFonts.x14Bold.copyWith(
+                                          color: SearchMode.values[index] == controller.searchMode
+                                              ? kNeutralColor100
+                                              : SearchMode.values[index] == SearchMode.worldwide ||
+                                                      SearchMode.values[index] == SearchMode.nearby && !(AuthenticationService.find.jwtUserData?.hasSharedPosition ?? false)
+                                                  ? kDisabledColor
+                                                  : kBlackColor,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Helper.goBack();
+                                        if (SearchMode.values[index] == SearchMode.nearby && !(AuthenticationService.find.jwtUserData?.hasSharedPosition ?? false)) {
+                                          Helper.snackBar(message: 'share_your_location'.tr);
+                                          return;
+                                        }
+                                        if (SearchMode.values[index] == SearchMode.worldwide) {
+                                          Helper.snackBar(message: 'feature_not_available_yet'.tr);
+                                          return;
+                                        }
+                                        controller.searchMode = SearchMode.values[index];
+                                      },
+                                    ),
                                   ),
-                                  onTap: () {
-                                    Helper.goBack();
-                                    if (!(AuthenticationService.find.jwtUserData?.hasSharedPosition ?? false)) {
-                                      Helper.snackBar(message: 'share_your_location'.tr);
-                                      return;
-                                    }
-                                    controller.searchMode = SearchMode.nearby;
-                                  },
                                 ),
-                                ListTile(
-                                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                  title: Text(SearchMode.regional.name.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
-                                  onTap: () async {
-                                    Helper.goBack();
-                                    controller.searchMode = SearchMode.regional;
-                                  },
-                                ),
-                                ListTile(
-                                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                  title: Text(SearchMode.national.name.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
-                                  onTap: () async {
-                                    Helper.goBack();
-                                    controller.searchMode = SearchMode.national;
-                                  },
-                                ),
-                                ListTile(
-                                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
-                                  title: Text(SearchMode.worldwide.name.tr, style: AppFonts.x14Bold.copyWith(color: kDisabledColor)),
-                                  onTap: () async {
-                                    Helper.snackBar(message: 'feature_not_available_yet'.tr);
-                                    Helper.goBack();
-                                    // controller.searchMode = SearchMode.worldwide;
-                                  },
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
@@ -372,6 +379,7 @@ class HomeScreen extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -405,9 +413,8 @@ class HomeScreen extends StatelessWidget {
                         if (SharedPreferencesService.find.isReady.value)
                           Buildables.buildTitle(
                             '${'new_tasks'.tr} ${'nearby'.tr}',
-                            onSeeMore: controller.nearbyTasks.isEmpty
-                                ? null
-                                : () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: controller.filterModel)),
+                            onSeeMore:
+                                controller.nearbyTasks.isEmpty ? null : () => Get.toNamed(TaskListScreen.routeName, arguments: TaskListScreen(filterModel: controller.filterModel)),
                           ),
                         LoadingCardEffect(
                           isLoading: controller.isLoading,

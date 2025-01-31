@@ -1,11 +1,9 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../helpers/helper.dart';
-import '../helpers/image_picker_by_platform/image_picker_platform.dart';
 import '../models/category.dart';
 import '../models/dto/image_dto.dart';
 import '../models/service.dart';
@@ -93,14 +91,7 @@ class StoreViewmodel {
 
   static Future<void> addServicePictures({void Function()? onFinish}) async {
     try {
-      List<XFile>? imageList;
-      await Helper.requestStoragePermission();
-      final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
-      if (foundation.kIsWeb) {
-        imageList = await pickerPlatform.getMedia();
-      } else {
-        imageList = await pickerPlatform.pickMultiImage();
-      }
+      List<XFile>? imageList = await Helper.pickImages();
       if (imageList != null) {
         serviceGallery = imageList;
         onFinish?.call();

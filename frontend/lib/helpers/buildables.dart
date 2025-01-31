@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -285,7 +286,25 @@ class Buildables {
           targets: CreateContractTutorial.targets,
           colorShadow: kNeutralOpacityColor,
           textSkip: 'skip'.tr,
+          additionalWidget: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
+            child: Obx(
+              () => CheckboxListTile(
+                dense: true,
+                checkColor: kNeutralColor100,
+                contentPadding: EdgeInsets.zero,
+                side: const BorderSide(color: kNeutralColor100),
+                title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
+                value: CreateContractTutorial.notShowAgain.value,
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: (bool? value) => CreateContractTutorial.notShowAgain.value = value ?? false,
+              ),
+            ),
+          ),
           onSkip: () {
+            if (CreateContractTutorial.notShowAgain.value) {
+              SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+            }
             hasOpenedTutorial.value = false;
             return true;
           },
@@ -450,7 +469,7 @@ class Buildables {
         width: size,
         color: color ?? kBlackColor,
         fit: BoxFit.cover,
-        progressIndicatorBuilder: (context, url, downloadProgress) => Lottie.asset(Assets.pictureLoading, fit: BoxFit.cover),
+        progressIndicatorBuilder: (context, url, downloadProgress) => const CircularProgressIndicator(color: kNeutralLightColor),
         errorWidget: (context, url, error) => const Icon(Icons.error),
         // errorListener: (error) => LoggerService.logger?.e(error),
       );
@@ -525,6 +544,39 @@ class Buildables {
                       onSuccessPayment.call();
                     }
                   },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+  static Widget buildImagePickerTypeBottomsheet({required void Function(ImageSource) onSelectType}) => Material(
+        color: kNeutralColor100,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        child: SizedBox(
+          height: 190,
+          child: Padding(
+            padding: const EdgeInsets.all(Paddings.large),
+            child: Column(
+              children: [
+                Text('choose_source'.tr, style: AppFonts.x16Bold.copyWith(color: kBlackColor)),
+                const SizedBox(height: Paddings.regular),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                  dense: true,
+                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                  title: Text('gallery'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                  leading: const Icon(Icons.image_outlined),
+                  onTap: () => onSelectType(ImageSource.gallery),
+                ),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                  dense: true,
+                  shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide.none),
+                  title: Text('camera'.tr, style: AppFonts.x14Bold.copyWith(color: kBlackColor)),
+                  leading: const Icon(Icons.camera_alt_outlined),
+                  onTap: () => onSelectType(ImageSource.camera),
                 ),
               ],
             ),

@@ -14,6 +14,7 @@ import '../../../helpers/helper.dart';
 import '../../../models/task.dart';
 import '../../../services/shared_preferences.dart';
 import '../../../services/theme/theme.dart';
+import '../../../services/tutorials/add_task_tutorial.dart';
 import '../../../widgets/categories_bottomsheet.dart';
 import '../../../widgets/coordinates_picker.dart';
 import '../../../widgets/custom_buttons.dart';
@@ -45,7 +46,25 @@ class AddTaskBottomsheet extends StatelessWidget {
                   ? state.controller!.scrollController.animateTo(state.controller!.scrollController.position.maxScrollExtent, duration: Durations.long2, curve: Curves.bounceIn)
                   : null,
               textSkip: 'skip'.tr,
+              additionalWidget: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
+                child: Obx(
+                  () => CheckboxListTile(
+                    dense: true,
+                    checkColor: kNeutralColor100,
+                    contentPadding: EdgeInsets.zero,
+                    side: const BorderSide(color: kNeutralColor100),
+                    title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
+                    value: AddTaskTutorial.notShowAgain.value,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    onChanged: (bool? value) => AddTaskTutorial.notShowAgain.value = value ?? false,
+                  ),
+                ),
+              ),
               onSkip: () {
+                if (AddTaskTutorial.notShowAgain.value) {
+                  SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                }
                 hasOpenedTutorial.value = false;
                 return true;
               },

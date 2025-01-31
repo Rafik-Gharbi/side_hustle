@@ -44,6 +44,7 @@ final screens = {
 class MainScreenWithBottomNavigation extends StatelessWidget {
   static const String routeName = '/home';
   static RxBool isOnTutorial = false.obs;
+  static RxBool notShowAgain = false.obs;
 
   final bool noAppBar;
   final void Function()? onBack;
@@ -63,7 +64,7 @@ class MainScreenWithBottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     bool showConnectivityMsg = true;
     return PopScope(
-      canPop: false,
+      canPop: MainAppController.find.bottomNavIndex.value != 0,
       onPopInvokedWithResult: (didPop, result) {
         if (isOnTutorial.value) return;
         if (MainAppController.find.bottomNavIndex.value != 0) {

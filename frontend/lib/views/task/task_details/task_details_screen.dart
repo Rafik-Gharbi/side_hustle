@@ -123,6 +123,7 @@ class TaskDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: Paddings.large),
                         Text(task.title, style: AppFonts.x16Bold),
+                        const SizedBox(height: Paddings.small),
                         Row(
                           children: [
                             Buildables.buildCategoryIcon(task.category!.icon),

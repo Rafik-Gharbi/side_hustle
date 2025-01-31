@@ -5,6 +5,7 @@ import '../controllers/main_app_controller.dart';
 import '../database/database_repository/reservation_database_repository.dart';
 import '../database/database_repository/task_database_repository.dart';
 import '../helpers/helper.dart';
+import '../models/category.dart';
 import '../models/dto/task_request_dto.dart';
 import '../models/filter_model.dart';
 import '../models/reservation.dart';
@@ -15,9 +16,10 @@ import '../services/logger_service.dart';
 class TaskRepository extends GetxService {
   static TaskRepository get find => Get.find<TaskRepository>();
 
-  Future<Map<String, List<dynamic>>?> getHomeTasks({int? governorateId, String? searchMode}) async {
+  Future<(Map<String, List<dynamic>>?, List<Category>?)> getHomeTasks({int? governorateId, String? searchMode}) async {
     try {
       Map<String, List<dynamic>>? tasks = {};
+      List<Category> popularCategories = [];
       if (MainAppController.find.isConnected) {
         final result = await ApiBaseHelper().request(
           RequestType.get,
@@ -35,6 +37,10 @@ class TaskRepository extends GetxService {
         if (result['ongoingBooking'] != null) {
           tasks.putIfAbsent('ongoingBooking', () => (result['ongoingBooking'] as List).map((e) => Reservation.fromJson(e)).toList());
         }
+        if (result['popularCategories'] != null) {
+          popularCategories
+              .addAll((result['popularCategories'] as List).map((e) => MainAppController.find.getCategoryById(e['id'])).where((element) => element != null).map((e) => e!));
+        }
       } else {
         tasks = await TaskDatabaseRepository.find.getHomeTasks();
         final reservations = await ReservationDatabaseRepository.find.getHomeReservations();
@@ -44,11 +50,11 @@ class TaskRepository extends GetxService {
         TaskDatabaseRepository.find.backupHomeTasks(tasks);
         ReservationDatabaseRepository.find.backupHomeReservations(tasks);
       }
-      return tasks;
+      return (tasks, popularCategories);
     } catch (e) {
       LoggerService.logger?.e('Error occured in getHomeTasks:\n$e');
     }
-    return null;
+    return (null, null);
   }
 
   Future<List<Task>?> filterTasks(

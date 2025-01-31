@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/foundation.dart' as foundation;
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../../../constants/constants.dart';
 import '../../../constants/shared_preferences_keys.dart';
 import '../../../helpers/helper.dart';
-import '../../../helpers/image_picker_by_platform/image_picker_platform.dart';
 import '../../../models/balance_transaction.dart';
 import '../../../models/user.dart';
 import '../../../repositories/balance_repository.dart';
@@ -146,14 +144,7 @@ class BalanceController extends GetxController {
 
   Future<void> addDepositSlipPicture() async {
     try {
-      XFile? image;
-      await Helper.requestStoragePermission();
-      final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
-      if (foundation.kIsWeb) {
-        image = await pickerPlatform.getImageFromSource(source: ImageSource.gallery);
-      } else {
-        image = await pickerPlatform.pickImage(source: ImageSource.gallery);
-      }
+      XFile? image = await Helper.pickImage();
       if (image != null) {
         depositSlip = image;
         update();

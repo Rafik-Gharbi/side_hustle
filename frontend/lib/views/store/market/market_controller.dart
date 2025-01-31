@@ -14,6 +14,7 @@ import '../../../networking/api_base_helper.dart';
 import '../../../repositories/store_repository.dart';
 import '../../../services/shared_preferences.dart';
 import '../../../services/tutorials/market_tutorial.dart';
+import '../my_store/my_store_controller.dart';
 
 class MarketController extends GetxController {
   /// not permanent, use with caution
@@ -57,7 +58,7 @@ class MarketController extends GetxController {
         });
       }
     });
-    init();
+    Helper.waitAndExecute(() => Get.isRegistered<MyStoreController>(), () => init());
   }
 
   Store getServiceStore(Service service) => _hotServicesDTO.singleWhere((element) => element.service?.id == service.id).store!;

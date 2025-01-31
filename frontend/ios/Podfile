@@ -49,7 +49,15 @@ post_install do |installer|
            ## dart: PermissionGroup.photos
            'PERMISSION_PHOTOS=1',
            ## dart: PermissionGroup.mediaLibrary
-           'PERMISSION_MEDIA_LIBRARY=1',         ]
+           'PERMISSION_MEDIA_LIBRARY=1',         
+           ## dart: PermissionGroup.location
+           'BYPASS_PERMISSION_LOCATION_ALWAYS=1',
+        ]
+    end
+    if target.name == "geolocator_apple"
+      target.build_configurations.each do |config|
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)', 'BYPASS_PERMISSION_LOCATION_ALWAYS=1']
+      end
     end
   end
   ################  Awesome Notifications pod modification  ###################

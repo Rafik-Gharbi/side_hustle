@@ -69,12 +69,12 @@ class SettingsScreen extends StatelessWidget {
                       title: 'language'.tr,
                       onTap: () => Get.bottomSheet(const LanguageSelector()),
                     ),
-                    // AnimatedListTile(
-                    //   onTap: () => Helper.snackBar(message: 'feature_not_available_yet'.tr),
-                    //   leading: const Icon(Icons.favorite_border),
-                    //   subtitle: 'msg_rate_review_us'.tr,
-                    //   title: 'rate_us'.tr,
-                    // ),
+                    AnimatedListTile(
+                      onTap: controller.reviewApp,
+                      leading: const Icon(Icons.favorite_border),
+                      subtitle: 'msg_rate_review_us'.tr,
+                      title: 'rate_us'.tr,
+                    ),
                     AnimatedListTile(
                       leading: const Icon(Icons.mail_outline),
                       subtitle: 'msg_share_thoughts'.tr,
@@ -139,7 +139,7 @@ class SettingsScreen extends StatelessWidget {
                         leading: const Icon(Icons.fingerprint_outlined),
                         title: MainAppController.find.isAuthenticationRequired.value ? 'update_authentication'.tr : 'set_authentication'.tr,
                         subtitle: MainAppController.find.isAuthenticationRequired.value ? 'authentication_required'.tr : 'authentication_msg'.tr,
-                        onTap: () => MainAppController.find.setAuthentication(context),
+                        onTap: () => MainAppController.find.setAuthentication(),
                       ),
                     ),
                     // Buildables.lightDivider(padding: const EdgeInsets.symmetric(vertical: Paddings.regular)),
@@ -188,6 +188,21 @@ class SettingsScreen extends StatelessWidget {
                         trailing: const Icon(Icons.chevron_right, color: kErrorColor),
                         onTap: MainAppController.find.isConnected ? () => Get.toNamed(DeleteProfile.routeName) : null,
                       ),
+                    const SizedBox(height: Paddings.exceptional),
+                    if (Helper.currentVersion != null) Center(child: Text('${'version'.tr} ${Helper.currentVersion}', style: AppFonts.x12Regular)),
+                    Center(
+                      child: InkWell(
+                        onTap: () => Helper.launchUrlHelper(Uri(
+                          scheme: 'mailto',
+                          path: 'contact@dootify.com',
+                          queryParameters: {'subject': 'Contact from application'},
+                        ).toString().replaceAll('+', ' ')),
+                        child: Padding(
+                          padding: const EdgeInsets.all(Paddings.small),
+                          child: Text('contact@dootify.com', style: AppFonts.x12Regular.copyWith(color: kSelectedColor)),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: Paddings.exceptional),
                   ],
                 ),

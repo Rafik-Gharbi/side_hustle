@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../helpers/helper.dart';
-import '../../../helpers/image_picker_by_platform/image_picker_platform.dart';
 import '../../../models/user.dart';
 import '../../../repositories/user_repository.dart';
 import '../../../services/authentication_service.dart';
@@ -18,28 +17,19 @@ enum VerifPicture { frontIdentity, backIdentity, passport, selfie }
 
 class VerifyUserController extends GetxController {
   bool isOnBoarding = true;
-  RxInt timerProgress = 60.obs;
   DocumentType? documentType;
   XFile? selfiePicture;
   XFile? passportPicture;
   XFile? frontIdentityPicture;
   XFile? backIdentityPicture;
-  Timer? _timer;
   RxBool isLoadingDataUpload = false.obs;
   bool? uploadDocumentResult;
-  bool showTimer = true;
   RxBool isLoading = false.obs;
   bool hasEnabledNotification = false;
 
   bool get hasProvidedDocument => documentType == DocumentType.identityCard ? frontIdentityPicture != null && backIdentityPicture != null : passportPicture != null;
 
   bool get verifProcessIsGood => hasProvidedDocument && selfiePicture != null;
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
 
   VerifyUserController() {
     if (AuthenticationService.find.jwtUserData!.isVerified == VerifyIdentityStatus.pending) {
@@ -48,29 +38,13 @@ class VerifyUserController extends GetxController {
       passportPicture = XFile('');
       uploadDocumentResult = true;
       isOnBoarding = false;
-      showTimer = false;
     }
     _checkUserNotificationEnabled();
   }
 
   void startVerification() {
     isOnBoarding = false;
-    startTimer();
     update();
-  }
-
-  void startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (timerProgress.value > 0 && !verifProcessIsGood) {
-        timerProgress.value = timerProgress.value - 1;
-      } else {
-        timer.cancel();
-        if (timerProgress.value == 0) {
-          Helper.goBack();
-          Helper.snackBar(message: 'time_is_up'.tr);
-        }
-      }
-    });
   }
 
   void setDocumentType(DocumentType document) {
@@ -81,14 +55,7 @@ class VerifyUserController extends GetxController {
   Future<void> uploadVerifUserPicture({required VerifPicture type}) async {
     try {
       isLoading.value = true;
-      XFile? image;
-      await Helper.requestStoragePermission();
-      final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
-      if (kIsWeb) {
-        image = await pickerPlatform.getImageFromSource(source: kReleaseMode ? ImageSource.camera : ImageSource.gallery);
-      } else {
-        image = await pickerPlatform.pickImage(source: kReleaseMode ? ImageSource.camera : ImageSource.gallery);
-      }
+      XFile? image = await Helper.pickImage();
       if (image != null) {
         switch (type) {
           case VerifPicture.frontIdentity:
@@ -117,13 +84,11 @@ class VerifyUserController extends GetxController {
 
   void clearData() {
     isOnBoarding = true;
-    timerProgress = 60.obs;
     documentType = null;
     selfiePicture = null;
     passportPicture = null;
     frontIdentityPicture = null;
     backIdentityPicture = null;
-    _timer?.cancel();
   }
 
   Future<void> _uploadUserData() async {

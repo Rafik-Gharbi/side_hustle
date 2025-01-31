@@ -7,6 +7,8 @@ import '../../views/profile/balance/balance_controller.dart';
 import '../theme/theme.dart';
 
 class BalanceTutorial {
+  static RxBool notShowAgain = false.obs;
+
   static void showTutorial() {
     BalanceController.find.targets.addAll(
       [

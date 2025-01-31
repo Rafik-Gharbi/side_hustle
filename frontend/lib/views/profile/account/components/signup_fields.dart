@@ -36,7 +36,7 @@ class SignUpFields extends StatelessWidget {
                 disabled: isEditProfile ? false : !controller.acceptedTermsPrivacy.value,
                 onPressed: isEditProfile ? controller.updateUserData : controller.signUpUser,
                 loading: isEditProfile ? controller.isUpdatingProfile : controller.isLoggingIn,
-                title: isEditProfile ? 'edit_profile'.tr : 'create_account'.tr,
+                title: isEditProfile ? 'update'.tr : 'create_account'.tr,
               )
             : Obx(
                 () => CustomButtons.elevatePrimary(
@@ -44,7 +44,7 @@ class SignUpFields extends StatelessWidget {
                   disabled: isEditProfile ? false : !controller.acceptedTermsPrivacy.value,
                   onPressed: isEditProfile ? controller.updateUserData : controller.signUpUser,
                   loading: isEditProfile ? controller.isUpdatingProfile : controller.isLoggingIn,
-                  title: isEditProfile ? 'edit_profile'.tr : 'create_account'.tr,
+                  title: isEditProfile ? 'update'.tr : 'create_account'.tr,
                 ),
               );
         return Form(

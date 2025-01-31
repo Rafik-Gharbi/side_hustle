@@ -11,6 +11,7 @@ import '../../models/store.dart';
 import '../../models/task.dart';
 import '../../repositories/store_repository.dart';
 import '../../repositories/task_repository.dart';
+import '../../services/authentication_service.dart';
 
 class MapScreenController extends GetxController {
   final MapController mapController = MapController();
@@ -22,12 +23,15 @@ class MapScreenController extends GetxController {
   bool isInitialized = false;
   FilterModel _filterModel = FilterModel();
   bool _isTasks;
+  RxBool isLoading = false.obs;
+  LatLng? userCoordinates;
 
   bool get isTasks => _isTasks;
 
   set isTasks(bool value) {
     _isTasks = value;
-    _init();
+    isLoading.value = true;
+    _init().then((_) => isLoading.value = false);
   }
 
   FilterModel get filterModel => _filterModel;
@@ -60,6 +64,7 @@ class MapScreenController extends GetxController {
     }
     midPoint = result?['midPoint'];
     zoomLevel = result?['zoomLevel'];
+    userCoordinates = AuthenticationService.find.jwtUserData?.coordinates;
     isInitialized = true;
     update();
   }
@@ -111,6 +116,11 @@ class MapScreenController extends GetxController {
       debugPrint('Error moving map camera');
     }
     return {'midPoint': midpoint, 'zoomLevel': zoomLevel};
+  }
+
+  Future<void> centerOnUser() async {
+    userCoordinates = await Helper.getPosition();
+    mapController.move(userCoordinates!, 14);
   }
 }
 

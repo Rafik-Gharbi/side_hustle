@@ -7,6 +7,8 @@ import '../../views/profile/transactions/transactions_controller.dart';
 import '../theme/theme.dart';
 
 class TransactionsTutorial {
+  static RxBool notShowAgain = false.obs;
+
   static void showTutorial() {
     TransactionsController.find.targets.addAll(
       [

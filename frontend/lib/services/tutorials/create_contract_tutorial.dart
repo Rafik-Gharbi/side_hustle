@@ -8,6 +8,7 @@ import '../theme/theme.dart';
 class CreateContractTutorial {
   static List<TargetFocus> targets = [];
   static GlobalKey contractFormKey = GlobalKey();
+  static RxBool notShowAgain = false.obs;
 
   static void showTutorial() {
     if (targets.isEmpty) {

@@ -11,6 +11,7 @@ import '../../../helpers/helper.dart';
 import '../../../models/transaction.dart';
 import '../../../services/shared_preferences.dart';
 import '../../../services/theme/theme.dart';
+import '../../../services/tutorials/transactions_tutorial.dart';
 import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
@@ -38,7 +39,25 @@ class TransactionsScreen extends StatelessWidget {
               targets: state.controller!.targets,
               colorShadow: kNeutralOpacityColor,
               textSkip: 'skip'.tr,
+              additionalWidget: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
+                child: Obx(
+                  () => CheckboxListTile(
+                    dense: true,
+                    checkColor: kNeutralColor100,
+                    contentPadding: EdgeInsets.zero,
+                    side: const BorderSide(color: kNeutralColor100),
+                    title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
+                    value: TransactionsTutorial.notShowAgain.value,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    onChanged: (bool? value) => TransactionsTutorial.notShowAgain.value = value ?? false,
+                  ),
+                ),
+              ),
               onSkip: () {
+                if (TransactionsTutorial.notShowAgain.value) {
+                  SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                }
                 hasOpenedTutorial.value = false;
                 return true;
               },

@@ -7,6 +7,8 @@ import '../../views/task/add_task/add_task_controller.dart';
 import '../theme/theme.dart';
 
 class AddTaskTutorial {
+  static RxBool notShowAgain = false.obs;
+
   static void showTutorial() {
     AddTaskController.find.targets.addAll(
       [

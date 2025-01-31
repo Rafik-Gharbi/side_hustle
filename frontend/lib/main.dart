@@ -43,6 +43,7 @@ import 'services/theme/theme_service.dart';
 import 'services/translation/translation_checker.dart';
 import 'views/boost/list_boost/list_boost_controller.dart';
 import 'views/boost/list_boost/list_boost_screen.dart';
+import 'views/chat/chat_controller.dart';
 import 'views/home/home_controller.dart';
 import 'views/notifications/notification_controller.dart';
 import 'views/notifications/notification_screen.dart';
@@ -84,6 +85,7 @@ import 'views/profile/admin_dashboard/components/stats_screen/user_stats/user_st
 import 'views/profile/balance/balance_controller.dart';
 import 'views/profile/profile_screen/profile_controller.dart';
 import 'views/splash/splash_screen.dart';
+import 'views/store/market/market_controller.dart';
 import 'views/support/components/ticket_details.dart';
 import 'views/profile/admin_dashboard/components/support_system/support_controller.dart';
 import 'views/profile/admin_dashboard/components/support_system/support_screen.dart';
@@ -210,6 +212,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     observer = FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -218,6 +227,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       if (SharedPreferencesService.find.get(isFirstTimeKey) != null) firstScreen = MainScreenWithBottomNavigation.routeName;
       _checkUserPosition();
       MainAppController.find.checkVersionRequired();
+      if (MainAppController.find.isAuthenticationRequired.value && !MainAppController.find.isAuthenticated.value) {
+        MainAppController.find.showAuthenticationProcess();
+      }
     }
   }
 
@@ -449,7 +461,8 @@ class InitialBindings implements Bindings {
     Get.put(PaymentService(), permanent: true);
     Get.put(HomeController(), permanent: true);
     Get.put(ProfileController(), permanent: true);
-    // Get.put(BalanceController(), permanent: true);
+    Get.put(ChatController(), permanent: true);
+    Get.put(MarketController(), permanent: true);
     // Repositories
     Get.put(ChatRepository(), permanent: true);
     Get.put(UserRepository(), permanent: true);

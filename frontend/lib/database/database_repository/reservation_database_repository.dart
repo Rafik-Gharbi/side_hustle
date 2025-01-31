@@ -6,9 +6,11 @@ import 'package:get/get.dart';
 import '../../constants/shared_preferences_keys.dart';
 import '../../models/enum/request_status.dart';
 import '../../models/reservation.dart';
+import '../../models/service.dart';
 import '../../services/logger_service.dart';
 import '../../services/shared_preferences.dart';
 import '../database.dart';
+import 'store_database_repository.dart';
 import 'task_database_repository.dart';
 
 class ReservationDatabaseRepository extends GetxService {
@@ -29,8 +31,16 @@ class ReservationDatabaseRepository extends GetxService {
     try {
       final ReservationTableData? reservation = (await (database.select(database.reservationTable)..where((tbl) => tbl.id.equals(reservationId))).getSingleOrNull());
       if (reservation == null) return null;
-      final task = await TaskDatabaseRepository.find.getTaskById(reservation.task!);
-      return Reservation.fromReservationData(reservation: reservation.toCompanion(true), task: task!);
+      if (reservation.task != null) {
+        final task = await TaskDatabaseRepository.find.getTaskById(reservation.task!);
+        return task != null ? Reservation.fromReservationData(reservation: reservation.toCompanion(true), task: task) : null;
+      } else if (reservation.service != null) {
+        final serviceCompanion = await StoreDatabaseRepository.find.getServiceById(reservation.service!);
+        final gallery = await StoreDatabaseRepository.find.getGalleryByServiceId(reservation.service!);
+        final service = serviceCompanion != null ? Service.fromServiceData(service: serviceCompanion, gallery: gallery) : null;
+        return service != null ? Reservation.fromReservationData(reservation: reservation.toCompanion(true), service: service) : null;
+      }
+      return null;
     } catch (e) {
       LoggerService.logger?.e(e);
       return null;

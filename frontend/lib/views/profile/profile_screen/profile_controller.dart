@@ -1,5 +1,4 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,7 +7,6 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../../../constants/shared_preferences_keys.dart';
 import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/helper.dart';
-import '../../../helpers/image_picker_by_platform/image_picker_platform.dart';
 import '../../../models/category.dart';
 import '../../../models/user.dart';
 import '../../../networking/api_base_helper.dart';
@@ -93,14 +91,7 @@ class ProfileController extends GetxController {
 
   Future<void> uploadFilePicture({GlobalKey<FormState>? formKey}) async {
     try {
-      XFile? image;
-      await Helper.requestStoragePermission();
-      final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
-      if (foundation.kIsWeb) {
-        image = await pickerPlatform.getImageFromSource(source: ImageSource.gallery);
-      } else {
-        image = await pickerPlatform.pickImage(source: ImageSource.gallery);
-      }
+      XFile? image = await Helper.pickImage();
       if (image != null) {
         profilePicture = image;
         saveProfileInfo(isPictureUpload: true, formKey: formKey);

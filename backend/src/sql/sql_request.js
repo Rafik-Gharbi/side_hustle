@@ -396,9 +396,9 @@ async function fetchAndSortNearbyTasks(
   // Shuffle the tasks array
   shuffleArray(filteredTasks);
   // Apply limit and offset to the shuffled array
-  const limitedTasks = filteredTasks.slice(offset, offset + limit);
+  // const limitedTasks = filteredTasks.slice(offset, offset + limit);
 
-  const nearbyTasks = await populateTasks(limitedTasks, user?.id);
+  const nearbyTasks = await populateTasks(filteredTasks, user?.id);
 
   return nearbyTasks;
 }
@@ -523,6 +523,29 @@ async function getRandomHotTasks(user, governorateId, limit = 10, offset = 0) {
   const hotTasks = filteredTasks.slice(offset, offset + limit);
 
   return hotTasks;
+}
+
+async function fetchPopularCategories(searchMode, user) {
+  const query = `
+    SELECT c.id, c.name, COUNT(t.id) AS task_count
+    FROM category c
+    JOIN task t ON c.id = t.category_id
+    ${
+      searchMode !== "national"
+        ? `WHERE t.governorate_id = :userGovernorateId`
+        : ""
+    }
+    GROUP BY c.id, c.name
+    ORDER BY task_count DESC
+    LIMIT 4;
+  `;
+  const result = await sequelize.query(query, {
+    type: sequelize.QueryTypes.SELECT,
+    replacements: {
+      userGovernorateId: user && user.governorate_id ? user.governorate_id : 1,
+    },
+  });
+  return result;
 }
 
 async function populateTasks(fetchedTasks, currentUserId) {
@@ -969,4 +992,5 @@ module.exports = {
   populateSupportMessages,
   populateOneSupportMessage,
   fetchAndSortGovernorateTasks,
+  fetchPopularCategories,
 };

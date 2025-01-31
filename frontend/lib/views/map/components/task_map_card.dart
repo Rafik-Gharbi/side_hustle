@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constants/colors.dart';
+import '../../../constants/constants.dart';
 import '../../../constants/sizes.dart';
 import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/buildables.dart';
@@ -26,9 +27,9 @@ class TaskMapCard extends StatelessWidget {
       transitionDuration: const Duration(milliseconds: 600),
       openBuilder: (_, __) => TaskDetailsScreen(task: task),
       closedBuilder: (_, openContainer) => DecoratedBox(
-        decoration: const BoxDecoration(color: kNeutralLightColor),
+        decoration: BoxDecoration(color: kNeutralLightColor, borderRadius: smallRadius),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+          padding: const EdgeInsets.symmetric(horizontal: Paddings.regular).copyWith(top: Paddings.small),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

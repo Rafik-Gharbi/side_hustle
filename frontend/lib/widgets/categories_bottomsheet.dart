@@ -63,7 +63,25 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
               targets: CategoriesTutorial.targets,
               colorShadow: kNeutralOpacityColor,
               textSkip: 'skip'.tr,
+              additionalWidget: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
+                child: Obx(
+                  () => CheckboxListTile(
+                    dense: true,
+                    checkColor: kNeutralColor100,
+                    contentPadding: EdgeInsets.zero,
+                    side: const BorderSide(color: kNeutralColor100),
+                    title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
+                    value: CategoriesTutorial.notShowAgain.value,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    onChanged: (bool? value) => CategoriesTutorial.notShowAgain.value = value ?? false,
+                  ),
+                ),
+              ),
               onSkip: () {
+                if (CategoriesTutorial.notShowAgain.value) {
+                  SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                }
                 setState(() => hasOpenedTutorial = false);
                 return true;
               },

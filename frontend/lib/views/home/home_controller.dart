@@ -123,7 +123,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> fetchHomeTasks() async {
-    final result = await TaskRepository.find.getHomeTasks(governorateId: _filterModel.governorate?.id, searchMode: _filterModel.searchMode!.name);
+    final (result, categories) = await TaskRepository.find.getHomeTasks(governorateId: _filterModel.governorate?.id, searchMode: _filterModel.searchMode!.name);
     hotTasks = result?['hotTasks'] != null ? (result?['hotTasks'] as List).map((e) => e as Task).toList() : [];
     nearbyTasks = result?['nearbyTasks'] != null ? (result?['nearbyTasks'] as List).map((e) => e as Task).toList() : [];
     governorateTasks = result?['governorateTasks'] != null ? (result?['governorateTasks'] as List).map((e) => e as Task).toList() : [];
@@ -131,6 +131,20 @@ class HomeController extends GetxController {
     ongoingTaskReservations = result?['ongoingReservation'] != null ? (result?['ongoingReservation'] as List).map((e) => e as Reservation).toList() : [];
     serviceReservations = result?['booking'] != null ? (result?['booking'] as List).map((e) => e as Reservation).toList() : [];
     ongoingServiceReservations = result?['ongoingBooking'] != null ? (result?['ongoingBooking'] as List).map((e) => e as Reservation).toList() : [];
+    if (categories != null && categories.isNotEmpty) {
+      final categoryLength = categories.length;
+      mostPopularCategories = categoryLength == 4
+          ? categories
+          : [
+              ...categories,
+              ...MainAppController.find.categories
+                  .where((element) => element.parentId == -1 && !categories.any((exist) => exist.id == element.id))
+                  .toList()
+                  .take(4 - categoryLength)
+            ];
+    } else {
+      mostPopularCategories = MainAppController.find.categories.where((element) => element.parentId == -1).toList().getRange(10, 14).toList();
+    }
     update();
   }
 

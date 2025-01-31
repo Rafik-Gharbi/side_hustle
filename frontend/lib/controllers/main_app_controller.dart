@@ -75,7 +75,6 @@ class MainAppController extends GetxController {
 
   static final MainAppController _singleton = MainAppController._internal();
 
-
   factory MainAppController() => _singleton;
 
   MainAppController._internal() {
@@ -169,14 +168,14 @@ class MainAppController extends GetxController {
     return ConnectivityResult.none;
   }
 
-  Future<void> setAuthentication(BuildContext context) async {
+  Future<void> setAuthentication() async {
     if (isAuthenticationRequired.value) {
       isAuthenticated.value = false;
-      await showAuthenticationProcess(Get.currentRoute, context, couldCancel: true);
+      await showAuthenticationProcess(route: Get.currentRoute, couldCancel: true);
       if (!isAuthenticated.value) return;
     }
     await screenLockCreate(
-      context: context,
+      context: Get.context!,
       customizedButtonChild: isAuthenticationRequired.value ? const Icon(Icons.delete_forever, color: kNeutralColor100) : null,
       cancelButton: const Icon(Icons.close, color: kNeutralColor100),
       deleteButton: const Icon(Icons.backspace_outlined, color: kNeutralColor100, size: 22),
@@ -201,24 +200,35 @@ class MainAppController extends GetxController {
     );
   }
 
-  Future<void> showAuthenticationProcess(String? route, BuildContext context, {bool replaceNavigation = false, bool couldCancel = false}) async => await screenLock(
-        context: context,
-        correctString: SharedPreferencesService.find.get(userSecretKey) ?? '0000',
-        canCancel: couldCancel,
-        cancelButton: const Icon(Icons.close, color: kNeutralColor100),
-        deleteButton: const Icon(Icons.backspace_outlined, color: kNeutralColor100, size: 22),
-        keyPadConfig: const KeyPadConfig(buttonConfig: KeyPadButtonConfig(buttonStyle: ButtonStyle(foregroundColor: WidgetStatePropertyAll(kNeutralColor100)))),
-        config: ScreenLockConfig(backgroundColor: kNeutralColor100.withOpacity(0.4)),
-        onUnlocked: () {
-          isAuthenticated.value = true;
-          if (replaceNavigation) {
-            Get.offAllNamed(route ?? MainScreenWithBottomNavigation.routeName);
-          } else {
-            Helper.goBack();
+  Future<void> showAuthenticationProcess({String? route, bool replaceNavigation = false, bool couldCancel = false}) async => Helper.waitAndExecute(
+        () => Get.currentRoute == MainScreenWithBottomNavigation.routeName,
+        () async {
+          final localAuth = LocalAuthentication();
+          if (await localAuth.canCheckBiometrics) {
+            isAuthenticated.value = await localAuth.authenticate(localizedReason: 'authenticate_to_continue'.tr);
+          }
+          if (!isAuthenticated.value) {
+            await screenLock(
+              context: Get.context!,
+              correctString: SharedPreferencesService.find.get(userSecretKey) ?? '0000',
+              canCancel: couldCancel,
+              cancelButton: const Icon(Icons.close, color: kNeutralColor100),
+              deleteButton: const Icon(Icons.backspace_outlined, color: kNeutralColor100, size: 22),
+              keyPadConfig: const KeyPadConfig(buttonConfig: KeyPadButtonConfig(buttonStyle: ButtonStyle(foregroundColor: WidgetStatePropertyAll(kNeutralColor100)))),
+              config: ScreenLockConfig(backgroundColor: kNeutralColor100.withOpacity(0.4)),
+              onUnlocked: () {
+                isAuthenticated.value = true;
+                if (replaceNavigation) {
+                  Get.offAllNamed(route ?? MainScreenWithBottomNavigation.routeName);
+                } else {
+                  Helper.goBack();
+                }
+              },
+              // onCancelled: () => Helper.goBack();,
+              onOpened: () async => await _localAuth(route, replaceNavigation),
+            );
           }
         },
-        // onCancelled: () => Helper.goBack();,
-        onOpened: () async => await _localAuth(route, replaceNavigation),
       );
 
   Future<void> _init() async {
@@ -282,6 +292,7 @@ class MainAppController extends GetxController {
       },
     );
     isReady = true;
+    if (isAuthenticationRequired.value && !isAuthenticated.value) showAuthenticationProcess();
   }
 
   Future<void> _localAuth(String? route, bool replaceNavigation) async {

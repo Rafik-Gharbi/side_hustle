@@ -16,6 +16,7 @@ class BuildNearbyRange extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<MoreFilterController>(
       builder: (controller) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: Paddings.regular),
@@ -36,6 +37,7 @@ class BuildNearbyRange extends StatelessWidget {
                 CustomTextField(
                   width: 100,
                   textFontSize: 14,
+                  outlinedBorder: true,
                   enabled: AuthenticationService.find.jwtUserData?.coordinates != null,
                   fieldController: TextEditingController(text: '${controller.nearbyRange.value.toStringAsFixed(0)} ${'km'.tr}'),
                   textInputType: const TextInputType.numberWithOptions(decimal: true),

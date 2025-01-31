@@ -28,25 +28,23 @@ class AllReviews extends StatelessWidget {
               surfaceTintColor: Colors.transparent,
               color: kNeutralColor100,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(Paddings.small),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: Paddings.regular),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: () => Helper.goBack()),
-                            Text('all_reviews'.tr, style: AppFonts.x15Bold),
-                            const SizedBox(width: 40),
-                          ],
-                        ),
+              child: Padding(
+                padding: const EdgeInsets.all(Paddings.small),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: Paddings.regular),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomButtons.icon(icon: const Icon(Icons.close_outlined), onPressed: () => Helper.goBack()),
+                          Text('all_reviews'.tr, style: AppFonts.x15Bold),
+                          const SizedBox(width: 40),
+                        ],
                       ),
-                      buildAllReviewsContent(),
-                    ],
-                  ),
+                    ),
+                    Expanded(child: SingleChildScrollView(child: buildAllReviewsContent())),
+                  ],
                 ),
               ),
             ),
@@ -149,56 +147,68 @@ class AllReviews extends StatelessWidget {
                     ),
                   if (review.createdAt != null)
                     Align(
-                      alignment: Alignment.centerRight,
+                      alignment: Helper.resolveAlignment(),
                       child: Text(Helper.formatDate(review.createdAt!), style: AppFonts.x12Regular),
                     ),
                   if (isExpanded) ...[
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge * 2).copyWith(top: Paddings.large),
                       child: Table(
-                        defaultColumnWidth: FixedColumnWidth((Get.width - 60) / 2),
+                        textDirection: Helper.isArabic ? TextDirection.rtl : TextDirection.ltr,
+                        columnWidths: {
+                          1: FixedColumnWidth(Get.width * 0.3),
+                          2: FixedColumnWidth(Get.width * 0.5),
+                        },
                         children: [
                           TableRow(
                             children: [
                               Text('service_quality'.tr, style: AppFonts.x14Bold),
-                              RatingBarIndicator(
-                                rating: review.quality ?? 0,
-                                itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
-                                itemCount: 5,
-                                itemSize: 18,
+                              Center(
+                                child: RatingBarIndicator(
+                                  rating: review.quality ?? 0,
+                                  itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
+                                  itemCount: 5,
+                                  itemSize: 18,
+                                ),
                               ),
                             ],
                           ),
                           TableRow(
                             children: [
                               Text('service_fees'.tr, style: AppFonts.x14Bold),
-                              RatingBarIndicator(
-                                rating: review.fees ?? 0,
-                                itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
-                                itemCount: 5,
-                                itemSize: 18,
+                              Center(
+                                child: RatingBarIndicator(
+                                  rating: review.fees ?? 0,
+                                  itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
+                                  itemCount: 5,
+                                  itemSize: 18,
+                                ),
                               ),
                             ],
                           ),
                           TableRow(
                             children: [
                               Text('punctuality'.tr, style: AppFonts.x14Bold),
-                              RatingBarIndicator(
-                                rating: review.punctuality ?? 0,
-                                itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
-                                itemCount: 5,
-                                itemSize: 18,
+                              Center(
+                                child: RatingBarIndicator(
+                                  rating: review.punctuality ?? 0,
+                                  itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
+                                  itemCount: 5,
+                                  itemSize: 18,
+                                ),
                               ),
                             ],
                           ),
                           TableRow(
                             children: [
                               Text('politeness'.tr, style: AppFonts.x14Bold),
-                              RatingBarIndicator(
-                                rating: review.politeness ?? 0,
-                                itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
-                                itemCount: 5,
-                                itemSize: 18,
+                              Center(
+                                child: RatingBarIndicator(
+                                  rating: review.politeness ?? 0,
+                                  itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
+                                  itemCount: 5,
+                                  itemSize: 18,
+                                ),
                               ),
                             ],
                           ),

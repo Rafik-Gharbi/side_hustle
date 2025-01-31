@@ -52,6 +52,7 @@
 	<array>
 		<string>fbapi</string>
 		<string>fb-messenger-share-api</string>
+    	<string>mailto</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

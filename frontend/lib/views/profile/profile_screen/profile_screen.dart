@@ -58,10 +58,28 @@ class ProfileScreen extends StatelessWidget {
                 targets: controller.targets,
                 colorShadow: kNeutralOpacityColor,
                 textSkip: 'skip'.tr,
+                additionalWidget: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
+                  child: Obx(
+                    () => CheckboxListTile(
+                      dense: true,
+                      checkColor: kNeutralColor100,
+                      contentPadding: EdgeInsets.zero,
+                      side: const BorderSide(color: kNeutralColor100),
+                      title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
+                      value: MainScreenWithBottomNavigation.notShowAgain.value,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      onChanged: (bool? value) => MainScreenWithBottomNavigation.notShowAgain.value = value ?? false,
+                    ),
+                  ),
+                ),
                 onClickTarget: (target) => target.keyTarget == controller.profileHeaderKey
                     ? controller.scrollController.animateTo(controller.scrollController.position.maxScrollExtent, duration: Durations.long2, curve: Curves.bounceIn)
                     : null,
                 onSkip: () {
+                  if (MainScreenWithBottomNavigation.notShowAgain.value) {
+                    SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                  }
                   MainScreenWithBottomNavigation.isOnTutorial.value = false;
                   return true;
                 },

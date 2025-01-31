@@ -29,7 +29,7 @@ class _BuildCustomMarkerState extends State<BuildCustomMarker> {
     final bool = widget.mapController.move(marker.coordinates, 14);
     if (!close) {
       CustomBottomsheet(
-        height: marker.isTask ? 150 : 200,
+        height: marker.isTask ? 160 : 200,
         topRadius: 20,
         padding: const EdgeInsets.symmetric(horizontal: Paddings.regular).copyWith(bottom: Paddings.exceptional, top: Paddings.regular),
         child: marker.isTask

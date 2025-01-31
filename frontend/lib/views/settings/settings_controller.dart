@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 import '../../constants/shared_preferences_keys.dart';
 import '../../database/database.dart';
@@ -40,5 +41,20 @@ class SettingsController extends GetxController {
       categoryPreferences = 'show_popular_categories'.tr;
     }
     update();
+  }
+
+  Future<void> reviewApp() async {
+    try {
+      final InAppReview inAppReview = InAppReview.instance;
+      final isAvailable = await inAppReview.isAvailable();
+      if (isAvailable) {
+        inAppReview.requestReview();
+      } else {
+        Helper.snackBar(message: 'reviewing_not_available'.tr);
+      }
+      // TODO adabt app revewing to iOS
+    } catch (e) {
+      Helper.snackBar(message: '${'error_occurred'.tr}\n$e');
+    }
   }
 }

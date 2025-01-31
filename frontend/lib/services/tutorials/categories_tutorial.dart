@@ -10,6 +10,7 @@ class CategoriesTutorial {
   static List<TargetFocus> targets = [];
   static GlobalKey searchFieldKey = GlobalKey();
   static GlobalKey categoryKey = GlobalKey();
+  static RxBool notShowAgain = false.obs;
 
   static void showTutorial() {
     targets.addAll(

@@ -12,6 +12,7 @@ import '../../../controllers/main_app_controller.dart';
 import '../../../helpers/helper.dart';
 import '../../../services/shared_preferences.dart';
 import '../../../services/theme/theme.dart';
+import '../../../services/tutorials/balance_tutorial.dart';
 import '../../../widgets/balance_transaction_card.dart';
 import '../../../widgets/custom_button_with_overlay.dart';
 import '../../../widgets/custom_buttons.dart';
@@ -42,7 +43,25 @@ class BalanceScreen extends StatelessWidget {
                 targets: state.controller!.targets,
                 colorShadow: kNeutralOpacityColor,
                 textSkip: 'skip'.tr,
+                additionalWidget: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
+                  child: Obx(
+                    () => CheckboxListTile(
+                      dense: true,
+                      checkColor: kNeutralColor100,
+                      contentPadding: EdgeInsets.zero,
+                      side: const BorderSide(color: kNeutralColor100),
+                      title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
+                      value: BalanceTutorial.notShowAgain.value,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      onChanged: (bool? value) => BalanceTutorial.notShowAgain.value = value ?? false,
+                    ),
+                  ),
+                ),
                 onSkip: () {
+                  if (BalanceTutorial.notShowAgain.value) {
+                    SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                  }
                   hasOpenedTutorial.value = false;
                   return true;
                 },

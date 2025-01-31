@@ -16,6 +16,7 @@ import '../../../models/store.dart';
 import '../../../services/authentication_service.dart';
 import '../../../services/shared_preferences.dart';
 import '../../../services/theme/theme.dart';
+import '../../../services/tutorials/create_store_tutorial.dart';
 import '../../../viewmodel/reservation_viewmodel.dart';
 import '../../../viewmodel/store_viewmodel.dart';
 import '../../../widgets/custom_button_with_overlay.dart';
@@ -49,7 +50,25 @@ class MyStoreScreen extends StatelessWidget {
               targets: state.controller!.targets,
               colorShadow: kNeutralOpacityColor,
               textSkip: 'skip'.tr,
+              additionalWidget: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
+                child: Obx(
+                  () => CheckboxListTile(
+                    dense: true,
+                    checkColor: kNeutralColor100,
+                    contentPadding: EdgeInsets.zero,
+                    side: const BorderSide(color: kNeutralColor100),
+                    title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
+                    value: CreateStoreTutorial.notShowAgain.value,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    onChanged: (bool? value) => CreateStoreTutorial.notShowAgain.value = value ?? false,
+                  ),
+                ),
+              ),
               onSkip: () {
+                if (CreateStoreTutorial.notShowAgain.value) {
+                  SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                }
                 hasOpenedTutorial.value = false;
                 return true;
               },

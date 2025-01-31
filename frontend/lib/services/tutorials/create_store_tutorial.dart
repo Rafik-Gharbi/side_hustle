@@ -7,6 +7,8 @@ import '../../views/store/my_store/my_store_controller.dart';
 import '../theme/theme.dart';
 
 class CreateStoreTutorial {
+  static RxBool notShowAgain = false.obs;
+
   static void showTutorial() {
     if (MyStoreController.find.targets.isEmpty) {
       MyStoreController.find.targets.add(

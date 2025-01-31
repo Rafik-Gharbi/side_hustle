@@ -41,12 +41,15 @@ import '../widgets/custom_popup.dart';
 import '../widgets/main_screen_with_bottom_navigation.dart';
 import '../widgets/phone_otp_dialog.dart';
 import '../widgets/verify_email_dialog.dart';
+import 'buildables.dart';
 import 'extensions/date_time_extension.dart';
+import 'image_picker_by_platform/image_picker_platform.dart';
 
 class Helper {
   static Timer? _searchOnStoppedTyping;
   static String selectedIsoCode = defaultIsoCode;
   static String phonePrefix = defaultPrefix;
+  static String? currentVersion;
   static bool? lastCheckedVersion;
   static String _previousSnackBarMessage = '';
 
@@ -184,7 +187,7 @@ class Helper {
 
   static String decryptData(String encryptedData) {
     String decrypted = encryptedData;
-    if (kDebugMode) return decrypted;
+    // if (kDebugMode) return decrypted;
     try {
       if (encryptedData.isNotEmpty) {
         final key = enc.Key.fromUtf8(dotenv.env['SECRET_KEY']!);
@@ -293,9 +296,14 @@ class Helper {
     // Test if location services are enabled.
     serviceEnabled = await geolocatorPlatform.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
+      // Location services are not enabled. Inform user to enable location services.
+      Helper.snackBar(
+        message: 'location_service_disabled',
+        overrideButton: TextButton(
+          onPressed: () async => await Geolocator.openLocationSettings(),
+          child: Text('settings'.tr),
+        ),
+      );
       return false;
     }
     permission = await geolocatorPlatform.checkPermission();
@@ -314,12 +322,9 @@ class Helper {
   static Future<LatLng?> getPosition() async {
     final permission = await handlePermission();
     if (!permission) return null;
-
     try {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best, forceAndroidLocationManager: true);
-      final latitude = position.latitude;
-      final longitude = position.longitude;
-      return LatLng(latitude, longitude);
+      Position position = await Geolocator.getCurrentPosition(locationSettings: const LocationSettings());
+      return LatLng(position.latitude, position.longitude);
     } catch (error) {
       debugPrint('Error getting location: $error');
     }
@@ -439,7 +444,7 @@ class Helper {
 
   static Future<String> getCurrentVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    return packageInfo.version; // e.g., "1.2.3"
+    return currentVersion = packageInfo.version; // e.g., "1.2.3"
   }
 
   static bool compareVersions(String latestVersion, String currentVersion) {
@@ -562,6 +567,49 @@ class Helper {
       }
     }
   }
+
+  static Future<XFile?> pickImage() async {
+    ImageSource? source;
+    XFile? image;
+    await Helper.requestStoragePermission();
+    await Get.bottomSheet(
+      Buildables.buildImagePickerTypeBottomsheet(onSelectType: (type) {
+        source = type;
+        Get.back();
+      }),
+      isScrollControlled: true,
+    );
+    await Helper.requestStoragePermission();
+    final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
+    if (kIsWeb) {
+      image = await pickerPlatform.getImageFromSource(source: source);
+    } else {
+      image = await pickerPlatform.pickImage(source: source);
+    }
+    return image;
+  }
+
+  static Future<List<XFile>?> pickImages() async {
+    ImageSource? source;
+    List<XFile>? images;
+    await Helper.requestStoragePermission();
+    await Get.bottomSheet(
+      Buildables.buildImagePickerTypeBottomsheet(onSelectType: (type) {
+        source = type;
+        Get.back();
+      }),
+      isScrollControlled: true,
+    );
+    final pickerPlatform = ImagePickerPlatform.getPlatformPicker();
+    if (kIsWeb) {
+      images = await pickerPlatform.getMedia(source: source);
+    } else {
+      images = await pickerPlatform.pickMultiImage(source: source);
+    }
+    return images;
+  }
+
+  static Alignment resolveAlignment() => isArabic ? Alignment.centerLeft : Alignment.centerRight;
 }
 
 class ColorGenerator {
