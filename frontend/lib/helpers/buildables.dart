@@ -25,6 +25,7 @@ import '../widgets/coins_market.dart';
 import '../widgets/custom_bottomsheet.dart';
 import '../widgets/custom_buttons.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/main_screen_with_bottom_navigation.dart';
 import 'form_validators.dart';
 import 'helper.dart';
 
@@ -276,10 +277,11 @@ class Buildables {
     final TextEditingController dueDateController = TextEditingController(text: contract.dueDate != null ? Helper.formatDate(contract.dueDate!) : '');
     final TextEditingController descriptionController = TextEditingController(text: isTask ? contract.task!.description : contract.service?.description ?? '');
     final TextEditingController delivrablesController = TextEditingController(text: isTask ? contract.task!.delivrables : contract.service?.included ?? '');
-    final hasFinishedCreateContractTutorial = SharedPreferencesService.find.get(hasFinishedCreateContractTutorialKey) == 'true';
     RxBool hasOpenedTutorial = false.obs;
+    final hasFinishedCreateContractTutorial = SharedPreferencesService.find.get(hasFinishedCreateContractTutorialKey) == 'true';
     if (!hasFinishedCreateContractTutorial && !hasOpenedTutorial.value && CreateContractTutorial.targets.isNotEmpty) {
       hasOpenedTutorial.value = true;
+      MainScreenWithBottomNavigation.isOnTutorial.value = true;
       Future.delayed(
         Durations.extralong2,
         () => TutorialCoachMark(
@@ -303,8 +305,9 @@ class Buildables {
           ),
           onSkip: () {
             if (CreateContractTutorial.notShowAgain.value) {
-              SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+              SharedPreferencesService.find.add(hasFinishedCreateContractTutorialKey, 'true');
             }
+            MainScreenWithBottomNavigation.isOnTutorial.value = false;
             hasOpenedTutorial.value = false;
             return true;
           },

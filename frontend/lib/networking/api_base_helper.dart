@@ -52,16 +52,16 @@ class ApiBaseHelper extends GetxController {
   static ApiBaseHelper get find => Get.find<ApiBaseHelper>();
   static bool _isBlockingRenew = false;
   bool changeIpAddressOpened = false;
-  String baseUrl = baseUrlRemote;
-  // String baseUrl = kReleaseMode
-  //     ? baseUrlRemote
-  //     : kIsWeb
-  //         ? baseUrlLocalWeb
-  //         : GetPlatform.isAndroid
-  //             ? baseUrlLocalAndroid
-  //             : GetPlatform.isIOS
-  //                 ? baseUrlLocalIos
-  //                 : '';
+  // String baseUrl = baseUrlRemote;
+  String baseUrl = kReleaseMode
+      ? baseUrlRemote
+      : kIsWeb
+          ? baseUrlLocalWeb
+          : GetPlatform.isAndroid
+              ? baseUrlLocalAndroid
+              : GetPlatform.isIOS
+                  ? baseUrlLocalIos
+                  : '';
   bool _isLoading = false;
   bool blockRequest = false;
   final _defaultHeader = {

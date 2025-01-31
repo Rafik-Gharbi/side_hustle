@@ -15,6 +15,7 @@ import '../../../services/tutorials/transactions_tutorial.dart';
 import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
+import '../../../widgets/main_screen_with_bottom_navigation.dart';
 import '../../../widgets/overflowed_text_with_tooltip.dart';
 import 'transactions_controller.dart';
 
@@ -24,17 +25,18 @@ class TransactionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasFinishedChatTutorial = SharedPreferencesService.find.get(hasFinishedTransactionsTutorialKey) == 'true';
     RxBool hasOpenedTutorial = false.obs;
     return HoldInSafeArea(
       child: GetBuilder<TransactionsController>(
         initState: (state) => Helper.waitAndExecute(() => state.controller != null && !(state.controller?.isLoading.value ?? true), () {
+          final hasFinishedChatTutorial = SharedPreferencesService.find.get(hasFinishedTransactionsTutorialKey) == 'true';
           if (!hasFinishedChatTutorial &&
               Get.currentRoute == routeName &&
               !hasOpenedTutorial.value &&
               state.controller!.transactions.isNotEmpty &&
               state.controller!.targets.isNotEmpty) {
             hasOpenedTutorial.value = true;
+            MainScreenWithBottomNavigation.isOnTutorial.value = true;
             TutorialCoachMark(
               targets: state.controller!.targets,
               colorShadow: kNeutralOpacityColor,
@@ -56,8 +58,9 @@ class TransactionsScreen extends StatelessWidget {
               ),
               onSkip: () {
                 if (TransactionsTutorial.notShowAgain.value) {
-                  SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                  SharedPreferencesService.find.add(hasFinishedTransactionsTutorialKey, 'true');
                 }
+                MainScreenWithBottomNavigation.isOnTutorial.value = false;
                 hasOpenedTutorial.value = false;
                 return true;
               },

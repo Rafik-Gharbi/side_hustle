@@ -15,6 +15,7 @@ import '../services/tutorials/categories_tutorial.dart';
 import 'custom_buttons.dart';
 import 'custom_text_field.dart';
 import 'loading_card_effect.dart';
+import 'main_screen_with_bottom_navigation.dart';
 
 class CategoriesBottomsheet extends StatefulWidget {
   final void Function(List<Category> category) onSelectCategory;
@@ -52,13 +53,14 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
         setState(() {});
       },
     );
-    hasFinishedCategoryTutorial = SharedPreferencesService.find.get(hasFinishedCategoryTutorialKey) == 'true';
     Future.delayed(Durations.extralong2, () {
+      hasFinishedCategoryTutorial = SharedPreferencesService.find.get(hasFinishedCategoryTutorialKey) == 'true';
       if (!hasFinishedCategoryTutorial) {
         CategoriesTutorial.showTutorial();
         Helper.waitAndExecute(() => CategoriesTutorial.targets.isNotEmpty && !isLoading.value, () {
           if (!hasOpenedTutorial) {
             setState(() => hasOpenedTutorial = true);
+            MainScreenWithBottomNavigation.isOnTutorial.value = true;
             TutorialCoachMark(
               targets: CategoriesTutorial.targets,
               colorShadow: kNeutralOpacityColor,
@@ -80,8 +82,9 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
               ),
               onSkip: () {
                 if (CategoriesTutorial.notShowAgain.value) {
-                  SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                  SharedPreferencesService.find.add(hasFinishedCategoryTutorialKey, 'true');
                 }
+                MainScreenWithBottomNavigation.isOnTutorial.value = false;
                 setState(() => hasOpenedTutorial = false);
                 return true;
               },
@@ -184,6 +187,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                       CustomTextField(
                         key: CategoriesTutorial.searchFieldKey,
                         hintText: 'search_category'.tr,
+                        outlinedBorder: true,
                         onChanged: (value) => Helper.onSearchDebounce(() => filterCategories(value)),
                       ),
                       const SizedBox(height: Paddings.regular),

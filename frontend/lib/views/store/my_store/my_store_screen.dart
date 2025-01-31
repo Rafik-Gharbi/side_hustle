@@ -24,6 +24,7 @@ import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
+import '../../../widgets/main_screen_with_bottom_navigation.dart';
 import '../../../widgets/service_card.dart';
 import '../../profile/profile_screen/profile_controller.dart';
 import '../../review/all_reviews.dart';
@@ -38,14 +39,15 @@ class MyStoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasFinishedCreateStoreTutorial = SharedPreferencesService.find.get(hasFinishedCreateStoreTutorialKey) == 'true';
     RxBool hasOpenedTutorial = false.obs;
     return HoldInSafeArea(
       child: GetBuilder<MyStoreController>(
         init: MyStoreController(store: store),
         initState: (state) => Helper.waitAndExecute(() => state.controller != null && !(state.controller?.isLoading.value ?? true), () {
+          final hasFinishedCreateStoreTutorial = SharedPreferencesService.find.get(hasFinishedCreateStoreTutorialKey) == 'true';
           if (!hasFinishedCreateStoreTutorial && Get.currentRoute == routeName && !hasOpenedTutorial.value && state.controller!.targets.isNotEmpty) {
             hasOpenedTutorial.value = true;
+            MainScreenWithBottomNavigation.isOnTutorial.value = true;
             TutorialCoachMark(
               targets: state.controller!.targets,
               colorShadow: kNeutralOpacityColor,
@@ -67,8 +69,9 @@ class MyStoreScreen extends StatelessWidget {
               ),
               onSkip: () {
                 if (CreateStoreTutorial.notShowAgain.value) {
-                  SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                  SharedPreferencesService.find.add(hasFinishedCreateStoreTutorialKey, 'true');
                 }
+                MainScreenWithBottomNavigation.isOnTutorial.value = false;
                 hasOpenedTutorial.value = false;
                 return true;
               },

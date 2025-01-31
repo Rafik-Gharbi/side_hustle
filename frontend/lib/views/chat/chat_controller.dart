@@ -81,7 +81,7 @@ class ChatController extends GetxController {
     }
     // Join the chat room when selecting a discussion
     if (selectedChatBubble != null) {
-      if (Get.currentRoute != MessagesScreen.routeName) {
+      if (Get.currentRoute != MessagesScreen.routeName && userChatPropertiesOriginal.length > 1) {
         Get.toNamed(
           MessagesScreen.routeName,
           arguments: searchDiscussionsController.text.isNotEmpty ? searchDiscussionsController.text : null,

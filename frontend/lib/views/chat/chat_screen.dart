@@ -23,11 +23,11 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasFinishedChatTutorial = SharedPreferencesService.find.get(hasFinishedChatTutorialKey) == 'true';
     bool hasOpenedTutorial = false;
     return GetBuilder<ChatController>(
       builder: (controller) => Obx(
         () {
+          final hasFinishedChatTutorial = SharedPreferencesService.find.get(hasFinishedChatTutorialKey) == 'true';
           if (!hasFinishedChatTutorial &&
               MainAppController.find.isChatScreen &&
               !hasOpenedTutorial &&
@@ -57,7 +57,7 @@ class ChatScreen extends StatelessWidget {
               ),
               onSkip: () {
                 if (MainScreenWithBottomNavigation.notShowAgain.value) {
-                  SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                  SharedPreferencesService.find.add(hasFinishedChatTutorialKey, 'true');
                 }
                 MainScreenWithBottomNavigation.isOnTutorial.value = false;
                 return true;

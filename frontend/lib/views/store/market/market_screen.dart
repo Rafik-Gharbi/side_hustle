@@ -25,7 +25,6 @@ class MarketScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasFinishedMarketTutorial = SharedPreferencesService.find.get(hasFinishedMarketTutorialKey) == 'true';
     bool hasOpenedTutorial = false;
     return GetBuilder<MarketController>(
       initState: (state) => Helper.waitAndExecute(
@@ -37,6 +36,7 @@ class MarketScreen extends StatelessWidget {
       ),
       builder: (controller) => Obx(
         () {
+          final hasFinishedMarketTutorial = SharedPreferencesService.find.get(hasFinishedMarketTutorialKey) == 'true';
           if (!hasFinishedMarketTutorial && MainAppController.find.isMarketScreen && !hasOpenedTutorial && controller.targets.isNotEmpty && !controller.isLoading.value) {
             hasOpenedTutorial = true;
             MainScreenWithBottomNavigation.isOnTutorial.value = true;

@@ -130,7 +130,7 @@ const getMyRequestRequiredActionsCount = async (userId) => {
 const getTaskHistoryRequiredActionsCount = async (userId) => {
   let reservationList = await Reservation.findAll({
     where: {
-      user_id: userId,
+      provider_id: userId,
       task_id: { [Op.ne]: null },
       status: { [Op.ne]: "pending" },
     },
@@ -248,7 +248,7 @@ async function fetchUserReservation(userId, status = undefined) {
 
   let reservationList = await Reservation.findAll({
     where: {
-      provider_id: userFound.id,
+      [Op.or]: [{ user_id: userFound.id }, { provider_id: userFound.id }],
       status: status ?? null,
       task_id: { [Op.ne]: null },
     },

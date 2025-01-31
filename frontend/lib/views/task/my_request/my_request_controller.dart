@@ -53,7 +53,7 @@ class MyRequestController extends GetxController {
     isEndReservationList = false;
     isEndTaskList = false;
     await _fetchTaskRequest();
-    if (Get.arguments?['serviceId'] != null) highlightedTask = myTaskList.cast<Task?>().singleWhere((element) => element?.id == Get.arguments['serviceId'], orElse: () => null);
+    if (Get.arguments?['taskId'] != null) highlightedTask = myTaskList.cast<Task?>().singleWhere((element) => element?.id == Get.arguments['taskId'], orElse: () => null);
     if (Get.arguments?['bookingId'] != null) {
       await _fetchReservationRequest();
       highlightedReservation = myReservationList.cast<Reservation?>().singleWhere((element) => element?.id == Get.arguments['bookingId'], orElse: () => null);

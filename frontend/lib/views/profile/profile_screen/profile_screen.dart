@@ -34,7 +34,6 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasFinishedProfileTutorial = SharedPreferencesService.find.get(hasFinishedProfileTutorialKey) == 'true';
     RxBool hasOpenedTutorial = false.obs;
     return GetBuilder<AuthenticationService>(
       builder: (authService) => GetBuilder<ProfileController>(
@@ -43,6 +42,7 @@ class ProfileScreen extends StatelessWidget {
         initState: (state) => Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()),
         builder: (controller) => Obx(
           () {
+            final hasFinishedProfileTutorial = SharedPreferencesService.find.get(hasFinishedProfileTutorialKey) == 'true';
             if (!hasFinishedProfileTutorial &&
                 MainAppController.find.isProfileScreen &&
                 !hasOpenedTutorial.value &&
@@ -78,7 +78,8 @@ class ProfileScreen extends StatelessWidget {
                     : null,
                 onSkip: () {
                   if (MainScreenWithBottomNavigation.notShowAgain.value) {
-                    SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                    SharedPreferencesService.find.add(hasFinishedProfileTutorialKey, 'true');
+                    Future.delayed(Durations.medium4, () => MainScreenWithBottomNavigation.notShowAgain.value = false);
                   }
                   MainScreenWithBottomNavigation.isOnTutorial.value = false;
                   return true;
@@ -342,6 +343,7 @@ class ProfileScreen extends StatelessWidget {
                                                           onConfirm: AuthenticationService.find.logout,
                                                         ),
                                                       ),
+                                                      const SizedBox(height: Paddings.exceptional),
                                                     ],
                                                   ),
                                                 ),

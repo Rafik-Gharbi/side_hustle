@@ -102,7 +102,7 @@ class NotificationsController extends GetxController {
       case NotificationType.reservation:
         Future.delayed(const Duration(milliseconds: 600), () {
           if (decodedAction?['isOwner'] != null && (decodedAction?['isOwner'] as bool)) {
-            Get.toNamed(MyRequestScreen.routeName, arguments: decodedAction?['taskId']);
+            Get.toNamed(MyRequestScreen.routeName, arguments: {'taskId': decodedAction?['taskId']});
           } else {
             Get.toNamed(MyOffersScreen.routeName, arguments: decodedAction?['reservationId']);
           }

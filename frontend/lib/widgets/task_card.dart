@@ -74,18 +74,19 @@ class TaskCard extends StatelessWidget {
     bool highlightTile = false;
     bool isInitialized = false;
     return StatefulBuilder(builder: (_, setState) {
-      if (context.mounted && !isInitialized && highlightTile != isHighlighted) Future.delayed(const Duration(milliseconds: 600), () => context.mounted ? setState(() => highlightTile = isHighlighted) : null);
+      if (context.mounted && !isInitialized && highlightTile != isHighlighted) {
+        Future.delayed(const Duration(milliseconds: 600), () => context.mounted ? setState(() => highlightTile = isHighlighted) : null);
+      }
       isInitialized = true;
-      return Padding(
-        padding: EdgeInsets.only(bottom: dense ? 0 : Paddings.regular),
-        child: DecoratedBox(
-          decoration: BoxDecoration(color: backgroundColor, borderRadius: smallRadius),
+      return DecoratedBox(
+        decoration: BoxDecoration(color: highlightTile ? kPrimaryOpacityColor : backgroundColor, borderRadius: smallRadius),
+        child: Padding(
+          padding: EdgeInsets.only(bottom: dense ? 0 : Paddings.regular),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
             shape: dense
                 ? const OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
                 : RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
-            tileColor: highlightTile ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
             splashColor: kPrimaryOpacityColor,
             onTap: openContainer,
             title: Row(

@@ -57,76 +57,84 @@ class _ReportUserDialogState extends State<ReportUserDialog> {
   SizedBox buildContent(bool isMobile) => SizedBox(
         width: isMobile ? Get.width : 400,
         child: Padding(
-          padding: EdgeInsets.all(isMobile ? Paddings.extraLarge : Paddings.large),
-          child: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.all(Paddings.large),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('report'.tr, style: AppFonts.x18Bold),
-                      CustomButtons.icon(icon: const Icon(Icons.close), onPressed: () => Helper.goBack()),
-                    ],
-                  ),
-                  const SizedBox(height: Paddings.regular),
-                  Text('why_reporting'.tr, style: AppFonts.x14Bold),
-                  const SizedBox(height: Paddings.regular),
-                  Text('reporting_msg'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-                  const SizedBox(height: Paddings.large),
-                  ListView(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: List.generate(
-                      ReportReasons.values.length,
-                      (index) => RadioListTile<ReportReasons>(
-                        title: Text(ReportReasons.values[index].value.tr, style: AppFonts.x14Regular),
-                        value: ReportReasons.values[index],
-                        groupValue: _selectedReportReasons,
-                        onChanged: (value) => setState(() => _selectedReportReasons = value),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: Paddings.large),
-                  Text('reason'.tr, style: AppFonts.x14Bold),
-                  const SizedBox(height: Paddings.regular),
-                  Text('help_us_understand'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-                  const SizedBox(height: Paddings.extraLarge),
-                  CustomTextField(
-                    hintText: 'write_an_explanation'.tr,
-                    fieldController: explanationController,
-                    isTextArea: true,
-                    outlinedBorder: true,
-                    validator: _selectedReportReasons == ReportReasons.other ? FormValidators.notEmptyOrNullValidator : null,
-                  ),
-                  const SizedBox(height: Paddings.exceptional),
-                  CustomButtons.elevatePrimary(
-                    title: 'submit_report'.tr,
-                    loading: isLoading,
-                    width: isMobile ? Get.width : 400,
-                    disabled: _selectedReportReasons == null,
-                    onPressed: () {
-                      if (formKey.currentState?.validate() ?? false) {
-                        isLoading.value = true;
-                        ParamsRepository.find.reportUser(
-                          ReportDTO(
-                            reportedUser: widget.user,
-                            user: AuthenticationService.find.jwtUserData,
-                            task: widget.task,
-                            service: widget.service,
-                            reasons: _selectedReportReasons!,
-                            explanation: explanationController.text,
-                          ),
-                        ).then((value) => isLoading.value = false);
-                      }
-                    },
-                  ),
-                  const SizedBox(height: Paddings.exceptional),
+                  Text('report'.tr, style: AppFonts.x18Bold),
+                  CustomButtons.icon(icon: const Icon(Icons.close), onPressed: () => Helper.goBack()),
                 ],
               ),
-            ),
+              const SizedBox(height: Paddings.regular),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('why_reporting'.tr, style: AppFonts.x14Bold),
+                        const SizedBox(height: Paddings.regular),
+                        Text('reporting_msg'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                        const SizedBox(height: Paddings.large),
+                        ListView(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: List.generate(
+                            ReportReasons.values.length,
+                            (index) => RadioListTile<ReportReasons>(
+                              title: Text(ReportReasons.values[index].value.tr, style: AppFonts.x14Regular),
+                              value: ReportReasons.values[index],
+                              groupValue: _selectedReportReasons,
+                              onChanged: (value) => setState(() => _selectedReportReasons = value),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: Paddings.large),
+                        Text('reason'.tr, style: AppFonts.x14Bold),
+                        const SizedBox(height: Paddings.regular),
+                        Text('help_us_understand'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
+                        const SizedBox(height: Paddings.extraLarge),
+                        CustomTextField(
+                          hintText: 'write_an_explanation'.tr,
+                          fieldController: explanationController,
+                          isTextArea: true,
+                          outlinedBorder: true,
+                          validator: _selectedReportReasons == ReportReasons.other ? FormValidators.notEmptyOrNullValidator : null,
+                        ),
+                        const SizedBox(height: Paddings.exceptional),
+                        CustomButtons.elevatePrimary(
+                          title: 'submit_report'.tr,
+                          loading: isLoading,
+                          width: isMobile ? Get.width : 400,
+                          disabled: _selectedReportReasons == null,
+                          onPressed: () {
+                            if (formKey.currentState?.validate() ?? false) {
+                              isLoading.value = true;
+                              ParamsRepository.find
+                                  .reportUser(
+                                    ReportDTO(
+                                      reportedUser: widget.user,
+                                      user: AuthenticationService.find.jwtUserData,
+                                      task: widget.task,
+                                      service: widget.service,
+                                      reasons: _selectedReportReasons!,
+                                      explanation: explanationController.text,
+                                    ),
+                                  )
+                                  .then((value) => isLoading.value = false);
+                            }
+                          },
+                        ),
+                        const SizedBox(height: Paddings.exceptional),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       );

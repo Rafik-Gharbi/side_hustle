@@ -41,47 +41,54 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasFinishedHomeTutorial = SharedPreferencesService.find.get(hasFinishedHomeTutorialKey) == 'true';
     bool hasOpenedTutorial = false;
+    bool hasFinishedHomeTutorial = false;
     return GetBuilder<HomeController>(
-      initState: (state) => Helper.waitAndExecute(
-        () => state.controller != null && !(state.controller?.isLoading.value ?? true),
-        () {
-          FirebaseAnalytics.instance.logScreenView(screenName: 'HomeScreen');
-          if (!hasFinishedHomeTutorial && MainAppController.find.isHomeScreen && !hasOpenedTutorial && state.controller!.targets.isNotEmpty && !state.controller!.isLoading.value) {
-            hasOpenedTutorial = true;
-            MainScreenWithBottomNavigation.isOnTutorial.value = true;
-            TutorialCoachMark(
-              targets: state.controller!.targets,
-              colorShadow: kNeutralOpacityColor,
-              textSkip: 'skip'.tr,
-              additionalWidget: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
-                child: Obx(
-                  () => CheckboxListTile(
-                    dense: true,
-                    checkColor: kNeutralColor100,
-                    contentPadding: EdgeInsets.zero,
-                    side: const BorderSide(color: kNeutralColor100),
-                    title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
-                    value: MainScreenWithBottomNavigation.notShowAgain.value,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (bool? value) => MainScreenWithBottomNavigation.notShowAgain.value = value ?? false,
+      initState: (state) {
+        FirebaseAnalytics.instance.logScreenView(screenName: 'HomeScreen');
+        Helper.waitAndExecute(
+          () => state.controller != null && !(state.controller?.isLoading.value ?? true) && state.controller!.governorateTasks.isNotEmpty,
+          () {
+            hasFinishedHomeTutorial = SharedPreferencesService.find.get(hasFinishedHomeTutorialKey) == 'true';
+            if (!hasFinishedHomeTutorial &&
+                MainAppController.find.isHomeScreen &&
+                !hasOpenedTutorial &&
+                state.controller!.targets.isNotEmpty &&
+                !state.controller!.isLoading.value) {
+              hasOpenedTutorial = true;
+              MainScreenWithBottomNavigation.isOnTutorial.value = true;
+              TutorialCoachMark(
+                targets: state.controller!.targets,
+                colorShadow: kNeutralOpacityColor,
+                textSkip: 'skip'.tr,
+                additionalWidget: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
+                  child: Obx(
+                    () => CheckboxListTile(
+                      dense: true,
+                      checkColor: kNeutralColor100,
+                      contentPadding: EdgeInsets.zero,
+                      side: const BorderSide(color: kNeutralColor100),
+                      title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
+                      value: MainScreenWithBottomNavigation.notShowAgain.value,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      onChanged: (bool? value) => MainScreenWithBottomNavigation.notShowAgain.value = value ?? false,
+                    ),
                   ),
                 ),
-              ),
-              onSkip: () {
-                if (MainScreenWithBottomNavigation.notShowAgain.value) {
-                  SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
-                }
-                MainScreenWithBottomNavigation.isOnTutorial.value = false;
-                return true;
-              },
-              onFinish: () => SharedPreferencesService.find.add(hasFinishedHomeTutorialKey, 'true'),
-            ).show(context: context);
-          }
-        },
-      ),
+                onSkip: () {
+                  if (MainScreenWithBottomNavigation.notShowAgain.value) {
+                    SharedPreferencesService.find.add(hasFinishedHomeTutorialKey, 'true');
+                  }
+                  MainScreenWithBottomNavigation.isOnTutorial.value = false;
+                  return true;
+                },
+                onFinish: () => SharedPreferencesService.find.add(hasFinishedHomeTutorialKey, 'true'),
+              ).show(context: context);
+            }
+          },
+        );
+      },
       didChangeDependencies: (state) => MainAppController.find.isHomeScreen ? Helper.waitAndExecute(() => state.controller != null, () => state.controller!.init()) : {},
       builder: (controller) {
         if (hasFinishedHomeTutorial) {
@@ -263,6 +270,7 @@ class HomeScreen extends StatelessWidget {
                     'popular_categories'.tr,
                     onSeeMore: () => Get.bottomSheet(
                       DraggableBottomsheet(
+                        withCloseBtn: true,
                         child: CategoriesBottomsheet(
                           onSelectCategory: (category) {
                             Helper.goBack();
@@ -374,37 +382,34 @@ class HomeScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: Paddings.large),
                           child: DecoratedBox(
                             decoration: BoxDecoration(color: kAccentColor.withOpacity(0.4), borderRadius: smallRadius),
-                            child: SizedBox(
-                              height: 90,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Icon(Icons.warning_amber_outlined, color: kErrorColor),
-                                        CustomButtons.text(
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              const Icon(Icons.location_searching_outlined, color: kBlackColor),
-                                              const SizedBox(width: Paddings.regular),
-                                              Text('share_your_location'.tr, style: AppFonts.x14Bold),
-                                            ],
-                                          ),
-                                          onPressed: () async {
-                                            await AuthenticationService.find.getUserCoordinates(withSave: true);
-                                            controller.update();
-                                          },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: Paddings.regular).copyWith(bottom: Paddings.regular),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Icon(Icons.warning_amber_outlined, color: kErrorColor),
+                                      CustomButtons.text(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(Icons.location_searching_outlined, color: kBlackColor),
+                                            const SizedBox(width: Paddings.regular),
+                                            Text('share_your_location'.tr, style: AppFonts.x14Bold),
+                                          ],
                                         ),
-                                        const SizedBox(),
-                                      ],
-                                    ),
-                                    Text('share_location_msg'.tr, style: AppFonts.x12Regular, textAlign: TextAlign.justify),
-                                  ],
-                                ),
+                                        onPressed: () async {
+                                          await AuthenticationService.find.getUserCoordinates(withSave: true);
+                                          controller.update();
+                                        },
+                                      ),
+                                      const SizedBox(),
+                                    ],
+                                  ),
+                                  Text('share_location_msg'.tr, style: AppFonts.x12Regular, textAlign: TextAlign.justify),
+                                ],
                               ),
                             ),
                           ),

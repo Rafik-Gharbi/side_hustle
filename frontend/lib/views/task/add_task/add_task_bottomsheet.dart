@@ -21,6 +21,7 @@ import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/draggable_bottomsheet.dart';
 import '../../../widgets/governorates_bottomsheet.dart';
+import '../../../widgets/main_screen_with_bottom_navigation.dart';
 import 'add_task_controller.dart';
 
 class AddTaskBottomsheet extends StatelessWidget {
@@ -31,14 +32,15 @@ class AddTaskBottomsheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasFinishedAddTaskTutorial = SharedPreferencesService.find.get(hasFinishedAddTaskTutorialKey) == 'true';
     RxBool hasOpenedTutorial = false.obs;
     return GetBuilder<AddTaskController>(
       init: AddTaskController(task: task),
       initState: (state) {
         Helper.waitAndExecute(() => state.controller != null, () {
+          final hasFinishedAddTaskTutorial = SharedPreferencesService.find.get(hasFinishedAddTaskTutorialKey) == 'true';
           if (!hasFinishedAddTaskTutorial && !hasOpenedTutorial.value && state.controller!.targets.isNotEmpty) {
             hasOpenedTutorial.value = true;
+            MainScreenWithBottomNavigation.isOnTutorial.value = true;
             TutorialCoachMark(
               targets: state.controller!.targets,
               colorShadow: kNeutralOpacityColor,
@@ -63,8 +65,9 @@ class AddTaskBottomsheet extends StatelessWidget {
               ),
               onSkip: () {
                 if (AddTaskTutorial.notShowAgain.value) {
-                  SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                  SharedPreferencesService.find.add(hasFinishedAddTaskTutorialKey, 'true');
                 }
+                MainScreenWithBottomNavigation.isOnTutorial.value = false;
                 hasOpenedTutorial.value = false;
                 return true;
               },

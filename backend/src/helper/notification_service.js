@@ -33,8 +33,8 @@ class NotificationService {
   async sendNotification(userId, titleKey, bodyKey, type, action, data = {}) {
     try {
       const user = await User.findByPk(userId);
-      const title = i18n.__({ phrase: titleKey, locale: user.language }, data);
-      const body = i18n.__({ phrase: bodyKey, locale: user.language }, data);
+      const title = i18n.__({ phrase: titleKey, locale: user?.language ?? "en" }, data);
+      const body = i18n.__({ phrase: bodyKey, locale: user?.language ?? "en" }, data);
       let actionEncoded;
       if (action) actionEncoded = JSON.stringify(action);
       // Save notification to database
@@ -46,7 +46,7 @@ class NotificationService {
         action: actionEncoded,
       });
 
-      if (user && user.fcmToken) {
+      if (user?.fcmToken) {
         // Send notification via Firebase Admin
         sendFirebaseNotification([user.fcmToken], title, body, actionEncoded);
       } else {

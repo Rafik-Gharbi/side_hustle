@@ -19,6 +19,7 @@ import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_standard_scaffold.dart';
 import '../../../widgets/hold_in_safe_area.dart';
 import '../../../widgets/loading_request.dart';
+import '../../../widgets/main_screen_with_bottom_navigation.dart';
 import 'balance_controller.dart';
 import 'components/add_bank_number_bottomsheet.dart';
 import 'components/deposit_bottomsheet.dart';
@@ -30,15 +31,16 @@ class BalanceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasFinishedBalanceTutorial = SharedPreferencesService.find.get(hasFinishedBalanceTutorialKey) == 'true';
     RxBool hasOpenedTutorial = false.obs;
     return HoldInSafeArea(
       child: GetBuilder<BalanceController>(
         initState: (state) {
           FirebaseAnalytics.instance.logScreenView(screenName: 'BalanceScreen');
           Helper.waitAndExecute(() => state.controller != null && !(state.controller?.isLoading.value ?? true), () {
+            final hasFinishedBalanceTutorial = SharedPreferencesService.find.get(hasFinishedBalanceTutorialKey) == 'true';
             if (!hasFinishedBalanceTutorial && Get.currentRoute == routeName && !hasOpenedTutorial.value && state.controller!.targets.isNotEmpty) {
               hasOpenedTutorial.value = true;
+              MainScreenWithBottomNavigation.isOnTutorial.value = true;
               TutorialCoachMark(
                 targets: state.controller!.targets,
                 colorShadow: kNeutralOpacityColor,
@@ -60,8 +62,9 @@ class BalanceScreen extends StatelessWidget {
                 ),
                 onSkip: () {
                   if (BalanceTutorial.notShowAgain.value) {
-                    SharedPreferencesService.find.add(hasFinishedMarketTutorialKey, 'true');
+                    SharedPreferencesService.find.add(hasFinishedBalanceTutorialKey, 'true');
                   }
+                  MainScreenWithBottomNavigation.isOnTutorial.value = false;
                   hasOpenedTutorial.value = false;
                   return true;
                 },
