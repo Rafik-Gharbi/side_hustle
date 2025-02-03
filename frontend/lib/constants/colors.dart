@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../services/theme/theme_service.dart';
 
 const Color kPrimaryColor = Color(0xFF0074FE);
 const Color kPrimaryColorWhiter = Color.fromARGB(255, 119, 180, 165);
@@ -11,14 +14,22 @@ const Color kAccentDarkColor = Color.fromARGB(255, 106, 62, 19); // Colors.orang
 const Color kErrorColor = Color(0xFFE21200);
 Color kErrorLightColor = Colors.red.shade600;
 const Color kRatingColor = Color(0xFFFDCC0D);
-const Color kNeutralColor = Color(0xFF252535);
-const Color kNeutralLightColor = Color(0xFFF4F4F4); // Colors.grey.shade200;
-Color kNeutralLightOpacityColor = kNeutralLightColor.withOpacity(0.7);
-Color kNeutralOpacityColor = kNeutralColor.withOpacity(0.7);
-const Color kBlackColor = Colors.black;
+const Color _kNeutralColor = Color(0xFF252535);
+const Color _kNeutralLightColor = Color(0xFFE4E4E4);
+const Color _kNeutralLightDarkColor = Color.fromARGB(255, 97, 97, 102);
+const Color _kBlackColor = Colors.black;
+const Color _kBGDarkColor = Color.fromARGB(255, 30, 30, 30);
+const Color _kNeutralColor100 = Colors.white;
 const Color kDisabledColor = Colors.grey;
-const Color kNeutralColor100 = Colors.white;
 const Color kConfirmedColor = Color(0xFF34A853);
 const Color kSelectedDarkColor = Color.fromARGB(255, 0, 114, 208);
 const Color kSelectedColor = Color(0xff008BF9);
 const Color kSelectedLightColor = Color.fromARGB(255, 49, 162, 255);
+
+Color get kNeutralOpacityColor => kNeutralColor.withOpacity(0.7);
+Color get kNeutralLightOpacityColor => kNeutralLightColor.withOpacity(0.7);
+Color get kNeutralLightColor => Get.isRegistered<ThemeService>() && ThemeService.find.isDark ? _kNeutralLightDarkColor : _kNeutralLightColor; // Colors.grey.shade200;
+Color get kNeutralColor => Get.isRegistered<ThemeService>() && ThemeService.find.isDark ? _kNeutralLightColor : _kNeutralColor;
+Color get kBlackColor => Get.isRegistered<ThemeService>() && ThemeService.find.isDark ? _kNeutralColor100 : _kBlackColor;
+Color get kBlackReversedColor => Get.isRegistered<ThemeService>() && ThemeService.find.isDark ? _kBlackColor : _kNeutralColor100;
+Color get kNeutralColor100 => Get.isRegistered<ThemeService>() && ThemeService.find.isDark ? _kBGDarkColor : _kNeutralColor100;

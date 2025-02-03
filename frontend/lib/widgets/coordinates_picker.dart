@@ -87,7 +87,7 @@ class _CoordinatesPickerState extends State<CoordinatesPicker> {
                 child: CircleAvatar(
                   backgroundColor: kPrimaryColor,
                   radius: 15,
-                  child: Center(child: CustomButtons.icon(icon: const Icon(Icons.close, color: kNeutralColor100, size: 18), onPressed: Get.back)),
+                  child: Center(child: CustomButtons.icon(icon: Icon(Icons.close, color: kNeutralColor100, size: 18), onPressed: Get.back)),
                 ),
               )
             ],
@@ -157,7 +157,7 @@ class _CoordinatesPickerState extends State<CoordinatesPicker> {
                   children: [
                     Text('keep_location_privacy'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
                     const SizedBox(width: Paddings.small),
-                    Tooltip(message: 'keep_location_privacy_msg'.tr, child: const Icon(Icons.info_outline, size: 14, color: kNeutralColor)),
+                    Tooltip(message: 'keep_location_privacy_msg'.tr, child: Icon(Icons.info_outline, size: 14, color: kNeutralColor)),
                   ],
                 ),
                 Transform.scale(

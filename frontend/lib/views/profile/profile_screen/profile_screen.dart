@@ -58,6 +58,7 @@ class ProfileScreen extends StatelessWidget {
                 targets: controller.targets,
                 colorShadow: kNeutralOpacityColor,
                 textSkip: 'skip'.tr,
+                textStyleSkip: AppFonts.x12Bold.copyWith(color: kBlackReversedColor),
                 additionalWidget: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
                   child: Obx(
@@ -65,7 +66,7 @@ class ProfileScreen extends StatelessWidget {
                       dense: true,
                       checkColor: kNeutralColor100,
                       contentPadding: EdgeInsets.zero,
-                      side: const BorderSide(color: kNeutralColor100),
+                      side: BorderSide(color: kNeutralColor100),
                       title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
                       value: MainScreenWithBottomNavigation.notShowAgain.value,
                       controlAffinity: ListTileControlAffinity.leading,
@@ -89,7 +90,7 @@ class ProfileScreen extends StatelessWidget {
             }
             return MainAppController.find.isProfileScreen
                 ? DecoratedBox(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [kNeutralLightColor, kNeutralColor100],
                         begin: Alignment.topCenter,
@@ -118,7 +119,7 @@ class ProfileScreen extends StatelessWidget {
                                               children: [
                                                 Buildables.userImage(onEdit: controller.uploadFilePicture),
                                                 if (controller.profilePicture != null && controller.isUpdatingProfile)
-                                                  const Positioned.fill(child: Center(child: CircularProgressIndicator(color: kNeutralColor100)))
+                                                  Positioned.fill(child: Center(child: CircularProgressIndicator(color: kNeutralColor100)))
                                               ],
                                             ),
                                             const SizedBox(height: Paddings.large),
@@ -188,7 +189,7 @@ class ProfileScreen extends StatelessWidget {
                                       ),
                                       const SizedBox(height: Paddings.exceptional),
                                       DecoratedBox(
-                                        decoration: const BoxDecoration(color: kNeutralColor100, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+                                        decoration: BoxDecoration(color: kNeutralColor100, borderRadius: const BorderRadius.vertical(top: Radius.circular(30))),
                                         child: SizedBox(
                                           width: Get.width,
                                           child: Padding(

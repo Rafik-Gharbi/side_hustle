@@ -107,6 +107,10 @@ cron.schedule("0 0 1 * *", async () => {
         where: {
           user_id: user.id,
           status: "completed",
+          [Op.or]: [
+            { task_id: { [Op.ne]: null } },
+            { service_id: { [Op.ne]: null } },
+          ],
           updatedAt: {
             // We use `updatedAt` to check when the status changed to "completed"
             [Op.between]: [startOfPrevMonth, endOfPrevMonth],

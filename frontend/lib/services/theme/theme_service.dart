@@ -7,11 +7,13 @@ import '../shared_preferences.dart';
 
 class ThemeService {
   static ThemeService get find => Get.find<ThemeService>();
-  Rx<ThemeMode> currentTheme = ThemeMode.dark.obs;
+  Rx<ThemeMode> currentTheme = ThemeMode.light.obs;
 
   ThemeService() {
     init();
   }
+
+  bool get isDark => currentTheme.value == ThemeMode.dark;
 
   Future<void> init() async {
     await Helper.waitAndExecute(
@@ -24,7 +26,7 @@ class ThemeService {
   }
 
   void toggleTheme() {
-    Helper.snackBar(message: 'feature_not_available_yet'.tr);
+    // Helper.snackBar(message: 'feature_not_available_yet'.tr);
     if (currentTheme.value == ThemeMode.dark) {
       setTheme(ThemeMode.light);
     } else {
@@ -35,8 +37,7 @@ class ThemeService {
   Future<void> setTheme(ThemeMode theme) async {
     currentTheme.value = theme;
     Get.changeThemeMode(theme);
-    // AppColor().updateTheme(theme);
     SharedPreferencesService.find.add(currentThemeKey, theme == ThemeMode.dark ? 'dark' : 'light');
-    Future.delayed(const Duration(milliseconds: 300), () => Get.forceAppUpdate());
+    Future.delayed(Durations.long1, () => Get.forceAppUpdate());
   }
 }

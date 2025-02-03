@@ -45,7 +45,6 @@ class User {
   String? bio;
   String? referralCode;
   LatLng? coordinates;
-  bool hasSharedPosition;
   Gender? gender;
   VerifyIdentityStatus isVerified;
   bool? isMailVerified;
@@ -76,7 +75,6 @@ class User {
     this.role,
     this.picture,
     this.isMailVerified,
-    this.hasSharedPosition = false,
     this.isVerified = VerifyIdentityStatus.none,
     this.rating = 0,
     this.balance = 0,
@@ -90,6 +88,7 @@ class User {
   });
 
   int get totalCoins => availableCoins + availablePurchasedCoins;
+  bool get hasSharedPosition => coordinates != null;
   bool get isProfileCompleted => email != null && name != null && phone != null && birthdate != null && (isMailVerified ?? false) && governorate != null && gender != null;
 
   factory User.fromToken(Map<String, dynamic> payload) => User(
@@ -100,7 +99,7 @@ class User {
         baseCoins: payload['coins'],
         availableCoins: payload['availableCoins'],
         availablePurchasedCoins: payload['availablePurchasedCoins'],
-        hasSharedPosition: payload['hasSharedPosition'],
+        coordinates: payload['coordinates'] != null ? (payload['coordinates'] as String).fromString() : null,
         referralCode: payload['referral_code'],
         isMailVerified: payload['isMailVerified'],
         isVerified: VerifyIdentityStatus.fromString(payload['isVerified']),
@@ -117,7 +116,6 @@ class User {
         phone: json['phone_number'],
         password: json['password'],
         coordinates: json['coordinates'] != null ? (json['coordinates'] as String).fromString() : null,
-        hasSharedPosition: json['hasSharedPosition'] ?? false,
         birthdate: json['birthdate'] != null ? DateTime.parse(json['birthdate']) : null,
         createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
         gender: json['gender'] != null ? Gender.fromString(json['gender']) : null,

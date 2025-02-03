@@ -38,7 +38,7 @@ class CustomBottomsheet extends StatelessWidget {
                     children: [
                       const SizedBox(width: 40),
                       Text(title ?? '', style: AppFonts.x16Bold),
-                      const CustomButtons.icon(icon: Icon(Icons.close), onPressed: Helper.goBack),
+                      CustomButtons.icon(icon: Icon(Icons.close, color: kBlackColor), onPressed: Helper.goBack),
                     ],
                   ),
                 ),

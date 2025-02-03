@@ -218,6 +218,7 @@ exports.survey = async (req, res) => {
     await Survey.create({
       gender: req.body.gender,
       ageRange: req.body.ageRange,
+      cityFrom: req.body.cityFrom,
       employment: req.body.employment,
       usageFrequency: req.body.usageFrequency,
       internetAccess: req.body.internetAccess,
@@ -225,7 +226,9 @@ exports.survey = async (req, res) => {
       paymentMethods: req.body.paymentMethods,
       serviceOffer: req.body.serviceOffer,
       paidFor: req.body.paidFor,
-      monthlyPremium: req.body.monthlyPremium,
+      annualMarketing: req.body.annualMarketing,
+      currentlyDelegating: req.body.currentlyDelegating,
+      currentlyDelegatingWith: req.body.currentlyDelegatingWith,
       interestDelegating: req.body.interestDelegating,
       providerChallenges: req.body.providerChallenges,
       findProviders: req.body.findProviders,

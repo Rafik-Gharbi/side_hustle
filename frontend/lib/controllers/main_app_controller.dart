@@ -176,9 +176,9 @@ class MainAppController extends GetxController {
     }
     await screenLockCreate(
       context: Get.context!,
-      customizedButtonChild: isAuthenticationRequired.value ? const Icon(Icons.delete_forever, color: kNeutralColor100) : null,
-      cancelButton: const Icon(Icons.close, color: kNeutralColor100),
-      deleteButton: const Icon(Icons.backspace_outlined, color: kNeutralColor100, size: 22),
+      customizedButtonChild: isAuthenticationRequired.value ? Icon(Icons.delete_forever, color: kNeutralColor100) : null,
+      cancelButton: Icon(Icons.close, color: kNeutralColor100),
+      deleteButton: Icon(Icons.backspace_outlined, color: kNeutralColor100, size: 22),
       customizedButtonTap: () => Helper.openConfirmationDialog(
         content: 'disable_authentication_question'.tr,
         onConfirm: () {
@@ -189,7 +189,7 @@ class MainAppController extends GetxController {
         },
         onCancel: () => Helper.goBack(),
       ),
-      keyPadConfig: const KeyPadConfig(buttonConfig: KeyPadButtonConfig(buttonStyle: ButtonStyle(foregroundColor: WidgetStatePropertyAll(kNeutralColor100)))),
+      keyPadConfig: KeyPadConfig(buttonConfig: KeyPadButtonConfig(buttonStyle: ButtonStyle(foregroundColor: WidgetStatePropertyAll(kNeutralColor100)))),
       config: ScreenLockConfig(backgroundColor: kNeutralColor100.withOpacity(0.4)),
       onConfirmed: (value) {
         SharedPreferencesService.find.add(userSecretKey, value);
@@ -212,9 +212,9 @@ class MainAppController extends GetxController {
               context: Get.context!,
               correctString: SharedPreferencesService.find.get(userSecretKey) ?? '0000',
               canCancel: couldCancel,
-              cancelButton: const Icon(Icons.close, color: kNeutralColor100),
-              deleteButton: const Icon(Icons.backspace_outlined, color: kNeutralColor100, size: 22),
-              keyPadConfig: const KeyPadConfig(buttonConfig: KeyPadButtonConfig(buttonStyle: ButtonStyle(foregroundColor: WidgetStatePropertyAll(kNeutralColor100)))),
+              cancelButton: Icon(Icons.close, color: kNeutralColor100),
+              deleteButton: Icon(Icons.backspace_outlined, color: kNeutralColor100, size: 22),
+              keyPadConfig: KeyPadConfig(buttonConfig: KeyPadButtonConfig(buttonStyle: ButtonStyle(foregroundColor: WidgetStatePropertyAll(kNeutralColor100)))),
               config: ScreenLockConfig(backgroundColor: kNeutralColor100.withOpacity(0.4)),
               onUnlocked: () {
                 isAuthenticated.value = true;

@@ -72,7 +72,7 @@ class PrivacyTermsDialog extends StatelessWidget {
                                 style: AppFonts.x14Regular.copyWith(color: kPrimaryColor),
                                 recognizer: TapGestureRecognizer()..onTap = () => setState(() => isTerms = false),
                               ),
-                              const TextSpan(text: '.', style: AppFonts.x14Regular),
+                              TextSpan(text: '.', style: AppFonts.x14Regular),
                             ],
                           ),
                         ),

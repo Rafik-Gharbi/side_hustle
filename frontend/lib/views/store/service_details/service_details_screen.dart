@@ -244,7 +244,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                         loading: ReservationViewmodel.isLoading,
                         title: 'mark_service_done'.tr,
                         titleStyle: AppFonts.x14Regular,
-                        icon: const Icon(Icons.done, color: kNeutralColor100),
+                        icon: Icon(Icons.done, color: kNeutralColor100),
                         width: Get.width - 40,
                         onPressed: onMarkDone!,
                       ),

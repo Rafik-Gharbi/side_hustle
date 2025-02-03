@@ -66,7 +66,7 @@ class TicketDetails extends StatelessWidget {
         title: 'ticket_details'.tr,
         actionButton: saveRequired()
             ? CustomButtons.icon(
-                icon: const Icon(Icons.save_outlined),
+                icon: Icon(Icons.save_outlined, color: kBlackColor),
                 onPressed: () async {
                   final result = await UserRepository.find.updateSupportTicket(SupportTicket(
                     id: currentTicket.id,
@@ -255,7 +255,7 @@ class TicketDetails extends StatelessWidget {
                       ),
                       suffixIcon: CustomButtons.icon(
                         onPressed: () => sendMessage(currentTicket.id!),
-                        icon: const Icon(Icons.send, color: kNeutralColor),
+                        icon: Icon(Icons.send, color: kNeutralColor),
                         disabled: currentTicket.status == TicketStatus.closed,
                       ),
                     ),

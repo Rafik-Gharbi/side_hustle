@@ -45,6 +45,7 @@ class BalanceScreen extends StatelessWidget {
                 targets: state.controller!.targets,
                 colorShadow: kNeutralOpacityColor,
                 textSkip: 'skip'.tr,
+                textStyleSkip: AppFonts.x12Bold.copyWith(color: kBlackReversedColor),
                 additionalWidget: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
                   child: Obx(
@@ -52,7 +53,7 @@ class BalanceScreen extends StatelessWidget {
                       dense: true,
                       checkColor: kNeutralColor100,
                       contentPadding: EdgeInsets.zero,
-                      side: const BorderSide(color: kNeutralColor100),
+                      side: BorderSide(color: kNeutralColor100),
                       title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
                       value: BalanceTutorial.notShowAgain.value,
                       controlAffinity: ListTileControlAffinity.leading,
@@ -80,7 +81,7 @@ class BalanceScreen extends StatelessWidget {
               backgroundColor: kNeutralColor100,
               title: 'my_balance'.tr,
               body: DecoratedBox(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [kNeutralColor, kNeutralColor100], begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 ),
                 child: SizedBox(
@@ -248,7 +249,7 @@ class BalanceScreen extends StatelessWidget {
                           LoadingRequest(
                             isLoading: controller.isLoading,
                             child: DecoratedBox(
-                              decoration: const BoxDecoration(color: kNeutralColor100, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+                              decoration: BoxDecoration(color: kNeutralColor100, borderRadius: const BorderRadius.vertical(top: Radius.circular(30))),
                               child: SizedBox(
                                 width: Get.width,
                                 child: Padding(

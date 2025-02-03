@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -12,9 +12,10 @@ import '../../models/task.dart';
 import '../../repositories/store_repository.dart';
 import '../../repositories/task_repository.dart';
 import '../../services/authentication_service.dart';
+import '../../viewmodel/user_viewmodel.dart';
 
 class MapScreenController extends GetxController {
-  final MapController mapController = MapController();
+  AnimatedMapController? mapController;
   List<MarkerModel> markers = [];
   List<Task> tasks = [];
   List<Store> stores = [];
@@ -47,8 +48,9 @@ class MapScreenController extends GetxController {
 
   Future<void> _init() async {
     Map<String, dynamic>? result;
+    _filterModel.searchMode = UserViewmodel.searchMode;
     if (isTasks) {
-      tasks = await TaskRepository.find.filterTasks(withCoordinates: true, filter: filterModel) ?? [];
+      tasks = await TaskRepository.find.filterTasks(withCoordinates: true, filter: filterModel, limit: -1) ?? [];
       result = _calculateMidPoint(tasks.where((element) => element.coordinates != null).map((e) => e.coordinates!).toList());
       markers = tasks
           .where((element) => element.coordinates != null)
@@ -111,7 +113,7 @@ class MapScreenController extends GetxController {
     LatLng midpoint = result['midPoint'];
     double zoomLevel = calculateZoomLevel(midpoint, result['minLat'], result['maxLat'], result['minLng'], result['maxLng']);
     try {
-      mapController.move(midpoint, zoomLevel);
+      mapController!.animateTo(dest: midpoint, zoom: zoomLevel);
     } catch (e) {
       debugPrint('Error moving map camera');
     }
@@ -120,7 +122,7 @@ class MapScreenController extends GetxController {
 
   Future<void> centerOnUser() async {
     userCoordinates = await Helper.getPosition();
-    mapController.move(userCoordinates!, 14);
+    mapController!.animateTo(dest: userCoordinates!, zoom: 14);
   }
 }
 

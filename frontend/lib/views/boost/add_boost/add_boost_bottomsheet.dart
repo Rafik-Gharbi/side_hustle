@@ -121,7 +121,7 @@ class AddBoostBottomsheet extends StatelessWidget {
                           child: Text('audience_age'.tr, style: AppFonts.x15Bold),
                         ),
                         Theme(
-                          data: ThemeData(sliderTheme: const SliderThemeData(valueIndicatorColor: kNeutralColor)),
+                          data: ThemeData(sliderTheme: SliderThemeData(valueIndicatorColor: kNeutralColor)),
                           child: RangeSlider(
                             min: 18,
                             max: 65,
@@ -176,7 +176,7 @@ class AddBoostBottomsheet extends StatelessWidget {
                               ],
                             ),
                           ),
-                          leading: const Icon(Icons.calendar_today_outlined, color: kNeutralColor),
+                          leading: Icon(Icons.calendar_today_outlined, color: kNeutralColor),
                           trailing: SizedBox(
                             width: 96,
                             child: Padding(
@@ -184,11 +184,11 @@ class AddBoostBottomsheet extends StatelessWidget {
                               child: Row(
                                 children: [
                                   CustomButtons.icon(
-                                    icon: const Icon(Icons.chevron_left, color: kNeutralColor),
+                                    icon: Icon(Icons.chevron_left, color: kNeutralColor),
                                     onPressed: () => controller.endDate = controller.endDate.subtract(const Duration(days: 1)),
                                   ),
                                   CustomButtons.icon(
-                                    icon: const Icon(Icons.chevron_right, color: kNeutralColor),
+                                    icon: Icon(Icons.chevron_right, color: kNeutralColor),
                                     onPressed: () => controller.endDate = controller.endDate.add(const Duration(days: 1)),
                                   ),
                                 ],

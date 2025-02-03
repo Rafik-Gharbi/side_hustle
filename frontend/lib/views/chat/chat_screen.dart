@@ -40,6 +40,7 @@ class ChatScreen extends StatelessWidget {
               targets: controller.targets,
               colorShadow: kNeutralOpacityColor,
               textSkip: 'skip'.tr,
+              textStyleSkip: AppFonts.x12Bold.copyWith(color: kBlackReversedColor),
               additionalWidget: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
                 child: Obx(
@@ -47,7 +48,7 @@ class ChatScreen extends StatelessWidget {
                     dense: true,
                     checkColor: kNeutralColor100,
                     contentPadding: EdgeInsets.zero,
-                    side: const BorderSide(color: kNeutralColor100),
+                    side: BorderSide(color: kNeutralColor100),
                     title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
                     value: MainScreenWithBottomNavigation.notShowAgain.value,
                     controlAffinity: ListTileControlAffinity.leading,

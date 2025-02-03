@@ -31,7 +31,7 @@ class ReservationCard extends StatelessWidget {
           decoration: BoxDecoration(color: backgroundColor ?? kNeutralLightOpacityColor, borderRadius: smallRadius),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-            shape: RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
+            shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
             tileColor: highlighted ? kPrimaryOpacityColor : (backgroundColor ?? kNeutralLightOpacityColor),
             splashColor: kPrimaryOpacityColor,
             title: TaskCard(task: reservation.task!, dense: true),

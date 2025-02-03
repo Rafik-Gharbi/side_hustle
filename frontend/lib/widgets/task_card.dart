@@ -45,6 +45,7 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => OpenContainer(
         closedElevation: 0,
+        closedColor: kNeutralColor100,
         transitionDuration: const Duration(milliseconds: 600),
         openBuilder: (_, __) => TaskDetailsScreen(task: task),
         closedBuilder: (_, openContainer) => AuthenticationService.find.jwtUserData?.id != null && AuthenticationService.find.jwtUserData?.id == task.owner.id
@@ -54,13 +55,13 @@ class TaskCard extends StatelessWidget {
                 trailingActions: [
                   SwipeAction(
                     performsFirstActionWithFullSwipe: true,
-                    icon: const Icon(Icons.delete_forever_rounded, color: kNeutralColor100),
+                    icon: Icon(Icons.delete_forever_rounded, color: kNeutralColor100),
                     onTap: (handler) => onDeleteTask?.call(),
                     color: kErrorColor,
                   ),
                   SwipeAction(
                     performsFirstActionWithFullSwipe: true,
-                    icon: const Icon(Icons.edit_outlined, color: kNeutralColor100),
+                    icon: Icon(Icons.edit_outlined, color: kNeutralColor100),
                     onTap: (handler) => onEditTask?.call(),
                     color: kSelectedColor,
                   ),
@@ -78,15 +79,16 @@ class TaskCard extends StatelessWidget {
         Future.delayed(const Duration(milliseconds: 600), () => context.mounted ? setState(() => highlightTile = isHighlighted) : null);
       }
       isInitialized = true;
-      return DecoratedBox(
-        decoration: BoxDecoration(color: highlightTile ? kPrimaryOpacityColor : backgroundColor, borderRadius: smallRadius),
-        child: Padding(
-          padding: EdgeInsets.only(bottom: dense ? 0 : Paddings.regular),
+      return Padding(
+        padding: EdgeInsets.only(bottom: dense ? 0 : Paddings.regular),
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: highlightTile ? kPrimaryOpacityColor : backgroundColor ?? kNeutralLightColor, borderRadius: smallRadius),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+            tileColor: backgroundColor ?? kNeutralLightColor,
             shape: dense
-                ? const OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
-                : RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
+                ? OutlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor))
+                : RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
             splashColor: kPrimaryOpacityColor,
             onTap: openContainer,
             title: Row(
@@ -136,7 +138,7 @@ class TaskCard extends StatelessWidget {
                       Badge(
                         offset: Offset(condidates > 99 ? -5 : 0, 5),
                         label: condidates == -1
-                            ? const Icon(Icons.done_outlined, size: 16, color: kNeutralColor100)
+                            ? Icon(Icons.done_outlined, size: 16, color: kNeutralColor100)
                             : Text(condidates > 99 ? '+99' : condidates.toString(), style: AppFonts.x11Bold.copyWith(color: kNeutralColor100)),
                         backgroundColor: condidates == -1 ? kConfirmedColor : kErrorColor,
                         child: Padding(

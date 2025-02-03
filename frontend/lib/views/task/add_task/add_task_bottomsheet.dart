@@ -48,6 +48,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                   ? state.controller!.scrollController.animateTo(state.controller!.scrollController.position.maxScrollExtent, duration: Durations.long2, curve: Curves.bounceIn)
                   : null,
               textSkip: 'skip'.tr,
+              textStyleSkip: AppFonts.x12Bold.copyWith(color: kBlackReversedColor),
               additionalWidget: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
                 child: Obx(
@@ -55,7 +56,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                     dense: true,
                     checkColor: kNeutralColor100,
                     contentPadding: EdgeInsets.zero,
-                    side: const BorderSide(color: kNeutralColor100),
+                    side: BorderSide(color: kNeutralColor100),
                     title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
                     value: AddTaskTutorial.notShowAgain.value,
                     controlAffinity: ListTileControlAffinity.leading,
@@ -88,7 +89,7 @@ class AddTaskBottomsheet extends StatelessWidget {
             canPop: !hasOpenedTutorial.value,
             child: Material(
               child: DecoratedBox(
-                decoration: const BoxDecoration(color: kNeutralColor100),
+                decoration: BoxDecoration(color: kNeutralColor100),
                 child: Padding(
                   padding: const EdgeInsets.all(Paddings.extraLarge),
                   child: Form(
@@ -173,7 +174,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              leading: const Icon(Icons.location_on_outlined, color: kNeutralColor),
+                              leading: Icon(Icons.location_on_outlined, color: kNeutralColor),
                             ),
                             Buildables.lightDivider(),
                             ListTile(
@@ -196,7 +197,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              leading: const Icon(Icons.calendar_today_outlined, color: kNeutralColor),
+                              leading: Icon(Icons.calendar_today_outlined, color: kNeutralColor),
                               trailing: SizedBox(
                                 width: 96,
                                 child: Padding(
@@ -204,11 +205,11 @@ class AddTaskBottomsheet extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       CustomButtons.icon(
-                                        icon: const Icon(Icons.chevron_left, color: kNeutralColor),
+                                        icon: Icon(Icons.chevron_left, color: kNeutralColor),
                                         onPressed: () => controller.setCreatedDate(previous: true),
                                       ),
                                       CustomButtons.icon(
-                                        icon: const Icon(Icons.chevron_right, color: kNeutralColor),
+                                        icon: Icon(Icons.chevron_right, color: kNeutralColor),
                                         onPressed: () => controller.setCreatedDate(next: true),
                                       ),
                                     ],
@@ -288,7 +289,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              leading: const Icon(Icons.attach_file_outlined, color: kNeutralColor),
+                              leading: Icon(Icons.attach_file_outlined, color: kNeutralColor),
                             ),
                             if (controller.attachments != null)
                               SingleChildScrollView(
@@ -329,7 +330,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                                 radius: 8,
                                                 backgroundColor: kNeutralOpacityColor,
                                                 child: CustomButtons.icon(
-                                                  icon: const Icon(Icons.close, size: 14, color: kNeutralColor100),
+                                                  icon: Icon(Icons.close, size: 14, color: kNeutralColor100),
                                                   onPressed: () => controller.removeAttachments(xFile),
                                                 ),
                                               ),
@@ -349,7 +350,7 @@ class AddTaskBottomsheet extends StatelessWidget {
                                     padding: const EdgeInsets.only(right: Paddings.regular),
                                     child: CustomButtons.iconWithBackground(
                                       padding: const EdgeInsets.all(14),
-                                      icon: const Icon(Icons.delete_forever_rounded, color: kNeutralColor100),
+                                      icon: Icon(Icons.delete_forever_rounded, color: kNeutralColor100),
                                       buttonColor: kErrorColor,
                                       onPressed: () => controller.deleteTask(task!),
                                     ),

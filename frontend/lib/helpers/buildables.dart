@@ -18,6 +18,7 @@ import '../services/authentication_service.dart';
 import '../services/payment_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/theme/theme.dart';
+import '../services/theme/theme_service.dart';
 import '../services/tutorials/create_contract_tutorial.dart';
 import '../views/profile/account/login_dialog.dart';
 import '../views/home/home_controller.dart';
@@ -38,7 +39,7 @@ class Buildables {
     bool outlinedBorder = false,
   }) =>
       Theme(
-        data: ThemeData(bottomSheetTheme: const BottomSheetThemeData(backgroundColor: kNeutralColor100)),
+        data: ThemeData(bottomSheetTheme: BottomSheetThemeData(backgroundColor: kNeutralColor100)),
         child: Directionality(
           textDirection: TextDirection.ltr,
           child: Container(
@@ -51,13 +52,13 @@ class Buildables {
               isCountrySelectionEnabled: true,
               isCountryButtonPersistent: true,
               style: AppFonts.x14Regular,
-              countryButtonStyle: const CountryButtonStyle(
+              countryButtonStyle: CountryButtonStyle(
                 showDialCode: true,
                 showIsoCode: true,
                 showFlag: true,
                 flagSize: 16,
                 textStyle: AppFonts.x14Regular,
-                padding: EdgeInsets.only(bottom: 0, right: 10, left: 15),
+                padding: const EdgeInsets.only(bottom: 0, right: 10, left: 15),
               ),
               decoration: InputDecoration(
                 alignLabelWithHint: true,
@@ -68,14 +69,14 @@ class Buildables {
                 hintText: '${'phone'.tr} (${'required'.tr})',
                 // label: enableFloatingLabel ? Text(hintText ?? '', style: hintTextStyle ?? AppFonts.x14Regular.copyWith(color: kNeutralColor)) : null,
                 border: outlinedBorder
-                    ? OutlineInputBorder(borderRadius: smallRadius, borderSide: const BorderSide(color: kNeutralLightColor))
-                    : const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
+                    ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: kNeutralLightColor))
+                    : UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
                 enabledBorder: outlinedBorder
-                    ? OutlineInputBorder(borderRadius: smallRadius, borderSide: const BorderSide(color: kNeutralLightColor))
-                    : const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
+                    ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: kNeutralLightColor))
+                    : UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
                 focusedBorder: outlinedBorder
-                    ? OutlineInputBorder(borderRadius: smallRadius, borderSide: const BorderSide(color: kNeutralLightColor))
-                    : const UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
+                    ? OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(color: kNeutralLightColor))
+                    : UnderlineInputBorder(borderSide: BorderSide(color: kNeutralLightColor)),
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
                 floatingLabelStyle: AppFonts.x14Regular.copyWith(height: 0.2),
                 hintStyle: AppFonts.x14Regular.copyWith(color: kNeutralColor.withAlpha(150)),
@@ -288,6 +289,7 @@ class Buildables {
           targets: CreateContractTutorial.targets,
           colorShadow: kNeutralOpacityColor,
           textSkip: 'skip'.tr,
+          textStyleSkip: AppFonts.x12Bold.copyWith(color: kBlackReversedColor),
           additionalWidget: Padding(
             padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
             child: Obx(
@@ -295,7 +297,7 @@ class Buildables {
                 dense: true,
                 checkColor: kNeutralColor100,
                 contentPadding: EdgeInsets.zero,
-                side: const BorderSide(color: kNeutralColor100),
+                side: BorderSide(color: kNeutralColor100),
                 title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
                 value: CreateContractTutorial.notShowAgain.value,
                 controlAffinity: ListTileControlAffinity.leading,
@@ -439,7 +441,7 @@ class Buildables {
                   children: [
                     Text('${'available'.tr}:', style: AppFonts.x16Bold.copyWith(color: kNeutralColor100)),
                     const SizedBox(width: Paddings.regular),
-                    const Icon(Icons.paid_outlined, size: 22, color: kNeutralColor100),
+                    Icon(Icons.paid_outlined, size: 22, color: kNeutralColor100),
                     const SizedBox(width: Paddings.regular),
                     Text(
                       '${AuthenticationService.find.jwtUserData!.totalCoins} ${'coins'.tr}',
@@ -472,7 +474,7 @@ class Buildables {
         width: size,
         color: color ?? kBlackColor,
         fit: BoxFit.cover,
-        progressIndicatorBuilder: (context, url, downloadProgress) => const CircularProgressIndicator(color: kNeutralLightColor),
+        progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(color: kNeutralLightColor),
         errorWidget: (context, url, error) => const Icon(Icons.error),
         // errorListener: (error) => LoggerService.logger?.e(error),
       );
@@ -609,11 +611,11 @@ class Buildables {
             isLabelVisible: actionRequired > 0,
             label: Text(
               actionRequired.toString(),
-              style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
+              style: AppFonts.x10Bold.copyWith(color: ThemeService.find.isDark ? kBlackColor : kNeutralColor100),
             ),
             child: CircleAvatar(
               radius: 20,
-              backgroundColor: kNeutralLightColor,
+              backgroundColor: ThemeService.find.isDark ? kNeutralColor : kNeutralLightColor,
               child: Icon(icon, size: 24, color: enabled ? kPrimaryColor : kDisabledColor),
             ),
           ),

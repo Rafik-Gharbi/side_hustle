@@ -30,7 +30,7 @@ class CustomStandardScaffold extends StatelessWidget {
               centerTitle: true,
               bottom: appBarBottom,
               leading: CustomButtons.icon(
-                icon: const Icon(Icons.chevron_left, size: 28),
+                icon: Icon(Icons.chevron_left, size: 28, color: kBlackColor),
                 onPressed: () {
                   onBack?.call();
                   NavigationHistoryObserver.instance.goToPreviousRoute();
@@ -45,7 +45,7 @@ class CustomStandardScaffold extends StatelessWidget {
           decoration: BoxDecoration(
             color: backgroundColor,
             gradient: backgroundColor == null
-                ? const LinearGradient(
+                ? LinearGradient(
                     colors: [kNeutralLightColor, kNeutralColor100],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,

@@ -32,7 +32,7 @@ class WithdrawalDialog extends StatelessWidget {
           const SizedBox(height: Paddings.regular),
           Text('proceed_with_withdrawal'.tr, style: AppFonts.x16Bold),
           const SizedBox(height: Paddings.regular),
-          const Divider(color: kNeutralLightColor),
+          Divider(color: kNeutralLightColor),
           const SizedBox(height: Paddings.regular),
           Text('withdrawal_msg'.tr, style: AppFonts.x14Regular, textAlign: TextAlign.justify),
           const SizedBox(height: Paddings.large),
@@ -61,7 +61,7 @@ class WithdrawalDialog extends StatelessWidget {
             ],
           ),
           const SizedBox(height: Paddings.large),
-          const Divider(color: kNeutralLightColor),
+          Divider(color: kNeutralLightColor),
           const SizedBox(height: Paddings.regular),
           Center(
             child: CustomButtons.elevatePrimary(

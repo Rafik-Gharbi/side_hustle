@@ -167,7 +167,7 @@ class AddSupportTicket extends StatelessWidget {
                               ),
                             ],
                           ),
-                          leading: const Icon(Icons.attach_file_outlined, color: kNeutralColor),
+                          leading: Icon(Icons.attach_file_outlined, color: kNeutralColor),
                         ),
                         if (attachments != null)
                           SingleChildScrollView(
@@ -211,7 +211,7 @@ class AddSupportTicket extends StatelessWidget {
                                             radius: 8,
                                             backgroundColor: kNeutralOpacityColor,
                                             child: CustomButtons.icon(
-                                              icon: const Icon(Icons.close, size: 14, color: kNeutralColor100),
+                                              icon: Icon(Icons.close, size: 14, color: kNeutralColor100),
                                               onPressed: () => removeAttachments(xFile),
                                             ),
                                           ),

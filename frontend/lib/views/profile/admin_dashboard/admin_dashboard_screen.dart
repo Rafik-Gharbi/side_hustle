@@ -73,7 +73,7 @@ class AdminDashboardScreen extends StatelessWidget {
                                   .toList(),
                             ),
                             DecoratedBox(
-                              decoration: const BoxDecoration(color: kNeutralColor100, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+                              decoration: BoxDecoration(color: kNeutralColor100, borderRadius: const BorderRadius.vertical(top: Radius.circular(30))),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(vertical: Paddings.extraLarge, horizontal: Paddings.exceptional),
                                 child: SizedBox(

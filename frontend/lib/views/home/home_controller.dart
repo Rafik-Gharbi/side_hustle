@@ -15,6 +15,7 @@ import '../../repositories/task_repository.dart';
 import '../../services/authentication_service.dart';
 import '../../services/shared_preferences.dart';
 import '../../services/tutorials/home_tutorial.dart';
+import '../../viewmodel/user_viewmodel.dart';
 import '../../widgets/main_screen_with_bottom_navigation.dart';
 import '../task/task_list/task_list_screen.dart';
 
@@ -107,14 +108,8 @@ class HomeController extends GetxController {
       // TODO adapt user preferences if selected most searched categories and fix this below by getting true popular categories from BE
       mostPopularCategories = MainAppController.find.categories.where((element) => element.parentId == -1).toList().getRange(10, 14).toList();
       final savedGovernorate = MainAppController.find.getGovernorateById(int.tryParse(SharedPreferencesService.find.get(governorateKey) ?? ''));
-      final savedSearchMode = SearchMode.values.cast<SearchMode?>().singleWhere((element) => element?.name == SharedPreferencesService.find.get(searchModeKey), orElse: () => null);
       _filterModel.governorate = savedGovernorate ?? AuthenticationService.find.jwtUserData?.governorate;
-      _filterModel.searchMode = savedSearchMode ??
-          (AuthenticationService.find.jwtUserData?.coordinates != null
-              ? SearchMode.nearby
-              : AuthenticationService.find.jwtUserData?.governorate != null
-                  ? SearchMode.regional
-                  : SearchMode.national);
+      _filterModel.searchMode = UserViewmodel.searchMode;
       await fetchHomeTasks();
       MainAppController.find.getNotSeenNotifications();
       isLoading.value = false;
@@ -170,7 +165,7 @@ class HomeController extends GetxController {
     MainAppController.find.isBackReachable.value = isBEConnected;
     if (version != null) {
       final currentVersion = await Helper.getCurrentVersion();
-      MainAppController.find.hasVersionUpdate.value = version != currentVersion;
+      MainAppController.find.hasVersionUpdate.value = Helper.compareVersions(version, currentVersion);
     } else {
       Helper.snackBar(message: 'Couldn\'t check version update');
     }

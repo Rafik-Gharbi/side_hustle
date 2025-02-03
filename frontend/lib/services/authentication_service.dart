@@ -277,7 +277,6 @@ class AuthenticationService extends GetxController {
         governorate: governorate,
         phone: Helper.isNullOrEmpty(phoneNumber) ? null : phoneNumber,
         coordinates: coordinates,
-        hasSharedPosition: coordinates != null,
         referralCode: referralCodeController.text,
         language: Get.locale?.languageCode,
       );
@@ -430,7 +429,7 @@ class AuthenticationService extends GetxController {
         jwtUserData?.picture = userFromToken.picture;
         jwtUserData?.isVerified = userFromToken.isVerified;
         jwtUserData?.isMailVerified = userFromToken.isMailVerified;
-        jwtUserData?.hasSharedPosition = userFromToken.hasSharedPosition;
+        jwtUserData?.coordinates = userFromToken.coordinates;
         jwtUserData?.password = null;
         isLoggingIn.value = false;
       }
@@ -463,7 +462,6 @@ class AuthenticationService extends GetxController {
           governorate: governorate,
           gender: gender,
           coordinates: coordinates,
-          hasSharedPosition: coordinates != null,
           birthdate: birthdateController.text.isNotEmpty ? DateFormat('yyyy-MM-dd').parse(birthdateController.text) : null,
         ),
         withBack: true,

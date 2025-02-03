@@ -126,13 +126,13 @@ class Helper {
     required Widget child,
     double? width,
     double? height,
-    Color backgroundColor = kNeutralColor100,
+    Color? backgroundColor,
     double radius = RadiusSize.large,
     EdgeInsets padding = EdgeInsets.zero,
   }) =>
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(radius))),
-        backgroundColor: backgroundColor,
+        backgroundColor: backgroundColor ?? kNeutralColor100,
         insetPadding: padding,
         contentPadding: padding,
         elevation: 0,
@@ -253,7 +253,7 @@ class Helper {
       Get.context!,
       // dialogConstraints: const BoxConstraints(maxWidth: 800, maxHeight: 400),
       showTitleActions: true,
-      theme: const picker.DatePickerTheme(
+      theme: picker.DatePickerTheme(
         containerHeight: 290,
         backgroundColor: kNeutralColor100,
         cancelStyle: AppFonts.x14Bold,
@@ -342,7 +342,7 @@ class Helper {
         borderWidth: 2,
         borderRadius: 10,
         dismissDirection: DismissDirection.up,
-        icon: const Icon(Icons.notifications_active_outlined, color: kBlackColor),
+        icon: Icon(Icons.notifications_active_outlined, color: kBlackColor),
         onTap: (_) => NotificationsController.find.resolveNotificationAction(notification),
         maxWidth: 400,
         margin: isMobile ? const EdgeInsets.all(5) : EdgeInsets.only(left: Get.width / 2, right: 50, top: 10),

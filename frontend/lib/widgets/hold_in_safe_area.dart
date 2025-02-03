@@ -15,7 +15,7 @@ class HoldInSafeArea extends StatelessWidget {
   Widget build(BuildContext context) => Material(
         color: backgroundColor ?? (Helper.isMobile ? kPrimaryColor : Colors.transparent),
         child: DecoratedBox(
-          decoration: const BoxDecoration(color: kNeutralColor100),
+          decoration: BoxDecoration(color: kNeutralColor100),
           child: SafeArea(
             bottom: bottom,
             child: Padding(

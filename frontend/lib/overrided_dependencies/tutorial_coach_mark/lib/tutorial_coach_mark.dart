@@ -26,7 +26,7 @@ class TutorialCoachMark {
   final bool Function()? onSkip;
   final AlignmentGeometry alignSkip;
   final String textSkip;
-  final TextStyle textStyleSkip;
+  final TextStyle? textStyleSkip;
   final bool hideSkip;
   final bool useSafeArea;
   final Color colorShadow;
@@ -56,7 +56,7 @@ class TutorialCoachMark {
     this.onSkip,
     this.alignSkip = Alignment.bottomRight,
     this.textSkip = "SKIP",
-    this.textStyleSkip = const TextStyle(color: Colors.white),
+    this.textStyleSkip,
     this.hideSkip = false,
     this.useSafeArea = true,
     this.opacityShadow = 0.8,

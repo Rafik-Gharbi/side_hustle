@@ -62,7 +62,7 @@ class SupportScreen extends StatelessWidget {
                                 title: buildUserCard(supportTicket),
                                 tilePadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
                                 childrenPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                                shape: RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
+                                shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
                                 backgroundColor: kNeutralLightOpacityColor,
                                 collapsedBackgroundColor: highlighted ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
                                 expandedCrossAxisAlignment: CrossAxisAlignment.start,

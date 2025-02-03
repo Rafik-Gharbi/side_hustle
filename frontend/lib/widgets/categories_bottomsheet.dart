@@ -11,6 +11,7 @@ import '../helpers/helper.dart';
 import '../models/category.dart';
 import '../services/shared_preferences.dart';
 import '../services/theme/theme.dart';
+import '../services/theme/theme_service.dart';
 import '../services/tutorials/categories_tutorial.dart';
 import 'custom_buttons.dart';
 import 'custom_text_field.dart';
@@ -65,6 +66,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
               targets: CategoriesTutorial.targets,
               colorShadow: kNeutralOpacityColor,
               textSkip: 'skip'.tr,
+              textStyleSkip: AppFonts.x12Bold.copyWith(color: kBlackReversedColor),
               additionalWidget: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
                 child: Obx(
@@ -72,7 +74,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                     dense: true,
                     checkColor: kNeutralColor100,
                     contentPadding: EdgeInsets.zero,
-                    side: const BorderSide(color: kNeutralColor100),
+                    side: BorderSide(color: kNeutralColor100),
                     title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
                     value: CategoriesTutorial.notShowAgain.value,
                     controlAffinity: ListTileControlAffinity.leading,
@@ -127,160 +129,210 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
       canPop: !hasOpenedTutorial,
       child: SafeArea(
         child: DecoratedBox(
-          decoration: const BoxDecoration(color: kNeutralColor100),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: Paddings.extraLarge),
-            child: SizedBox(
-              height: Get.height * 0.9,
-              width: Get.width,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: Paddings.regular, horizontal: Paddings.large),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (widget.maxSelect > 1) ...[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const SizedBox(width: 40),
-                            Text('subscribe_categories'.tr, style: AppFonts.x16Bold),
-                            CustomButtons.icon(
-                              icon: const Icon(Icons.check_circle_outlined),
-                              onPressed: () {
-                                if (canUpdate) widget.onSelectCategory.call(selectedCategories);
-                                Helper.goBack();
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: Paddings.large),
-                        if (canUpdate) ...[
-                          Text(
-                            '${'select_x_categories'.trParams({'max': widget.maxSelect.toString()})}: ${'y_of_x_selected'.trParams({
-                                  'selected': selectedCategories.length.toString(),
-                                  'max': widget.maxSelect.toString()
-                                })}',
-                            style: AppFonts.x12Regular,
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              text: '',
-                              style: AppFonts.x12Regular,
+          decoration: BoxDecoration(color: kNeutralColor100),
+          child: SizedBox(
+            height: Get.height * 0.9,
+            width: Get.width,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: Paddings.regular, horizontal: Paddings.large),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (widget.maxSelect > 1) ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                WidgetSpan(
-                                  baseline: TextBaseline.alphabetic,
-                                  alignment: PlaceholderAlignment.baseline,
-                                  child: InkWell(
-                                    onTap: () => debugPrint('Subscribe tapped'),
-                                    child: Text('subscribe'.tr, style: AppFonts.x12Bold.copyWith(decoration: TextDecoration.underline)),
-                                  ),
+                                const SizedBox(width: 40),
+                                Text('subscribe_categories'.tr, style: AppFonts.x16Bold),
+                                CustomButtons.icon(
+                                  icon: Icon(Icons.check_circle_outlined, color: selectedCategories.isEmpty ? kDisabledColor : kBlackColor),
+                                  disabled: selectedCategories.isEmpty,
+                                  onPressed: () {
+                                    if (canUpdate && selectedCategories.isNotEmpty) widget.onSelectCategory.call(selectedCategories);
+                                    Helper.goBack();
+                                  },
                                 ),
-                                TextSpan(text: ' ${'premium_more_categories'.tr}'),
                               ],
                             ),
+                            const SizedBox(height: Paddings.large),
+                            if (canUpdate) ...[
+                              Text(
+                                '${'select_x_categories'.trParams({'max': widget.maxSelect.toString()})}: ${'y_of_x_selected'.trParams({
+                                      'selected': selectedCategories.length.toString(),
+                                      'max': widget.maxSelect.toString()
+                                    })}',
+                                style: AppFonts.x12Regular,
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  text: '',
+                                  style: AppFonts.x12Regular,
+                                  children: [
+                                    WidgetSpan(
+                                      baseline: TextBaseline.alphabetic,
+                                      alignment: PlaceholderAlignment.baseline,
+                                      child: InkWell(
+                                        onTap: () => debugPrint('Subscribe tapped'),
+                                        child: Text('subscribe'.tr, style: AppFonts.x12Bold.copyWith(decoration: TextDecoration.underline)),
+                                      ),
+                                    ),
+                                    TextSpan(text: ' ${'premium_more_categories'.tr}'),
+                                  ],
+                                ),
+                              ),
+                            ] else if (widget.nextUpdate != null)
+                              Text('update_categories_in_date'.trParams({'date': Helper.formatDate(widget.nextUpdate!)}), style: AppFonts.x12Regular),
+                          ],
+                          const SizedBox(height: Paddings.regular),
+                          CustomTextField(
+                            key: CategoriesTutorial.searchFieldKey,
+                            hintText: 'search_category'.tr,
+                            outlinedBorder: true,
+                            onChanged: (value) => Helper.onSearchDebounce(() => filterCategories(value)),
                           ),
-                        ] else if (widget.nextUpdate != null)
-                          Text('update_categories_in_date'.trParams({'date': Helper.formatDate(widget.nextUpdate!)}), style: AppFonts.x12Regular),
-                      ],
-                      const SizedBox(height: Paddings.regular),
-                      CustomTextField(
-                        key: CategoriesTutorial.searchFieldKey,
-                        hintText: 'search_category'.tr,
-                        outlinedBorder: true,
-                        onChanged: (value) => Helper.onSearchDebounce(() => filterCategories(value)),
-                      ),
-                      const SizedBox(height: Paddings.regular),
-                      LoadingCardEffect(
-                        isLoading: isLoading,
-                        type: LoadingCardEffectType.categoryBottomSheet,
-                        child: Wrap(
-                          children: List.generate(
-                            filteredCategories.length,
-                            (index) {
-                              final parentCategory = filteredCategories[index];
-                              return StatefulBuilder(
-                                builder: (context, setStateCategory) {
-                                  void toggleExpandParent(bool value) {
-                                    if (value) {
-                                      isExpandedParents = [for (var i = 0; i < parentCategories.length; i++) false];
-                                      setState(() {});
-                                    }
-                                    setStateCategory(() => isExpandedParents[index] = value);
-                                  }
+                          const SizedBox(height: Paddings.regular),
+                          LoadingCardEffect(
+                            isLoading: isLoading,
+                            type: LoadingCardEffectType.categoryBottomSheet,
+                            child: Wrap(
+                              children: List.generate(
+                                filteredCategories.length,
+                                (index) {
+                                  final parentCategory = filteredCategories[index];
+                                  return StatefulBuilder(
+                                    builder: (context, setStateCategory) {
+                                      void toggleExpandParent(bool value) {
+                                        if (value) {
+                                          isExpandedParents = [for (var i = 0; i < parentCategories.length; i++) false];
+                                          setState(() {});
+                                        }
+                                        setStateCategory(() => isExpandedParents[index] = value);
+                                      }
 
-                                  return AnimatedContainer(
-                                    duration: Durations.medium3,
-                                    width: isExpandedParents[index] ? Get.width : (Get.width - 30) / 3,
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(vertical: Paddings.regular),
-                                    child: isExpandedParents[index]
-                                        ? Theme(
-                                            data: ThemeData(dividerColor: kNeutralLightColor),
-                                            child: ExpansionTile(
-                                              initiallyExpanded: true,
-                                              onExpansionChanged: (value) => toggleExpandParent(value),
-                                              trailing: Icon(Icons.close, color: isExpandedParents[index] ? kNeutralColor : null),
-                                              title: Text(parentCategory.name, style: AppFonts.x16Bold, overflow: TextOverflow.ellipsis),
-                                              childrenPadding: EdgeInsets.zero,
-                                              children: [
-                                                GridView.extent(
-                                                  shrinkWrap: true,
-                                                  physics: const NeverScrollableScrollPhysics(),
-                                                  maxCrossAxisExtent: 140.0,
-                                                  childAspectRatio: 0.85,
-                                                  mainAxisSpacing: Paddings.regular,
-                                                  crossAxisSpacing: Paddings.regular,
-                                                  padding: const EdgeInsets.all(Paddings.large),
-                                                  children: MainAppController.find
-                                                      .getCategoryChildren(parentCategory)
-                                                      .where((element) => searchCategory.isNotEmpty ? element.name.toLowerCase().contains(searchCategory.toLowerCase()) : true)
-                                                      .map(
-                                                    (subCategory) {
-                                                      final isSelected = selectedCategories.any((element) => element.id == subCategory.id);
-                                                      return buildCategoryWidget(
-                                                        canUpdate: canUpdate,
-                                                        isSelected: isSelected,
-                                                        category: subCategory,
-                                                        isChild: true,
-                                                        onTap: () {
-                                                          if (canUpdate) {
-                                                            if (isSelected) {
-                                                              selectedCategories.remove(subCategory);
-                                                            } else if (selectedCategories.length < widget.maxSelect) {
-                                                              selectedCategories.add(subCategory);
-                                                            }
-                                                            setState(() {});
-                                                            if (canUpdate && widget.maxSelect == 1 && selectedCategories.length == widget.maxSelect) {
-                                                              widget.onSelectCategory.call(selectedCategories);
-                                                              Helper.goBack();
-                                                            }
-                                                          }
+                                      return AnimatedContainer(
+                                        duration: Durations.medium3,
+                                        width: isExpandedParents[index] ? Get.width : (Get.width - 30) / 3,
+                                        alignment: Alignment.center,
+                                        padding: const EdgeInsets.symmetric(vertical: Paddings.regular),
+                                        child: isExpandedParents[index]
+                                            ? Theme(
+                                                data: ThemeData(dividerColor: kNeutralLightColor),
+                                                child: ExpansionTile(
+                                                  initiallyExpanded: true,
+                                                  onExpansionChanged: (value) => toggleExpandParent(value),
+                                                  trailing: Icon(Icons.close, color: isExpandedParents[index] ? kNeutralColor : null),
+                                                  title: Text(parentCategory.name, style: AppFonts.x16Bold, overflow: TextOverflow.ellipsis),
+                                                  childrenPadding: EdgeInsets.zero,
+                                                  children: [
+                                                    GridView.extent(
+                                                      shrinkWrap: true,
+                                                      physics: const NeverScrollableScrollPhysics(),
+                                                      maxCrossAxisExtent: 140.0,
+                                                      childAspectRatio: 0.85,
+                                                      mainAxisSpacing: Paddings.regular,
+                                                      crossAxisSpacing: Paddings.regular,
+                                                      padding: const EdgeInsets.all(Paddings.large),
+                                                      children: MainAppController.find
+                                                          .getCategoryChildren(parentCategory)
+                                                          .where((element) => searchCategory.isNotEmpty ? element.name.toLowerCase().contains(searchCategory.toLowerCase()) : true)
+                                                          .map(
+                                                        (subCategory) {
+                                                          final isSelected = selectedCategories.any((element) => element.id == subCategory.id);
+                                                          return buildCategoryWidget(
+                                                            canUpdate: canUpdate,
+                                                            isSelected: isSelected,
+                                                            category: subCategory,
+                                                            isChild: true,
+                                                            onTap: () {
+                                                              if (canUpdate) {
+                                                                if (isSelected) {
+                                                                  selectedCategories.remove(subCategory);
+                                                                } else if (selectedCategories.length < widget.maxSelect) {
+                                                                  selectedCategories.add(subCategory);
+                                                                }
+                                                                setState(() {});
+                                                                if (canUpdate && widget.maxSelect == 1 && selectedCategories.length == widget.maxSelect) {
+                                                                  widget.onSelectCategory.call(selectedCategories);
+                                                                  Helper.goBack();
+                                                                }
+                                                              }
+                                                            },
+                                                          );
                                                         },
-                                                      );
-                                                    },
-                                                  ).toList(),
+                                                      ).toList(),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
-                                          )
-                                        : buildCategoryWidget(
-                                            key: index == 0 ? CategoriesTutorial.categoryKey : null,
-                                            canUpdate: canUpdate,
-                                            category: parentCategory,
-                                            onTap: () => setStateCategory(() => toggleExpandParent(true)),
-                                          ),
+                                              )
+                                            : buildCategoryWidget(
+                                                key: index == 0 ? CategoriesTutorial.categoryKey : null,
+                                                canUpdate: canUpdate,
+                                                category: parentCategory,
+                                                onTap: () => setStateCategory(() => toggleExpandParent(true)),
+                                              ),
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                if (selectedCategories.isNotEmpty && canUpdate)
+                  SizedBox(
+                    width: Get.width,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(border: Border(top: BorderSide(color: kNeutralOpacityColor))),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: Paddings.regular, horizontal: Paddings.regular),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: Paddings.regular),
+                                child: Text(
+                                  '${'select_x_categories'.trParams({'max': widget.maxSelect.toString()})}: ${'y_of_x_selected'.trParams({
+                                        'selected': selectedCategories.length.toString(),
+                                        'max': widget.maxSelect.toString()
+                                      })}',
+                                  style: AppFonts.x12Regular,
+                                ),
+                              ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: List.generate(
+                                    selectedCategories.length,
+                                    (index) => SizedBox(
+                                      width: 110,
+                                      child: buildCategoryWidget(
+                                        canUpdate: canUpdate,
+                                        dense: true,
+                                        isSelected: true,
+                                        onTap: () => setState(() => selectedCategories.remove(selectedCategories[index])),
+                                        category: selectedCategories[index],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+              ],
             ),
           ),
         ),
@@ -288,7 +340,8 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
     );
   }
 
-  Widget buildCategoryWidget({required bool canUpdate, bool isSelected = false, required void Function() onTap, required Category category, bool isChild = false, GlobalKey? key}) {
+  Widget buildCategoryWidget(
+      {required bool canUpdate, bool isSelected = false, required void Function() onTap, required Category category, bool isChild = false, GlobalKey? key, bool dense = false}) {
     return InkWell(
       key: key,
       onTap: onTap,
@@ -304,16 +357,24 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
                   Padding(
                     padding: const EdgeInsets.all(Paddings.small),
                     child: CircleAvatar(
-                      radius: 30,
+                      radius: dense ? 21 : 30,
                       backgroundColor: isSelected
                           ? kPrimaryColor
                           : isChild
                               ? kAccentDarkColor
                               : kNeutralColor,
-                      child: Center(child: Buildables.buildCategoryIcon(category.icon, size: 40, color: kNeutralColor100)),
+                      child: Center(
+                        child: Buildables.buildCategoryIcon(category.icon,
+                            size: dense ? 28 : 40,
+                            color: ThemeService.find.isDark
+                                ? isChild
+                                    ? null
+                                    : kNeutralColor100
+                                : kNeutralColor100),
+                      ),
                     ),
                   ),
-                  if (category.description.isNotEmpty)
+                  if (category.description.isNotEmpty && !dense)
                     const Positioned(
                       top: 0,
                       right: 0,
@@ -324,7 +385,7 @@ class _CategoriesBottomsheetState extends State<CategoriesBottomsheet> {
               const SizedBox(height: Paddings.small),
               Text(
                 '${category.name} ${widget.isAdding ? '(${category.subscribed})' : ''}',
-                style: AppFonts.x12Regular,
+                style: AppFonts.x12Regular.copyWith(fontSize: dense ? 10 : 12),
                 softWrap: true,
                 textAlign: TextAlign.center,
               ),

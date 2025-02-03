@@ -41,7 +41,7 @@ class BoostCard extends StatelessWidget {
       trailingActions: [
         SwipeAction(
           performsFirstActionWithFullSwipe: true,
-          icon: const Icon(Icons.edit_outlined, color: kNeutralColor100),
+          icon: Icon(Icons.edit_outlined, color: kNeutralColor100),
           onTap: (handler) => onEditBoost(),
           color: kSelectedColor,
         ),
@@ -89,13 +89,13 @@ class BoostCard extends StatelessWidget {
                       text: TextSpan(
                         style: AppFonts.x12Regular.copyWith(color: kNeutralColor),
                         children: [
-                          const WidgetSpan(child: Icon(Icons.location_city_outlined, size: 16, color: kNeutralColor)),
+                          WidgetSpan(child: Icon(Icons.location_city_outlined, size: 16, color: kNeutralColor)),
                           TextSpan(text: ' ${boost.governorate != null ? boost.governorate!.name : 'all_tunisia'.tr}'),
                           const TextSpan(text: ' ⦿ '),
-                          const WidgetSpan(child: Icon(Icons.people_alt_outlined, size: 16, color: kNeutralColor)),
+                          WidgetSpan(child: Icon(Icons.people_alt_outlined, size: 16, color: kNeutralColor)),
                           TextSpan(text: ' ${boost.minAge != null && boost.maxAge != null ? '${boost.minAge} - ${boost.maxAge}' : '18 - 65+'}'),
                           const TextSpan(text: ' ⦿ '),
-                          const WidgetSpan(child: Icon(Icons.male_outlined, size: 16, color: kNeutralColor)),
+                          WidgetSpan(child: Icon(Icons.male_outlined, size: 16, color: kNeutralColor)),
                           TextSpan(text: ' ${boost.gender != null ? boost.gender!.name : 'all_genders'.tr}'),
                         ],
                       ),

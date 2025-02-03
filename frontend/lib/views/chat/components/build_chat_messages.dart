@@ -134,7 +134,7 @@ class BuildChatMessages extends StatelessWidget {
               closedBuilder: (_, openContainer) => ListTile(
                 onTap: openContainer,
                 contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                shape: RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
+                shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -165,7 +165,7 @@ class BuildChatMessages extends StatelessWidget {
                     ],
                   ],
                 ),
-                leading: const Icon(Icons.assignment_outlined, color: kNeutralColor),
+                leading: Icon(Icons.assignment_outlined, color: kNeutralColor),
               ),
             ),
           ),

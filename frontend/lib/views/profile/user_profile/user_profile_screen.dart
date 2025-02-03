@@ -50,7 +50,7 @@ class UserProfileScreen extends StatelessWidget {
           height: controller.showAllReviews ? Get.height * 0.9 : 550,
           child: HoldInSafeArea(
             child: DecoratedBox(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [kNeutralLightColor, kNeutralColor100],
                   begin: Alignment.topCenter,
@@ -173,7 +173,7 @@ class UserProfileScreen extends StatelessWidget {
                               loading: isLoading,
                               title: 'mark_task_done'.tr,
                               titleStyle: AppFonts.x14Regular,
-                              icon: const Icon(Icons.done, color: kNeutralColor100),
+                              icon: Icon(Icons.done, color: kNeutralColor100),
                               width: Get.width - 40,
                               onPressed: onMarkDone!,
                             ),

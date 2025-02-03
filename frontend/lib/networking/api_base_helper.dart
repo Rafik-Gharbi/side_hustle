@@ -302,7 +302,7 @@ class ApiBaseHelper extends GetxController {
                 padding: const EdgeInsets.all(Paddings.large),
                 child: Column(
                   children: [
-                    const Center(child: Text('Change real device IP address', style: AppFonts.x15Bold)),
+                    Center(child: Text('Change real device IP address', style: AppFonts.x15Bold)),
                     const SizedBox(height: Paddings.exceptional),
                     Text('Current baseURL: $baseUrl', style: AppFonts.x12Regular),
                     const SizedBox(height: Paddings.regular),

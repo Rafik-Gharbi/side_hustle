@@ -1,3 +1,5 @@
+import '../services/theme/theme_service.dart';
+
 class Assets {
   // Lottie
   static const String forgotPasswordAnimation = 'assets/lottie/forgot_password.json';
@@ -12,10 +14,10 @@ class Assets {
   static const String pictureLoading = 'assets/lottie/picture_loading.json';
   static const String emptyAnimation = 'assets/lottie/empty_animation.json';
   // Pictures
-  static const String dootifyLogo = 'assets/images/dootify-logo.png';
-  static const String dootifyWhiteLogo = 'assets/images/dootify-logo-white.png';
-  static const String dootifyIconLogo = 'assets/images/dootify-logo-icon.png';
-  static const String dootifyWhiteIconLogo = 'assets/images/dootify-logo-icon-white.png';
+  static const String _dootifyLogo = 'assets/images/dootify-logo.png';
+  static const String _dootifyWhiteLogo = 'assets/images/dootify-logo-white.png';
+  static const String _dootifyIconLogo = 'assets/images/dootify-logo-icon.png';
+  static const String _dootifyWhiteIconLogo = 'assets/images/dootify-logo-icon-white.png';
   static const String noImage = 'assets/images/no_image.jpg';
   static const String signedContract = 'assets/images/signed.png';
   static const String withdrawMoneyIcon = 'assets/images/withdraw_money.png';
@@ -26,4 +28,7 @@ class Assets {
   static const String onboarding1 = 'assets/images/onboarding1.jpg';
   static const String onboarding2 = 'assets/images/onboarding2.jpg';
   static const String onboarding3 = 'assets/images/onboarding3.jpg';
+
+  static String get dootifyLogo => ThemeService.find.isDark ? _dootifyWhiteLogo : _dootifyLogo;
+  static String get dootifyIconLogo => ThemeService.find.isDark ? _dootifyWhiteIconLogo : _dootifyIconLogo;
 }

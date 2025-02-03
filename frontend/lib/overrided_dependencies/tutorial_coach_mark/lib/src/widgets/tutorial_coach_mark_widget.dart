@@ -22,7 +22,7 @@ class TutorialCoachMarkWidget extends StatefulWidget {
     this.onClickSkip,
     this.colorShadow = Colors.black,
     this.opacityShadow = 0.8,
-    this.textStyleSkip = const TextStyle(color: Colors.white),
+    this.textStyleSkip,
     this.hideSkip = false,
     this.useSafeArea = true,
     this.focusAnimationDuration,
@@ -51,7 +51,7 @@ class TutorialCoachMarkWidget extends StatefulWidget {
   final Function()? onClickSkip;
   final AlignmentGeometry alignSkip;
   final String textSkip;
-  final TextStyle textStyleSkip;
+  final TextStyle? textStyleSkip;
   final bool hideSkip;
   final bool useSafeArea;
   final Duration? focusAnimationDuration;

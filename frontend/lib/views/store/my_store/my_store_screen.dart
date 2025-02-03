@@ -52,6 +52,7 @@ class MyStoreScreen extends StatelessWidget {
               targets: state.controller!.targets,
               colorShadow: kNeutralOpacityColor,
               textSkip: 'skip'.tr,
+              textStyleSkip: AppFonts.x12Bold.copyWith(color: kBlackReversedColor),
               additionalWidget: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
                 child: Obx(
@@ -59,7 +60,7 @@ class MyStoreScreen extends StatelessWidget {
                     dense: true,
                     checkColor: kNeutralColor100,
                     contentPadding: EdgeInsets.zero,
-                    side: const BorderSide(color: kNeutralColor100),
+                    side: BorderSide(color: kNeutralColor100),
                     title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
                     value: CreateStoreTutorial.notShowAgain.value,
                     controlAffinity: ListTileControlAffinity.leading,
@@ -169,7 +170,7 @@ class MyStoreScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Spacer(),
-                  const CircleAvatar(radius: 40, backgroundColor: kNeutralLightColor, child: Icon(Icons.store_outlined, size: 48)),
+                  CircleAvatar(radius: 40, backgroundColor: kNeutralLightColor, child: const Icon(Icons.store_outlined, size: 48)),
                   const SizedBox(height: Paddings.extraLarge),
                   Text('have_no_store'.tr, style: AppFonts.x14Regular),
                   const Spacer(),
@@ -215,7 +216,7 @@ class MyStoreScreen extends StatelessWidget {
                       progressIndicatorBuilder: (context, url, downloadProgress) => Lottie.asset(Assets.pictureLoading, fit: BoxFit.cover),
                       errorWidget: (context, url, error) => DecoratedBox(
                         decoration: BoxDecoration(color: kNeutralOpacityColor),
-                        child: const Center(child: Icon(Icons.error, color: kNeutralLightColor)),
+                        child: Center(child: Icon(Icons.error, color: kNeutralLightColor)),
                       ),
                       // errorListener: (error) => LoggerService.logger?.e(error),
                     )
@@ -235,7 +236,7 @@ class MyStoreScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.camera_alt_outlined, size: 24, color: kNeutralColor),
+                              Icon(Icons.camera_alt_outlined, size: 24, color: kNeutralColor),
                               const SizedBox(height: Paddings.small),
                               Text('add_store_cover'.tr, style: AppFonts.x12Bold.copyWith(color: kNeutralColor)),
                             ],

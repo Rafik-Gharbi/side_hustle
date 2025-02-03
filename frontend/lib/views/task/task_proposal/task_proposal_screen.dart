@@ -51,7 +51,7 @@ class TaskProposalScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: Paddings.regular),
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-                              shape: RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
+                              shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
                               tileColor: kNeutralLightOpacityColor,
                               splashColor: kPrimaryOpacityColor,
                               onTap: openContainer,

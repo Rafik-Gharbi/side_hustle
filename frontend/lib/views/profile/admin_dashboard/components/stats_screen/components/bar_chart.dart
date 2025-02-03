@@ -124,12 +124,12 @@ class BarChartWidgetState extends State<BarChartWidget> {
                       children: [
                         CustomButtons.icon(
                           onPressed: () => setState(() => currentDate = currentDate.subtract(const Duration(days: 7))),
-                          icon: const Icon(Icons.chevron_left_rounded, color: kBlackColor),
+                          icon: Icon(Icons.chevron_left_rounded, color: kBlackColor),
                         ),
                         Text('${'week'.tr}: ${getWeekNumber(currentDate)}', style: AppFonts.x12Bold),
                         CustomButtons.icon(
                           onPressed: () => setState(() => currentDate = currentDate.add(const Duration(days: 7))),
-                          icon: const Icon(Icons.chevron_right_rounded, color: kBlackColor),
+                          icon: Icon(Icons.chevron_right_rounded, color: kBlackColor),
                         ),
                       ],
                     ),

@@ -124,7 +124,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   maxLength: widget.maxLength,
                   onTapOutside: widget.onTapOutside,
                   inputFormatters: widget.inputFormatters,
-                  style: TextStyle(fontSize: widget.textFontSize),
+                  style: TextStyle(fontSize: widget.textFontSize, color: kBlackColor),
                   enabled: widget.enabled,
                   textDirection: widget.textInputType == TextInputType.phone ? TextDirection.ltr : null,
                   focusNode: widget.focusNode,

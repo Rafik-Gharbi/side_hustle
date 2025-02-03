@@ -245,7 +245,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                             title: 'mark_task_done'.tr,
                                             loading: ReservationViewmodel.isLoading,
                                             titleStyle: AppFonts.x14Regular,
-                                            icon: const Icon(Icons.done, color: kNeutralColor100),
+                                            icon: Icon(Icons.done, color: kNeutralColor100),
                                             width: Get.width - 40,
                                             onPressed: () => ReservationViewmodel.markDoneProposals(controller.reservation),
                                           ),

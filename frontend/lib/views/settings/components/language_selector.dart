@@ -52,7 +52,7 @@ class LanguageSelectorState extends State<LanguageSelector> {
   }
 
   Widget _buildTiles(BuildContext context) => DecoratedBox(
-        decoration: const BoxDecoration(color: kNeutralColor100, borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusSize.extraLarge))),
+        decoration: BoxDecoration(color: kNeutralColor100, borderRadius: const BorderRadius.vertical(top: Radius.circular(RadiusSize.extraLarge))),
         child: Padding(
           padding: const EdgeInsets.all(Paddings.exceptional),
           child: SingleChildScrollView(

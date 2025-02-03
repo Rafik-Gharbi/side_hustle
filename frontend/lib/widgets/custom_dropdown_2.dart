@@ -335,11 +335,11 @@ class _BuildDropDownButton<T> extends StatelessWidget {
                       iconStyleData: IconStyleData(
                         icon: Padding(
                           padding: const EdgeInsets.only(right: 8.0),
-                          child: icon ?? const Icon(Icons.expand_more, size: 25, color: kNeutralColor),
+                          child: icon ?? Icon(Icons.expand_more, size: 25, color: kNeutralColor),
                         ),
                         openMenuIcon: Padding(
                           padding: const EdgeInsets.only(right: 8.0),
-                          child: icon ?? const Icon(Icons.expand_less, size: 25, color: kNeutralColor),
+                          child: icon ?? Icon(Icons.expand_less, size: 25, color: kNeutralColor),
                         ),
                       ),
                       hint: labelIncluded
@@ -352,7 +352,7 @@ class _BuildDropDownButton<T> extends StatelessWidget {
                                     child: Center(child: Text(label ?? '', style: AppFonts.x14Regular)),
                                   ),
                                   const SizedBox(width: 10),
-                                  const SizedBox(
+                                  SizedBox(
                                     width: .6,
                                     height: 50,
                                     child: DecoratedBox(decoration: BoxDecoration(color: kNeutralColor)),
@@ -392,7 +392,7 @@ class _BuildDropDownButton<T> extends StatelessWidget {
                       menuItemStyleData: MenuItemStyleData(
                         height: itemHeight!,
                         padding: itemPadding ?? const EdgeInsets.all(Paddings.small),
-                        overlayColor: const WidgetStatePropertyAll(kNeutralColor100),
+                        overlayColor: WidgetStatePropertyAll(kNeutralColor100),
                       ),
                       onMenuStateChange: (isOpen) {
                         isMenuOpen?.call(isOpen);
@@ -416,8 +416,8 @@ class _BuildDropDownButton<T> extends StatelessWidget {
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                                     hintText: 'search_item'.tr,
                                     hintStyle: AppFonts.x14Bold.copyWith(color: kNeutralColor),
-                                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: kNeutralColor)),
-                                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: kNeutralColor)),
+                                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: kNeutralColor)),
+                                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: kNeutralColor)),
                                   ),
                                 ),
                               ),

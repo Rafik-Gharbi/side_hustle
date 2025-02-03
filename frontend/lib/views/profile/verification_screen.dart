@@ -25,7 +25,7 @@ class VerificationScreen extends StatelessWidget {
         title: '',
         noAppBar: true,
         body: DecoratedBox(
-          decoration: const BoxDecoration(border: Border(top: BorderSide(color: kNeutralLightColor, width: 0.5))),
+          decoration: BoxDecoration(border: Border(top: BorderSide(color: kNeutralLightColor, width: 0.5))),
           child: LoadingRequest(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

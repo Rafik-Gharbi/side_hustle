@@ -11,6 +11,7 @@ import '../helpers/helper.dart';
 import '../models/store.dart';
 import '../services/authentication_service.dart';
 import '../services/theme/theme.dart';
+import '../services/theme/theme_service.dart';
 import '../views/store/my_store/my_store_screen.dart';
 import 'custom_buttons.dart';
 
@@ -25,13 +26,14 @@ class StoreCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return OpenContainer(
       closedElevation: 0,
+      closedColor: kNeutralColor100,
       transitionDuration: const Duration(milliseconds: 600),
       openBuilder: (_, __) => MyStoreScreen(store: store),
       closedBuilder: (_, openContainer) => Padding(
         padding: EdgeInsets.only(bottom: isDense ? 0 : Paddings.regular),
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
-          shape: RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
+          shape: RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
           tileColor: isDense ? kNeutralLightColor : kNeutralLightOpacityColor,
           splashColor: kPrimaryOpacityColor,
           onTap: openContainer,
@@ -47,16 +49,16 @@ class StoreCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: smallRadius,
                   child: DecoratedBox(
-                    decoration: const BoxDecoration(color: kNeutralColor),
+                    decoration: BoxDecoration(color: ThemeService.find.isDark ? kNeutralLightColor : kNeutralColor),
                     child: store.picture?.file.path != null
                         ? Image.network(
                             store.picture!.file.path,
                             height: 100,
                             width: 100,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.error_outline, color: kNeutralColor100)),
+                            errorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.error_outline, color: kNeutralColor100)),
                           )
-                        : Center(child: Text('no_image'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100))),
+                        : Center(child: Text('no_image'.tr, style: AppFonts.x12Regular.copyWith(color: ThemeService.find.isDark ? kBlackColor : kNeutralColor100))),
                   ),
                 ),
               ),
@@ -77,7 +79,7 @@ class StoreCard extends StatelessWidget {
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.pin_drop_outlined, size: 14, color: kNeutralColor),
+                                  Icon(Icons.pin_drop_outlined, size: 14, color: kNeutralColor),
                                   const SizedBox(width: Paddings.regular),
                                   Text(store.governorate!.name, style: AppFonts.x10Regular.copyWith(color: kNeutralColor)),
                                 ],

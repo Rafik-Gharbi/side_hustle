@@ -10,6 +10,7 @@ import '../../helpers/buildables.dart';
 import '../../helpers/helper.dart';
 import '../../services/authentication_service.dart';
 import '../../services/theme/theme.dart';
+import '../../services/theme/theme_service.dart';
 import '../../widgets/custom_standard_scaffold.dart';
 import '../../widgets/feedback_bottomsheet.dart';
 import 'components/animated_list_tile.dart';
@@ -38,13 +39,13 @@ class SettingsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     AnimatedTitle(title: 'general'.tr),
-                    // Obx(() => AnimatedListTile(
-                    //       leading: const Icon(Icons.light_mode_outlined),
-                    //       subtitle: '${'current_theme'.tr}: ${ThemeService.find.currentTheme.value.name.tr}',
-                    //       title: 'theme'.tr,
-                    //       onTap: () => ThemeService.find.toggleTheme(),
-                    //       // onTap: () => ThemeService.find.toggleTheme(),
-                    //     )),
+                    Obx(() => AnimatedListTile(
+                          leading: const Icon(Icons.light_mode_outlined),
+                          subtitle: '${'current_theme'.tr}: ${ThemeService.find.currentTheme.value.name.tr}',
+                          title: 'theme'.tr,
+                          onTap: () => ThemeService.find.toggleTheme(),
+                          // onTap: () => ThemeService.find.toggleTheme(),
+                        )),
                     // Obx(() => AnimatedListTile(
                     //       leading: const Icon(Icons.currency_exchange_outlined),
                     //       subtitle: '${'current_currency'.tr}: ${MainAppController.find.currency.value}',

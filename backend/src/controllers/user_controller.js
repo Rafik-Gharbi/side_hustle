@@ -80,7 +80,10 @@ exports.sendTestMail = async (req, res) => {
 exports.renewJWT = async (req, res) => {
   try {
     const decodedJwt = req.decoded;
-    const user = await User.findByPk(decodedJwt.id);
+    const user = decodedJwt ? await User.findByPk(decodedJwt.id) : undefined;
+    if (!user) {
+      return res.status(404).json({ message: "user_not_found" });
+    }
     const token = await generateJWT(user);
     const refreshToken = await generateJWT(user, true);
 

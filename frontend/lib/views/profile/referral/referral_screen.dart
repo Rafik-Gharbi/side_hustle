@@ -27,7 +27,7 @@ class ReferralScreen extends StatelessWidget {
           backgroundColor: kNeutralColor100,
           title: 'referrals'.tr,
           actionButton: CustomButtons.icon(
-            icon: const Icon(Icons.people_alt_outlined),
+            icon: Icon(Icons.people_alt_outlined, color: kBlackColor),
             onPressed: () => Get.toNamed(RefereesScreen.routeName),
           ),
           body: SingleChildScrollView(
@@ -76,7 +76,7 @@ class ReferralScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(width: Paddings.regular),
                                     CustomButtons.icon(
-                                      icon: const Icon(Icons.copy_outlined, color: kNeutralColor100),
+                                      icon: Icon(Icons.copy_outlined, color: kNeutralColor100),
                                       onPressed: controller.copyCodeToClipboard,
                                     )
                                   ],
@@ -94,7 +94,7 @@ class ReferralScreen extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       const SizedBox(width: Paddings.large),
-                                      const Icon(Icons.share_outlined, color: kNeutralColor100),
+                                      Icon(Icons.share_outlined, color: kNeutralColor100),
                                       const SizedBox(width: Paddings.regular),
                                       Text('share_with_friends'.tr, style: AppFonts.x16Bold.copyWith(color: kNeutralColor100)),
                                       const SizedBox(width: Paddings.large),
@@ -115,22 +115,22 @@ class ReferralScreen extends StatelessWidget {
                 ListTile(
                   title: Text('how_it_works_step1'.tr, style: AppFonts.x14Bold),
                   subtitle: Text('how_it_works_step1_subtitle'.tr, softWrap: true, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-                  leading: const CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('1', style: AppFonts.x18Bold))),
+                  leading: CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('1', style: AppFonts.x18Bold))),
                 ),
                 ListTile(
                   title: Text('how_it_works_step2'.tr, style: AppFonts.x14Bold),
                   subtitle: Text('how_it_works_step2_subtitle'.tr, softWrap: true, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-                  leading: const CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('2', style: AppFonts.x18Bold))),
+                  leading: CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('2', style: AppFonts.x18Bold))),
                 ),
                 ListTile(
                   title: Text('how_it_works_step3'.tr, style: AppFonts.x14Bold),
                   subtitle: Text('how_it_works_step3_subtitle'.tr, softWrap: true, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-                  leading: const CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('3', style: AppFonts.x18Bold))),
+                  leading: CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('3', style: AppFonts.x18Bold))),
                 ),
                 ListTile(
                   title: Text('how_it_works_step4'.tr, style: AppFonts.x14Bold),
                   subtitle: Text('how_it_works_step4_subtitle'.tr, softWrap: true, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
-                  leading: const CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('4', style: AppFonts.x18Bold))),
+                  leading: CircleAvatar(backgroundColor: kNeutralLightColor, child: Center(child: Text('4', style: AppFonts.x18Bold))),
                 ),
                 const SizedBox(height: Paddings.small),
                 CustomButtons.text(

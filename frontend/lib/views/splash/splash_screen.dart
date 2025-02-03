@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constants/assets.dart';
+import '../../constants/colors.dart';
 import '../../constants/shared_preferences_keys.dart';
 import '../../helpers/helper.dart';
 import '../../services/authentication_service.dart';
@@ -87,7 +88,7 @@ class SplashScreenState extends State<SplashScreen> with TickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: kNeutralColor100,
         body: Center(
           child: AnimatedBuilder(
             animation: Listenable.merge([_introController, _breathingController, _finalController]),

@@ -61,6 +61,7 @@ class HomeScreen extends StatelessWidget {
                 targets: state.controller!.targets,
                 colorShadow: kNeutralOpacityColor,
                 textSkip: 'skip'.tr,
+                textStyleSkip: AppFonts.x12Bold.copyWith(color: kBlackReversedColor),
                 additionalWidget: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: Paddings.extraLarge, vertical: Paddings.regular),
                   child: Obx(
@@ -68,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                       dense: true,
                       checkColor: kNeutralColor100,
                       contentPadding: EdgeInsets.zero,
-                      side: const BorderSide(color: kNeutralColor100),
+                      side: BorderSide(color: kNeutralColor100),
                       title: Text('not_show_again'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor100)),
                       value: MainScreenWithBottomNavigation.notShowAgain.value,
                       controlAffinity: ListTileControlAffinity.leading,
@@ -127,7 +128,7 @@ class HomeScreen extends StatelessWidget {
                                           style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
                                         ),
                                         child: CustomButtons.icon(
-                                          icon: const Icon(Icons.notifications_outlined),
+                                          icon: Icon(Icons.notifications_outlined, color: kBlackColor),
                                           onPressed: () => Get.toNamed(NotificationScreen.routeName),
                                         ),
                                       ),
@@ -144,11 +145,11 @@ class HomeScreen extends StatelessWidget {
                               CustomButtons.icon(
                                 disabled: !MainAppController.find.isConnected,
                                 key: controller.mapViewKey,
-                                icon: const Icon(Icons.map_outlined),
+                                icon: Icon(Icons.map_outlined, color: kBlackColor),
                                 onPressed: () => Get.bottomSheet(const MapScreen(isTasks: true), isScrollControlled: true),
                               ),
                               CustomButtons.icon(
-                                icon: const Icon(Icons.settings_outlined),
+                                icon: Icon(Icons.settings_outlined, color: kBlackColor),
                                 onPressed: () => Get.toNamed(SettingsScreen.routeName),
                               ),
                             ],
@@ -182,7 +183,7 @@ class HomeScreen extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                const Icon(Icons.location_on_outlined),
+                                Icon(Icons.location_on_outlined, color: kBlackColor),
                                 const SizedBox(width: Paddings.regular),
                                 Text(controller.searchMode?.name.tr ?? '', style: AppFonts.x14Bold),
                               ],
@@ -252,7 +253,7 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(width: Paddings.regular),
                       CustomButtons.iconWithBackground(
                         key: controller.advancedFilterKey,
-                        icon: const Icon(Icons.filter_alt_outlined, color: kBlackColor),
+                        icon: Icon(Icons.filter_alt_outlined, color: kBlackColor),
                         buttonColor: kNeutralLightOpacityColor,
                         height: 48,
                         onPressed: () => Get.dialog(
@@ -395,7 +396,7 @@ class HomeScreen extends StatelessWidget {
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            const Icon(Icons.location_searching_outlined, color: kBlackColor),
+                                            Icon(Icons.location_searching_outlined, color: kBlackColor),
                                             const SizedBox(width: Paddings.regular),
                                             Text('share_your_location'.tr, style: AppFonts.x14Bold),
                                           ],

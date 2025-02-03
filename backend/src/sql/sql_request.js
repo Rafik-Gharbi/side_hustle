@@ -295,10 +295,11 @@ async function fetchAndSortNearbyTasks(
   categoryId = undefined,
   priceMin = undefined,
   priceMax = undefined,
-  taskId = undefined
+  taskId = undefined,
+  mode = undefined
 ) {
   let userLongitude, userLatitude;
-  if (user && user.coordinates) {
+  if (user && user.coordinates && mode === "nearby") {
     [userLongitude, userLatitude] = user?.coordinates?.split(",").map(Number);
   }
   let childCategoryIds;
@@ -382,7 +383,7 @@ async function fetchAndSortNearbyTasks(
       userLatitude,
       userGovernorateId:
         (governorateId && governorateId !== 1 ? governorateId : undefined) ??
-        (user && user.governorate_id ? user.governorate_id : 1),
+        (user?.governorate_id && mode === "regional" ? user.governorate_id : 1),
     },
   });
 
@@ -396,7 +397,9 @@ async function fetchAndSortNearbyTasks(
   // Shuffle the tasks array
   shuffleArray(filteredTasks);
   // Apply limit and offset to the shuffled array
-  // const limitedTasks = filteredTasks.slice(offset, offset + limit);
+  if (limit !== -1) {
+    filteredTasks = filteredTasks.slice(offset, offset + limit);
+  }
 
   const nearbyTasks = await populateTasks(filteredTasks, user?.id);
 

@@ -44,133 +44,6 @@ const constantId = {
       role: "subscribed",
     },
   ],
-  // LanguageType: [
-  //   {
-  //     id: "1",
-  //     language_code: "en",
-  //     name: "English",
-  //   },
-  //   {
-  //     id: "2",
-  //     language_code: "de",
-  //     name: "German",
-  //   },
-  //   {
-  //     id: "3",
-  //     language_code: "pl",
-  //     name: "Polish",
-  //   },
-  //   {
-  //     id: "4",
-  //     language_code: "fr",
-  //     name: "Fbabynch",
-  //   },
-  //   {
-  //     id: "5",
-  //     language_code: "es",
-  //     name: "Spanish",
-  //   },
-  //   {
-  //     id: "6",
-  //     language_code: "it",
-  //     name: "Italian",
-  //   },
-  //   {
-  //     id: "7",
-  //     language_code: "sv",
-  //     name: "Swedish",
-  //   },
-  //   {
-  //     id: "8",
-  //     language_code: "da",
-  //     name: "Danish",
-  //   },
-  //   {
-  //     id: "9",
-  //     language_code: "pt",
-  //     name: "Portuguese",
-  //   },
-  //   {
-  //     id: "10",
-  //     language_code: "cs",
-  //     name: "Czech",
-  //   },
-  //   {
-  //     id: "11",
-  //     language_code: "nl",
-  //     name: "Dutch",
-  //   },
-  //   {
-  //     id: "12",
-  //     language_code: "fi",
-  //     name: "Finnish",
-  //   },
-  //   {
-  //     id: "13",
-  //     language_code: "ru",
-  //     name: "Russian",
-  //   },
-  //   {
-  //     id: "14",
-  //     language_code: "lv",
-  //     name: "Latvian",
-  //   },
-  //   {
-  //     id: "15",
-  //     language_code: "lt",
-  //     name: "Lithuanian",
-  //   },
-  //   {
-  //     id: "16",
-  //     language_code: "ee",
-  //     name: "Estonian",
-  //   },
-  //   {
-  //     id: "17",
-  //     language_code: "sk",
-  //     name: "Slovak",
-  //   },
-  //   {
-  //     id: "18",
-  //     language_code: "hu",
-  //     name: "Hungarian",
-  //   },
-  //   {
-  //     id: "19",
-  //     language_code: "jp",
-  //     name: "Japanese",
-  //   },
-  //   {
-  //     id: "22",
-  //     language_code: "bg",
-  //     name: "Bulgarian",
-  //   },
-  //   {
-  //     id: "23",
-  //     language_code: "tk",
-  //     name: "Turkish",
-  //   },
-  //   {
-  //     id: "24",
-  //     language_code: "gr",
-  //     name: "Greek",
-  //   },
-  //   {
-  //     id: "25",
-  //     language_code: "ro",
-  //     name: "Romanian",
-  //   },
-  //   {
-  //     id: "26",
-  //     language_code: "zh",
-  //     name: "Chinese",
-  //   },
-  //   {
-  //     id: "27",
-  //     language_code: "ca",
-  //     name: "Catalan",
-  //   },
-  // ],
   categories: [
     {
       id: 1,
@@ -1666,7 +1539,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 17,
       delivrables: "None",
-      coordinates: "36.850000, 10.180000",
+      coordinates: "36.451000, 10.735000",
       archived: false,
       owner_id: 1,
       category_id: 103, // Plumbing (subcategory of Household Services)
@@ -1692,7 +1565,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 17,
       delivrables: "None",
-      coordinates: "36.800000, 10.200000",
+      coordinates: "36.452000, 10.735000",
       archived: false,
       owner_id: 1,
       category_id: 701, // Academic Tutoring (subcategory of Education & Tutoring)
@@ -1705,7 +1578,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 17,
       delivrables: "None",
-      coordinates: "36.780000, 10.150000",
+      coordinates: "36.459000, 10.738000",
       archived: false,
       owner_id: 1,
       category_id: 1101, // Pet Sitting & Walking (subcategory of Pet Care)
@@ -1730,7 +1603,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 2,
       delivrables: "None",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "36.8665, 10.1647", // Coordinates in Ariana, Tunisia
       archived: false,
       owner_id: 1,
       category_id: 702, // Language Instruction
@@ -1743,7 +1616,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 2,
       delivrables: "None",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "36.8669, 10.1647",
       archived: false,
       owner_id: 1,
       category_id: 801, // Event Planning & Coordination
@@ -1755,7 +1628,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 2,
       delivrables: "None",
-      coordinates: "36.790000, 10.170000",
+      coordinates: "36.8655, 10.1640",
       archived: false,
       owner_id: 1,
       category_id: 101, // Cleaning
@@ -1780,7 +1653,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 3,
       delivrables: "None",
-      coordinates: "36.810000, 10.190000",
+      coordinates: "36.7333, 9.1833",
       archived: false,
       owner_id: 1,
       category_id: 105, // Carpentry
@@ -1793,7 +1666,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 3,
       delivrables: "None",
-      coordinates: "36.780000, 10.160000",
+      coordinates: "36.7339, 9.1833",
       archived: false,
       owner_id: 1,
       category_id: 603, // IT Support & Consulting
@@ -1832,7 +1705,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 4,
       delivrables: "None",
-      coordinates: "36.830000, 10.200000",
+      coordinates: "36.7545, 10.2334",
       archived: false,
       owner_id: 1,
       category_id: 1903, // Personal Training
@@ -1988,7 +1861,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 7,
       delivrables: "None",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "34.425000, 8.784167",
       archived: false,
       owner_id: 1,
       category_id: 701, // Academic Tutoring
@@ -2013,7 +1886,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 7,
       delivrables: "Landscaped outdoor space",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "34.425020, 8.784169",
       archived: false,
       owner_id: 1,
       category_id: 1201, // Gardening & Landscaping
@@ -2025,7 +1898,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 7,
       delivrables: "Clean and sanitized space",
-      coordinates: "36.790000, 10.170000",
+      coordinates: "34.425103, 8.784160",
       archived: false,
       owner_id: 1,
       category_id: 101, // Cleaning
@@ -2037,7 +1910,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 8,
       delivrables: "Childcare services",
-      coordinates: "36.830000, 10.200000",
+      coordinates: "36.5011, 8.7802",
       archived: false,
       owner_id: 1,
       category_id: 1801, // Childcare
@@ -2050,7 +1923,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 8,
       delivrables: "Elderly care services",
-      coordinates: "36.810000, 10.190000",
+      coordinates: "36.5019, 8.7803",
       archived: false,
       owner_id: 1,
       category_id: 1802, // Elderly Care & Companionship
@@ -2062,7 +1935,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 8,
       delivrables: "Groomed pet",
-      coordinates: "36.780000, 10.160000",
+      coordinates: "36.5021, 8.7800",
       archived: false,
       owner_id: 1,
       category_id: 1102, // Grooming
@@ -2075,7 +1948,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 8,
       delivrables: "Repaired home",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "36.5019, 8.7817",
       archived: false,
       owner_id: 1,
       category_id: 102, // Repair & Maintenance
@@ -2088,7 +1961,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 9,
       delivrables: "Moved belongings",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "35.6781, 10.0963",
       archived: false,
       owner_id: 1,
       category_id: 403, // Moving
@@ -2114,7 +1987,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 9,
       delivrables: "None",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "35.6783, 10.0969",
       archived: false,
       owner_id: 1,
       category_id: 701, // Academic Tutoring
@@ -2140,7 +2013,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 10,
       delivrables: "Landscaped outdoor space",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "35.1676, 8.8365",
       archived: false,
       owner_id: 1,
       category_id: 1201, // Gardening & Landscaping
@@ -2152,7 +2025,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 10,
       delivrables: "Clean and sanitized home",
-      coordinates: "36.790000, 10.170000",
+      coordinates: "35.1673, 8.8369",
       archived: false,
       owner_id: 1,
       category_id: 101, // Cleaning
@@ -2165,7 +2038,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 10,
       delivrables: "Childcare services",
-      coordinates: "36.830000, 10.200000",
+      coordinates: "35.1671, 8.8360",
       archived: false,
       owner_id: 1,
       category_id: 1801, // Childcare
@@ -2178,7 +2051,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 10,
       delivrables: "Elderly care services",
-      coordinates: "36.810000, 10.190000",
+      coordinates: "35.1666, 8.8368",
       archived: false,
       owner_id: 1,
       category_id: 1802, // Elderly Care & Companionship
@@ -2191,7 +2064,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 11,
       delivrables: "Groomed pet and walked dog",
-      coordinates: "36.780000, 10.160000",
+      coordinates: "33.7055, 8.9659",
       archived: false,
       owner_id: 1,
       category_id: 1101, // Pet Sitting & Walking
@@ -2204,7 +2077,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 11,
       delivrables: "Repaired home",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "33.7052, 8.9650",
       archived: false,
       owner_id: 1,
       category_id: 104, // Electrical
@@ -2217,7 +2090,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 11,
       delivrables: "Moved belongings, packed and unpacked",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "33.7059, 8.9649",
       archived: false,
       owner_id: 1,
       category_id: 403, // Moving
@@ -2243,7 +2116,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 12,
       delivrables: "None",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "36.1826, 8.7141",
       archived: false,
       owner_id: 1,
       category_id: 701, // Academic Tutoring
@@ -2269,7 +2142,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 12,
       delivrables: "Landscaped outdoor space with water feature",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "36.1823, 8.7149",
       archived: false,
       owner_id: 1,
       category_id: 1201, // Gardening & Landscaping
@@ -2282,7 +2155,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 12,
       delivrables: "Deep-cleaned space",
-      coordinates: "36.790000, 10.170000",
+      coordinates: "36.1836, 8.7147",
       archived: false,
       owner_id: 1,
       category_id: 101, // Cleaning
@@ -2295,7 +2168,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 13,
       delivrables: "Childcare services",
-      coordinates: "36.830000, 10.200000",
+      coordinates: "35.5047, 11.0622",
       archived: false,
       owner_id: 1,
       category_id: 1801, // Childcare
@@ -2308,7 +2181,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 13,
       delivrables: "Elderly care services",
-      coordinates: "36.810000, 10.190000",
+      coordinates: "35.5043, 11.0624",
       archived: false,
       owner_id: 1,
       category_id: 1802, // Elderly Care & Companionship
@@ -2321,7 +2194,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 13,
       delivrables: "Groomed pet with hydrotherapy treatment",
-      coordinates: "36.780000, 10.160000",
+      coordinates: "35.5049, 11.0629",
       archived: false,
       owner_id: 1,
       category_id: 1102, // Grooming
@@ -2335,7 +2208,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 13,
       delivrables: "Repaired home",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "35.5017, 11.0625",
       archived: false,
       owner_id: 1,
       category_id: 102, // Repair & Maintenance
@@ -2348,7 +2221,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 14,
       delivrables: "None",
-      coordinates: "36.850000, 10.180000",
+      coordinates: "36.8081, 10.0971",
       archived: false,
       owner_id: 1,
       category_id: 103, // Plumbing (subcategory of Household Services)
@@ -2374,7 +2247,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 14,
       delivrables: "None",
-      coordinates: "36.800000, 10.200000",
+      coordinates: "36.8084, 10.0974",
       archived: false,
       owner_id: 1,
       category_id: 701, // Academic Tutoring (subcategory of Education & Tutoring)
@@ -2387,7 +2260,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 14,
       delivrables: "None",
-      coordinates: "36.780000, 10.150000",
+      coordinates: "36.8084, 10.0961",
       archived: false,
       owner_id: 1,
       category_id: 1101, // Pet Sitting & Walking (subcategory of Pet Care)
@@ -2412,7 +2285,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 15,
       delivrables: "None",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "33.354950, 10.505477",
       archived: false,
       owner_id: 1,
       category_id: 702, // Language Instruction
@@ -2425,7 +2298,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 15,
       delivrables: "None",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "33.354959, 10.505470",
       archived: false,
       owner_id: 1,
       category_id: 801, // Event Planning & Coordination
@@ -2437,7 +2310,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 15,
       delivrables: "None",
-      coordinates: "36.790000, 10.170000",
+      coordinates: "33.354940, 10.505467",
       archived: false,
       owner_id: 1,
       category_id: 101, // Cleaning
@@ -2462,7 +2335,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 16,
       delivrables: "None",
-      coordinates: "36.810000, 10.190000",
+      coordinates: "33.354960, 10.505487",
       archived: false,
       owner_id: 1,
       category_id: 105, // Carpentry
@@ -2475,7 +2348,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 16,
       delivrables: "None",
-      coordinates: "36.780000, 10.160000",
+      coordinates: "33.354952, 10.505478",
       archived: false,
       owner_id: 1,
       category_id: 603, // IT Support & Consulting
@@ -2514,7 +2387,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 18,
       delivrables: "None",
-      coordinates: "36.830000, 10.200000",
+      coordinates: "34.7406, 10.7603",
       archived: false,
       owner_id: 1,
       category_id: 1903, // Personal Training
@@ -2670,7 +2543,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 22,
       delivrables: "None",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "32.9297, 10.4518",
       archived: false,
       owner_id: 1,
       category_id: 701, // Academic Tutoring
@@ -2695,7 +2568,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 23,
       delivrables: "Landscaped outdoor space",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "33.9197, 8.1335",
       archived: false,
       owner_id: 1,
       category_id: 1201, // Gardening & Landscaping
@@ -2707,7 +2580,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 23,
       delivrables: "Clean and sanitized space",
-      coordinates: "36.790000, 10.170000",
+      coordinates: "33.9195, 8.1330",
       archived: false,
       owner_id: 1,
       category_id: 101, // Cleaning
@@ -2719,7 +2592,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 23,
       delivrables: "Childcare services",
-      coordinates: "36.830000, 10.200000",
+      coordinates: "33.9190, 8.1334",
       archived: false,
       owner_id: 1,
       category_id: 1801, // Childcare
@@ -2732,7 +2605,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 24,
       delivrables: "Elderly care services",
-      coordinates: "36.810000, 10.190000",
+      coordinates: "36.8065, 10.1815",
       archived: false,
       owner_id: 1,
       category_id: 1802, // Elderly Care & Companionship
@@ -2744,7 +2617,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 24,
       delivrables: "Groomed pet",
-      coordinates: "36.780000, 10.160000",
+      coordinates: "36.80654, 10.18158",
       archived: false,
       owner_id: 1,
       category_id: 1102, // Grooming
@@ -2757,7 +2630,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 24,
       delivrables: "Repaired home",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "36.80659, 10.18152",
       archived: false,
       owner_id: 1,
       category_id: 102, // Repair & Maintenance
@@ -2770,7 +2643,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 24,
       delivrables: "Moved belongings",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "36.8064, 10.1814",
       archived: false,
       owner_id: 1,
       category_id: 403, // Moving
@@ -2796,7 +2669,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 25,
       delivrables: "None",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "36.4020, 10.1429",
       archived: false,
       owner_id: 1,
       category_id: 701, // Academic Tutoring
@@ -2822,7 +2695,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 25,
       delivrables: "Landscaped outdoor space",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "36.40205, 10.14292",
       archived: false,
       owner_id: 1,
       category_id: 1201, // Gardening & Landscaping
@@ -2834,7 +2707,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 25,
       delivrables: "Clean and sanitized home",
-      coordinates: "36.790000, 10.170000",
+      coordinates: "36.40207, 10.14299",
       archived: false,
       owner_id: 1,
       category_id: 101, // Cleaning
@@ -2860,7 +2733,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 24,
       delivrables: "Elderly care services",
-      coordinates: "36.810000, 10.190000",
+      coordinates: "36.80657, 10.1816",
       archived: false,
       owner_id: 1,
       category_id: 1802, // Elderly Care & Companionship
@@ -2873,7 +2746,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 23,
       delivrables: "Groomed pet and walked dog",
-      coordinates: "36.780000, 10.160000",
+      coordinates: "33.91972, 8.13354",
       archived: false,
       owner_id: 1,
       category_id: 1101, // Pet Sitting & Walking
@@ -2886,7 +2759,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 23,
       delivrables: "Repaired home",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "33.919733, 8.133502",
       archived: false,
       owner_id: 1,
       category_id: 104, // Electrical
@@ -2899,7 +2772,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 22,
       delivrables: "Moved belongings, packed and unpacked",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "32.92976, 10.45183",
       archived: false,
       owner_id: 1,
       category_id: 403, // Moving
@@ -2925,7 +2798,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 21,
       delivrables: "None",
-      coordinates: "36.820000, 10.180000",
+      coordinates: "35.8256, 10.6360",
       archived: false,
       owner_id: 1,
       category_id: 701, // Academic Tutoring
@@ -2951,7 +2824,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 19,
       delivrables: "Landscaped outdoor space with water feature",
-      coordinates: "36.800000, 10.220000",
+      coordinates: "35.0382, 9.4840",
       archived: false,
       owner_id: 1,
       category_id: 1201, // Gardening & Landscaping
@@ -2964,7 +2837,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 16,
       delivrables: "Deep-cleaned space",
-      coordinates: "36.790000, 10.170000",
+      coordinates: "35.7770, 10.8262",
       archived: false,
       owner_id: 1,
       category_id: 101, // Cleaning
@@ -2977,7 +2850,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 15,
       delivrables: "Childcare services",
-      coordinates: "36.830000, 10.200000",
+      coordinates: null,
       archived: false,
       owner_id: 1,
       category_id: 1801, // Childcare
@@ -2990,7 +2863,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 14,
       delivrables: "Elderly care services",
-      coordinates: "36.810000, 10.190000",
+      coordinates: null,
       archived: false,
       owner_id: 1,
       category_id: 1802, // Elderly Care & Companionship
@@ -3003,7 +2876,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 11,
       delivrables: "Groomed pet with hydrotherapy treatment",
-      coordinates: "36.780000, 10.160000",
+      coordinates: null,
       archived: false,
       owner_id: 1,
       category_id: 1102, // Grooming
@@ -3017,7 +2890,7 @@ const constantId = {
       deducted_coins: 0,
       governorate_id: 9,
       delivrables: "Repaired home",
-      coordinates: "36.820000, 10.180000",
+      coordinates: null,
       archived: false,
       owner_id: 1,
       category_id: 102, // Repair & Maintenance

@@ -97,9 +97,9 @@ class BuildOnboarding extends StatelessWidget {
                           controller.setDocumentType(DocumentType.identityCard);
                           onFinish?.call();
                         },
-                        shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: const BorderSide(width: 0.4, color: kNeutralColor)),
+                        shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(width: 0.4, color: kNeutralColor)),
                         title: Text('identity_card'.tr, style: AppFonts.x14Bold),
-                        leading: const CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: Icon(Icons.badge_outlined)),
+                        leading: CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: const Icon(Icons.badge_outlined)),
                         trailing: const Icon(Icons.chevron_right_rounded),
                       ),
                       const SizedBox(height: Paddings.regular),
@@ -108,9 +108,9 @@ class BuildOnboarding extends StatelessWidget {
                           controller.setDocumentType(DocumentType.passport);
                           onFinish?.call();
                         },
-                        shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: const BorderSide(width: 0.4, color: kNeutralColor)),
+                        shape: OutlineInputBorder(borderRadius: smallRadius, borderSide: BorderSide(width: 0.4, color: kNeutralColor)),
                         title: Text('passport'.tr, style: AppFonts.x14Bold),
-                        leading: const CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: Icon(Icons.airplane_ticket_outlined)),
+                        leading: CircleAvatar(radius: 20, backgroundColor: kNeutralLightColor, child: const Icon(Icons.airplane_ticket_outlined)),
                         trailing: const Icon(Icons.chevron_right_rounded),
                       ),
                     ],

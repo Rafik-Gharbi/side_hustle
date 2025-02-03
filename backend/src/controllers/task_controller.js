@@ -181,7 +181,8 @@ exports.filterTasks = async (req, res) => {
         (categoryId = categoryIdFilter),
         (priceMin = minPrice),
         (priceMax = maxPrice),
-        (taskId = taskIdFilter)
+        (taskId = taskIdFilter),
+        (mode = searchMode)
       );
     } else {
       tasks = await fetchAndSortGovernorateTasks(

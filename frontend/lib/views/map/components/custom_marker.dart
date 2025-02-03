@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/constants.dart';
@@ -14,19 +13,18 @@ import 'task_map_card.dart';
 
 class BuildCustomMarker extends StatefulWidget {
   final MarkerModel? marker;
-  final MapController mapController;
   final bool isHighlighted;
   final void Function() onTap;
 
-  const BuildCustomMarker(this.marker, this.mapController, {super.key, this.isHighlighted = false, required this.onTap});
+  const BuildCustomMarker(this.marker, {super.key, this.isHighlighted = false, required this.onTap});
 
   @override
   State<BuildCustomMarker> createState() => _BuildCustomMarkerState();
 }
 
 class _BuildCustomMarkerState extends State<BuildCustomMarker> {
-  Future<bool> openMarkerPopup(MarkerModel marker, {bool close = false}) async {
-    final bool = widget.mapController.move(marker.coordinates, 14);
+  Future<void> openMarkerPopup(MarkerModel marker, {bool close = false}) async {
+    widget.onTap.call();
     if (!close) {
       CustomBottomsheet(
         height: marker.isTask ? 160 : 200,
@@ -39,7 +37,6 @@ class _BuildCustomMarkerState extends State<BuildCustomMarker> {
     } else if (Get.isBottomSheetOpen ?? false) {
       Helper.goBack();
     }
-    return bool;
   }
 
   @override

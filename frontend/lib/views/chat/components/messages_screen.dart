@@ -42,7 +42,7 @@ class MessagesScreen extends StatelessWidget {
             title: 'messages'.tr,
             onBack: controller.clearMessagesScreen,
             actionButton: CustomButtons.icon(
-              icon: Icon(controller.openMessagesSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
+              icon: Icon(controller.openMessagesSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined, color: kBlackColor),
               onPressed: () => controller.openMessagesSearchBar.value = !controller.openMessagesSearchBar.value,
             ),
             appBarBottom: controller.openMessagesSearchBar.value
@@ -106,7 +106,7 @@ class MessagesScreen extends StatelessWidget {
                                       ),
                                       suffixIcon: CustomButtons.icon(
                                         onPressed: controller.sendMessage,
-                                        icon: const Icon(Icons.send, color: kNeutralColor),
+                                        icon: Icon(Icons.send, color: kNeutralColor),
                                         disabled: controller.selectedChatBubble == null,
                                       ),
                                     ),

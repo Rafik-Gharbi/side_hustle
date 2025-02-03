@@ -63,14 +63,14 @@ class ServiceCard extends StatelessWidget {
                       if (onDeleteService != null)
                         SwipeAction(
                           performsFirstActionWithFullSwipe: true,
-                          icon: const Icon(Icons.delete_forever_rounded, color: kNeutralColor100),
+                          icon: Icon(Icons.delete_forever_rounded, color: kNeutralColor100),
                           onTap: (handler) => onDeleteService?.call(),
                           color: kErrorColor,
                         ),
                       if (onEditService != null)
                         SwipeAction(
                           performsFirstActionWithFullSwipe: true,
-                          icon: const Icon(Icons.edit_outlined, color: kNeutralColor100),
+                          icon: Icon(Icons.edit_outlined, color: kNeutralColor100),
                           onTap: (handler) => onEditService?.call(),
                           color: kSelectedColor,
                         ),
@@ -92,8 +92,8 @@ class ServiceCard extends StatelessWidget {
         return ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
           shape: dense
-              ? const OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
-              : RoundedRectangleBorder(borderRadius: smallRadius, side: const BorderSide(color: kNeutralLightColor)),
+              ? OutlineInputBorder(borderSide: BorderSide(color: kNeutralColor100))
+              : RoundedRectangleBorder(borderRadius: smallRadius, side: BorderSide(color: kNeutralLightColor)),
           tileColor: highlighted ? kPrimaryOpacityColor : kNeutralLightOpacityColor,
           splashColor: kPrimaryOpacityColor,
           title: Row(

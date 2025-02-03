@@ -184,7 +184,7 @@ class CustomButtons extends StatelessWidget {
                                     child: SizedBox(
                                       width: (height ?? 50) - 20,
                                       height: (height ?? 50) - 20,
-                                      child: const CircularProgressIndicator(color: Colors.white),
+                                      child: CircularProgressIndicator(color: kNeutralColor100),
                                     ),
                                   )
                                 : Text(
@@ -215,7 +215,7 @@ class CustomButtons extends StatelessWidget {
                               child: SizedBox(
                                 width: (height ?? 50) - 20,
                                 height: (height ?? 50) - 20,
-                                child: const CircularProgressIndicator(color: Colors.white),
+                                child: CircularProgressIndicator(color: kNeutralColor100),
                               ),
                             )
                           : Text(
@@ -223,9 +223,9 @@ class CustomButtons extends StatelessWidget {
                               style: (titleStyle ?? AppFonts.x16Bold).copyWith(
                                 color: buttonColor != null
                                     ? Helper.isColorDarkEnoughForWhiteText(buttonColor!)
-                                        ? kBlackColor
-                                        : kNeutralColor100
-                                    : kNeutralColor100,
+                                        ? Colors.black
+                                        : Colors.white
+                                    : Colors.white,
                               ),
                             ),
                     ),
@@ -237,7 +237,7 @@ class CustomButtons extends StatelessWidget {
                 shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius: const BorderRadius.all(Radius.circular(5)),
-                    side: borderSide ?? const BorderSide(color: kNeutralLightColor),
+                    side: borderSide ?? BorderSide(color: kNeutralLightColor),
                   ),
                 ),
                 padding: WidgetStateProperty.all(padding ?? EdgeInsets.zero),
@@ -248,7 +248,7 @@ class CustomButtons extends StatelessWidget {
                   ),
                 ),
                 surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
-                backgroundColor: disabled ? WidgetStateProperty.all(Theme.of(context).scaffoldBackgroundColor) : WidgetStateProperty.all(buttonColor ?? Colors.white),
+                backgroundColor: disabled ? WidgetStateProperty.all(Theme.of(context).scaffoldBackgroundColor) : WidgetStateProperty.all(buttonColor ?? kNeutralColor100),
               ),
               onPressed: disabled || (loading ?? false)
                   ? null

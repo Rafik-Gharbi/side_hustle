@@ -186,7 +186,7 @@ class SignUpFields extends StatelessWidget {
                           style: AppFonts.x14Regular.copyWith(color: kPrimaryColor),
                           recognizer: TapGestureRecognizer()..onTap = () => controller.openPrivacy(),
                         ),
-                        const TextSpan(text: '.', style: AppFonts.x14Regular),
+                        TextSpan(text: '.', style: AppFonts.x14Regular),
                       ],
                     ),
                   ),
@@ -210,17 +210,17 @@ class SignUpFields extends StatelessWidget {
     final buildOrDivider = Helper.isMobile
         ? Row(
             children: [
-              const Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralColor), child: SizedBox(height: 1))),
+              Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralColor), child: const SizedBox(height: 1))),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Paddings.regular),
                 child: Text('or'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralColor)),
               ),
-              const Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralColor), child: SizedBox(height: 1))),
+              Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralColor), child: const SizedBox(height: 1))),
             ],
           )
         : Column(
             children: [
-              const Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralLightColor), child: SizedBox(width: 1))),
+              Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralLightColor), child: const SizedBox(width: 1))),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: Paddings.large),
                 child: RotatedBox(
@@ -228,7 +228,7 @@ class SignUpFields extends StatelessWidget {
                   child: Text('or'.tr, style: AppFonts.x12Regular.copyWith(color: kNeutralLightColor)),
                 ),
               ),
-              const Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralLightColor), child: SizedBox(width: 1))),
+              Expanded(child: DecoratedBox(decoration: BoxDecoration(color: kNeutralLightColor), child: const SizedBox(width: 1))),
             ],
           );
     final buildSignUpWithSocial = GetBuilder<AuthenticationService>(
@@ -248,7 +248,7 @@ class SignUpFields extends StatelessWidget {
             ],
             CustomButtons.elevateSecondary(
               onPressed: () => Helper.snackBar(message: 'feature_not_available_yet'.tr), // signUpSocial(() => controller.facebookLogin(isSignUp: true)),
-              borderSide: const BorderSide(color: kNeutralColor),
+              borderSide: BorderSide(color: kNeutralColor),
               icon: Image.asset(Assets.facebookIcon, width: 25),
               title: 'continue_facebook'.tr,
               loading: controller.isLoggingIn,
@@ -257,7 +257,7 @@ class SignUpFields extends StatelessWidget {
             CustomButtons.elevateSecondary(
               onPressed: () => signUpSocial(() => controller.signInWithGoogle(isSignUp: true)),
               buttonColor: kNeutralColor100,
-              borderSide: const BorderSide(color: kNeutralColor),
+              borderSide: BorderSide(color: kNeutralColor),
               icon: Image.asset(Assets.googleIcon, width: 25),
               title: 'continue_google'.tr,
               loading: controller.isLoggingIn,

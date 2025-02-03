@@ -46,7 +46,7 @@ class TaskListScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CustomButtons.icon(
-                  icon: Icon(controller.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
+                  icon: Icon(controller.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined, color: kBlackColor),
                   onPressed: () {
                     controller.openSearchBar.value = !controller.openSearchBar.value;
                     if (!controller.openSearchBar.value && controller.searchTaskController.text.isNotEmpty) {
@@ -56,7 +56,7 @@ class TaskListScreen extends StatelessWidget {
                   },
                 ),
                 CustomButtons.icon(
-                  icon: const Icon(Icons.filter_alt_outlined),
+                  icon: Icon(Icons.filter_alt_outlined, color: kBlackColor),
                   onPressed: () => Get.dialog(
                     MoreFiltersPopup(
                       updateFilter: (filter) => controller.filterModel = filter,

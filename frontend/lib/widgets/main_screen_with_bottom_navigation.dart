@@ -10,6 +10,7 @@ import '../helpers/helper.dart';
 import '../models/filter_model.dart';
 import '../services/navigation_history_observer.dart';
 import '../services/theme/theme.dart';
+import '../services/theme/theme_service.dart';
 import '../views/chat/chat_controller.dart';
 import '../views/profile/admin_dashboard/admin_dashboard_screen.dart';
 import '../views/profile/admin_dashboard/components/approve_user/approve_user_screen.dart';
@@ -87,7 +88,7 @@ class MainScreenWithBottomNavigation extends StatelessWidget {
                   bottom: resolveScreenAppBarBottom(),
                   leading: isNotMainRoute
                       ? CustomButtons.icon(
-                          icon: const Icon(Icons.chevron_left, size: 28),
+                          icon: Icon(Icons.chevron_left, size: 28, color: kBlackColor),
                           onPressed: () => onBackButtonPressed(),
                         )
                       : const SizedBox(),
@@ -120,7 +121,7 @@ class MainScreenWithBottomNavigation extends StatelessWidget {
                                       ),
                                     ),
                                     CustomButtons.icon(
-                                      icon: const Icon(Icons.close, color: kNeutralColor100),
+                                      icon: Icon(Icons.close, color: kNeutralColor100),
                                       onPressed: () => setState(() => showConnectivityMsg = false),
                                     ),
                                   ],
@@ -154,13 +155,14 @@ class MainScreenWithBottomNavigation extends StatelessWidget {
                       : null,
                   mini: true,
                   shape: const CircleBorder(),
-                  child: const Icon(Icons.add, color: kNeutralColor100),
+                  child: Icon(Icons.add, color: ThemeService.find.isDark ? kBlackColor : kNeutralColor100),
                 ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           bottomNavigationBar: hideBottomNavigation
               ? null
               : Obx(
                   () => AnimatedBottomNavigationBar(
+                    backgroundColor: kNeutralColor100,
                     builder: (widget, index, isActive) {
                       widget = Icon((widget as Icon).icon, color: isActive ? kPrimaryColor : kBlackColor);
                       return index == 2 // Chat
@@ -170,7 +172,7 @@ class MainScreenWithBottomNavigation extends StatelessWidget {
                                 isLabelVisible: MainAppController.find.notSeenMessages.value > 0,
                                 label: Text(
                                   MainAppController.find.notSeenMessages.value.toString(),
-                                  style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
+                                  style: AppFonts.x10Bold.copyWith(color: ThemeService.find.isDark ? kBlackColor : kNeutralColor100),
                                 ),
                                 child: SizedBox(width: 60, height: 60, child: widget),
                               ),
@@ -182,7 +184,7 @@ class MainScreenWithBottomNavigation extends StatelessWidget {
                                     isLabelVisible: MainAppController.find.profileActionRequired.value > 0,
                                     label: Text(
                                       MainAppController.find.profileActionRequired.value.toString(),
-                                      style: AppFonts.x10Bold.copyWith(color: kNeutralColor100),
+                                      style: AppFonts.x10Bold.copyWith(color: ThemeService.find.isDark ? kBlackColor : kNeutralColor100),
                                     ),
                                     child: SizedBox(width: 60, height: 60, child: widget),
                                   ),
@@ -235,12 +237,12 @@ class MainScreenWithBottomNavigation extends StatelessWidget {
       return [
         CustomButtons.icon(
           key: MarketController.find.searchIconKey,
-          icon: Icon(MarketController.find.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
+          icon: Icon(MarketController.find.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined, color: kBlackColor),
           onPressed: () => MarketController.find.openSearchBar.value = !MarketController.find.openSearchBar.value,
         ),
         CustomButtons.icon(
           key: MarketController.find.advancedFilterKey,
-          icon: const Icon(Icons.filter_alt_outlined),
+          icon: Icon(Icons.filter_alt_outlined, color: kBlackColor),
           onPressed: () => Get.dialog(
             MoreFiltersPopup(
               updateFilter: (filter) => MarketController.find.filterModel = filter,
@@ -255,7 +257,7 @@ class MainScreenWithBottomNavigation extends StatelessWidget {
       return [
         CustomButtons.icon(
           key: ChatController.find.searchIconKey,
-          icon: Icon(ChatController.find.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined),
+          icon: Icon(ChatController.find.openSearchBar.value ? Icons.search_off_outlined : Icons.search_outlined, color: kBlackColor),
           onPressed: () {
             ChatController.find.openSearchBar.value = !ChatController.find.openSearchBar.value;
             if (!ChatController.find.openSearchBar.value) {
