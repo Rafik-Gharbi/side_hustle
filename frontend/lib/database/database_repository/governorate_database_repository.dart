@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:get/get.dart';
 
 import '../../models/governorate.dart';
-import '../../services/logger_service.dart';
+import '../../services/logging/logger_service.dart';
 import '../database.dart';
 
 class GovernorateDatabaseRepository extends GetxService {

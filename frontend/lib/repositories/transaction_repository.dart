@@ -6,7 +6,7 @@ import '../models/coin_pack_purchase.dart';
 import '../models/transaction.dart';
 import '../networking/api_base_helper.dart';
 import '../services/authentication_service.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class TransactionRepository extends GetxService {
   static TransactionRepository get find => Get.find<TransactionRepository>();

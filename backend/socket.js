@@ -35,6 +35,7 @@ const {
   approveUser,
   userNotApprovable,
   getUsersSupport,
+  queryTable,
 } = require("./src/controllers/admin_controller");
 const {
   BalanceTransaction,
@@ -638,6 +639,18 @@ function initializeSocket(io) {
         });
       } catch (error) {
         console.error("Error getting admin user stats data:", error);
+      }
+    });
+    socket.on("queryTableData", async (data) => {
+      try {
+        const adminUser = await validateAdmin(data.jwt);
+        if (!adminUser) return;
+        const tableData = await queryTable(data.table, data.fields, data.conditions, data.groupBy, data.orderBy, data.orderType);
+        io.to(`${adminUser.id}-adminDashboard`).emit("adminTableData", {
+          tableData: tableData,
+        });
+      } catch (error) {
+        console.error("Error getting admin query table data:", error);
       }
     });
 

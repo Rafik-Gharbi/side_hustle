@@ -12,7 +12,7 @@ import '../../../models/user.dart';
 import '../../../networking/api_base_helper.dart';
 import '../../../repositories/user_repository.dart';
 import '../../../services/authentication_service.dart';
-import '../../../services/logger_service.dart';
+import '../../../services/logging/logger_service.dart';
 import '../../../services/shared_preferences.dart';
 import '../../../services/tutorials/profile_tutorial.dart';
 import '../../../widgets/categories_bottomsheet.dart';

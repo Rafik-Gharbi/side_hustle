@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 import '../models/referral.dart';
 import '../networking/api_base_helper.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class ReferralRepository extends GetxService {
   static ReferralRepository get find => Get.find<ReferralRepository>();

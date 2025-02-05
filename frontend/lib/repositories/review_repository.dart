@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../helpers/helper.dart';
 import '../models/review.dart';
 import '../networking/api_base_helper.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class ReviewRepository extends GetxService {
   static ReviewRepository get find => Get.find<ReviewRepository>();

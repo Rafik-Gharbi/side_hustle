@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../constants/icon_map.dart';
-import '../../services/logger_service.dart';
+import '../../services/logging/logger_service.dart';
 
 extension IconDataConvertor on String {
   IconData getIconData() {

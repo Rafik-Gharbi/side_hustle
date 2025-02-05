@@ -8,6 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'logger_helper.dart';
+
 extension LoggerExtension on Logger {
   void errorStackTrace(Object error, StackTrace stackTrace, String functionName) {
     e('Error $functionName: ${error.toString()}\nStackTrace: ${stackTrace.toString()}');
@@ -55,7 +57,7 @@ class LoggerService extends GetxService {
 
       if (!filterByDate) {
         // Return the full log file if no filtering is required
-        return XFile.fromData(logFile.readAsBytesSync(), name: 'log.txt', mimeType: 'txt', path: logFile.path);
+        return XFile.fromData(logFile.readAsBytesSync(), name: 'log.pdf', mimeType: 'pdf', path: logFile.path);
       }
 
       // Read the log file content
@@ -68,7 +70,7 @@ class LoggerService extends GetxService {
         final timestamp = _extractTimestamp(lines[i]);
         if (timestamp != null) {
           final difference = now.difference(timestamp);
-          if (difference.inDays <= 2) {
+          if (difference.inDays <= 1) {
             startIndex = i;
             break;
           }
@@ -76,15 +78,16 @@ class LoggerService extends GetxService {
       }
 
       // Take all lines from the found index onward
-      final filteredLogs = lines.sublist(startIndex).join('\n');
+      final filteredLogs = lines.sublist(startIndex);
 
       // Write the filtered logs to a temporary file
       final tempDir = await getTemporaryDirectory();
-      final tempFile = File('${tempDir.path}/filtered_log.txt');
-      await tempFile.writeAsString(filteredLogs);
-
+      // final tempFile = File('${tempDir.path}/filtered_log.pdf');
+      // await tempFile.writeAsString(filteredLogs);
+      final pdfFile = await generateLogPdf(filteredLogs);
+      if (pdfFile == null) return null;
       // Return the filtered log file
-      return XFile.fromData(tempFile.readAsBytesSync(), name: 'log.txt', mimeType: 'txt', path: '${tempDir.path}/filtered_log.txt');
+      return XFile.fromData(pdfFile.readAsBytesSync(), name: 'log.pdf', mimeType: 'pdf', path: '${tempDir.path}/filtered_log.pdf');
     }
     return null;
   }
@@ -175,6 +178,12 @@ class MyPrinter extends LogPrinter {
     final formattedLevel = '[${event.level.name.toUpperCase()}]';
     final timestamp = printTime ? DateFormat('yyyy-MM-dd HH:mm:ss').format(event.time) : '';
     final logOutput = '$timestamp $formattedLevel $messageStr';
+
+    if (event.level == Level.error && event.stackTrace != null) {
+      final stackTraceLines = event.stackTrace.toString().split('\n').take(10).join('\n');
+      return [logOutput, stackTraceLines];
+    }
+
     return [logOutput];
   }
 

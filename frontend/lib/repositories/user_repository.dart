@@ -15,7 +15,7 @@ import '../models/user.dart';
 import '../networking/api_base_helper.dart';
 import '../networking/api_exceptions.dart';
 import '../services/authentication_service.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 import '../services/shared_preferences.dart';
 
 class UserRepository extends GetxService {
@@ -336,7 +336,7 @@ class UserRepository extends GetxService {
 
   Future<List<SupportTicket>?> getUserSupportTickets() async {
     try {
-      final guestId = SharedPreferencesService.find.get(guestIdKey);
+      final guestId = AuthenticationService.find.isLoggedIn ? null : SharedPreferencesService.find.get(guestIdKey);
       final result = await ApiBaseHelper().request(RequestType.get, '/user/support-tickets${guestId != null ? '?guest_id=$guestId' : ''}', sendToken: true);
       final tickets = (result['tickets'] as List).map((e) => SupportTicket.fromJson(e)).toList();
       return tickets;
@@ -348,7 +348,7 @@ class UserRepository extends GetxService {
 
   Future<List<SupportMessage>?> getTicketMessages(String ticketId) async {
     try {
-      final guestId = SharedPreferencesService.find.get(guestIdKey);
+      final guestId = AuthenticationService.find.isLoggedIn ? null : SharedPreferencesService.find.get(guestIdKey);
       final result = await ApiBaseHelper().request(RequestType.get, '/user/support-messages?ticket_id=$ticketId&guest_id=$guestId', sendToken: true);
       final tickets = (result['messages'] as List).map((e) => SupportMessage.fromJson(e)).toList();
       return tickets;

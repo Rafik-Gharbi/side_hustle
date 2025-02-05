@@ -328,7 +328,7 @@ class _BuildDropDownButton<T> extends StatelessWidget {
                                       borderRadius: smallRadius,
                                     ),
                                     child: Center(
-                                      child: Text(valueFrom?.call(value) ?? value.toString(), style: AppFonts.x14Regular),
+                                      child: Text(valueFrom?.call(value) ?? value.toString(), style: AppFonts.x14Regular.copyWith(color: selectedItem != null && selectedItem == value ? kNeutralColor100 : kBlackColor)),
                                     ),
                                   ),
                                 ),

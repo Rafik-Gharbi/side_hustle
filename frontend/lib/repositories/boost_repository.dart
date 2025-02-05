@@ -4,7 +4,7 @@ import '../helpers/helper.dart';
 import '../models/boost.dart';
 import '../models/dto/boost_dto.dart';
 import '../networking/api_base_helper.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class BoostRepository extends GetxService {
   static BoostRepository get find => Get.find<BoostRepository>();

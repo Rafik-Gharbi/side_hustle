@@ -80,6 +80,7 @@ class HomeScreen extends StatelessWidget {
                 onSkip: () {
                   if (MainScreenWithBottomNavigation.notShowAgain.value) {
                     SharedPreferencesService.find.add(hasFinishedHomeTutorialKey, 'true');
+                    Future.delayed(Durations.medium4, () => MainScreenWithBottomNavigation.notShowAgain.value = false);
                   }
                   MainScreenWithBottomNavigation.isOnTutorial.value = false;
                   return true;
@@ -166,10 +167,17 @@ class HomeScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('${'hello'.tr},', style: AppFonts.x14Regular.copyWith(color: kNeutralColor)),
-                          if (AuthenticationService.find.isUserLoggedIn.value)
-                            Text(AuthenticationService.find.jwtUserData?.name ?? 'user'.tr, style: AppFonts.x16Bold)
-                          else
-                            Text('guest_user'.tr, style: AppFonts.x16Bold)
+                          Obx(
+                            () {
+                              if (AuthenticationService.find.isLoggingIn.value || (!AuthenticationService.find.isReady && SharedPreferencesService.find.get(jwtKey) != null)) {
+                                return Text('logging_in'.tr, style: AppFonts.x16Bold);
+                              } else if (AuthenticationService.find.isUserLoggedIn.value) {
+                                return Text(AuthenticationService.find.jwtUserData?.name ?? 'user'.tr, style: AppFonts.x16Bold);
+                              } else {
+                                return Text('guest_user'.tr, style: AppFonts.x16Bold);
+                              }
+                            },
+                          ),
                         ],
                       ),
                       CustomButtonWithOverlay(

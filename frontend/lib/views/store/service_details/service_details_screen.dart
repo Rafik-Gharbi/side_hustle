@@ -15,7 +15,7 @@ import '../../../models/enum/request_status.dart';
 import '../../../models/service.dart';
 import '../../../models/store.dart';
 import '../../../services/authentication_service.dart';
-import '../../../services/logger_service.dart';
+import '../../../services/logging/logger_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../viewmodel/reservation_viewmodel.dart';
 import '../../../widgets/custom_button_with_overlay.dart';

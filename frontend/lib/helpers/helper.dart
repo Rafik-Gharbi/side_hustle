@@ -31,7 +31,7 @@ import '../repositories/user_repository.dart';
 import '../services/authentication_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/translation/app_localization.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 import '../services/theme/theme.dart';
 import '../views/notifications/notification_controller.dart';
 import '../views/profile/account/login_dialog.dart';
@@ -610,6 +610,12 @@ class Helper {
   }
 
   static Alignment resolveAlignment() => isArabic ? Alignment.centerLeft : Alignment.centerRight;
+
+  static Color getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll('#', '');
+    if (hexColor.length == 6) hexColor = 'FF$hexColor';
+    return Color(int.parse(hexColor, radix: 16));
+  }
 }
 
 class ColorGenerator {

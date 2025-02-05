@@ -10,7 +10,7 @@ import '../models/reservation.dart';
 import '../models/task.dart';
 import '../networking/api_base_helper.dart';
 import '../services/authentication_service.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class ReservationRepository extends GetxService {
   static ReservationRepository get find => Get.find<ReservationRepository>();

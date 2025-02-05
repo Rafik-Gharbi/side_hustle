@@ -16,6 +16,7 @@ import 'admin_dashboard_controller.dart';
 import 'components/feedbacks/feedbacks_screen.dart';
 import 'components/manage_balance/manage_balance_screen.dart';
 import 'components/support_system/support_screen.dart';
+import 'components/table_data/table_data_screen.dart';
 import 'components/user_reports/user_reports_screen.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
@@ -109,6 +110,11 @@ class AdminDashboardScreen extends StatelessWidget {
                                         label: 'support_system'.tr,
                                         icon: Icons.support_outlined,
                                         onTap: () => Get.toNamed(SupportScreen.routeName)?.then((value) => controller.init()),
+                                      ),
+                                      Buildables.buildActionTile(
+                                        label: 'query_table'.tr,
+                                        icon: Icons.data_exploration_outlined,
+                                        onTap: () => Get.toNamed(TableDataScreen.routeName)?.then((value) => controller.init()),
                                       ),
                                     ],
                                   ),

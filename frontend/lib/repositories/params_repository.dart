@@ -13,7 +13,7 @@ import '../models/coin_pack.dart';
 import '../models/dto/report_dto.dart';
 import '../models/governorate.dart';
 import '../networking/api_base_helper.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 import '../widgets/feedback_bottomsheet.dart';
 import '../widgets/thank_you_popup.dart';
 

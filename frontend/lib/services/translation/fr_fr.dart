@@ -240,6 +240,8 @@ final Map<String, String> frFr = <String, String>{
   'identity_card': 'Carte d\'identité',
   'passport': 'Passeport',
   'uploading_wait': 'Téléchargement de votre document, veuillez patienter.',
+  'logging_in': 'Connexion en cours...',
+  'query_table': 'Requête des tables',
   'verification': 'Vérification',
   'complete': 'Complet',
   'failed': 'Échoué',

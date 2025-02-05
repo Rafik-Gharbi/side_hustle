@@ -7,7 +7,7 @@ import '../../constants/shared_preferences_keys.dart';
 import '../../models/enum/request_status.dart';
 import '../../models/reservation.dart';
 import '../../models/service.dart';
-import '../../services/logger_service.dart';
+import '../../services/logging/logger_service.dart';
 import '../../services/shared_preferences.dart';
 import '../database.dart';
 import 'store_database_repository.dart';

@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:get/get.dart';
 
 import '../../models/user.dart';
-import '../../services/logger_service.dart';
+import '../../services/logging/logger_service.dart';
 import '../database.dart';
 
 class UserDatabaseRepository extends GetxService {

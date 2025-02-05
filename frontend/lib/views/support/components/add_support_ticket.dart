@@ -12,7 +12,8 @@ import '../../../helpers/form_validators.dart';
 import '../../../helpers/helper.dart';
 import '../../../models/support_ticket.dart';
 import '../../../repositories/user_repository.dart';
-import '../../../services/logger_service.dart';
+import '../../../services/authentication_service.dart';
+import '../../../services/logging/logger_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../widgets/custom_buttons.dart';
 import '../../../widgets/custom_dropdown.dart';
@@ -237,7 +238,7 @@ class AddSupportTicket extends StatelessWidget {
                                 UserRepository.find
                                     .submitSupportTicket(
                                   SupportTicket(
-                                    guestId: Helper.getOrCreateGuestId(),
+                                    guestId: AuthenticationService.find.isLoggedIn ? null : Helper.getOrCreateGuestId(),
                                     category: ticketCategory!,
                                     subject: subjectController.text,
                                     description: descriptionController.text,

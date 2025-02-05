@@ -7,7 +7,6 @@ import '../../constants/assets.dart';
 import '../../constants/colors.dart';
 import '../../constants/shared_preferences_keys.dart';
 import '../../helpers/helper.dart';
-import '../../services/authentication_service.dart';
 import '../../services/shared_preferences.dart';
 import '../../widgets/main_screen_with_bottom_navigation.dart';
 import '../onboarding/onboarding_screen.dart';
@@ -63,8 +62,7 @@ class SplashScreenState extends State<SplashScreen> with TickerProviderStateMixi
       Timer.periodic(const Duration(milliseconds: 100), (timer) {
         elapsedMilliseconds += 100;
         // Check if the authentication service is ready
-        Helper.waitAndExecute(
-            () => SharedPreferencesService.find.isReady.value && AuthenticationService.find.isReady && _breathingAnimation.value == 1 && elapsedMilliseconds >= 1000, () {
+        Helper.waitAndExecute(() => SharedPreferencesService.find.isReady.value && _breathingAnimation.value == 1 && elapsedMilliseconds >= 1000, () {
           timer.cancel();
           _breathingController.stop();
           _finalController.forward().whenComplete(

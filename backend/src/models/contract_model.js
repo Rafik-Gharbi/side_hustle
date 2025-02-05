@@ -1,7 +1,5 @@
 const { sequelize, Sequelize } = require("../../db.config");
 const { User } = require("./user_model");
-const { Service } = require("./service_model");
-const { Task } = require("./task_model");
 const { Reservation } = require("./reservation_model");
 const Contract = sequelize.define(
   "contract",

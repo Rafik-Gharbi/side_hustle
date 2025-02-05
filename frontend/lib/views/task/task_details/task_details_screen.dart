@@ -13,7 +13,7 @@ import '../../../helpers/helper.dart';
 import '../../../models/dto/image_dto.dart';
 import '../../../models/task.dart';
 import '../../../services/authentication_service.dart';
-import '../../../services/logger_service.dart';
+import '../../../services/logging/logger_service.dart';
 import '../../../services/theme/theme.dart';
 import '../../../viewmodel/reservation_viewmodel.dart';
 import '../../../widgets/custom_button_with_overlay.dart';

@@ -14,7 +14,7 @@ import '../controllers/main_app_controller.dart';
 import '../helpers/helper.dart';
 import '../main.dart';
 import '../services/authentication_service.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/theme/theme.dart';
 import '../widgets/custom_buttons.dart';
@@ -44,7 +44,7 @@ extension RequestTypeExtension on RequestType {
 const String baseUrlLocalWeb = 'http://localhost:3000'; // web localhost
 const String baseUrlLocalAndroid = 'http://10.0.2.2:3000'; // android localhost
 const String baseUrlLocalIos = 'http://127.0.0.1:3000'; // ios localhost
-const String baseUrlRealDevice = 'http://192.168.1.7:3000'; // 'http://172.20.10.2:3000'; // real device ip address
+const String baseUrlRealDevice = 'http://192.168.1.107:3000'; // 'http://172.20.10.2:3000'; // real device ip address
 const String baseUrlRemote = 'https://api.dootify.com'; // remote
 String _lastRequestedUrl = '';
 

@@ -10,7 +10,7 @@ import '../models/filter_model.dart';
 import '../models/service.dart';
 import '../models/store.dart';
 import '../networking/api_base_helper.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class StoreRepository extends GetxService {
   static StoreRepository get find => Get.find<StoreRepository>();

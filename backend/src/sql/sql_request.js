@@ -653,10 +653,12 @@ async function populateOneSupportTicket(ticket) {
     logFile =
       attachments.find(
         (attachment) =>
-          attachment.type === "file" && attachment.url.endsWith(".txt")
+          attachment.type === "file" &&
+          attachment.url.endsWith(".pdf") &&
+          attachment.url.includes("log")
       ) || null;
     attachments = attachments.filter(
-      (attachment) => attachment.id !== logFile.id
+      (attachment) => attachment.id !== logFile?.id
     );
   }
 

@@ -15,7 +15,7 @@ import '../../../models/review.dart';
 import '../../../models/service.dart';
 import '../../../models/store.dart';
 import '../../../repositories/store_repository.dart';
-import '../../../services/logger_service.dart';
+import '../../../services/logging/logger_service.dart';
 import '../../../services/shared_preferences.dart';
 import '../../../services/tutorials/create_store_tutorial.dart';
 import '../../../viewmodel/store_viewmodel.dart';

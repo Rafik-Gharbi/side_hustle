@@ -4,7 +4,7 @@ import '../controllers/main_app_controller.dart';
 import '../database/database_repository/task_database_repository.dart';
 import '../models/dto/favorite_dto.dart';
 import '../networking/api_base_helper.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class FavoriteRepository extends GetxService {
   static FavoriteRepository get find => Get.find<FavoriteRepository>();

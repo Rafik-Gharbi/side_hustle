@@ -27,7 +27,7 @@ class OnboardingScreen extends StatelessWidget {
           return IntroductionScreen(
             pages: [
               PageViewModel(
-                title: 'welcome_to'.tr,
+                titleWidget: Text('welcome_to'.tr, style: AppFonts.x16Bold),
                 bodyWidget: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -40,24 +40,24 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               ),
               PageViewModel(
-                title: 'with_dootify'.tr,
-                body: 'delegate_tasks_save_time'.tr,
+                titleWidget: Text('with_dootify'.tr, style: AppFonts.x16Bold),
+                bodyWidget: Text('delegate_tasks_save_time'.tr, style: AppFonts.x14Regular),
                 image: Padding(
                   padding: const EdgeInsets.only(top: Paddings.large),
                   child: Center(child: ClipRRect(borderRadius: smallRadius, child: Image.asset(Assets.onboarding1, width: Get.width - 30, fit: BoxFit.cover))),
                 ),
               ),
               PageViewModel(
-                title: 'earn_with_skills'.tr,
-                body: 'offer_services_earn_income'.tr,
+                titleWidget: Text('earn_with_skills'.tr, style: AppFonts.x16Bold),
+                bodyWidget: Text('offer_services_earn_income'.tr, style: AppFonts.x14Regular),
                 image: Padding(
                   padding: const EdgeInsets.only(top: Paddings.large),
                   child: Center(child: ClipRRect(borderRadius: smallRadius, child: Image.asset(Assets.onboarding2, width: Get.width - 30, fit: BoxFit.cover))),
                 ),
               ),
               PageViewModel(
-                title: 'stay_connected'.tr,
-                body: 'engage_with_community'.tr,
+                titleWidget: Text('stay_connected'.tr, style: AppFonts.x16Bold),
+                bodyWidget: Text('engage_with_community'.tr, style: AppFonts.x14Regular),
                 image: Padding(
                   padding: const EdgeInsets.only(top: Paddings.large),
                   child: Center(child: ClipRRect(borderRadius: smallRadius, child: Image.asset(Assets.onboarding3, width: Get.width - 30, fit: BoxFit.cover))),

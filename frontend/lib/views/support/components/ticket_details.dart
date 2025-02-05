@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:http/http.dart' as http;
 
 import '../../../constants/colors.dart';
 import '../../../constants/shared_preferences_keys.dart';
@@ -270,37 +272,45 @@ class TicketDetails extends StatelessWidget {
     });
   }
 
+  Future<File> downloadPDF(String fileName) async {
+    final response = await ApiBaseHelper.find.request(RequestType.get, '/public/support_attachments/logs/$fileName');
+    final bytes = response.bodyBytes;
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/$fileName');
+    await file.writeAsBytes(bytes);
+    return file;
+  }
+
   Widget buildAttachmentFile({required String fileName, required String type, required String label}) {
     return Padding(
       padding: const EdgeInsets.only(top: Paddings.regular),
       child: InkWell(
-        onTap: () async {
-          http.Response? logContent;
-          if (type == 'log') {
-            logContent = await ApiBaseHelper.find.request(
-              RequestType.get,
-              '/public/support_attachments/${type == 'log' ? 'logs' : type == 'image' ? 'images' : 'documents'}/$fileName',
-            );
-          }
-
-          Widget wrapWithScrollable({required Widget child, required bool isWrap}) => isWrap ? Scrollbar(child: SingleChildScrollView(child: child)) : child;
-          return Get.bottomSheet(
+        onTap: () {
+          Get.bottomSheet(
               DraggableBottomsheet(
                 dragHandlerPadding: 20,
-                child: Material(
-                  color: kNeutralColor100,
-                  child: wrapWithScrollable(
-                    isWrap: type == 'log' || type == 'image',
-                    child: Padding(
-                      padding: const EdgeInsets.all(Paddings.large).copyWith(bottom: Paddings.exceptional),
-                      child: type == 'log'
-                          ? Text(logContent!.body, style: AppFonts.x14Regular)
-                          : type == 'image'
-                              ? Image.network(ApiBaseHelper.find.getLogs(fileName, type))
-                              : SizedBox(height: Get.height * 0.9, child: SfPdfViewer.network(ApiBaseHelper.find.getLogs(fileName, type))),
-                    ),
-                  ),
-                ),
+                child: type == 'log'
+                    ? FutureBuilder<File>(
+                        future: downloadPDF(fileName),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                          } else if (snapshot.hasData) {
+                            return SfPdfViewer.file(snapshot.data!);
+                          } else {
+                            return const Center(child: Text('No PDF found'));
+                          }
+                        },
+                      )
+                    : Material(
+                        color: kNeutralColor100,
+                        child: Padding(
+                          padding: const EdgeInsets.all(Paddings.large).copyWith(bottom: Paddings.exceptional),
+                          child: Image.network(ApiBaseHelper.find.getLogs(fileName, type)),
+                        ),
+                      ),
               ),
               isScrollControlled: true);
         },

@@ -11,7 +11,7 @@ import '../models/filter_model.dart';
 import '../models/reservation.dart';
 import '../models/task.dart';
 import '../networking/api_base_helper.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class TaskRepository extends GetxService {
   static TaskRepository get find => Get.find<TaskRepository>();

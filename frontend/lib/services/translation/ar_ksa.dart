@@ -238,6 +238,8 @@ final Map<String, String> arKSA = <String, String>{
   'identity_card': 'بطاقة الهوية',
   'passport': 'جواز السفر',
   'uploading_wait': 'جارٍ رفع مستندك، يرجى الانتظار.',
+  'logging_in': 'تسجيل الدخول...',
+  'query_table': 'استعلام الجداول',
   'verification': 'التحقق',
   'complete': 'اكتمال',
   'failed': 'فشل',

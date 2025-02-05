@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../constants/constants.dart';
 import '../models/notification.dart';
 import '../networking/api_base_helper.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class NotificationRepository extends GetxService {
   static NotificationRepository get find => Get.find<NotificationRepository>();

@@ -9,7 +9,7 @@ import '../models/dto/image_dto.dart';
 import '../models/service.dart';
 import '../models/store.dart';
 import '../repositories/store_repository.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 import '../views/store/my_store/components/add_service_bottomsheet.dart';
 
 class StoreViewmodel {

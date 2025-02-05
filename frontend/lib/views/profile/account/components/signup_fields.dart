@@ -30,23 +30,19 @@ class SignUpFields extends StatelessWidget {
     final isEditProfile = user != null;
     final buildSignUpForm = GetBuilder<AuthenticationService>(
       builder: (controller) {
-        Widget getActionButton() => isEditProfile
-            ? CustomButtons.elevatePrimary(
-                width: double.infinity,
-                disabled: isEditProfile ? false : !controller.acceptedTermsPrivacy.value,
-                onPressed: isEditProfile ? controller.updateUserData : controller.signUpUser,
-                loading: isEditProfile ? controller.isUpdatingProfile : controller.isLoggingIn,
-                title: isEditProfile ? 'update'.tr : 'create_account'.tr,
-              )
-            : Obx(
-                () => CustomButtons.elevatePrimary(
-                  width: double.infinity,
-                  disabled: isEditProfile ? false : !controller.acceptedTermsPrivacy.value,
-                  onPressed: isEditProfile ? controller.updateUserData : controller.signUpUser,
-                  loading: isEditProfile ? controller.isUpdatingProfile : controller.isLoggingIn,
-                  title: isEditProfile ? 'update'.tr : 'create_account'.tr,
-                ),
-              );
+        Widget getActionButton() => CustomButtons.elevatePrimary(
+              width: double.infinity,
+              onPressed: () => isEditProfile
+                  ? controller.updateUserData()
+                  : controller.acceptedTermsPrivacy.value
+                      ? controller.signUpUser()
+                      : Get.dialog(
+                          const PrivacyTermsDialog(),
+                          barrierDismissible: false,
+                        ).then((_) => controller.acceptedTermsPrivacy.value ? controller.signUpUser() : {}),
+              loading: isEditProfile ? controller.isUpdatingProfile : controller.isLoggingIn,
+              title: isEditProfile ? 'update'.tr : 'create_account'.tr,
+            );
         return Form(
           key: controller.formSignupKey,
           child: Column(
@@ -123,6 +119,7 @@ class SignUpFields extends StatelessWidget {
                 outlinedBorder: true,
                 isOptional: false,
                 fieldController: controller.birthdateController,
+                validator: FormValidators.notEmptyOrNullValidator,
                 onTap: () => Helper.openDatePicker(currentTime: DateTime.now(), onConfirm: (p0) => controller.birthdateController.text = Helper.formatDate(p0)),
                 readOnly: true,
               ),
@@ -136,6 +133,7 @@ class SignUpFields extends StatelessWidget {
                 selectedItem: controller.gender,
                 valueFrom: (gender) => gender.value.tr,
                 buttonHeight: 45,
+                validator: (_) => FormValidators.notEmptyOrNullValidator(controller.gender?.name),
                 onChanged: (selected) => controller.gender = selected!,
               ),
               const SizedBox(height: Paddings.regular),
@@ -238,7 +236,7 @@ class SignUpFields extends StatelessWidget {
             : Get.dialog(
                 const PrivacyTermsDialog(),
                 barrierDismissible: false,
-              ).then((_) => signup());
+              ).then((_) => controller.acceptedTermsPrivacy.value ? signup() : {});
         return Column(
           children: [
             if (Helper.isMobile) const SizedBox(height: Paddings.exceptional) else const Spacer(),

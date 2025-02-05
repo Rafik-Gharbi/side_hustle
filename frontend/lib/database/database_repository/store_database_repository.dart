@@ -13,7 +13,7 @@ import '../../models/service.dart';
 import '../../models/store.dart';
 import '../../models/user.dart';
 import '../../services/authentication_service.dart';
-import '../../services/logger_service.dart';
+import '../../services/logging/logger_service.dart';
 import '../../services/shared_preferences.dart';
 import '../database.dart';
 import 'user_database_repository.dart';

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../helpers/helper.dart';
 import '../networking/api_base_helper.dart';
 import '../services/authentication_service.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class PaymentRepository extends GetxService {
   static PaymentRepository get find => Get.find<PaymentRepository>();

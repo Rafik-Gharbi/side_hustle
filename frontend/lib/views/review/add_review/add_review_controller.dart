@@ -8,7 +8,7 @@ import '../../../models/dto/image_dto.dart';
 import '../../../models/review.dart';
 import '../../../models/user.dart';
 import '../../../repositories/review_repository.dart';
-import '../../../services/logger_service.dart';
+import '../../../services/logging/logger_service.dart';
 
 class AddReviewController extends GetxController {
   final TextEditingController messageController = TextEditingController();

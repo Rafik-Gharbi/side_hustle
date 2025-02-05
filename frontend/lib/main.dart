@@ -82,6 +82,8 @@ import 'views/profile/admin_dashboard/components/stats_screen/task_stats/task_st
 import 'views/profile/admin_dashboard/components/stats_screen/task_stats/task_stats_screen.dart';
 import 'views/profile/admin_dashboard/components/stats_screen/user_stats/user_stats_controller.dart';
 import 'views/profile/admin_dashboard/components/stats_screen/user_stats/user_stats_screen.dart';
+import 'views/profile/admin_dashboard/components/table_data/table_data_controller.dart';
+import 'views/profile/admin_dashboard/components/table_data/table_data_screen.dart';
 import 'views/profile/balance/balance_controller.dart';
 import 'views/profile/profile_screen/profile_controller.dart';
 import 'views/splash/splash_screen.dart';
@@ -109,7 +111,7 @@ import 'views/profile/favorite/favorite_controller.dart';
 import 'views/profile/favorite/favorite_screen.dart';
 
 import 'controllers/main_app_controller.dart';
-import 'services/logger_service.dart';
+import 'services/logging/logger_service.dart';
 import 'services/navigation_history_observer.dart';
 import 'services/shared_preferences.dart';
 import 'services/theme/theme.dart';
@@ -403,6 +405,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               GetPage(name: ReviewStatsScreen.routeName, page: () => const ReviewStatsScreen(), binding: BindingsBuilder.put(() => ReviewStatsController())),
             ],
           ),
+          GetPage(name: TableDataScreen.routeName, page: () => const TableDataScreen(), binding: BindingsBuilder.put(() => TableDataController())),
           GetPage(
             name: ManageBalanceScreen.routeName,
             page: () => const ManageBalanceScreen(),

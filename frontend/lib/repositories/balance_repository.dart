@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../models/balance_transaction.dart';
 import '../networking/api_base_helper.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class BalanceRepository extends GetxService {
   static BalanceRepository get find => Get.find<BalanceRepository>();

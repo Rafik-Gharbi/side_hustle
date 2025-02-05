@@ -26,7 +26,7 @@ import '../repositories/notification_repository.dart';
 import '../repositories/params_repository.dart';
 import '../repositories/user_repository.dart';
 import '../services/authentication_service.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 import '../services/shared_preferences.dart';
 import '../services/theme/theme.dart';
 import '../services/translation/app_localization.dart';

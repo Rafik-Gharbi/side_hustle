@@ -24,7 +24,7 @@ import '../views/chat/components/messages_screen.dart';
 import '../views/profile/profile_screen/profile_controller.dart';
 import '../views/settings/components/privacy_policy_screen.dart';
 import '../views/settings/components/terms_condition_screen.dart';
-import 'logger_service.dart';
+import 'logging/logger_service.dart';
 import 'shared_preferences.dart';
 
 enum ForgotPasswordStep { sendEmail, changePassword }
@@ -54,7 +54,7 @@ class AuthenticationService extends GetxController {
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController referralCodeController = TextEditingController();
   late GoogleSignIn _googleSignIn;
-  ForgotPasswordStep _screenState = ForgotPasswordStep.sendEmail;
+  Rx<ForgotPasswordStep> screenState = ForgotPasswordStep.sendEmail.obs;
   LoginWidgetState _currentState = LoginWidgetState.login;
   bool _isPhoneInput = true;
   RxBool sendingEmail = false.obs;
@@ -94,8 +94,6 @@ class AuthenticationService extends GetxController {
 
   bool get isLoggedIn => _jwtUserData != null;
 
-  ForgotPasswordStep get screenState => _screenState;
-
   Gender? get gender => _gender;
 
   Governorate? get governorate => _governorate;
@@ -114,11 +112,6 @@ class AuthenticationService extends GetxController {
 
   set gender(Gender? value) {
     _gender = value;
-    update();
-  }
-
-  set screenState(ForgotPasswordStep value) {
-    _screenState = value;
     update();
   }
 
@@ -155,7 +148,8 @@ class AuthenticationService extends GetxController {
         final jwtPayload = JwtDecoder.decode(savedToken);
         final isTokenExpired = JwtDecoder.isExpired(savedToken);
         isUserMailVerified = jwtPayload['isMailVerified'];
-        if ((isUserMailVerified ?? false) && !isTokenExpired) {
+        if (!isTokenExpired) {
+          isLoggingIn.value = true;
           initiateCurrentUser(savedToken);
           // init chat messages standBy room
           _initChatStandByRoom();
@@ -250,6 +244,7 @@ class AuthenticationService extends GetxController {
     _jwtUserData = null;
     _chatRoomInitiated = false;
     isLoggingIn.value = false;
+    MainAppController.find.showProfileCompletionIndicator.value = false;
     update();
   }
 
@@ -337,7 +332,7 @@ class AuthenticationService extends GetxController {
     confirmPasswordController.text = '';
     validationKeyController.text = '';
     _currentState = LoginWidgetState.login;
-    _screenState = ForgotPasswordStep.sendEmail;
+    screenState.value = ForgotPasswordStep.sendEmail;
     _firstMailSent = false;
     sendingEmail.value = false;
   }
@@ -435,6 +430,7 @@ class AuthenticationService extends GetxController {
       }
       // init chat messages standBy room
       _initChatStandByRoom();
+      MainAppController.find.showProfileCompletionIndicator.value = true;
       if (jwtUserData?.language != null && jwtUserData?.language != Get.locale?.languageCode) {
         MainAppController.find.changeLanguage(languageCode: jwtUserData!.language);
       }
@@ -484,7 +480,8 @@ class AuthenticationService extends GetxController {
       sendingEmail.value = true;
       final success = await UserRepository.find.sendChangePasswordCode(emailController.text);
       firstMailSent = true;
-      if (success) screenState = ForgotPasswordStep.changePassword;
+      if (success) screenState.value = ForgotPasswordStep.changePassword;
+      update();
     }
   }
 
@@ -510,12 +507,6 @@ class AuthenticationService extends GetxController {
         final loginDTO = await UserRepository.find.renewJWT(token: refreshToken);
         if (loginDTO?.refreshToken != null) {
           SharedPreferencesService.find.add(refreshTokenKey, loginDTO!.refreshToken!);
-          try {
-            final jwtPayload = JwtDecoder.decode(loginDTO.token ?? '');
-            _jwtUserData = User.fromToken(jwtPayload);
-          } catch (e) {
-            Helper.snackBar(title: 'oups'.tr, message: 'session_expired'.tr);
-          }
           initiateCurrentUser(loginDTO.token);
           return true;
         }

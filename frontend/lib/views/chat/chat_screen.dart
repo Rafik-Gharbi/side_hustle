@@ -59,6 +59,7 @@ class ChatScreen extends StatelessWidget {
               onSkip: () {
                 if (MainScreenWithBottomNavigation.notShowAgain.value) {
                   SharedPreferencesService.find.add(hasFinishedChatTutorialKey, 'true');
+                  Future.delayed(Durations.medium4, () => MainScreenWithBottomNavigation.notShowAgain.value = false);
                 }
                 MainScreenWithBottomNavigation.isOnTutorial.value = false;
                 return true;

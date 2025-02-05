@@ -12,6 +12,7 @@ import '../../../../helpers/helper.dart';
 import '../../../../repositories/params_repository.dart';
 import '../../../../services/authentication_service.dart';
 import '../../../../services/theme/theme.dart';
+import '../../../../widgets/custom_buttons.dart';
 
 class PrivacyTermsDialog extends StatelessWidget {
   const PrivacyTermsDialog({super.key});
@@ -36,7 +37,7 @@ class PrivacyTermsDialog extends StatelessWidget {
               } else {
                 return SizedBox(
                   width: Get.width,
-                  height: Get.height * 0.65,
+                  // height: Get.height * 0.65,
                   child: Column(
                     children: [
                       Expanded(
@@ -80,11 +81,33 @@ class PrivacyTermsDialog extends StatelessWidget {
                           () => Checkbox(
                             checkColor: kNeutralColor100,
                             value: controller.acceptedTermsPrivacy.value,
-                            onChanged: (value) {
-                              controller.acceptedTermsPrivacy.value = !controller.acceptedTermsPrivacy.value;
-                              if (controller.acceptedTermsPrivacy.value) Future.delayed(Durations.long4, Get.back);
-                            },
+                            onChanged: (value) => controller.acceptedTermsPrivacy.value = !controller.acceptedTermsPrivacy.value,
                           ),
+                        ),
+                      ),
+                      const SizedBox(height: Paddings.regular),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: Paddings.regular),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: CustomButtons.elevateSecondary(
+                                title: 'cancel'.tr,
+                                onPressed: Get.back,
+                              ),
+                            ),
+                            const SizedBox(width: Paddings.regular),
+                            Obx(
+                              () => Expanded(
+                                child: CustomButtons.elevatePrimary(
+                                  title: 'continue'.tr,
+                                  disabled: !controller.acceptedTermsPrivacy.value,
+                                  onPressed: Get.back,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

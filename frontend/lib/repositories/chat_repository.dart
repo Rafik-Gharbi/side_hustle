@@ -9,7 +9,7 @@ import '../models/dto/discussion_dto.dart';
 import '../models/reservation.dart';
 import '../networking/api_base_helper.dart';
 import '../services/authentication_service.dart';
-import '../services/logger_service.dart';
+import '../services/logging/logger_service.dart';
 
 class ChatRepository extends GetxService {
   static ChatRepository get find => Get.find<ChatRepository>();

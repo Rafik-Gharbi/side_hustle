@@ -411,7 +411,7 @@ async function getUserStatsData() {
     const transactionUsers = await sequelize.query(
       `
       SELECT DISTINCT user_id FROM transaction 
-      WHERE createdAt >= NOW() - INTERVAL 30 DAY
+      WHERE createdAt >= NOW() - INTERVAL 3 DAY
     `,
       { type: Sequelize.QueryTypes.SELECT }
     );
@@ -419,7 +419,7 @@ async function getUserStatsData() {
     const reservationUsers = await sequelize.query(
       `
       SELECT DISTINCT user_id FROM reservation 
-      WHERE createdAt >= NOW() - INTERVAL 30 DAY
+      WHERE createdAt >= NOW() - INTERVAL 3 DAY
     `,
       { type: Sequelize.QueryTypes.SELECT }
     );
@@ -808,6 +808,37 @@ async function updateStatus(id, status) {
   }
 }
 
+// Endpoint for fetching data from any table
+async function queryTable(
+  table,
+  fields,
+  conditions,
+  groupBy,
+  orderBy,
+  orderType
+) {
+  try {
+    if (!table) {
+      return "missing";
+    }
+    // Construct the SQL query
+    let query = `SELECT ${
+      fields && fields !== "" ? fields : "*"
+    } FROM ${table}${conditions ? " WHERE " + conditions : ""}${
+      groupBy ? " GROUP BY " + groupBy : ""
+    }${orderBy ? " ORDER BY " + orderBy + ` ${(orderType ?? "ASC")}` : ""}`;
+    // Execute query
+    const results = await sequelize.query(query, {
+      type: sequelize.QueryTypes.SELECT,
+    });
+    return results;
+  } catch (error) {
+    console.log(`Error at updateStatus`);
+    console.error("\x1b[31m%s\x1b[0m", error);
+    return error.toString();
+  }
+}
+
 module.exports = {
   usersForApproving,
   approveUser,
@@ -833,4 +864,5 @@ module.exports = {
   getTaskStatsData,
   updateStatus,
   getAdminRequiredActionsCount,
+  queryTable,
 };

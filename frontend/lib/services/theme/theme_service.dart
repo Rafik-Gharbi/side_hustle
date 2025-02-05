@@ -21,7 +21,7 @@ class ThemeService {
       () => setTheme(ThemeMode.values
               .cast<ThemeMode?>()
               .singleWhere((element) => element?.name != null && element?.name == SharedPreferencesService.find.get(currentThemeKey), orElse: () => null) ??
-          ThemeMode.dark),
+          ThemeMode.light),
     );
   }
 

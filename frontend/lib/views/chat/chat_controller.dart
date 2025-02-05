@@ -20,7 +20,7 @@ import '../../models/user.dart';
 import '../../repositories/chat_repository.dart';
 import '../../repositories/reservation_repository.dart';
 import '../../services/authentication_service.dart';
-import '../../services/logger_service.dart';
+import '../../services/logging/logger_service.dart';
 import '../../services/shared_preferences.dart';
 import '../../services/stream_socket.dart';
 import '../../services/tutorials/chat_tutorial.dart';

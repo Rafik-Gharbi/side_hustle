@@ -18,9 +18,9 @@ const storage = multer.diskStorage({
     ensureDecryptBody(req);
     // Check file type to determine destination
     const ext = path.extname(file.originalname).toLowerCase();
-    if (ext === ".txt") {
+    if (ext === ".pdf" && file.originalname.toLowerCase().includes("log")) {
       dir = path.join(__dirname, "../../public/support_attachments/logs");
-    } else if ([".pdf", ".docx", ".doc"].includes(ext)) {
+    } else if ([".pdf", ".txt", ".docx", ".doc"].includes(ext)) {
       dir = path.join(__dirname, "../../public/support_attachments/documents");
     } else if ([".jpg", ".jpeg", ".png", ".gif", ".webp"].includes(ext)) {
       dir = path.join(__dirname, "../../public/support_attachments/images");
@@ -36,12 +36,12 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname).toLowerCase();
 
-    if (ext === ".txt") {
+    if (ext === ".pdf" && file.originalname.toLowerCase().includes("log")) {
       // For log files
       const userId = req.decoded?.id || "unknown";
       const timestamp = new Date().toISOString().replace(/[:.]/g, "-"); // Format date for filename
-      cb(null, `log-${userId}-${timestamp}.txt`);
-    } else if ([".pdf", ".docx", ".doc"].includes(ext)) {
+      cb(null, `log-${userId}-${timestamp}.pdf`);
+    } else if ([".pdf", ".txt", ".docx", ".doc"].includes(ext)) {
       const userId = req.decoded?.id || "unknown";
       const timestamp = new Date().toISOString().replace(/[:.]/g, "-"); // Format date for filename
       cb(null, `doc-${userId}-${timestamp}${ext}`);

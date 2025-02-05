@@ -238,6 +238,8 @@ final Map<String, String> arTN = <String, String>{
   'identity_card': 'بطاقة تعريف',
   'passport': 'باسبور',
   'uploading_wait': 'جاري تحميل الوثيقة، الرجاء الانتظار.',
+  'logging_in': 'جاري تسجيل الدخول...',
+  'query_table': 'استعلام الجداول',
   'verification': 'التحقق',
   'complete': 'مكتمل',
   'failed': 'فشل',

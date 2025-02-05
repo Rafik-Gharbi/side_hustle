@@ -239,6 +239,8 @@ final Map<String, String> enUs = <String, String>{
   'identity_card': 'Identity Card',
   'passport': 'Passport',
   'uploading_wait': 'Uploading your document, please wait.',
+  'logging_in': 'Logging in...',
+  'query_table': 'Query Tables',
   'verification': 'Verification',
   'complete': 'Complete',
   'failed': 'Failed',
